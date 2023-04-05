@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,8 +6,6 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
-
 
 model User {
   id       Int     @id @default(autoincrement())
@@ -59,19 +54,17 @@ model Pets {
 }
 
 model Vets {
-  id        Int    @id @default(autoincrement())
-  name      String
+  id         Int        @id @default(autoincrement())
+  name       String
+  crmv       Int?
   speciality String
-  crmv      Int?
-  schedule Schedule[]
-
+  schedule   Schedule[]
 }
 
-
 model Schedule {
-    id        Int    @id @default(autoincrement())
-    plants String[]
-    plantsOur String[]
-    plantId Int
-    vets Vets @relation(fields: [plantId], references: [id])
+  id        Int      @id @default(autoincrement())
+  plants    String[]
+  plantId   Int
+  plantsOur String[]
+  vets      Vets     @relation(fields: [plantId], references: [id])
 }
