@@ -107,13 +107,13 @@ export function Home() {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4}>
+              
                 <div className="submenus">
                   <ul>
                     <li>
-                      <a href=""> DASHBOARD</a>
+                    <Link to="/Home/Labs">Laboratórios</Link>
                     </li>
                     <li>
-                      {" "}
                       <a href=""> CRIAR USUÁRIO</a>
                     </li>
                     <li>
@@ -146,11 +146,13 @@ export function Home() {
               icon={<GiHealthNormal fill="#f10b0b" size={36} />}
             />
             <CardNavigation
+             path="/Home/Labs"
               title="Laboratórios"
               text="Ver exames"
               icon={<IoFlask fill="#217c97" size={36} />}
             />
             <CardNavigation
+              path="/Home/Medicines"
               title="Medicamentos"
               text="Ver medicamentos"
               icon={<GiHealthPotion fill="#63136a" size={36} />}

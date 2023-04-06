@@ -38,7 +38,7 @@ export function ReceptionSidebar() {
           </Link>
 
 
-          <Link to="/Home/Users">
+          <Link to="/Home/Admissions">
           <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={GiHealthNormal} fontSize="20"/>
               <Text ml="4" fontWeight="medium" color="gray.700">Internações e Exames</Text>
