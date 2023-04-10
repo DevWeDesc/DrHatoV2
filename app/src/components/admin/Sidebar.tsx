@@ -41,7 +41,7 @@ export function Sidebar() {
           <Link to="/Home/Schedule">
           <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={AiOutlineSchedule} fontSize="20"/>
-              <Text ml="4" fontWeight="medium" color="gray.700">Agenda</Text>
+              <Text ml="4" fontWeight="medium" color="gray.700">Agendar</Text>
             </Box>
           </Link>
           </Stack>

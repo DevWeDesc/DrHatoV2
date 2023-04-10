@@ -68,3 +68,10 @@ model Schedule {
   plantsOur String[]
   vets      Vets     @relation(fields: [plantId], references: [id])
 }
+
+model Autorizations {
+    id        Int      @id @default(autoincrement())
+    name String
+    text String
+
+}
