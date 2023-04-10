@@ -8,6 +8,6 @@ export async function vetsRoutes(app: FastifyInstance){
     app.post('/vets',vetsController.createVet)
 
     app.post('/autorizations', autorizationsController.createAutorization)
-    app.post('/autorizations', autorizationsController.showAutorization)
+    app.get('/autorizations', autorizationsController.showAutorization)
 
 }
