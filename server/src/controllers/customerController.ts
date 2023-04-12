@@ -38,7 +38,7 @@ export const customerController = {
       const customer = await prisma.customer.findFirst({
         where: {
           OR: [{ name: name }, { cpf: cpf }, { phone: phone }],
-        },
+        }, include: { pets: true}
       });
 
       reply.send(CustomerSchema.parse(customer));

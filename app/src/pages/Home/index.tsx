@@ -174,6 +174,7 @@ export function Home() {
               icon={<BsBellFill fill="#FF7200" size={36} />}
             />
             <CardNavigation
+             path="/Home/Autorizations"
               title="Autorizações"
               text="Ver exames"
               icon={<AiFillCheckCircle fill="#46720c" size={36} />}

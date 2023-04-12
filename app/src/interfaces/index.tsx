@@ -29,6 +29,15 @@ export interface AutorizationData {
   text: string;
 }
 
+export interface AutPDFProps {
+  name?: string;
+  adress?: string;
+  cpf?: string;
+  petName?: string;
+  petDescription?: string;
+  autName?: string;
+  autText?: string;  
+}
   
   export interface IDBContext {
     userDataList: UserData[]
@@ -40,6 +49,10 @@ export interface AutorizationData {
     autorization: AutorizationData[]
     setAutorization: React.Dispatch<React.SetStateAction<AutorizationData[]>>
     dbLoaded: boolean
+    generateAut: AutPDFProps
+    setGenerateAut: React.Dispatch<React.SetStateAction<AutPDFProps>>
+    data: any
+    setData: any
   }
 
 

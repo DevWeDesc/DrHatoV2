@@ -1,4 +1,4 @@
-import { Routes, Route, Await } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
 import { AdminCharts } from "./pages/AdminDashboard/charts";
@@ -26,7 +26,8 @@ import { EditUser } from "./pages/Users/edit";
 import { Schedules } from "./pages/Schedule";
 import { Medicines } from "./pages/Medicines";
 import { CreateMedicine } from "./pages/Medicines/create";
-
+import { GenerateAutorizations } from "./pages/Autorizations";
+import { GeneratePdf } from "./pages/Autorizations/generate";
 export function Router() {
   return (
     <Routes>
@@ -40,6 +41,9 @@ export function Router() {
         <Route path="/Home/Admin/Charts" element={<AdminCharts />} />
         <Route path="/Home/Admin/Autorizations" element={<Autorizations />} />
         <Route path="/Home/Admin/Autorizations/:id" element={<AutorizationsEdit />} />
+        <Route path="/Home/Autorizations" element={<GenerateAutorizations />} />
+        <Route path="/Home/Autorizations/PDF/:id" element={<GeneratePdf />} />
+
 
 
         <Route path="/Home/Users" element={<UsersList />} />
