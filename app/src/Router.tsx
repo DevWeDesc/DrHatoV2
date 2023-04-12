@@ -1,8 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Await } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
 import { AdminCharts } from "./pages/AdminDashboard/charts";
 import { Autorizations } from "./pages/AdminDashboard/autorizations";
+import { AutorizationsEdit } from "./pages/AdminDashboard/autorizationsEdit";
 import { AdminMain } from "./pages/AdminDashboard/";
 import { UsersList } from "./pages/Users";
 import { VetsList } from "./pages/Vets";
@@ -38,6 +39,7 @@ export function Router() {
         <Route path="/Home/Admin" element={<AdminMain />} />
         <Route path="/Home/Admin/Charts" element={<AdminCharts />} />
         <Route path="/Home/Admin/Autorizations" element={<Autorizations />} />
+        <Route path="/Home/Admin/Autorizations/:id" element={<AutorizationsEdit />} />
 
 
         <Route path="/Home/Users" element={<UsersList />} />

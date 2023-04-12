@@ -12,11 +12,18 @@ import { Flex } from "@chakra-ui/react";
 
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { GenericModal } from "../../components/Modal/GenericModal";
+import { DbContext } from "../../contexts/DbContext";
+import { Link } from "react-router-dom";
+import { LoadingSpinner } from "../../components/Loading";
 
 export function Autorizations() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {autorization } = useContext(DbContext)
+
+  const autorizations = autorization ? autorization : null
+
   function openModal() {
     setIsModalOpen(true);
   }
@@ -57,16 +64,20 @@ export function Autorizations() {
                       Nome
                     </Text>
                     <UnorderedList>
-                      <ListItem>Alta condicional</ListItem>
-                      <ListItem>Atestado de óbito</ListItem>
-                      <ListItem>Atestado de saúde</ListItem>
+                    {
+                      autorizations != null ? autorizations.map((item) =>  (
+                        <Link key={item.id}  to={`/Home/Admin/Autorizations/${item.id}`}>
+                          <Text>{item.name}</Text>
+                        </Link>
+                      )) : (<LoadingSpinner/>)
+                    }
                       
                     </UnorderedList>
                     <GenericModal
                       isOpen={isModalOpen}
                       onRequestClose={closeModal}
                     >
-                      <Text color="black">Cadastrar novo medicamento</Text>
+                      <Text color="black">Cadastrar nova autorização</Text>
                     </GenericModal>
                   </Flex>
                 </Box>

@@ -14,6 +14,21 @@ export interface UserData {
     schedule: []
   
   }
+
+  export interface UserData {
+    name: string;
+    password: string;
+    username: string;
+    isAdmin: boolean;
+    id?:  number | string;
+}
+
+export interface AutorizationData {
+  id: number | string;
+  name: string;
+  text: string;
+}
+
   
   export interface IDBContext {
     userDataList: UserData[]
@@ -22,15 +37,11 @@ export interface UserData {
     vetList: VetData[]
     day: string[]
     setCurrentDay: React.Dispatch<React.SetStateAction<string[]>>
+    autorization: AutorizationData[]
+    setAutorization: React.Dispatch<React.SetStateAction<AutorizationData[]>>
+    dbLoaded: boolean
   }
 
- export interface UserData {
-    name: string;
-    password: string;
-    username: string;
-    isAdmin: boolean;
-    id?:  number | string;
-}
 
 export interface IAuthContext {
     validateLogin: () => boolean;

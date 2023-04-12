@@ -9,5 +9,7 @@ export async function vetsRoutes(app: FastifyInstance){
 
     app.post('/autorizations', autorizationsController.createAutorization)
     app.get('/autorizations', autorizationsController.showAutorization)
+    app.get('/autorizations/:id', autorizationsController.searchAutorizaton)
+    app.put('/autorizations/:id', autorizationsController.editAutorizaton)
 
 }
