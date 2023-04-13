@@ -69,7 +69,7 @@ export function Header() {
             maxWidth={220}
             maxHeight={6}
             border="1px"
-            onClick={() => logOut()}
+            onClick={() => navigate("/Home/Queue")}
           >
            Fila de Atendimento
           </Button>

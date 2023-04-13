@@ -1,0 +1,51 @@
+DOCUMENTAÇÃO DO SISTEMA PARA AJUDAR MANUTENÇÃO
+
+
+SUPER IMPORTANTE !! ----------- Router.tsx -----------------!! SUPER IMPORTANTE
+o Sistema usa React Router, então e uma SPA(Single Page Application). todas as rotas e navegações vem
+do Router.tsx na raíz do projeto sendo um dos arquivos mais importantes do APP qualquer problema relacionado a rotas,
+navegação etc.. conferir o arquivo Router.tsx.
+
+PASTAS:
+-- PASTA CONTEXTS:
+os contextos são responsáveis por transmitir boa parte dos dados do sistema,
+para evitar props drilling, criei um contexto chamado DBContext que faz toda chamada de API e puxa as informações do banco
+
+Atuamente possui 3 contexts, o Auth responsável pelo Login, e o Db responsável pela conexão com o banco,
+isso não exclui chamadas a API em componentes separados. para realizar login e necessário que o DB context envie um boolean
+para o Auth contenxt, caso falhe o botão de login não irá aparecer, então com isso já e possivel saber que a conexão com o banco falhou.
+
+-- PASTA COMPONENTS:
+literalmente responsável por todo corpo da aplicação, o app e construido em React e feito em pura componentização e reaproveitamento de interfaces UI, muitos components são ou vão ser genericos ou seja poderão ser usado em uma ou mais partes da aplicação
+
+-- PASTA PAGES:
+são todas páginas do app que contém os componentes são responsáveis por gerenciar tudo e fazer as transições entre as telas
+
+
+-- PASTA QUEUE:
+responsável pelo sistema de filas, qualquer problema relacionado a filas será de la e tera contexto próprio.
+
+-- PASTA INTERFACES:
+são as interfaces do typescript para tipagens, majoritariamente usada para tipar os contexts.
+
+-- PASTA LAYOUTS: 
+responsável pela criação de design de layouts, que futuramente sera utilizada para criar temas especiais como natal, pascoa etc..
+
+-- PASTA STYLES:
+estilos globais do CHAKRA UI E Styled componentes
+
+-- PASTA Lib:
+contera conexões e libs utilizadas como o axios para api.
+
+
+-- PASTA HELPERS: 
+ajudaram em coisas em especificos e contera a documentação e alguns testes unitários
+
+
+
+
+
+
+
+
+

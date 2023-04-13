@@ -23,11 +23,13 @@ import { Pets } from "./pages/Pets";
 import { CreatePets } from "./pages/Pets/create";
 import { DetailsPets } from "./pages/Pets/details";
 import { EditUser } from "./pages/Users/edit";
-import { Schedules } from "./pages/Schedule";
+import { Schedules } from "./pages/Schedule/schedule";
 import { Medicines } from "./pages/Medicines";
 import { CreateMedicine } from "./pages/Medicines/create";
 import { GenerateAutorizations } from "./pages/Autorizations";
 import { GeneratePdf } from "./pages/Autorizations/generate";
+import { ScheduleMenu } from "./pages/Schedule/menu";
+import { QueueSistem } from "./queue";
 export function Router() {
   return (
     <Routes>
@@ -36,7 +38,9 @@ export function Router() {
         <Route path="/" element={<Login />} />
         <Route path="/Home" element={<DefaultLayout />}>
         <Route path="/Home" element={<Home />} />
+        <Route path="/Home/Queue" element={<QueueSistem />} />
          
+
         <Route path="/Home/Admin" element={<AdminMain />} />
         <Route path="/Home/Admin/Charts" element={<AdminCharts />} />
         <Route path="/Home/Admin/Autorizations" element={<Autorizations />} />
@@ -64,6 +68,8 @@ export function Router() {
 
         
         <Route path="/Home/Schedule" element={<Schedules />} />
+        <Route path="/Home/Schedule/Menu" element={<ScheduleMenu />} />
+
         <Route path="/Home/Admissions" element={<Admissions />} />
         <Route path="/Home/Medicines" element={<Medicines />} />
         <Route path="/Home/Medicines/Create" element={<CreateMedicine />} />

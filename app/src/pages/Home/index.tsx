@@ -164,6 +164,7 @@ export function Home() {
               icon={<GiNurseFemale fill="#c9537e" size={36} />}
             />
             <CardNavigation
+             path="/Home/Schedule/Menu"
               title="Agendas"
               text="Ver exames"
               icon={<AiFillSchedule fill="#6ac574" size={36} />}
