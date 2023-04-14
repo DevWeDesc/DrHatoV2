@@ -17,11 +17,9 @@ import {
   VStack,
   Text,
   RadioGroup,
-  Radio,
-  Stack,
-  Menu,
+  Radio, Menu,
   MenuButton,
-  MenuList,
+  MenuList
 } from "@chakra-ui/react";
 import { Header } from "../../components/admin/Header";
 import { SearchComponent } from "../../components/Search";
@@ -30,40 +28,64 @@ import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import { BsArrowLeft } from "react-icons/all";
 import { AdminContainer } from "../AdminDashboard/style";
 import { AiOutlineCheckCircle } from "react-icons/all";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { DbContext } from "../../contexts/DbContext";
 import { StyledBox } from "../../components/Header/style";
-import { useParams, Link } from "react-router-dom";
 import { api } from "../../lib/axios";
 import { MdPets as Burger } from "react-icons/all";
-
+import * as pdfMake from "pdfmake/build/pdfmake";
+import * as pdfFonts from "pdfmake/build/vfs_fonts";
+import { TDocumentDefinitions } from "pdfmake/interfaces";
+import { toast } from "react-toastify";
 export function GenerateAutorizations() {
   const { autorization, setGenerateAut } = useContext(DbContext);
-  const {data} = useContext(DbContext)
+  const { data } = useContext(DbContext);
   const [value, setValue] = useState("");
+  const [petValue, setPetValue] = useState("");
   const autorizations = autorization ? autorization : null;
-  const { id } = useParams<{ id: string }>();
-  interface CustomerProps {
-    name: string;
-    adress: string;
-    phone: string;
-    cpf: number;
-    email: string;
-    birthday: string | number;
-    pets: [];
-  }
+  const [createAut, setCreateAut] = useState({});
 
-  const [customer, setCustomer] = useState<CustomerProps>({
-    name: "",
-    adress: "",
-    email: "",
-    cpf: 0,
-    birthday: "",
-    phone: "",
-    pets: [],
-  });
+  
+  //@ts-ignore
+  pdfMake.addVirtualFileSystem(pdfFonts);
 
-  console.log(data);
+  const handleCreateAut = async () => {
+
+    try {
+          const response = await api.get(`/autorizations/${value}`);
+    const petDesc = data.pets.find( (pet: any) => pet.id == petValue)
+    const dataAut = response.data;
+    const autorization = {
+      name: data.name,
+      adress: data.adress,
+      cpf: data.cpf,
+      autName: dataAut.name,
+      autText: dataAut.text,
+      petName: petDesc.name,
+      petEsp: petDesc.especie,
+      petCod: petDesc.codPet
+    };
+
+
+    setCreateAut(autorization);
+    const docDefinition: TDocumentDefinitions = {
+      content: [
+        `Nome: ${autorization.name}\n Endereço: ${autorization.adress}\n CPF: ${autorization.cpf}\n Nome do pet: ${autorization.petName}\n Especie: ${autorization.petEsp}\n Código Pet: ${autorization.petCod}\n \n  ${autorization.autName}\n ${autorization.autText}\n\n CPF:\n Nome:\n Endereço Completo:\n Data:___________,______de_________de________.\n\n Assinatura do responsável pelo paciente:\n   ______________________________________________________________`,
+      ],
+      pageMargins: [50, 50],
+      pageSize: "A4",
+    };
+    pdfMake.createPdf(docDefinition).open();
+    } catch (error) {
+      toast.error('Necessário escolher um tipo de autorização e ao menos um PET.')
+    }
+
+
+  };
+  console.log('PET VALUE', petValue)
+
+
+  console.log('DATA LOG',data);
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -75,7 +97,7 @@ export function GenerateAutorizations() {
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
-                <SearchComponent  />
+                <SearchComponent />
 
                 <Accordion defaultIndex={[0]} allowMultiple>
                   <AccordionItem>
@@ -149,7 +171,14 @@ export function GenerateAutorizations() {
                                   p="2px"
                                   gap="2"
                                 >
-                                  <Text>{pets.name}</Text>
+                              <RadioGroup onChange={setPetValue} value={petValue}>
+                                <Radio
+                                  bgColor={petValue == pets.id ? "green" : "red"}
+                                  value={pets.id as any}
+                                >
+                                  {pets.name}
+                                </Radio>
+                              </RadioGroup>
                                 </Flex>
                               ))}
                             </MenuList>
@@ -159,6 +188,10 @@ export function GenerateAutorizations() {
                     </Tbody>
                   </Table>
                 </Flex>
+
+                <Button onClick={() => handleCreateAut()} colorScheme="teal">
+                  Gerar Autorização
+                </Button>
               </Flex>
             </Box>
           </Flex>
