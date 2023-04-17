@@ -23,21 +23,11 @@ import {
               align="flex-start"
               as={Flex}
             >
-              <Box textAlign="center"  p="8" bg="gray.100" borderRadius={8}>
-                <Text fontSize="lg" mb="4">
-                Cadastrar Cliente
-                </Text>
-                <ReceptionCreateNewConsultForm />
-              </Box>
-  
               <Box textAlign="center" p="8" bg="gray.100" borderRadius={8}>
                 <Text fontSize="lg" mb="4">
                   Consultar Cliente
                 </Text>
                 <SearchConsultForm />
-  
-               
-               
               </Box>
             </SimpleGrid>
           </Flex>

@@ -16,7 +16,7 @@ import { CreateVet } from "./pages/Vets/create";
 import { DefaultLayout } from "./layouts";
 import { CreateUser } from "./pages/Users/create";
 import { Reception } from "./pages/Reception";
-import { ReceptionConsults } from "./pages/Reception/consultas";
+import { ReceptionConsults } from "./pages/Reception/consults";
 import { Finance } from "./pages/Finance";
 import { Customer } from "./pages/Customer";
 import { Pets } from "./pages/Pets";
@@ -27,7 +27,7 @@ import { Schedules } from "./pages/Schedule/schedule";
 import { Medicines } from "./pages/Medicines";
 import { CreateMedicine } from "./pages/Medicines/create";
 import { GenerateAutorizations } from "./pages/Autorizations";
-
+import { CreateCustomer } from "./pages/Reception/createCustomer";
 import { ScheduleMenu } from "./pages/Schedule/menu";
 import { QueueSistem } from "./queue";
 export function Router() {
@@ -87,6 +87,7 @@ export function Router() {
           path="/Home/Recepcao/Consultas/Clientes/Pets/Details/:id"
           element={<DetailsPets />}
         />
+            <Route path="/Home/Recepcao/Create" element={<CreateCustomer />} />
         <Route path="/Home/Recepcao/Finance" element={<Finance />} />
       </Route>
     </Routes>
