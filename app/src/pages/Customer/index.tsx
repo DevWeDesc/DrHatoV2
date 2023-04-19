@@ -84,17 +84,17 @@ export function Customer() {
             <Box textAlign="center" p="8" bg="gray.100" borderRadius={8}>
 
               {
-                customer.balance <= 0 ? (<Link to="/Home/Customer/Balance"><Text color="red">
+                customer.balance <= 0 ? (<Link to={`/Home/Customer/Balance/${id}`}><Text color="red">
                   Saldo total: {new Intl.NumberFormat('pt-Br', {
                      style: 'currency',
                      currency: 'BRL'
                   }).format(customer.balance)}
-                </Text></Link>) :( <Text color="green">
+                </Text></Link>) : (<Link to={`/Home/Customer/Balance/${id}`}><Text color="green">
                 Saldo total: {new Intl.NumberFormat('pt-Br', {
                    style: 'currency',
                    currency: 'BRL'
                 }).format(customer.balance)}
-              </Text>)
+              </Text> </Link>)
               }
          
               

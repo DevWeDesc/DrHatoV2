@@ -91,7 +91,7 @@ export function Router() {
             <Route path="/Home/Recepcao/Create" element={<CreateCustomer />} />
         <Route path="/Home/Recepcao/Finance" element={<Finance />} />
 
-        <Route path="/Home/Customer/Balance" element={<BalanceHistory />} />
+        <Route path="/Home/Customer/Balance/:id" element={<BalanceHistory />} />
 
         
       </Route>

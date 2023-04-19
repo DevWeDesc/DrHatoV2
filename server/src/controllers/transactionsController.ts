@@ -25,7 +25,7 @@ getCustomerTransactions: async (request: FastifyRequest, reply: FastifyReply) =>
     const { id } = IdSchema.parse(request.params)
 
     try {
-        const userTransactions = await prisma.transaction.findFirst({
+        const userTransactions = await prisma.transaction.findMany({
             where: {transaction_id: parseInt(id)}
         })
 
