@@ -3,7 +3,6 @@ import { Container } from './styles'
 
 export function Transactions() {
   const { transactions } = useTransactions()
-
   return (
     <Container>
       <table>

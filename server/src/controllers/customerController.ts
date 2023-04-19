@@ -12,6 +12,7 @@ const CustomerSchema = z.object({
   cpf: z.string(),
   phone: z.string(),
   pets: z.any(),
+  balance: z.number(),
 });
 export const customerController = {
   showAllUsers: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -38,7 +39,7 @@ export const customerController = {
       const customer = await prisma.customer.findFirst({
         where: {
           OR: [{ name: name }, { cpf: cpf }, { phone: phone }],
-        }, include: { pets: true}
+        }, include: { pets: true, transaction: true}, 
       });
 
       reply.send(CustomerSchema.parse(customer));
@@ -54,14 +55,15 @@ export const customerController = {
         phone: z.string(),
         cpf: z.string(),
         email: z.string().email(),
-        birthday: z.string()
+        birthday: z.string(),
+        balance: z.number(),
        })
     
-       const {name, adress, phone, email, cpf, birthday} = createCustomer.parse(request.body)
+       const {name, adress, phone, email, cpf, birthday, balance} = createCustomer.parse(request.body)
     
        try {
         await prisma.customer.create({
-          data: {name, adress, phone, email, cpf, birthday}
+          data: {name, adress, phone, email, cpf, birthday, balance}
         })
        } catch (error) {
         console.error(error)

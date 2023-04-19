@@ -30,6 +30,7 @@ import { GenerateAutorizations } from "./pages/Autorizations";
 import { CreateCustomer } from "./pages/Reception/createCustomer";
 import { ScheduleMenu } from "./pages/Schedule/menu";
 import { QueueSistem } from "./queue";
+import { BalanceHistory } from "./pages/Customer/balanceHistory";
 export function Router() {
   return (
     <Routes>
@@ -89,6 +90,10 @@ export function Router() {
         />
             <Route path="/Home/Recepcao/Create" element={<CreateCustomer />} />
         <Route path="/Home/Recepcao/Finance" element={<Finance />} />
+
+        <Route path="/Home/Customer/Balance" element={<BalanceHistory />} />
+
+        
       </Route>
     </Routes>
   );

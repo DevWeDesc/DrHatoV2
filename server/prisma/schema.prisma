@@ -20,23 +20,27 @@ model User {
 }
 
 model Transaction {
-  id        Int    @id @default(autoincrement())
-  title     String
-  amount    Int
-  type      String
-  category  String
-  createdAt String
+  id             Int       @id @default(autoincrement())
+  title          String
+  amount         Int
+  type           String
+  category       String
+  createdAt      String
+  transaction_id Int
+  customer       Customer? @relation(fields: [transaction_id], references: [id])
 }
 
 model Customer {
-  id       Int    @id @unique @default(autoincrement())
-  name     String @unique
-  adress   String
-  phone    String @unique
-  cpf      String @unique
-  email    String
-  birthday String
-  pets     Pets[]
+  id          Int           @id @unique @default(autoincrement())
+  name        String        @unique
+  adress      String
+  phone       String        @unique
+  cpf         String        @unique
+  email       String
+  birthday    String
+  pets        Pets[]
+  balance     Int
+  transaction Transaction[]
 }
 
 model Pets {

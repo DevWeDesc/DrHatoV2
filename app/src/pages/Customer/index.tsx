@@ -30,6 +30,7 @@ interface CustomerProps {
   phone: string;
   cpf: number;
   email: string;
+  balance: number;
   birthday: string | number;
   pets: [];
 }
@@ -48,6 +49,7 @@ export function Customer() {
     cpf: 0,
     birthday: "",
     phone: "",
+    balance: 0,
     pets: [],
   });
 
@@ -77,7 +79,25 @@ export function Customer() {
             align="flex-start"
             as={Flex}
           >
+       
+       
             <Box textAlign="center" p="8" bg="gray.100" borderRadius={8}>
+
+              {
+                customer.balance <= 0 ? (<Link to="/Home/Customer/Balance"><Text color="red">
+                  Saldo total: {new Intl.NumberFormat('pt-Br', {
+                     style: 'currency',
+                     currency: 'BRL'
+                  }).format(customer.balance)}
+                </Text></Link>) :( <Text color="green">
+                Saldo total: {new Intl.NumberFormat('pt-Br', {
+                   style: 'currency',
+                   currency: 'BRL'
+                }).format(customer.balance)}
+              </Text>)
+              }
+         
+              
               <Flex mt="8" justify="center" direction="column">
                 <Table colorScheme="blackAlpha">
                   <Thead>

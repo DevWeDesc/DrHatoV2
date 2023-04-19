@@ -17,13 +17,15 @@ export async function transactionRoutes(app: FastifyInstance){
     })
  
     app.post('/transactions', async (request, reply) => {
-       const { title, amount, type, category, createdAt }: ITransaction | any = request.body
+       const { title, amount, type, category, createdAt, customerId }: ITransaction | any = request.body
        try {
           await prisma.transaction.create({
-             data:{  title, amount, type, category, createdAt}
+         
+             data:{  title, amount, type, category, createdAt, customer: {connect: {id: customerId }}} 
           })
        } catch (error) {
              console.log(error)
+             reply.send(error)
        }
     })
 
