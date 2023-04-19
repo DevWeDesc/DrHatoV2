@@ -10,8 +10,22 @@ import {
   Td,
   Box
 } from '@chakra-ui/react'
-
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { api } from '../../lib/axios';
 export function BalanceHistory() {
+  const [transactions, setTransactons] = useState({})
+
+
+  const { id } = useParams<{ id: string }>();
+  useEffect(() => {
+     async function getTransactions() {
+      await api.get(`transactions/${id}`);
+    }
+  }, [])
+
+
+
   return (
     <ChakraProvider>
       <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6" justify="center"
@@ -24,15 +38,15 @@ export function BalanceHistory() {
         <Table border="2px" m={2}  colorScheme="blackAlpha">
             <Thead>
               <Tr >
-              <th>Titulo</th>
-              <th>Valor</th>
-              <th>Categoria</th>
-              <th>Data</th>
+              <Th>Titulo</Th>
+              <Th>Valor</Th>
+              <Th>Categoria</Th>
+              <Th>Data</Th>
               </Tr>
             </Thead>
             <Tbody>
               <Tr>
-                <td>AA</td>
+                <Td>AA</Td>
               </Tr>
             </Tbody>
           </Table>

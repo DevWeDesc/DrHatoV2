@@ -8,7 +8,7 @@ const AutorizationSchema = z.object({
     text: z.string()
 })
 
-export const autorizationsController = {
+export const autorizationsRegister = {
     createAutorization: async(request: FastifyRequest, reply: FastifyReply) => {
         const {name, text} = AutorizationSchema.parse(request.body)
         await prisma.autorizations.create({

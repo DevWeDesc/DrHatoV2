@@ -13,12 +13,13 @@ const CustomerSchema = z.object({
   phone: z.string(),
   pets: z.any(),
   balance: z.number(),
+  transactions: z.any(),
 });
 export const customerController = {
   showAllUsers: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const allUser = await prisma.customer.findMany({
-        include: { pets: true },
+        include: { pets: true, transaction: true},
       });
       return reply.send(allUser);
     } catch (error) {
@@ -39,7 +40,7 @@ export const customerController = {
       const customer = await prisma.customer.findFirst({
         where: {
           OR: [{ name: name }, { cpf: cpf }, { phone: phone }],
-        }, include: { pets: true, transaction: true}, 
+        }, include: { pets: true, transaction: true}
       });
 
       reply.send(CustomerSchema.parse(customer));
@@ -56,7 +57,7 @@ export const customerController = {
         cpf: z.string(),
         email: z.string().email(),
         birthday: z.string(),
-        balance: z.number(),
+        balance: z.number().optional()
        })
     
        const {name, adress, phone, email, cpf, birthday, balance} = createCustomer.parse(request.body)
@@ -72,7 +73,7 @@ export const customerController = {
 
   findUserById: async (request: FastifyRequest, reply: FastifyReply) => {
     const { id }: any = (request.params)
-    const customer = await prisma.customer.findUnique({ where: { id: parseInt(id) }, include:{pets: true} })
+    const customer = await prisma.customer.findUnique({ where: { id: parseInt(id) }, include:{pets: true, transaction: true} })
     reply.send(CustomerSchema.parse(customer))
   }
 };

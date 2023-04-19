@@ -20,14 +20,14 @@ model User {
 }
 
 model Transaction {
-  id             Int       @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   title          String
   amount         Int
   type           String
   category       String
   createdAt      String
   transaction_id Int
-  customer       Customer? @relation(fields: [transaction_id], references: [id])
+  customer       Customer @relation(fields: [transaction_id], references: [id])
 }
 
 model Customer {
@@ -38,8 +38,8 @@ model Customer {
   cpf         String        @unique
   email       String
   birthday    String
+  balance     Int?
   pets        Pets[]
-  balance     Int
   transaction Transaction[]
 }
 

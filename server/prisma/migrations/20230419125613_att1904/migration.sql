@@ -1,12 +1,11 @@
 /*
   Warnings:
 
-  - Added the required column `balance` to the `Customer` table without a default value. This is not possible if the table is not empty.
   - Added the required column `transaction_id` to the `Transaction` table without a default value. This is not possible if the table is not empty.
 
 */
 -- AlterTable
-ALTER TABLE "Customer" ADD COLUMN     "balance" INTEGER NOT NULL;
+ALTER TABLE "Customer" ADD COLUMN     "balance" INTEGER;
 
 -- AlterTable
 ALTER TABLE "Transaction" ADD COLUMN     "transaction_id" INTEGER NOT NULL;
