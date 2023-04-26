@@ -35,11 +35,6 @@ interface CustomerProps {
   pets: [];
 }
 
-interface PetsProps {
-  id: string | number;
-  name: string;
-}
-
 export function Customer() {
   const { id } = useParams<{ id: string }>();
   const [customer, setCustomer] = useState<CustomerProps>({

@@ -35,65 +35,57 @@ export function Router() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/Home" element={<DefaultLayout />}>
+      <Route element={<DefaultLayout />}>
         <Route path="/Home" element={<Home />} />
-        <Route path="/Home/Queue" element={<QueueSistem />} />
 
-        <Route path="/Home/Admin" element={<AdminMain />} />
-        <Route path="/Home/Admin/Charts" element={<AdminCharts />} />
-        <Route path="/Home/Admin/Autorizations" element={<Autorizations />} />
+        <Route path="/Queue" element={<QueueSistem />} />
+
+        <Route path="/Admin" element={<AdminMain />} />
+        <Route path="/Admin/Charts" element={<AdminCharts />} />
+        <Route path="/Admin/Autorizations" element={<Autorizations />} />
         <Route
-          path="/Home/Admin/Autorizations/:id"
+          path="/Admin/Autorizations/:id"
           element={<AutorizationsEdit />}
         />
-        <Route path="/Home/Autorizations" element={<GenerateAutorizations />} />
 
-        <Route path="/Home/Users" element={<UsersList />} />
-        <Route path="/Home/Users/Create" element={<CreateUser />} />
-        <Route path="/Home/Users/Edit/:id" element={<EditUser />} />
+        <Route path="/Autorizations" element={<GenerateAutorizations />} />
 
-        <Route path="/Home/Vets" element={<VetsList />} />
-        <Route path="/Home/Vets/Menu" element={<MenuVet />} />
-        <Route path="/Home/Vets/Create" element={<CreateVet />} />
+        <Route path="/Users" element={<UsersList />} />
+        <Route path="/Users/Create" element={<CreateUser />} />
+        <Route path="/Users/Edit/:id" element={<EditUser />} />
 
-        <Route path="/Home/Labs" element={<LabMenu />} />
-        <Route path="/Home/Labs/Exames" element={<LabExames />} />
-        <Route path="/Home/Labs/Imagens" element={<LabImagens />} />
+        <Route path="/Vets" element={<VetsList />} />
+        <Route path="/Vets/Menu" element={<MenuVet />} />
+        <Route path="/Vets/Create" element={<CreateVet />} />
 
-        <Route path="/Home/Schedule" element={<Schedules />} />
-        <Route path="/Home/Schedule/Menu" element={<ScheduleMenu />} />
+        <Route path="/Labs" element={<LabMenu />} />
+        <Route path="/Labs/Exames" element={<LabExames />} />
+        <Route path="/Labs/Imagens" element={<LabImagens />} />
 
-        <Route path="/Home/Admissions" element={<Admissions />} />
-        <Route path="/Home/Medicines" element={<Medicines />} />
-        <Route path="/Home/Medicines/Create" element={<CreateMedicine />} />
+        <Route path="/Schedule" element={<Schedules />} />
+        <Route path="/Schedule/Menu" element={<ScheduleMenu />} />
 
-        <Route path="/Home/Recepcao" element={<Reception />} />
+        <Route path="/Admissions" element={<Admissions />} />
+
+        <Route path="/Medicines" element={<Medicines />} />
+        <Route path="/Medicines/Create" element={<CreateMedicine />} />
+
+        <Route path="/Recepcao" element={<Reception />} />
+        <Route path="/Recepcao/Consultas" element={<ReceptionConsults />} />
+        <Route path="/Recepcao/Consultas/Clientes/:id" element={<Customer />} />
+        <Route path="/Recepcao/Consultas/Clientes/Pets" element={<Pets />} />
         <Route
-          path="/Home/Recepcao/Consultas"
-          element={<ReceptionConsults />}
-        />
-        <Route
-          path="/Home/Recepcao/Consultas/Clientes/:id"
-          element={<Customer />}
-        />
-        <Route
-          path="/Home/Recepcao/Consultas/Clientes/Pets"
-          element={<Pets />}
-        />
-        <Route
-          path="/Home/Recepcao/Consultas/Clientes/Pets/Create/:id"
+          path="/Recepcao/Consultas/Clientes/Pets/Create/:id"
           element={<CreatePets />}
         />
         <Route
-          path="/Home/Recepcao/Consultas/Clientes/Pets/Details/:id"
+          path="/Recepcao/Consultas/Clientes/Pets/Details/:id"
           element={<DetailsPets />}
         />
-            <Route path="/Home/Recepcao/Create" element={<CreateCustomer />} />
-        <Route path="/Home/Recepcao/Finance" element={<Finance />} />
+        <Route path="/Recepcao/Create" element={<CreateCustomer />} />
+        <Route path="/Recepcao/Finance" element={<Finance />} />
 
-        <Route path="/Home/Customer/Balance/:id" element={<BalanceHistory />} />
-
-        
+        <Route path="/Customer/Balance/:id" element={<BalanceHistory />} />
       </Route>
     </Routes>
   );

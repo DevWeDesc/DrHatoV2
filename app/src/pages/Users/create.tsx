@@ -5,18 +5,11 @@ import { AdminContainer } from "../AdminDashboard/style";
 import { FormContainer } from "./style";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useState } from 'react';
+import { CreateUserFormData } from "../../interfaces";
 import { Input } from "../../components/admin/Input";
 import { SubmitHandler } from "react-hook-form/dist/types";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
-
-interface CreateUserFormData {
-  name: string;
-  password: string;
-  username: string;
-  isAdmin: boolean;
-}
 
 export function CreateUser() {
 
@@ -42,7 +35,7 @@ export function CreateUser() {
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-        <Header />
+        <Header title="USUÁRIOS" />
 
         <Flex w="100%"  my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />

@@ -16,21 +16,21 @@ export function ReceptionSidebar() {
             </Box>
             </Link>
 
-            <Link to="/Home/Recepcao">
+            <Link to="/Recepcao">
             <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={GrUnorderedList} fontSize="20"/>
               <Text ml="4" fontWeight="medium" color="gray.700">Todas opções</Text>
             </Box>
             </Link>
           
-            <Link to="/Home/Recepcao/Consultas">
+            <Link to="/Recepcao/Consultas">
             <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={FaWpforms} fontSize="20"/>
               <Text ml="4" fontWeight="medium" color="gray.700">Consultas</Text>
             </Box>
             </Link>
 
-          <Link to="/Home/Recepcao/Finance">
+          <Link to="/Recepcao/Finance">
           <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={TbReportMoney} fontSize="20"/>
               <Text ml="4" fontWeight="medium" color="gray.700">Caixas</Text>
@@ -38,14 +38,14 @@ export function ReceptionSidebar() {
           </Link>
 
 
-          <Link to="/Home/Admissions">
+          <Link to="/Admissions">
           <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={GiHealthNormal} fontSize="20"/>
               <Text ml="4" fontWeight="medium" color="gray.700">Internações e Exames</Text>
             </Box>
           </Link>
 
-          <Link to="/Home/Users">
+          <Link to="/Users">
           <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={RiContactsLine} fontSize="20"/>
               <Text ml="4" fontWeight="medium" color="gray.700">Administrativo</Text>

@@ -41,9 +41,9 @@ export function Reception() {
                     </div>
                    
                     <div className="buttonsContainer">
-                      <Link to="/Home/Recepcao/Consultas"><Button minWidth={200} colorScheme="whatsapp" >Nova Consulta</Button></Link>
+                      <Link to="/Recepcao/Consultas"><Button minWidth={200} colorScheme="whatsapp" >Nova Consulta</Button></Link>
                       <Button colorScheme="whatsapp" >Alterar Consulta</Button>
-                      <Link to="/Home/Recepcao/Create"><Button colorScheme="whatsapp" >Cadastro de Clientes</Button></Link>
+                      <Link to="/Recepcao/Create"><Button colorScheme="whatsapp" >Cadastro de Clientes</Button></Link>
                     </div>
                   </div>
                 </div>

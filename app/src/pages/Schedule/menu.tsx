@@ -22,13 +22,9 @@ export function ScheduleMenu() {
         <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
           <GenericSidebar>
           <GenericLink icon={BsArrowLeft}  name='Voltar' path="/Home"/>
-          <GenericLink icon={AiOutlineMenu}  name='Menu' path="/Home/Schedule/Menu"/>
-          <GenericLink icon={GiHealthNormal}  name='Cirurgias' path="/Home/Cirurgias"/>
-          <GenericLink icon={AiOutlineSchedule}  name='Agendas' />
-
-           
-
-        
+          <GenericLink icon={AiOutlineMenu}  name='Menu' path="/Schedule/Menu"/>
+          <GenericLink icon={GiHealthNormal}  name='Cirurgias' path="/Cirurgias"/>
+          <GenericLink icon={AiOutlineSchedule}  name='Agendas' /> 
           </GenericSidebar>
           <SimpleGrid
             flex="1"

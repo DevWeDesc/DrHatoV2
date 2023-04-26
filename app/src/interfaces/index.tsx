@@ -64,3 +64,12 @@ export interface IAuthContext {
     setUserPassword: React.Dispatch<React.SetStateAction<string>>
     userData: UserData[]
 }
+
+
+export interface CreateUserFormData {
+  name: string;
+  password: string;
+  username: string;
+  isAdmin: boolean;
+}
+
