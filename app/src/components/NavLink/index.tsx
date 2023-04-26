@@ -31,17 +31,17 @@ export function NavLink({ direction}: LinkContainerProps) {
             </Link>
           )}
 
-          <Link to="/home">
+          <Link to="/Vets">
             <FaDog size={26} color="" />
             <Text>Veterinários</Text>
           </Link>
 
-          <Link to="/home">
+          <Link to="/Labs">
             <FaHouseUser size={26} color="" />
             <Text>Laboratórios</Text>
           </Link>
 
-          <Link to="/Home/Recepcao">
+          <Link to="/Recepcao">
             <FaHouseUser size={26} color="" />
             <Text>Recepção</Text>
           </Link>

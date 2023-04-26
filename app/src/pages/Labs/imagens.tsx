@@ -2,19 +2,13 @@ import {
   Box,
   ChakraProvider,
   Flex,
-  Table,
-  Tr,
-  Td,
-  Thead,
-  Tbody,
-  Th
+  Table
 } from '@chakra-ui/react'
 import { Header } from '../../components/admin/Header'
 import { SearchComponent } from '../../components/Search'
 import { GenericLink } from '../../components/Sidebars/GenericLink'
 import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
-import { AiOutlineSearch } from 'react-icons/all'
-import { AiOutlineMenu, BsArrowLeft, IoIosFlask, BsImages} from "react-icons/all"
+import { AiOutlineMenu, BsArrowLeft, IoIosFlask, BsImages } from "react-icons/all"
 import { AdminContainer } from '../AdminDashboard/style'
 
 export function LabImagens() {

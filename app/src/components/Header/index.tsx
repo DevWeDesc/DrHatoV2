@@ -53,7 +53,7 @@ export function Header() {
             maxWidth={220}
             maxHeight={6}
             border="1px"
-            onClick={() => logOut()}
+            onClick={() => navigate("/Users")}
           >
             Configurações de usuário
           </Button>
@@ -69,7 +69,7 @@ export function Header() {
             maxWidth={220}
             maxHeight={6}
             border="1px"
-            onClick={() => navigate("/Home/Queue")}
+            onClick={() => navigate("/Queue")}
           >
            Fila de Atendimento
           </Button>

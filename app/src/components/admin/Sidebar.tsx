@@ -17,28 +17,28 @@ export function Sidebar() {
 
 
 
-            <Link to="/Home/Admin/Charts">
+            <Link to="/Admin/Charts">
             <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={RiDashboardLine} fontSize="20"/>
               <Text ml="4" fontWeight="medium" color="gray.700">Dashboard</Text>
             </Box>
             </Link>
           
-          <Link to="/Home/Users">
+          <Link to="/Users">
           <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={RiContactsLine} fontSize="20"/>
               <Text ml="4" fontWeight="medium" color="gray.700">Usuários</Text>
             </Box>
           </Link>
 
-          <Link to="/Home/Vets">
+          <Link to="/Vets">
           <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={GiHealthIncrease} fontSize="20"/>
               <Text ml="4" fontWeight="medium" color="gray.700">Veterinários</Text>
             </Box>
           </Link>
           
-          <Link to="/Home/Schedule">
+          <Link to="/Schedule">
           <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={AiOutlineSchedule} fontSize="20"/>
               <Text ml="4" fontWeight="medium" color="gray.700">Agendar</Text>

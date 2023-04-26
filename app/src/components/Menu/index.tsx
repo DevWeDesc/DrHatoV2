@@ -13,12 +13,12 @@ import {
 export function MenuBurger() {
     const location = useLocation();
     switch(location.pathname) {
-      case '/Home/AdminDashboard':
-      case '/home/AdminDashboard':
-      case '/Home/Users':
-      case '/home/Users':
-      case '/Home/Users/Create':
-      case 'home/Users/Create':    
+      case '/AdminDashboard':
+      case '/AdminDashboard':
+      case '/Users':
+      case '/Users':
+      case '/Users/Create':
+      case '/Users/Create':    
         return null;
       default:
         break;
