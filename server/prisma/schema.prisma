@@ -38,6 +38,7 @@ model Customer {
   cpf         String        @unique
   email       String
   birthday    String
+  cep         String
   balance     Int?
   pets        Pets[]
   transaction Transaction[]

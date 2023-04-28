@@ -63,7 +63,7 @@ export function BalanceHistory() {
         direction="column"
       >
 
-      <Link to={`/Home/Recepcao/Consultas/Clientes/${id}`}><Button colorScheme="whatsapp">Voltar</Button></Link>
+      <Link to={`/Recepcao/Consultas/Clientes/${id}`}><Button colorScheme="whatsapp">Voltar</Button></Link>
 
         <Flex align="center" justify="center" mb="4" direction="column"> 
         <Text>Histórico Cliente</Text>

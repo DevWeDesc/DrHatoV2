@@ -101,7 +101,7 @@ export function SearchConsultForm() {
           <Text mt="8" fontSize="16px" fontWeight="bold">
             {customerFound ? (
               <Link
-                to={`/Home/Recepcao/Consultas/Clientes/${customerFound.id}`}
+                to={`/Recepcao/Consultas/Clientes/${customerFound.id}`}
               >
                 {customerFound.name}
               </Link>

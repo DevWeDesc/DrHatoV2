@@ -5,7 +5,6 @@ import {
     SimpleGrid,
     ChakraProvider,
   } from "@chakra-ui/react";
-  import { ReceptionCreateNewConsultForm } from "../../components/Forms/ReceptionCreateNewConsultForm";
   import { SearchConsultForm } from "../../components/Forms/SearchConsultForm";
   import { ReceptionSidebar } from "../../components/Sidebars/ReceptionBar";
   

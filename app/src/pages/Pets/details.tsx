@@ -64,8 +64,8 @@ export function DetailsPets() {
       <Flex direction="column" h="100vh">
         <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <GenericSidebar>
-          <GenericLink name="Voltar recepção" path="/Home/Recepcao/" icon={BiLeftArrowAlt} />
-          <GenericLink name="Voltar proprietário" path="/Home/Recepcao/Consultas/Clientes/1" icon={BiLeftArrowAlt} />
+          <GenericLink name="Voltar recepção" path="/Recepcao/" icon={BiLeftArrowAlt} />
+          <GenericLink name="Voltar proprietário" path={`/Recepcao/Consultas/Clientes/${id}`} icon={BiLeftArrowAlt} />
          </GenericSidebar>
           <SimpleGrid
             flex="1"

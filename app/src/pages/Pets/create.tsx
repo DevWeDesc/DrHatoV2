@@ -16,7 +16,7 @@ export function CreatePets() {
       <Flex direction="column" h="100vh">
         <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
          <GenericSidebar>
-          <GenericLink name="Voltar" path="/Home/Recepcao/Consultas/Clientes/1" icon={BiLeftArrowAlt} />
+          <GenericLink name="Voltar" path="/Recepcao/Consultas/Clientes/1" icon={BiLeftArrowAlt} />
          </GenericSidebar>
           <SimpleGrid
             flex="1"

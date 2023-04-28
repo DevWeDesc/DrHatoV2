@@ -1,9 +1,6 @@
-import {  Flex, Box, SimpleGrid, ChakraProvider,  
-    Button,
-    HStack
+import {  Flex, Box, SimpleGrid, ChakraProvider,   HStack
   } from '@chakra-ui/react'
-  import { useEffect, useState } from 'react';
-  import { useParams } from 'react-router-dom';
+
   import { ReceptionSidebar } from '../../components/Sidebars/ReceptionBar'
   export function Pets() {
     return (

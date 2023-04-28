@@ -32,6 +32,7 @@ interface CustomerProps {
   email: string;
   balance: number;
   birthday: string | number;
+  cep: string
   pets: [];
 }
 
@@ -44,6 +45,7 @@ export function Customer() {
     cpf: 0,
     birthday: "",
     phone: "",
+    cep: "",
     balance: 0,
     pets: [],
   });
@@ -76,15 +78,15 @@ export function Customer() {
           >
        
        
-            <Box textAlign="center" p="8" bg="gray.100" borderRadius={8}>
+            <Box textAlign="center" p="8" borderRadius={8}>
 
               {
-                customer.balance <= 0 ? (<Link to={`/Home/Customer/Balance/${id}`}><Text color="red">
+                customer.balance <= 0 ? (<Link to={`/Customer/Balance/${id}`}><Text color="red">
                   Saldo total: {new Intl.NumberFormat('pt-Br', {
                      style: 'currency',
                      currency: 'BRL'
                   }).format(customer.balance)}
-                </Text></Link>) : (<Link to={`/Home/Customer/Balance/${id}`}><Text color="green">
+                </Text></Link>) : (<Link to={`/Customer/Balance/${id}`}><Text color="green">
                 Saldo total: {new Intl.NumberFormat('pt-Br', {
                    style: 'currency',
                    currency: 'BRL'
@@ -103,7 +105,9 @@ export function Customer() {
                       <Th>CPF</Th>
                       <Th>E-mail</Th>
                       <Th>Data de Nascimento</Th>
+                      <Th>Cep</Th>
                       <Th>Pets</Th>
+
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -114,6 +118,7 @@ export function Customer() {
                       <Td>{customer.cpf}</Td>
                       <Td>{customer.email}</Td>
                       <Td>{customer.birthday}</Td>
+                      <Td>{customer.cep}</Td>
                       <Td>
                         {" "}
                         <Menu>
@@ -136,7 +141,7 @@ export function Customer() {
                                 p="2px"
                                 gap="2"
                               >
-                                <Link to={`/Home/Recepcao/Consultas/Clientes/Pets/Details/${pets.id}`}>
+                                <Link to={`/Recepcao/Consultas/Clientes/Pets/Details/${pets.id}`}>
                                   <Text>{pets.name}</Text>
                                 </Link>
                               </Flex>
@@ -149,7 +154,7 @@ export function Customer() {
                 </Table>
 
                 <HStack mt="8" align="center">
-                  <Link to={`/Home/Recepcao/Consultas/Clientes/Pets/Create/${id}`}>
+                  <Link to={`/Recepcao/Consultas/Clientes/Pets/Create/${id}`}>
                     <Button maxWidth={320} colorScheme="whatsapp">
                       Cadastrar pet
                     </Button>

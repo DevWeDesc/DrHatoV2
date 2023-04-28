@@ -18,6 +18,7 @@ interface CreateNewClienteProps {
     cpf: string;
     email: string;
     birthday: Date | string | number;
+    cep: string;
 }
 export function ReceptionCreateNewConsultForm() {
     const { register, handleSubmit} = useForm()
@@ -30,6 +31,7 @@ export function ReceptionCreateNewConsultForm() {
             birthday: values.birthday,
             phone:values.phone,
             cpf:values.cpf,
+            cep: values.cep
          }
          console.log(data)
         try {
@@ -60,6 +62,9 @@ export function ReceptionCreateNewConsultForm() {
 
         <FormLabel   htmlFor="birthday">Data de nascimento</FormLabel>
         <Input   {...register("birthday")}  id="birthday" maxWidth={320} name="birthday" type="text" />
+
+        <FormLabel   htmlFor="cep">Cep do Cliente</FormLabel>
+        <Input   {...register("cep")}  id="cep" maxWidth={320} name="cep" type="text" />
 
 
         <Button mt="8" colorScheme="whatsapp" type="submit">Cadastrar</Button>
