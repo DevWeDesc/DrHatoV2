@@ -1,22 +1,9 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
-import { z } from "zod";
 import { ValidationContract } from "../validators/validateContract";
+import { CustomerSchema, createCustomer } from "../schemas/schemasValidator";
 const prisma = new PrismaClient();
 
-const CustomerSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  email: z.string(),
-  adress: z.string(),
-  birthday: z.string(),
-  cpf: z.string(),
-  phone: z.string(),
-  balance: z.any(),
-  cep: z.string(),
-  pets: z.any(),
-  transactions: z.any(),
-});
 export const customerController = {
   showAllUsers: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
@@ -50,25 +37,13 @@ export const customerController = {
       reply.status(404).send(error);
     }
   },
-
   createUser: async (request: FastifyRequest, reply: FastifyReply) => {
-    const createCustomer = z.object({
-        name: z.string(),
-        adress: z.string(),
-        phone: z.string(),
-        cpf: z.string(),
-        email: z.string().email(),
-        birthday: z.string(),
-        cep: z.string(),
-        balance: z.any().optional()
-       })
-
        const contract = new ValidationContract() ;
 
        const {name, adress, phone, email, cpf, birthday, balance, cep} = createCustomer.parse(request.body)
        try {
 
-        await contract.userAlreadyExists(cpf, 'Usuário já existe!')
+        await contract.customerAlreadyExists(cpf, 'Usuário já existe!')
         if(contract.hadError()){
           reply.status(400).send(contract.showErrors())
           contract.clearErrors()
@@ -93,9 +68,6 @@ export const customerController = {
       return acc
     }, 0)
 
-    
-     
-    
     reply.send(CustomerSchema.parse(customer))
   }
 };

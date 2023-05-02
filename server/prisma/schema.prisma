@@ -12,11 +12,13 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  name     String  @unique
+  id       Int        @id @default(autoincrement())
+  name     String     @unique
   username String
   password String
-  isAdmin  Boolean
+  userType String[]   @default(["admin", "user", "vet"])
+  crmv     Int?
+  schedule Schedule[]
 }
 
 model Transaction {
@@ -62,20 +64,12 @@ model Pets {
   customer     Customer @relation(fields: [customer_id], references: [id])
 }
 
-model Vets {
-  id         Int        @id @default(autoincrement())
-  name       String
-  crmv       Int?
-  speciality String
-  schedule   Schedule[]
-}
-
 model Schedule {
   id        Int      @id @default(autoincrement())
   plants    String[]
   plantId   Int
   plantsOur String[]
-  vets      Vets     @relation(fields: [plantId], references: [id])
+  users     User     @relation(fields: [plantId], references: [id])
 }
 
 model Autorizations {

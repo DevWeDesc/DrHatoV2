@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
-import { IDBContext, AutorizationData, UserData, VetData, AutPDFProps } from '../interfaces';
+import { IDBContext, AutorizationData, UserData, AutPDFProps } from '../interfaces';
 import { api } from '../lib/axios';
 
 
@@ -11,7 +11,6 @@ export const DbContext = createContext({} as IDBContext )
 export function DbContextProvider ({children}: DbContextProps) {
   const [userDataList, setUserListData] = useState<UserData[]>([])
   const [pagination, setPagination] = useState(1)
-  const [vetList, setVetList] = useState<VetData[]>([])
   const [day, setCurrentDay]  = useState([] as string[])
   const [autorization, setAutorization] = useState<AutorizationData[]>([])
   const [dbLoaded, setDbLoaded] = useState(false)
@@ -26,20 +25,16 @@ export function DbContextProvider ({children}: DbContextProps) {
       };
     
       const getUserListData = async () => {
-        const response = await api.get(`userall?pag=${pagination}`);
+        const response = await api.get(`users?pag=${pagination}`);
         return response.data.users
       };
   
-      const getVetsListData = async () => {
-        const response = await api.get('/vets')
-        return response.data
-      }
     
-      Promise.all([getAutorizations(), getUserListData(), getVetsListData()])
-        .then(([autorizations, userListData, vetsListData]) => {
+      Promise.all([getAutorizations(), getUserListData(), ])
+        .then(([autorizations, userListData,]) => {
           setAutorization(autorizations)
           setUserListData(userListData)
-          setVetList(vetsListData)
+    
           setTimeout(()=>{
             setDbLoaded(true)
           },2000)
@@ -56,7 +51,7 @@ export function DbContextProvider ({children}: DbContextProps) {
  
 
   return (
-      <DbContext.Provider value={{dbLoaded, userDataList, pagination, setPagination, vetList, day, setCurrentDay, autorization, setAutorization, generateAut, setGenerateAut, data, setData }}>
+      <DbContext.Provider value={{dbLoaded, userDataList, pagination, setPagination, day, setCurrentDay, autorization, setAutorization, generateAut, setGenerateAut, data, setData }}>
           {children}
       </DbContext.Provider>
   )

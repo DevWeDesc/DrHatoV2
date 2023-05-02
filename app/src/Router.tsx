@@ -58,7 +58,7 @@ export function Router() {
         <Route path="/Vets/Menu" element={<MenuVet />} />
         <Route path="/Vets/Create" element={<CreateVet />} />
 
-        <Route path="/Labs" element={<LabMenu />} />
+        <Route path="/Labs"  element={<LabMenu />} />
         <Route path="/Labs/Exames" element={<LabExames />} />
         <Route path="/Labs/Imagens" element={<LabImagens />} />
 

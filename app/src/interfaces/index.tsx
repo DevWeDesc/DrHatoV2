@@ -43,7 +43,6 @@ export interface AutPDFProps {
     userDataList: UserData[]
     pagination: number
     setPagination: React.Dispatch<React.SetStateAction<number>>
-    vetList: VetData[]
     day: string[]
     setCurrentDay: React.Dispatch<React.SetStateAction<string[]>>
     autorization: AutorizationData[]

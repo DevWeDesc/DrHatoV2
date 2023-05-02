@@ -13,9 +13,7 @@ export function AuthContextProvider ({children}: any) {
         async function GetUser() {
           try {
             const response = await api.get('/users');
-            if (response.data.length > 0) {
-              setUserData(response.data);
-            }
+            setUserData(response.data.users);
           } catch (error) {
             console.log(error);
           } finally {
@@ -25,8 +23,7 @@ export function AuthContextProvider ({children}: any) {
       
         GetUser();
       }, []);
-      console.log(userData)
-
+     
     const validateLogin = () =>  {
         const  userExists =  userData.find( (user) => user.name === userLogin && user.password === userPassword )
         localStorage.setItem('userSession', JSON.stringify(userExists))

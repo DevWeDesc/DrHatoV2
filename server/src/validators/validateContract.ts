@@ -5,14 +5,25 @@ export class ValidationContract {
     constructor() {
       this.errors = [];
     }
-    public async userAlreadyExists(value: string, message: string) {
-     const userExits = await prisma.customer.findUnique({
+    public async customerAlreadyExists(value: string, message: string) {
+     const customerExits = await prisma.customer.findUnique({
         where: { cpf: value },
       })
-       if(userExits) {
+       if(customerExits) {
         this.errors.push(message)
        } 
     }
+
+    public async userAlreadyExists(value: string, message: string) {
+        const userExist = await prisma.user.findFirst({
+          where:{name: value}
+        })
+
+        if(userExist) {
+          this.errors.push(message)
+        }
+    }
+
     public showErrors(): string[] {
       return this.errors;
     }
