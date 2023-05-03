@@ -14,14 +14,14 @@ interface UserProps {
   name: string;
   password: string;
   username: string;
-  isAdmin: boolean;
+  userType: string;
 }
 
 interface EditUserProps {
   id: any
   password: string;
   username: string;
-  isAdmin: boolean;
+  userType: string;
 }
 
 export function EditUser() {
@@ -31,7 +31,7 @@ export function EditUser() {
     name: '',
     username: '',
     password:'',
-    isAdmin: false,
+    userType: '',
   })
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export function EditUser() {
     const data = {
       username: values.username,
       password: values.password,
-      isAdmin: Boolean(values.isAdmin)
+      userType: values.userType,
     }
     try {
       await api.put(`/users/${id}`, data)
@@ -89,7 +89,7 @@ export function EditUser() {
                         <Th>Nome</Th>
                         <Th>Nome de Usuário</Th>
                         <Th>Senha</Th>
-                        <Th>E Administrador ?</Th>
+                        <Th>Tipo de Uusário</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -97,7 +97,7 @@ export function EditUser() {
                         <Td>{customer.name}</Td>
                         <Td>{customer.username}</Td>
                         <Td>{customer.password}</Td>
-                        <Td>{ customer.isAdmin === true ? 'ADMIN' : 'USER' }</Td>
+                        <Td>{customer.userType.includes("admin") ? "ADMINISTRADOR" : customer.userType.includes("vet") ? "VETERINÁRIO" : "USUÁRIO" }</Td>
                       </Tr>
                     </Tbody>
                 </Table>
@@ -105,17 +105,17 @@ export function EditUser() {
                     <FormContainer>
                     <Input {...register('username')} name='username' label='Novo nome de usuário' />
                     <Input {...register('password')} name='password' label='Nova senha de usuário' />
-                
-                    <Flex mt="6" padding="4" textAlign="center" direction="column">
-                    <Text fontWeight="medium">o usuário será administrador ?</Text>
-                    <HStack >
-                    <Input _focus={{ bg: "green" }}  {...register("isAdmin")} maxWidth={4} maxHeight={6} label="sim" name="isAdmin"   id="sim" type="radio"  value="true"/>
-                    <Input _focus={{ bg: "green" }}  {...register("isAdmin")} maxWidth={4}  maxHeight={6} label="não"  name="isAdmin"   id="não" type="radio"  value="false"/>
-                    </HStack>
+                    <Input {...register('userType')} name='userType' label='Tipo de Usuário' />
 
-                    <Button mt="4" colorScheme="whatsapp" type='submit'  onClick={handleSubmit(handleEditUser as any)}>Editar</Button>
+                
+          
+                  <Flex align="center" justify="center" gap={4}>
+                  <Button mt="4" colorScheme="whatsapp" type='submit'  onClick={handleSubmit(handleEditUser as any)}>Editar</Button>
                     <Button mt="4" colorScheme="red" type='submit'  onClick={handleSubmit(handleDeleteUser as any)}>Deletar</Button>
-                    </Flex>
+             
+
+                  </Flex>
+                  
                     </FormContainer>
                    
                   </FormControl>

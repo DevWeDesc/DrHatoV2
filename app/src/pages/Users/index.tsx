@@ -14,11 +14,15 @@ import { AdminContainer } from "../AdminDashboard/style";
   export function UsersList()
   {
     const { userDataList  } = useContext(DbContext)
+
+
+  
+
   return (
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-        <Header />
+        <Header title="Usuários" />
 
         <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />
@@ -31,7 +35,7 @@ import { AdminContainer } from "../AdminDashboard/style";
             <Flex mb="8" justify="space-between" align="center">
               <Heading size="lg" fontWeight="normal">Usúarios</Heading>
               
-              <Link to='/Home/Users/Create'>
+              <Link to='/Users/Create'>
               <Button as="a"size="sm" fontSize="sm" colorScheme="green"
               leftIcon={<Icon as={RiAddLine}/>}
               >
@@ -76,13 +80,13 @@ import { AdminContainer } from "../AdminDashboard/style";
                       </Box>
                     </Td>
                     <Td>
-                      <Text fontWeight="bold" color="gray.800">{user.isAdmin === true ? 'ADMIN' : 'USER' }</Text>
+                      <Text fontWeight="bold" color="gray.800">{ user.userType.includes("admin") ? "ADMINISTRADOR" : user.userType.includes("vet") ? "VETERINÁRIO" : "USUÁRIO" }</Text>
                     </Td>
   
                     
                   <Td>
                     
-                    <Link to={`/Home/Users/Edit/${user.id}`}> 
+                    <Link to={`/Users/Edit/${user.id}`}> 
                     <Button as="a"size="sm" fontSize="sm" colorScheme="green"
                       leftIcon={<Icon as={RiPencilLine}/>}
                       >

@@ -24,7 +24,7 @@ scroll-behavior: auto;
     
     background-color: white;
     height: 100vh; 
-    width: 300px
+    width: 400px
 }
 
 .section-2 {
@@ -32,7 +32,7 @@ scroll-behavior: auto;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-   
+   width: 100%;
     gap: 1rem;
     
 }
@@ -40,6 +40,8 @@ scroll-behavior: auto;
 .section-3 {
     display: flex;
     margin: 1rem;
+    width: 500px;
+    height: 600px;
 }
 
 

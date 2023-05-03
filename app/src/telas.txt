@@ -1,0 +1,188 @@
+IMPORTANTES: 
+
+- ADMINISTRAÇÃO - 
+1 onda
+cadastros
+procedimentos 
+autorizações
+instruções
+exames
+setor 
+vacinas 
+opções
+usuarios
+permissões tipos de eventos
+-- RELATORIOS --
+relatorio financeiro por setor
+relatorio de clientes abc
+relatorio cirurgias concluidas 
+rel novos clientes
+rel vacina por periodo 
+rel tabela fato
+rel fin setor
+rel procedimento por vet.
+
+
+
+
+
+2 onda
+canil
+cirurgias
+especializades
+raças 
+vouchers
+tipos de pagamento
+tipos de procedimentos
+compendio de veterinarios
+unificações animais e clientes
+protocolos
+relatorios clientes abc
+relatorios especialidades
+preferencias
+rel origem clientes novos
+rel veterinario 2023
+rel inter por tipo
+rel de cupons/vounches
+
+
+
+ retirar
+ mala direta
+ medicamentos
+ origem
+cadastro de procedimentos
+adicionar tipos de procedimentos
+consultar opinião
+comissão
+pagamentos rastraveis
+fluxo de caixa 
+relatorios de exames
+relatorio vacinas não tomadas sai
+relatorio exames clin e vet externos
+rel frequencia
+rel visualizar caixas
+rel clientesvets
+rel nut
+rel procedimentos
+rel vac
+rel vacinas por vet
+tabela de preços
+relt de caixas
+rel de retornos
+rel tipo de eventos
+
+-- VETERINARIOS --
+pesquisa:
+intervalo de data - preset 1 ms=es
+cod animal
+nome clientes
+nome animal
+vet
+finalizados
+-----------
+tira
+ordem classificação
+especie
+raças
+especializades
+
+resultado da pesquisa exatamente igual.
+
+retirar - items em cima cirurgias protocolos procedimentos medicamentos
+
+DENTRO DA FICHA DO clientes - coração do Sistema
+
+
+menu de navegação: 
+1 onda
+formularios
+intrus prop 
+autorizaçoes
+protocolos
+
+
+2 onda
+protocolos
+medicamentos
+
+tira
+cal de nutri
+guia de nutri
+presc mapa
+imprimir pagina
+fotos
+
+
+custos e concluir são a mesma tela
+
+
+-- LABORATORIO --
+mantém
+se e exame vai pra lab pra ser laudado
+tela de preencher exames
+
+-- LABORATORIO IMAGENS -- igual lab tipo de exame define pra onde vai
+
+
+--- INTERNAÇÕES ---
+LISTA DE PACIENTES INTERNADOS
+etiquetas
+formularios
+guia de INTERNAÇÕES
+protocolos
+historico
+
+
+tira 
+cal e guia de nutri
+imprimir
+
+pode solicitar exames, cirurgias, 
+
+
+-- RECEPÇÃO ---
+CONSULTAS FICAS
+
+caixa FICAS
+REIMPRIMIR caixas
+PAGAMENTOS
+
+
+TIRA
+DEVOLUÇOES 
+
+
+
+ferramentas 
+tabelas de preços
+trocar senha
+autorizações
+medicamentos
+
+inter exames e vacinas FICA
+
+
+
+Administrativo - acesso restrito
+
+
+
+-- AUTORIZAÇÕES ---
+
+feita
+
+
+--- CIRURGIAS ---
+REPLICA LABS
+
+
+-- MENSAGENS TIRA ---
+
+--- AGENDAS -- 
+API PEGA PLANTÃO
+
+
+
+
+

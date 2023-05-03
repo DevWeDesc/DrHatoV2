@@ -19,7 +19,7 @@ export interface UserData {
     name: string;
     password: string;
     username: string;
-    isAdmin: boolean;
+    userType: string
     id?:  number | string;
 }
 
