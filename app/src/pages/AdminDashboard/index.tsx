@@ -27,7 +27,7 @@ export function AdminMain() {
             align="flex-start" as={Flex}
             >
               <Flex wrap="wrap" gap="4">
-                <Link to="/Home/Admin/Autorizations">
+                <Link to="/Admin/Autorizations">
                 <Button colorScheme="whatsapp">Cadastro de Autorizações</Button>
                 </Link>
                  
@@ -35,7 +35,10 @@ export function AdminMain() {
                  <Button colorScheme="whatsapp">Cadastro de Canis</Button>
                  <Button colorScheme="whatsapp">Cadastro de Centro Cirúrgico</Button>
                  <Button colorScheme="whatsapp">Cadastro de Especialidades</Button>
+                 <Link to="/Admin/Exams">
                  <Button colorScheme="whatsapp">Cadastro de Exames</Button>
+                 </Link>
+            
                  <Button colorScheme="whatsapp">Cadastro de Malas Diretas</Button>
                  <Button colorScheme="whatsapp">Cadastro de Procedimentos</Button>
                  <Button colorScheme="whatsapp">Cadastro de Raças</Button>

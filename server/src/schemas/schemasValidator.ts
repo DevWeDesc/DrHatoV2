@@ -32,3 +32,17 @@ export const UserSchema = z.object({
   userType: z.any()
 })
  
+
+
+
+export const ExamsType = ["lab", "image"]
+
+export const ExamSchema = z.object({
+  name: z.string(),
+  examsType: z.string().array(),
+  price: z.number(),
+  available: z.boolean(),
+  applicableGender: z.string().optional(),
+  subName: z.string().optional(),
+  description: z.string().optional(),
+})

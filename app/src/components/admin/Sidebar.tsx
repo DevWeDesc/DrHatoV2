@@ -8,7 +8,7 @@ export function Sidebar() {
         <Box>
           <Text fontWeight="bold" color="gray.700" fontSize="small" >GERAL</Text>
           <Stack spacing="4" mt="8" align="stretch">
-          <Link to="/Home/Admin/">
+          <Link to="/Admin/">
             <Box  display="flex" alignItems="center" color="green.300" > 
             <Icon as={GrUnorderedList} fontSize="20"/>
               <Text ml="4" fontWeight="medium" color="gray.700">Todas opções</Text>

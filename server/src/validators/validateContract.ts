@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { ExamsType } from "../schemas/schemasValidator";
 const prisma = new PrismaClient()
 export class ValidationContract {
     private errors: string[];
@@ -22,6 +23,20 @@ export class ValidationContract {
         if(userExist) {
           this.errors.push(message)
         }
+    }
+
+    public async examAlreadyExist(value: string, message: string) {
+      const examExist = await prisma.exams.findFirst({
+        where: {name: value}
+      })
+
+      if(examExist) {
+        this.errors.push(message)
+      }
+    }
+ 
+    public async validateExamsType(value: string[], message: string){
+      ExamsType.some( e => value.includes(e)) ? true : this.errors.push(message)
     }
 
     public showErrors(): string[] {

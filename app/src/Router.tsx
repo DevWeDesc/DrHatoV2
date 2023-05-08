@@ -31,6 +31,7 @@ import { CreateCustomer } from "./pages/Reception/createCustomer";
 import { ScheduleMenu } from "./pages/Schedule/menu";
 import { QueueSistem } from "./queue";
 import { BalanceHistory } from "./pages/Customer/balanceHistory";
+import { ExamesList } from "./pages/Exams";
 export function Router() {
   return (
     <Routes>
@@ -47,6 +48,7 @@ export function Router() {
           path="/Admin/Autorizations/:id"
           element={<AutorizationsEdit />}
         />
+         <Route path="/Admin/Exams" element={<ExamesList />} />
 
         <Route path="/Autorizations" element={<GenerateAutorizations />} />
 

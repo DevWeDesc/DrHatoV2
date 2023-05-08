@@ -89,7 +89,7 @@ export function Autorizations() {
                     <UnorderedList>
                     {
                       autorizations != null ? autorizations.map((item) =>  (
-                        <Link key={item.id}  to={`/Home/Admin/Autorizations/${item.id}`}>
+                        <Link key={item.id}  to={`/Admin/Autorizations/${item.id}`}>
                           <Text>{item.name}</Text>
                         </Link>
                       )) : (<LoadingSpinner/>)

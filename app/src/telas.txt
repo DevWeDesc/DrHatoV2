@@ -6,7 +6,7 @@ cadastros
 procedimentos 
 autorizações
 instruções
-exames
+exames 
 setor 
 vacinas 
 opções

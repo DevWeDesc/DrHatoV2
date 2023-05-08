@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
-import { IDBContext, AutorizationData, UserData, AutPDFProps } from '../interfaces';
+import { IDBContext, AutorizationData, UserData, AutPDFProps, ExamsData } from '../interfaces';
 import { api } from '../lib/axios';
 
 
@@ -16,6 +16,7 @@ export function DbContextProvider ({children}: DbContextProps) {
   const [dbLoaded, setDbLoaded] = useState(false)
   const [generateAut, setGenerateAut] = useState<AutPDFProps>({})
   const [data, setData] = useState({})
+  const [exams, setExams] = useState<ExamsData[]>([])
 
   useEffect(() => {
     async function GetAllDataInDB() {
@@ -28,12 +29,17 @@ export function DbContextProvider ({children}: DbContextProps) {
         const response = await api.get(`users?pag=${pagination}`);
         return response.data.users
       };
-  
+      
+      const getExamesListData = async () => {
+        const response = await api.get('exams')
+        return response.data
+      }
     
-      Promise.all([getAutorizations(), getUserListData(), ])
-        .then(([autorizations, userListData,]) => {
+      Promise.all([getAutorizations(), getUserListData(), getExamesListData() ])
+        .then(([autorizations, userListData, exams]) => {
           setAutorization(autorizations)
           setUserListData(userListData)
+          setExams(exams)
     
           setTimeout(()=>{
             setDbLoaded(true)
@@ -51,7 +57,7 @@ export function DbContextProvider ({children}: DbContextProps) {
  
 
   return (
-      <DbContext.Provider value={{dbLoaded, userDataList, pagination, setPagination, day, setCurrentDay, autorization, setAutorization, generateAut, setGenerateAut, data, setData }}>
+      <DbContext.Provider value={{dbLoaded, userDataList, pagination, setPagination, day, setCurrentDay, autorization, setAutorization, generateAut, setGenerateAut, data, setData, exams, setExams }}>
           {children}
       </DbContext.Provider>
   )

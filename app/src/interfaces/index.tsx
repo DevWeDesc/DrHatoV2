@@ -38,6 +38,17 @@ export interface AutPDFProps {
   autName?: string;
   autText?: string;  
 }
+
+export interface ExamsData {
+  id: number | string;
+  name: string,
+  examsType: string,
+  price: number,
+  available: boolean,
+  applicableGender?: string,
+  subName?: string,
+  description?: string,
+}
   
   export interface IDBContext {
     userDataList: UserData[]
@@ -52,6 +63,8 @@ export interface AutPDFProps {
     setGenerateAut: React.Dispatch<React.SetStateAction<AutPDFProps>>
     data: any
     setData: any
+    exams: ExamsData[]
+    setExams: React.Dispatch<React.SetStateAction<ExamsData[]>>
   }
 
 
