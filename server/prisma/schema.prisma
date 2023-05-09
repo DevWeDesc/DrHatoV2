@@ -78,16 +78,14 @@ model Autorizations {
   text String
 }
 
-
 model Exams {
-  id   Int    @id @default(autoincrement())
-  examsType String[]
-  name String
-  price Decimal
-  available Boolean
-  applicableGender String?
-  subName String?
-  description String?
+  id               Int      @id @default(autoincrement())
+  examsType        String[]
+  name             String
+  price            Decimal
+  available        Boolean
+  applicableGender String[]
+  subName          String?
+  description      String?
+  ageRange         String[]
 }
-
-

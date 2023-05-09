@@ -32,6 +32,8 @@ import { ScheduleMenu } from "./pages/Schedule/menu";
 import { QueueSistem } from "./queue";
 import { BalanceHistory } from "./pages/Customer/balanceHistory";
 import { ExamesList } from "./pages/Exams";
+import { ExamsEdit } from "./pages/Exams/edit";
+import { ExamDetail } from "./pages/Exams/details";
 export function Router() {
   return (
     <Routes>
@@ -49,6 +51,10 @@ export function Router() {
           element={<AutorizationsEdit />}
         />
          <Route path="/Admin/Exams" element={<ExamesList />} />
+         <Route path="/Admin/Exams/:id" element={<ExamsEdit />} />
+         <Route path="/Admin/Exams/Details/:id" element={<ExamDetail />} />
+
+         
 
         <Route path="/Autorizations" element={<GenerateAutorizations />} />
 

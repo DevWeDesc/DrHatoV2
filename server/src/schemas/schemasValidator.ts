@@ -42,7 +42,8 @@ export const ExamSchema = z.object({
   examsType: z.string().array(),
   price: z.number(),
   available: z.boolean(),
-  applicableGender: z.string().optional(),
+  applicableGender: z.string().array().optional(),
   subName: z.string().optional(),
   description: z.string().optional(),
+  ageRange: z.string().array().optional(),
 })
