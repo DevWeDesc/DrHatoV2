@@ -26,7 +26,7 @@ import { Input } from "../admin/Input";
 
     }
     const fullOur =Object.values(vetOur)
-    console.log(fullOur)
+
     
      return (
         <ChakraProvider>

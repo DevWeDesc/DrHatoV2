@@ -44,7 +44,7 @@ export function CreatePetsForm() {
         rga: values.rga
       }
         
-      console.log('Data post',data)
+     
       try {
         await api.post(`/pets/${id}`, data)
         toast.success('pet cadastrado com sucesso')

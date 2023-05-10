@@ -82,10 +82,9 @@ export function GenerateAutorizations() {
 
 
   };
-  console.log('PET VALUE', petValue)
 
 
-  console.log('DATA LOG',data);
+
   return (
     <ChakraProvider>
       <AdminContainer>

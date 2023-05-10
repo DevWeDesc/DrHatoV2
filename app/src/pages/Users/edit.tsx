@@ -37,8 +37,8 @@ export function EditUser() {
   useEffect(() => {
     async function loadCustomer() {
       const response = await api.get(`/users/${id}`);
-      console.log('ROTA EDIT USERS',response)
-      setCustomer(response.data);
+
+      setCustomer(response.data)
     }
     loadCustomer();
   }, [id]);

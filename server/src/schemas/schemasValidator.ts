@@ -1,4 +1,4 @@
-import { ZodDefault, z } from "zod";
+import { z } from "zod";
 
 export const CustomerSchema = z.object({
   id: z.number(),
@@ -37,6 +37,11 @@ export const UserSchema = z.object({
 
 export const ExamsType = ["lab", "image"]
 
+export const sectorSchema = z.object({
+  id: z.number(),
+  name: z.string()
+})
+
 export const ExamSchema = z.object({
   name: z.string(),
   examsType: z.string().array(),
@@ -47,3 +52,5 @@ export const ExamSchema = z.object({
   description: z.string().optional(),
   ageRange: z.string().array().optional(),
 })
+
+

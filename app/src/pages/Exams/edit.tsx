@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react'
 import { useContext, useState } from 'react'
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Header } from '../../components/admin/Header'
 import { Sidebar } from '../../components/admin/Sidebar'
 import { DbContext } from '../../contexts/DbContext'
@@ -28,6 +28,7 @@ import { Input } from '../../components/admin/Input'
 export function ExamsEdit() {
   const { register, handleSubmit } = useForm()
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
 
 
   const handleCreateExam: SubmitHandler<FieldValues> = async values => {
@@ -46,6 +47,7 @@ export function ExamsEdit() {
       }
       await api.put(`exams/${id}`, data)
       toast.success('Exame configurado com sucesso')
+      navigate(0)
     } catch (error) {
       toast.error('Falha ao criar novo Exame')
     }

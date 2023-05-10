@@ -55,7 +55,7 @@ export function BalanceHistory() {
   }, [])
 
 
-  console.log("TRANSACTIONS LOG",transactions)
+
 
   return (
     <ChakraProvider>

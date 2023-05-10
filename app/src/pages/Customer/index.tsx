@@ -62,7 +62,6 @@ export function Customer() {
 
 
 
-  console.log("ATTCUSTOMER", customer);
 
   return (
     <ChakraProvider>

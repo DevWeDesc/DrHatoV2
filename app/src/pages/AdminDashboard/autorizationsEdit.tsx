@@ -56,6 +56,7 @@ const handleEditAutorization: SubmitHandler<AutorizationData>  = async (values) 
   try {
     await api.put(`/autorizations/${id}`, data)
     toast.success("Autorização editada")
+    navigate('/Admin/Autorizations')
   } catch (error) {
     toast.error("Falha ao editar")
   }

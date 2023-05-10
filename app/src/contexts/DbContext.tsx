@@ -2,7 +2,6 @@ import { createContext, useState, useEffect } from 'react'
 import { IDBContext, AutorizationData, UserData, AutPDFProps, ExamsData } from '../interfaces';
 import { api } from '../lib/axios';
 
-
 type DbContextProps = {
   children: React.ReactNode
 }
@@ -17,7 +16,10 @@ export function DbContextProvider ({children}: DbContextProps) {
   const [generateAut, setGenerateAut] = useState<AutPDFProps>({})
   const [data, setData] = useState({})
   const [exams, setExams] = useState<ExamsData[]>([])
+  const [refresh, setRefresh] = useState(false);
 
+
+  
   useEffect(() => {
     async function GetAllDataInDB() {
       const getAutorizations = async () => {
@@ -50,14 +52,18 @@ export function DbContextProvider ({children}: DbContextProps) {
           console.log('Ocorreu um erro:', error);
         });
     }
-    GetAllDataInDB()
 
+  GetAllDataInDB()
+   
   },[])
+  
 
- 
 
   return (
-      <DbContext.Provider value={{dbLoaded, userDataList, pagination, setPagination, day, setCurrentDay, autorization, setAutorization, generateAut, setGenerateAut, data, setData, exams, setExams }}>
+      <DbContext.Provider value={{dbLoaded, userDataList, pagination, setPagination, day, setCurrentDay, autorization, setAutorization, generateAut, setGenerateAut, data, setData, exams, setExams,
+        refresh,
+        setRefresh
+      }}>
           {children}
       </DbContext.Provider>
   )

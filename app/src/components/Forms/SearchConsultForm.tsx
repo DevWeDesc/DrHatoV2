@@ -28,7 +28,7 @@ export function SearchConsultForm() {
   const [customerFound, setCustomerFound] = useState<
     Partial<CreateNewClienteProps>
   >({});
-  console.log("customer", customerFound);
+
   const { register, handleSubmit } = useForm();
   const handleSearchNewCliente: SubmitHandler<CreateNewClienteProps> = async (
     values

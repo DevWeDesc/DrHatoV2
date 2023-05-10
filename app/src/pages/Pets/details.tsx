@@ -57,7 +57,7 @@ export function DetailsPets() {
     }
     getPet()
   },[pets.id])
-  console.log('MY PETS',pets)
+
 
   return (
     <ChakraProvider>

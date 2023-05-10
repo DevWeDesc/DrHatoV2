@@ -65,6 +65,8 @@ export interface ExamsData {
     setData: any
     exams: ExamsData[]
     setExams: React.Dispatch<React.SetStateAction<ExamsData[]>>
+    refresh: boolean
+    setRefresh:  React.Dispatch<React.SetStateAction<boolean>>
   }
 
 

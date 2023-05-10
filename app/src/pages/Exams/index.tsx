@@ -16,10 +16,10 @@ import {
   HStack, CheckboxGroup,
   Checkbox
 } from '@chakra-ui/react'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import { RiAddLine, RiPencilLine } from 'react-icons/ri'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Header } from '../../components/admin/Header'
 import { Paginaton } from '../../components/admin/Pagination'
 import { Sidebar } from '../../components/admin/Sidebar'
@@ -31,16 +31,12 @@ import { api } from '../../lib/axios'
 import { toast } from 'react-toastify'
 import { Input } from '../../components/admin/Input'
 
-interface InputOption {
-  lab: string
-  image: string
-}
 
 export function ExamesList() {
-  const { exams } = useContext(DbContext)
+  const { exams, refresh, setRefresh } = useContext(DbContext)
   const { register, handleSubmit } = useForm()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
 
   function openModal() {
     setIsModalOpen(true)
@@ -49,16 +45,26 @@ export function ExamesList() {
     setIsModalOpen(false)
   }
 
+
+  
+  function reloadApi() {
+    if(refresh === true) {
+      navigate(0)
+    }
+  }
+  reloadApi()
+
   const handleCreateExam: SubmitHandler<FieldValues> = async values => {
     try {
       const data = {
         name: values.name,
-        price: parseInt(values.price),
+        price: Number(values.price),
         available: values.available,
         examsType: values.examsType
       }
       await api.post('exams', data)
       toast.success('Exame criada com sucesso')
+      navigate(0)
     } catch (error) {
       toast.error('Falha ao criar novo Exame')
     }

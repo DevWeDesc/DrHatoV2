@@ -11,7 +11,7 @@ export function Schedule() {
     const currentDay = value
     const formatedDate = new Intl.DateTimeFormat('pt-BR').format(currentDay)
     setCurrentDay([...day, formatedDate])
-    console.log(day)
+
   }
  
   const tileDisabled = ({date, view}: {date: Date, view: string}) => {
