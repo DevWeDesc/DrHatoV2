@@ -34,6 +34,9 @@ import { BalanceHistory } from "./pages/Customer/balanceHistory";
 import { ExamesList } from "./pages/Exams";
 import { ExamsEdit } from "./pages/Exams/edit";
 import { ExamDetail } from "./pages/Exams/details";
+import { SectorsList } from "./pages/AdminDashboard/sectors";
+import { InstructionsList } from "./pages/AdminDashboard/instructions";
+
 export function Router() {
   return (
     <Routes>
@@ -53,6 +56,10 @@ export function Router() {
          <Route path="/Admin/Exams" element={<ExamesList />} />
          <Route path="/Admin/Exams/:id" element={<ExamsEdit />} />
          <Route path="/Admin/Exams/Details/:id" element={<ExamDetail />} />
+         <Route path="/Admin/Sectors" element={<SectorsList />} />
+         <Route path="/Admin/Instructions" element={<InstructionsList />} />
+    
+
 
          
 

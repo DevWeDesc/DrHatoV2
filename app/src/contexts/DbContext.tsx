@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
-import { IDBContext, AutorizationData, UserData, AutPDFProps, ExamsData } from '../interfaces';
+import { IDBContext, AutorizationData, UserData, AutPDFProps, ExamsData, SectorData, InstructionsData } from '../interfaces';
 import { api } from '../lib/axios';
 
 type DbContextProps = {
@@ -16,6 +16,8 @@ export function DbContextProvider ({children}: DbContextProps) {
   const [generateAut, setGenerateAut] = useState<AutPDFProps>({})
   const [data, setData] = useState({})
   const [exams, setExams] = useState<ExamsData[]>([])
+  const [sectors, setSectors] = useState<SectorData[]>([])
+  const [instructions, setIntructions] = useState<InstructionsData[]>([])
   const [refresh, setRefresh] = useState(false);
 
 
@@ -36,12 +38,23 @@ export function DbContextProvider ({children}: DbContextProps) {
         const response = await api.get('exams')
         return response.data
       }
+      const getSectorsListData =  async () => {
+        const response = await api.get('sectors')
+        return response.data
+      } 
+
+      const getInstructionsListData =  async () => {
+        const response = await api.get('instructions')
+        return response.data
+      } 
     
-      Promise.all([getAutorizations(), getUserListData(), getExamesListData() ])
-        .then(([autorizations, userListData, exams]) => {
+      Promise.all([getAutorizations(), getUserListData(), getExamesListData(), getSectorsListData(), getInstructionsListData()])
+        .then(([autorizations, userListData, exams, sectors, instructions]) => {
           setAutorization(autorizations)
           setUserListData(userListData)
           setExams(exams)
+          setSectors(sectors)
+          setIntructions(instructions)
     
           setTimeout(()=>{
             setDbLoaded(true)
@@ -62,7 +75,9 @@ export function DbContextProvider ({children}: DbContextProps) {
   return (
       <DbContext.Provider value={{dbLoaded, userDataList, pagination, setPagination, day, setCurrentDay, autorization, setAutorization, generateAut, setGenerateAut, data, setData, exams, setExams,
         refresh,
-        setRefresh
+        setRefresh,
+        sectors,
+        instructions
       }}>
           {children}
       </DbContext.Provider>

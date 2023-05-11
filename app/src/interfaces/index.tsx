@@ -15,6 +15,15 @@ export interface UserData {
   
   }
 
+  export interface SectorData {
+    id: number | string;
+    name: string;
+  }
+  export interface InstructionsData {
+    id: number | string;
+    name: string;
+    decription: string;
+  }
   export interface UserData {
     name: string;
     password: string;
@@ -64,6 +73,8 @@ export interface ExamsData {
     data: any
     setData: any
     exams: ExamsData[]
+    sectors:SectorData[]
+    instructions: InstructionsData[]
     setExams: React.Dispatch<React.SetStateAction<ExamsData[]>>
     refresh: boolean
     setRefresh:  React.Dispatch<React.SetStateAction<boolean>>

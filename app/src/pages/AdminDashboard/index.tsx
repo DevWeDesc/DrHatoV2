@@ -30,34 +30,27 @@ export function AdminMain() {
                 <Link to="/Admin/Autorizations">
                 <Button colorScheme="whatsapp">Cadastro de Autorizações</Button>
                 </Link>
-                 
-                 <Button colorScheme="whatsapp">Cadastro de Instruções</Button>
-                 <Button colorScheme="whatsapp">Cadastro de Canis</Button>
-                 <Button colorScheme="whatsapp">Cadastro de Centro Cirúrgico</Button>
-                 <Button colorScheme="whatsapp">Cadastro de Especialidades</Button>
+                <Link to="/Admin/Instructions">
+                <Button colorScheme="whatsapp">Cadastro de Instruções</Button>
+                </Link>
+                
+               
                  <Link to="/Admin/Exams">
                  <Button colorScheme="whatsapp">Cadastro de Exames</Button>
                  </Link>
             
-                 <Button colorScheme="whatsapp">Cadastro de Malas Diretas</Button>
+                
                  <Button colorScheme="whatsapp">Cadastro de Procedimentos</Button>
-                 <Button colorScheme="whatsapp">Cadastro de Raças</Button>
+               
+                 <Link to="/Admin/">
                  <Button colorScheme="whatsapp">Cadastro de Setores</Button>
+                 </Link>
                  <Button colorScheme="whatsapp">Cadastro de Vacinas</Button>
-                 <Button colorScheme="whatsapp">Cadastro de Origem</Button>
-                 <Button colorScheme="whatsapp">Vouchers</Button>
-                 <Button colorScheme="whatsapp">Opções do Sistema</Button>
-                 <Button colorScheme="whatsapp">Usuários</Button>
-                 <Button colorScheme="whatsapp">Tipos de Pagamento</Button>
-                 <Button colorScheme="whatsapp">Tipos de Procedimentos</Button>
-                 <Button colorScheme="whatsapp">Adicionar Tipos de Procedimentos</Button>
-                 <Button colorScheme="whatsapp">Compêndio de Medicamentos</Button>
-                 <Button colorScheme="whatsapp">Permissões de tipos de Eventos</Button>
-                 <Button colorScheme="whatsapp">Unificação de Clientes</Button>
-                 <Button colorScheme="whatsapp">Unificação de Animais</Button>
+
+     
+        
                  <Button colorScheme="whatsapp">Relatórios</Button>
-                 <Button colorScheme="whatsapp">Consulta Opinião</Button>
-                 <Button colorScheme="whatsapp">Protocolos</Button>
+         
               </Flex>
           
             </SimpleGrid>
