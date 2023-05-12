@@ -8,7 +8,8 @@ import {
   GiHealthPotion,
   AiFillSchedule,
   GiNurseFemale,
-  AiFillCheckCircle
+  AiFillCheckCircle,
+  MdAdminPanelSettings
 } from 'react-icons/all'
 export function CardsMenu() {
     const userPermissions = JSON.parse(localStorage.getItem('userSession') as any)
@@ -19,7 +20,7 @@ export function CardsMenu() {
           path="/Admin"
           title="Administração"
           text="Relatórios"
-          icon={<BsHouseDoorFill fill="#8eda7c" size={36} />}
+          icon={<MdAdminPanelSettings fill="#8eda7c" size={36} />}
         />
         <CardNavigation
           path="/Recepcao"

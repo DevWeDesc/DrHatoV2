@@ -11,7 +11,8 @@ import {
   BsHouseDoorFill,
   FaHospitalUser,
   GiHealthNormal,
-  IoFlask
+  IoFlask,
+  MdAdminPanelSettings
 } from 'react-icons/all'
 
 import { Link } from 'react-router-dom'
@@ -30,7 +31,7 @@ export function AsideMenu() {
                   gap="1rem"
                   _expanded={{ bg: '#F6F9FF', color: 'black' }}
                 >
-                  <BsHouseDoorFill fill="#8eda7c" size={26} />
+                  <MdAdminPanelSettings fill="#8eda7c" size={26} />
                   <Box as="span" flex="1" textAlign="left">
                     Administração
                   </Box>

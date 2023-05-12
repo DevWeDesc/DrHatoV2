@@ -16,8 +16,8 @@ model User {
   name     String     @unique
   username String
   password String
-  userType String[]   @default(["admin", "user", "vet"])
   crmv     Int?
+  userType String[]   @default(["admin", "user", "vet"])
   schedule Schedule[]
 }
 
@@ -40,8 +40,8 @@ model Customer {
   cpf         String        @unique
   email       String
   birthday    String
-  cep         String
   balance     Int?
+  cep         String
   pets        Pets[]
   transaction Transaction[]
 }
@@ -79,27 +79,51 @@ model Autorizations {
 }
 
 model Exams {
-  id               Int      @id @default(autoincrement())
-  examsType        String[]
+  id               Int       @id @default(autoincrement())
   name             String
   price            Decimal
   available        Boolean
-  applicableGender String[]
   subName          String?
   description      String?
+  examsType        String[]
   ageRange         String[]
-  setId            Int?
-  setor            Sectors? @relation(fields: [setId], references: [id])
+  applicableGender String[]
+  Sectors          Sectors[]
 }
 
 model Sectors {
-  id    Int     @id @default(autoincrement())
-  name  String
-  exams Exams[]
+  id         Int          @id @default(autoincrement())
+  name       String
+  examId     Int?
+  proced_id  Int
+  Exams      Exams?       @relation(fields: [examId], references: [id])
+  sectorsId  Int?
+  proceds Procedures[]
 }
 
 model Instructions {
   id          Int    @id @default(autoincrement())
   name        String
   description String
+}
+
+model Procedures {
+  id                  Int      @id @default(autoincrement())
+  name                String   @unique
+  price               Int
+  applicationInterval String?
+  applicableGender    String[]
+  ageRange            String[]
+  available           Boolean
+  observations        String
+  group_id            Int
+  groups              Groups   @relation(fields: [group_id], references: [id])
+  sector_id           Int
+  sector              Sectors  @relation(fields: [sector_id], references: [id])
+}
+
+model Groups {
+  id      Int          @id @default(autoincrement())
+  name    String
+  proceds Procedures[]
 }

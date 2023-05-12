@@ -51,9 +51,9 @@ export function InstructionsList() {
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false)
   const navigate = useNavigate()
 
-const handleCreateInstruction =  () => {
+function handleCreateInstruction (name: string, description: string)  {
   const docDefinition: TDocumentDefinitions = {
- content: [`Nome: ${instructions.name}`],
+ content: [`Nome: ${name}\n\n ${description}`],
  pageMargins: [50, 50],
  pageSize: "A4",
   }
@@ -214,7 +214,7 @@ const handleCreateInstruction =  () => {
                               fontSize="sm"
                               colorScheme="cyan"
                               leftIcon={<Icon as={AiOutlineDownload} />}
-                              onClick={() => handleCreateInstruction()}
+                              onClick={() => handleCreateInstruction(sector.name, sector.description)}
                             >
                               Gerar PDF
                             </Button>

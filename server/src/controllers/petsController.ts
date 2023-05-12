@@ -64,6 +64,7 @@ createPet: async (request: FastifyRequest, reply: FastifyReply) =>{
     }})
     if(petAlreadyExists) {
       reply.status(404).send('Pet already exists')
+      return
     }
 
     await prisma.pets.create({

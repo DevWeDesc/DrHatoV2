@@ -54,3 +54,19 @@ export const ExamSchema = z.object({
 })
 
 
+
+export const GroupSchema = z.object({
+  name: z.string()
+})
+
+export const ProcedureSchema = z.object({
+  name: z.string(),
+  price: z.number(),
+  applicationInterval: z.string(),
+  applicableGender:  z.string().array().optional(), 
+  ageRange:  z.string().array().optional(),
+  available: z.boolean(),
+  observations:  z.string(),
+  group_id: z.number(),
+  sector_id: z.number()
+})

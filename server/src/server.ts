@@ -8,6 +8,8 @@ import {generalRoutes } from './routes/general.routes'
 import { examsRoutes } from './routes/exams.routes'
 import { sectorsRoutes } from './routes/sector.routes'
 import { instructionsRoutes } from './routes/intructions.routes'
+import { groupsRoutes } from './routes/groups.routes'
+import { proceduresRoutes } from './routes/procedures.routes'
 
 const app = fastify()
 
@@ -20,6 +22,10 @@ app.register(generalRoutes)
 app.register(examsRoutes)
 app.register(sectorsRoutes)
 app.register(instructionsRoutes)
+app.register(groupsRoutes)
+app.register(proceduresRoutes)
+
+
 
 app.listen({ port: 5000 }, (err, address) => {
   if (err) {

@@ -52,7 +52,7 @@ export function GenerateAutorizations() {
   const handleCreateAut = async () => {
 
     try {
-          const response = await api.get(`/autorizations/${value}`);
+    const response = await api.get(`/autorizations/${value}`);
     const petDesc = data.pets.find( (pet: any) => pet.id == petValue)
     const dataAut = response.data;
     const autorization = {

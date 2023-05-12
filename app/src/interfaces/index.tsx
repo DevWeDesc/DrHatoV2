@@ -22,7 +22,7 @@ export interface UserData {
   export interface InstructionsData {
     id: number | string;
     name: string;
-    decription: string;
+    description: string;
   }
   export interface UserData {
     name: string;
