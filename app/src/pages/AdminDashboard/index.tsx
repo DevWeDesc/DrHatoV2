@@ -39,8 +39,10 @@ export function AdminMain() {
                  <Button colorScheme="whatsapp">Cadastro de Exames</Button>
                  </Link>
             
-                
-                 <Button colorScheme="whatsapp">Cadastro de Procedimentos</Button>
+                <Link to="/Admin/Procedures">
+                    <Button colorScheme="whatsapp">Cadastro de Procedimentos</Button>
+                </Link>
+               
                
                  <Link to="/Admin/Sectors">
                  <Button colorScheme="whatsapp">Cadastro de Setores</Button>

@@ -36,15 +36,19 @@ import { ExamsEdit } from "./pages/Exams/edit";
 import { ExamDetail } from "./pages/Exams/details";
 import { SectorsList } from "./pages/AdminDashboard/sectors";
 import { InstructionsList } from "./pages/AdminDashboard/instructions";
+import { ProceduresList } from "./pages/Procedures";
+import { ProcedureCreate } from "./pages/Procedures/create";
+import { ProcedureEdit } from "./pages/Procedures/edit";
 
 export function Router() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
-      <Route element={<DefaultLayout />}>
+        <Route path="/" element={<Login />} />
+        <Route element={<DefaultLayout />}>
         <Route path="/Home" element={<Home />} />
 
         <Route path="/Queue" element={<QueueSistem />} />
+
 
         <Route path="/Admin" element={<AdminMain />} />
         <Route path="/Admin/Charts" element={<AdminCharts />} />
@@ -58,10 +62,10 @@ export function Router() {
          <Route path="/Admin/Exams/Details/:id" element={<ExamDetail />} />
          <Route path="/Admin/Sectors" element={<SectorsList />} />
          <Route path="/Admin/Instructions" element={<InstructionsList />} />
-    
+         <Route path="/Admin/Procedures" element={<ProceduresList />} />
+         <Route path="/Admin/Procedures/Create" element={<ProcedureCreate />} />
+         <Route path="/Admin/Procedures/Edit/:id" element={<ProcedureEdit />} />
 
-
-         
 
         <Route path="/Autorizations" element={<GenerateAutorizations />} />
 

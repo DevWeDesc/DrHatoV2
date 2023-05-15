@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
-import { IDBContext, AutorizationData, UserData, AutPDFProps, ExamsData, SectorData, InstructionsData } from '../interfaces';
+import { IDBContext, AutorizationData, UserData, AutPDFProps, ExamsData, SectorData, InstructionsData, GroupsData, ProceduresData } from '../interfaces';
 import { api } from '../lib/axios';
 
 type DbContextProps = {
@@ -17,6 +17,8 @@ export function DbContextProvider ({children}: DbContextProps) {
   const [data, setData] = useState({})
   const [exams, setExams] = useState<ExamsData[]>([])
   const [sectors, setSectors] = useState<SectorData[]>([])
+  const [groups, setGroups] = useState<GroupsData[]>([])
+  const [procedures, setProcedures] = useState<ProceduresData[]>([])
   const [instructions, setIntructions] = useState<InstructionsData[]>([])
   const [refresh, setRefresh] = useState(false);
 
@@ -47,14 +49,27 @@ export function DbContextProvider ({children}: DbContextProps) {
         const response = await api.get('instructions')
         return response.data
       } 
+
+      const getGroupsListData =  async () => {
+        const response = await api.get('groups')
+        return response.data
+      }
+
+      const getProceduresListData =  async () => {
+        const response = await api.get('procedures')
+        return response.data
+      }
+
     
-      Promise.all([getAutorizations(), getUserListData(), getExamesListData(), getSectorsListData(), getInstructionsListData()])
-        .then(([autorizations, userListData, exams, sectors, instructions]) => {
+      Promise.all([getAutorizations(), getUserListData(), getExamesListData(), getSectorsListData(), getInstructionsListData(), getGroupsListData(), getProceduresListData()])
+        .then(([autorizations, userListData, exams, sectors, instructions, groups, procedures]) => {
           setAutorization(autorizations)
           setUserListData(userListData)
           setExams(exams)
           setSectors(sectors)
           setIntructions(instructions)
+          setGroups(groups)
+          setProcedures(procedures)
     
           setTimeout(()=>{
             setDbLoaded(true)
@@ -73,11 +88,26 @@ export function DbContextProvider ({children}: DbContextProps) {
 
 
   return (
-      <DbContext.Provider value={{dbLoaded, userDataList, pagination, setPagination, day, setCurrentDay, autorization, setAutorization, generateAut, setGenerateAut, data, setData, exams, setExams,
+      <DbContext.Provider value={{
+        dbLoaded, 
+        userDataList, 
+        pagination, 
+        setPagination, 
+        day, setCurrentDay, 
+        autorization, 
+        setAutorization, 
+        generateAut, 
+        setGenerateAut, 
+        data, 
+        setData, 
+        exams, 
+        setExams,
         refresh,
         setRefresh,
         sectors,
-        instructions
+        instructions,
+        groups,
+        procedures
       }}>
           {children}
       </DbContext.Provider>

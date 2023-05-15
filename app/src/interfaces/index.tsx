@@ -38,6 +38,12 @@ export interface AutorizationData {
   text: string;
 }
 
+export interface GroupsData {
+  id: string | number;
+  name: string;
+}
+
+
 export interface AutPDFProps {
   name?: string;
   adress?: string;
@@ -58,6 +64,18 @@ export interface ExamsData {
   subName?: string,
   description?: string,
 }
+
+  export interface ProceduresData {
+    id: string | number;
+    name: string;
+    price: number;
+    available: boolean;
+    observations: string;
+    applicationGender: string;
+    ageRange: string;
+    groups: GroupsData;
+    sector: SectorData
+  }
   
   export interface IDBContext {
     userDataList: UserData[]
@@ -78,6 +96,8 @@ export interface ExamsData {
     setExams: React.Dispatch<React.SetStateAction<ExamsData[]>>
     refresh: boolean
     setRefresh:  React.Dispatch<React.SetStateAction<boolean>>
+    groups: GroupsData[]
+    procedures: ProceduresData[]
   }
 
 
