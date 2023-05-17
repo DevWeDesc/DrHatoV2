@@ -39,12 +39,51 @@ contera conexões e libs utilizadas como o axios para api.
 
 
 -- PASTA HELPERS: 
-ajudaram em coisas em especificos e contera a documentação e alguns testes unitários
+ajudaram em coisas em especificas e também vai ter a documentação e alguns testes unitários
 
 
+-- DEPENDENCIAS DO PROJETO -- 
+"@chakra-ui/react": "^2.5.2",
+"@emotion/react": "^11.10.6",
+"@emotion/styled": "^11.10.6",
+"@types/react-modal": "^3.13.1",
+"apexcharts": "^3.37.2",
+"axios": "^1.3.4",
+"framer-motion": "^10.8.4",
+"install": "^0.13.0",
+"pdfmake": "^0.3.0-beta.1",
+"phosphor-react": "^1.4.1",
+"polished": "^4.2.2",
+"react": "^18.2.0",
+"react-apexcharts": "^1.4.0",
+"react-calendar": "^4.1.0",
+"react-dom": "^18.2.0",
+"react-hook-form": "^7.43.7",
+"react-icons": "^4.8.0",
+"react-modal": "^3.16.1",
+"react-router-dom": "^6.9.0",
+"react-toastify": "^9.1.1",
+"styled-components": "^5.3.9"
+"@types/pdfmake": "^0.2.2",
+"@types/react": "^18.0.28",
+"@types/react-dom": "^18.0.11",
+"@types/styled-components": "^5.1.26",
+"@vitejs/plugin-react": "^3.1.0",
+"miragejs": "^0.1.47",
+"typescript": "^4.9.3",
+"vite": "^4.2.0"
+
+Essas são todas dependências do Projeto e suas versões atuais, lembrando que todas essas tecnologias podem sofrer atualizações
+e outras ficarem deprecated(depreciadas) e perder suporte do mantenedor, mas sempre vai existir alternativas que substitutem as mesmas,
+o TypeScript e React possuem constantes atualizações e tais atualizações podem fazer trazer conflito no sistema e a modo como o código foi feito,
+e um ponto a se atentar também.
 
 
-
+MODO ATUAL DE RENDERIZAÇÃO DO SISTEMA:
+99% DA PRIMEIRA RENDERIZAÇÃO DO SISTEMA VEM DA CONTEXT API CHAMADA DbContext que se encontra na pasta Contexts,
+COMO O SISTEMA TRABALHA COM UMA API, SEMPRE QUE HOUVER UMA MUDANÇA NO BANCO O CERTO E RECARREGAR O DBCONTEXT E RERENDERIZAR AS INFORMAÇÕES DO SISTEMA,
+FUTURAMENTE POR QUESTÕES DE PERFORMACE E MELHOR UX USAR O REACT QUERY VAI TRAZER UMA MELHOR EXPERIÊNCIA DE USO DO SISTEMA E DE REQUISIÇÕES A API.
+POR SER UMA API LOCAL NÃO EXISTE CUSTOS POR REQUISIÇÕES E RESPOSTAS MAS SE FOSSE UMA API HOSPEDADA PODERIA HAVER ESSES CUSTOS, ENTÃO SEMPRE BUSCAR MINIMIZA-LOS.
 
 
 

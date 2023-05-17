@@ -15,6 +15,7 @@ import { GenericLink } from '../../components/Sidebars/GenericLink'
 import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
 import { AiOutlineSearch } from 'react-icons/all'
 import { AdminContainer } from '../AdminDashboard/style'
+import { Link } from 'react-router-dom'
 
 export function MenuVet() {
   return (
@@ -51,7 +52,10 @@ export function MenuVet() {
                     <Tbody>
                       <Tr>
                         <Td>Telefone</Td>
+                        <Link to="/Vets/WorkSpace">
                         <Td>Caroline Paschoal</Td>
+                        </Link>
+                       
                         <Td>Manolo</Td>
                         <Td>92487</Td>
                         <Td>  04/04/2023</Td>

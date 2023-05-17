@@ -4,6 +4,7 @@ generator client {
 
 generator erd {
   provider = "prisma-erd-generator"
+  output = "../ERD.png"
 }
 
 datasource db {
@@ -17,7 +18,7 @@ model User {
   username String
   password String
   crmv     Int?
-  userType String[]   @default(["admin", "user", "vet"])
+  userType String[] 
   schedule Schedule[]
 }
 
@@ -62,6 +63,7 @@ model Pets {
   codPet       String   @unique @default(uuid())
   rga          Int      @unique
   customer     Customer @relation(fields: [customer_id], references: [id])
+  medicineRecords MedicineRecord?
 }
 
 model Schedule {
@@ -78,6 +80,15 @@ model Autorizations {
   text String
 }
 
+model MedicineRecord {
+  id String @id @default(uuid())
+  observations String[]
+  exams  Exams[]
+  petId Int @unique
+  pet Pets @relation(fields: [petId], references: [id])
+
+}
+
 model Exams {
   id               Int       @id @default(autoincrement())
   name             String
@@ -89,6 +100,8 @@ model Exams {
   ageRange         String[]
   applicableGender String[]
   Sectors          Sectors[]
+  medicine_id String 
+  medicinesRecord  MedicineRecord?  @relation(fields: [medicine_id], references: [id])
 }
 
 model Sectors {
@@ -127,3 +140,4 @@ model Groups {
   name    String
   proceds Procedures[]
 }
+
