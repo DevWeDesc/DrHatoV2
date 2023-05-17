@@ -39,6 +39,8 @@ import { InstructionsList } from "./pages/AdminDashboard/instructions";
 import { ProceduresList } from "./pages/Procedures";
 import { ProcedureCreate } from "./pages/Procedures/create";
 import { ProcedureEdit } from "./pages/Procedures/edit";
+import { MedicineRecords } from "./pages/Pets/medicinesRecord";
+import { WorkSpaceVet } from "./pages/Vets/workspace";
 
 export function Router() {
   return (
@@ -76,6 +78,7 @@ export function Router() {
         <Route path="/Vets" element={<VetsList />} />
         <Route path="/Vets/Menu" element={<MenuVet />} />
         <Route path="/Vets/Create" element={<CreateVet />} />
+        <Route path="/Vets/WorkSpace" element={<WorkSpaceVet />} />
 
         <Route path="/Labs"  element={<LabMenu />} />
         <Route path="/Labs/Exames" element={<LabExames />} />
@@ -101,6 +104,7 @@ export function Router() {
           path="/Recepcao/Consultas/Clientes/Pets/Details/:id"
           element={<DetailsPets />}
         />
+        <Route path="/Pets/MedicineRecord/:id" element={<MedicineRecords/>} />
         <Route path="/Recepcao/Create" element={<CreateCustomer />} />
         <Route path="/Recepcao/Finance" element={<Finance />} />
 

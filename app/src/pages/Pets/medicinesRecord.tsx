@@ -9,16 +9,14 @@ import {
   Td,
   Th,
   Tr,
-  Button,
-  Text,
+  Text
 } from "@chakra-ui/react";
 import { GenericLink, } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import {BiLeftArrowAlt } from 'react-icons/all'
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useState, useEffect} from 'react'
 import { api } from "../../lib/axios";
-
 
 
 interface Customer {
@@ -42,10 +40,9 @@ interface PetProps {
 }
 
 
-export function DetailsPets() {
+export function MedicineRecords() {
   const { id } = useParams<{ id: string }>();
   const [pets, setPets] = useState({} as PetProps)
-  const navigate = useNavigate()
 
   useEffect(() => {
     async function getPet () {
@@ -78,54 +75,28 @@ export function DetailsPets() {
           >
             <Box textAlign="center" p="8" bg="gray.100" borderRadius={8}>
               <Flex mt="8" justify="center" direction="column">
-                <Flex direction="column" align='center' gap="2">
-                <Button colorScheme="whatsapp" maxWidth={300}
-                onClick={() => navigate(`/Pets/MedicineRecord/${pets.id}`)}
-                >Prontuário</Button>
-                <Text mb="4">Veja o histórico do Pet no prontuário</Text>
-                </Flex>
-                
+          <Text fontWeight="bold" mb="4">PRONTUÁRIO </Text>
                 <Table colorScheme="blackAlpha">
                   <Thead>
                     <Tr>
                       <Th>Nome</Th>
-                      <Th>Sexo</Th>
-                      <Th>Raça</Th>
-                      <Th>Especie</Th>
-                      <Th>Data de Nascimento</Th>
+                      <Th>Exames</Th>
+                      <Th>Vacinas</Th>
+                      <Th>Cirurgias</Th>
+                      <Th>Observações</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     <Tr>
                       <Td>{pets.name}</Td>
-                      <Td>{pets.sexo}</Td>
-                      <Td>{pets.race}</Td>
-                      <Td>{pets.especie}</Td>
-                      <Td>{pets.bornDate}</Td>
+          
                     </Tr>
                   </Tbody>
                 </Table>
 
-                <Table colorScheme="blackAlpha">
-                  <Thead>
-                    <Tr>
-                    <Th>Proprietario</Th>
-                      <Th>Porte</Th>
-                      <Th>Pedigree/RGA</Th>
-              
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Tr>
-                      <Td>{pets.customer?.name}</Td>
-                      <Td>{pets.sizePet}</Td>
-                      <Td>{pets.rga}</Td>
-                 
-                    </Tr>
-                  </Tbody>
-                </Table>
+               
 
-                
+          
               </Flex>
             </Box>
           </SimpleGrid>

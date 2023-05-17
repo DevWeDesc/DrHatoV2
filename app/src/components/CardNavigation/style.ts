@@ -15,8 +15,10 @@ box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 
 
 &&:hover {
-   box-shadow: rgba(97, 202, 144, 0.5) 0px 7px 29px 0px;;
+   box-shadow: rgba(97, 202, 144, 0.5) 0px 7px 29px 0px;
 }
+
+
 
  h2  {
     font-size: 18px;
