@@ -41,6 +41,10 @@ export const sectorSchema = z.object({
   id: z.number(),
   name: z.string()
 })
+export const searchSchema = z.object({
+  name: z.string(),
+  adress: z.string(),
+})
 
 export const ExamSchema = z.object({
   name: z.string(),

@@ -4,7 +4,7 @@ generator client {
 
 generator erd {
   provider = "prisma-erd-generator"
-  output = "../ERD.png"
+  output   = "../ERD.png"
 }
 
 datasource db {
@@ -18,7 +18,7 @@ model User {
   username String
   password String
   crmv     Int?
-  userType String[] 
+  userType String[]
   schedule Schedule[]
 }
 
@@ -48,21 +48,21 @@ model Customer {
 }
 
 model Pets {
-  id           Int      @id @default(autoincrement())
-  name         String
-  especie      String
-  sexo         String
-  race         String
-  weigth       String
-  status       String
-  corPet       String
-  sizePet      String
-  bornDate     String
-  observations String
-  customer_id  Int
-  codPet       String   @unique @default(uuid())
-  rga          Int      @unique
-  customer     Customer @relation(fields: [customer_id], references: [id])
+  id              Int             @id @default(autoincrement())
+  name            String
+  especie         String
+  sexo            String
+  race            String
+  weigth          String
+  status          String
+  corPet          String
+  sizePet         String
+  bornDate        String
+  observations    String
+  customer_id     Int
+  codPet          String          @unique @default(uuid())
+  rga             Int             @unique
+  customer        Customer        @relation(fields: [customer_id], references: [id])
   medicineRecords MedicineRecord?
 }
 
@@ -81,16 +81,15 @@ model Autorizations {
 }
 
 model MedicineRecord {
-  id String @id @default(uuid())
-  observations String[]
-  exams  Exams[]
-  petId Int @unique
-  pet Pets @relation(fields: [petId], references: [id])
-
+  id           String   @id @default(uuid())
+  observations String[] @default([""])
+  exams        Exams[]
+  petId        Int      @unique
+  pet          Pets     @relation(fields: [petId], references: [id])
 }
 
 model Exams {
-  id               Int       @id @default(autoincrement())
+  id               Int             @id @default(autoincrement())
   name             String
   price            Decimal
   available        Boolean
@@ -100,18 +99,18 @@ model Exams {
   ageRange         String[]
   applicableGender String[]
   Sectors          Sectors[]
-  medicine_id String 
-  medicinesRecord  MedicineRecord?  @relation(fields: [medicine_id], references: [id])
+  medicine_id      String
+  medicinesRecord  MedicineRecord? @relation(fields: [medicine_id], references: [id])
 }
 
 model Sectors {
-  id         Int          @id @default(autoincrement())
-  name       String
-  examId     Int?
-  proced_id  Int?
-  Exams      Exams?       @relation(fields: [examId], references: [id])
-  sectorsId  Int?
-  proceds Procedures[]
+  id        Int          @id @default(autoincrement())
+  name      String
+  examId    Int?
+  proced_id Int?
+  Exams     Exams?       @relation(fields: [examId], references: [id])
+  sectorsId Int?
+  proceds   Procedures[]
 }
 
 model Instructions {
@@ -130,9 +129,9 @@ model Procedures {
   available           Boolean
   observations        String
   group_id            Int
-  groups              Groups?   @relation(fields: [group_id], references: [id])
+  groups              Groups?  @relation(fields: [group_id], references: [id])
   sector_id           Int
-  sector              Sectors?  @relation(fields: [sector_id], references: [id])
+  sector              Sectors? @relation(fields: [sector_id], references: [id])
 }
 
 model Groups {
@@ -140,4 +139,3 @@ model Groups {
   name    String
   proceds Procedures[]
 }
-

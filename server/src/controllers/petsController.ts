@@ -31,7 +31,7 @@ getAllPets: async (request: FastifyRequest, reply: FastifyReply) => {
 getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
   const { id }: any = request.params
   try {
-    const pet = await prisma.pets.findFirst({ where: { id : parseInt(id)}, include: {customer: {select: { name: true}}} })
+    const pet = await prisma.pets.findFirst({ where: { id : parseInt(id)}, include: {customer: {select: { name: true}}, medicineRecords: {select: {exams: true, observations: true}}} })
     return reply.send(pet)
   } catch (error) {
     console.log(error)
