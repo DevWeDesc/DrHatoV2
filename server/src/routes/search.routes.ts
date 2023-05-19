@@ -5,4 +5,5 @@ import { searchController } from '../controllers/searchController';
 
 export async function searchsRoutes(app: FastifyInstance){
 app.get('/query', searchController.getAllWithName)
+app.get('/queryall', searchController.getAll)
 }

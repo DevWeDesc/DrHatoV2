@@ -59,6 +59,7 @@ model Pets {
   sizePet         String
   bornDate        String
   observations    String
+  
   customer_id     Int
   codPet          String          @unique @default(uuid())
   rga             Int             @unique

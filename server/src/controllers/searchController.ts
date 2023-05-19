@@ -1,7 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { Prisma, PrismaClient } from "@prisma/client";
-import { ValidationContract } from "../validators/validateContract";
-import {  searchSchema} from "../schemas/schemasValidator";
 const prisma = new PrismaClient();
 
 
@@ -10,7 +8,6 @@ export const searchController = {
   getAllWithName: async (request: FastifyRequest<{
     Querystring: { name?: string; cpf?: string; adress?: string };
   }>, reply: FastifyReply) => {
-
     try {
       const cpf = request.query.cpf;
       const name = request.query.name;
@@ -27,6 +24,36 @@ export const searchController = {
       reply.status(400).send({ message: error})
       console.log(error)
     }
-  }
+  },
+
+  getAll: async (request: FastifyRequest<{
+    Querystring: { name?: string; cpf?: string; adress?: string };
+  }>, reply: FastifyReply) => {
+    try {
+      const cpf = request.query.cpf;
+      const name = request.query.name;
+      const adress = request.query.adress;
+      
+      const result = await prisma.customer.findMany({
+        where: {
+          OR: [
+            { name: { startsWith: name } },
+            { adress: { startsWith: adress } },
+            { cpf: { startsWith: cpf } }
+          ]
+        },
+        include: {
+          pets: true
+        }
+      });
+      
+      reply.status(200).send(result);
+    } catch (error) {
+      reply.status(400).send({ message: error})
+      console.log(error)
+    }
+  },
+
+
 
 }
