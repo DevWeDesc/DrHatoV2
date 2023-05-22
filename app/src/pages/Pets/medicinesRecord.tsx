@@ -20,6 +20,7 @@ import { api } from "../../lib/axios";
 
 
 interface Customer {
+  id: string | number;
   name: string
 }
 
@@ -64,7 +65,7 @@ export function MedicineRecords() {
         <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <GenericSidebar>
           <GenericLink name="Voltar recepção" path="/Recepcao/" icon={BiLeftArrowAlt} />
-          <GenericLink name="Voltar proprietário" path={`/Recepcao/Consultas/Clientes/${id}`} icon={BiLeftArrowAlt} />
+          <GenericLink name="Voltar proprietário" path={`/Recepcao/Consultas/Clientes/${pets.customer?.id}`} icon={BiLeftArrowAlt} />
          </GenericSidebar>
           <SimpleGrid
             flex="1"

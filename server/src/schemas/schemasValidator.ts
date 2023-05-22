@@ -10,6 +10,7 @@ export const CustomerSchema = z.object({
   phone: z.string(),
   balance: z.any(),
   cep: z.string(),
+  
   pets: z.any(),
   transactions: z.any(),
 });
@@ -22,7 +23,8 @@ export const createCustomer = z.object({
   email: z.string().email(),
   birthday: z.string(),
   cep: z.string(),
-  balance: z.any().optional()
+  balance: z.any().optional(),
+  vetPreference: z.string().optional(),
  })
 
 export const UserSchema = z.object({
@@ -33,7 +35,13 @@ export const UserSchema = z.object({
 })
  
 
-
+export const QueueSchema = z.object({
+  serviceQueue: z.boolean().optional().default(false),
+  returnQueue: z.boolean().optional().default(false),
+  queueEntry:  z.any().optional(),
+  queryType: z.string().optional(),
+  vetPreference: z.string().optional(),
+})
 
 export const ExamsType = ["lab", "image"]
 

@@ -8,12 +8,6 @@ import {
   Thead,
   Tbody,
   Th,
-  AccordionIcon,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  VStack,
   Text,
   RadioGroup,
   Radio, Menu,
@@ -23,7 +17,6 @@ import {
 } from '@chakra-ui/react'
 import { useContext, useState} from 'react'
 import { Header } from '../../components/admin/Header'
-import { SearchComponent } from '../../components/Search'
 import { GenericLink } from '../../components/Sidebars/GenericLink'
 import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
 import { AiOutlineSearch } from 'react-icons/all'
@@ -58,7 +51,7 @@ export function MenuVet() {
                   <Table colorScheme="blackAlpha">
                     <Thead>
                       <Tr>
-                        <Th>Tipo</Th>
+                        <Th>CPF</Th>
                         <Th>Cliente</Th>
                         <Th>Animal</Th>
                         <Th>Código</Th>
@@ -115,7 +108,7 @@ export function MenuVet() {
                           <Td>  04/04/2023</Td>
                         
                           <Td>25:53</Td>
-                          <Td>Sem Preferência</Td>
+                          <Td>{user.vetPreference ? user.vetPreference : "Sem Preferência"}</Td>
                           <Td>0</Td>
                         </Tr>
                     </>) ): (<>

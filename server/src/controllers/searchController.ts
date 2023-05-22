@@ -43,8 +43,8 @@ export const searchController = {
           ]
         },
         include: {
-          pets: true
-        }
+          pets: {include: {queue: true}},
+        },
       });
       
       reply.status(200).send(result);

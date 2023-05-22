@@ -1,12 +1,13 @@
+import { ChakraProps } from "@chakra-ui/react"
 import React, { useState } from "react"
 import Modal from 'react-modal'
 
-interface ModalTransactionProps {
+interface ModalTransactionProps extends ChakraProps {
   isOpen: boolean
   onRequestClose: () => void
   children: React.ReactNode
 }
-export function GenericModal({isOpen, onRequestClose, children}: ModalTransactionProps) {
+export function GenericModal({isOpen, onRequestClose, children, ...rest}: ModalTransactionProps) {
 
   const customStyles = {
     content: {
@@ -24,6 +25,7 @@ export function GenericModal({isOpen, onRequestClose, children}: ModalTransactio
      isOpen={isOpen}
      onRequestClose={onRequestClose}
      style={customStyles}
+     {...rest}
     >
       {children}
     </Modal>

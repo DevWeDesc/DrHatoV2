@@ -11,6 +11,7 @@ import { instructionsRoutes } from './routes/intructions.routes'
 import { groupsRoutes } from './routes/groups.routes'
 import { proceduresRoutes } from './routes/procedures.routes'
 import { searchsRoutes } from './routes/search.routes'
+import { queueRoutes } from './routes/queue.routes'
 
 const app = fastify()
 
@@ -26,6 +27,7 @@ app.register(instructionsRoutes)
 app.register(groupsRoutes)
 app.register(proceduresRoutes)
 app.register(searchsRoutes)
+app.register(queueRoutes)
 
 
 

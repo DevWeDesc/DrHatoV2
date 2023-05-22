@@ -11,6 +11,9 @@ import {
   Tr,
   Button,
   Text,
+  Checkbox,
+  HStack,
+  FormControl,
 } from "@chakra-ui/react";
 import { GenericLink, } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
@@ -18,13 +21,22 @@ import {BiLeftArrowAlt } from 'react-icons/all'
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect} from 'react'
 import { api } from "../../lib/axios";
-
+import { GenericModal } from "../../components/Modal/GenericModal";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { Input } from "../../components/admin/Input";
+import { toast } from "react-toastify";
+import moment from 'moment';
 
 
 interface Customer {
+  id: number | string;
   name: string
 }
-
+type queueProps = {
+  id: number | string;
+  returnQueue?: boolean,
+  serviceQueue?: boolean
+}
 interface PetProps {
   id: number
   name: string;
@@ -39,12 +51,15 @@ interface PetProps {
   status: string;
   bornDate: string;
   customer: Customer
+  queue: queueProps
 }
 
 
 export function DetailsPets() {
   const { id } = useParams<{ id: string }>();
   const [pets, setPets] = useState({} as PetProps)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { register, handleSubmit } = useForm()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -52,14 +67,49 @@ export function DetailsPets() {
       try {
         const response  = await api.get(`/pets/${id}`)
         setPets(response.data)
+  
       } catch (error) {
         console.log(error)
       }
   
     }
     getPet()
-  },[pets.id])
+  },[])
 
+  function openModal() {
+    setIsModalOpen(true);
+  }
+  function closeModal() {
+    setIsModalOpen(false);
+  }
+const PetIsInQueue = pets.queue ? pets.queue : false
+let  petIsInQueue
+//@ts-ignore
+if(PetIsInQueue.returnQueue === true || PetIsInQueue.serviceQueue === true) {
+  petIsInQueue = "SIM"
+} else {
+  petIsInQueue = "NÃO"
+}
+ 
+
+const handleSetFile: SubmitHandler<FieldValues> = async values => {
+  try {
+    const formattedData = moment().toISOString()
+  
+    const data = {
+      returnQueue: values.returnQueue,
+      serviceQueue: values.serviceQueue,
+      queryType: values.queryType,
+      queryEntry: formattedData
+    }
+    console.log(data)
+
+    await api.put(`queue/${pets.queue.id}`, data)
+    toast.success('Pet colocado na fila com sucesso!')
+  } catch (error) {
+    toast.error('Falha ao colocar na fila')
+  }
+}
 
   return (
     <ChakraProvider>
@@ -67,7 +117,7 @@ export function DetailsPets() {
         <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
         <GenericSidebar>
           <GenericLink name="Voltar recepção" path="/Recepcao/" icon={BiLeftArrowAlt} />
-          <GenericLink name="Voltar proprietário" path={`/Recepcao/Consultas/Clientes/${id}`} icon={BiLeftArrowAlt} />
+          <GenericLink name="Voltar proprietário" path={`/Recepcao/Consultas/Clientes/${pets.customer?.id}`} icon={BiLeftArrowAlt} />
          </GenericSidebar>
           <SimpleGrid
             flex="1"
@@ -79,10 +129,26 @@ export function DetailsPets() {
             <Box textAlign="center" p="8" bg="gray.100" borderRadius={8}>
               <Flex mt="8" justify="center" direction="column">
                 <Flex direction="column" align='center' gap="2">
-                <Button colorScheme="whatsapp" maxWidth={300}
+
+                  <Flex justify="space-between" w="100%">
+
+                  <div>
+                  <Button colorScheme="whatsapp" maxWidth={300}
                 onClick={() => navigate(`/Pets/MedicineRecord/${pets.id}`)}
                 >Prontuário</Button>
                 <Text mb="4">Veja o histórico do Pet no prontuário</Text>
+                  </div>
+
+                  <div>
+                  <Button colorScheme="orange" maxWidth={300}
+                    onClick={() => openModal()}
+                >Colocar na Fila</Button>
+                <Text mb="4">Coloque o pet na fila de Atendimento</Text>
+                  </div>
+
+                  </Flex>
+          
+              
                 </Flex>
                 
                 <Table colorScheme="blackAlpha">
@@ -93,6 +159,7 @@ export function DetailsPets() {
                       <Th>Raça</Th>
                       <Th>Especie</Th>
                       <Th>Data de Nascimento</Th>
+                     
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -105,13 +172,48 @@ export function DetailsPets() {
                     </Tr>
                   </Tbody>
                 </Table>
+                    <GenericModal
+                      isOpen={isModalOpen}
+                      onRequestClose={closeModal}
+ 
+                    >
+                      <FormControl   as="form"
+                  onSubmit={handleSubmit(handleSetFile)}>
+                      <Flex direction="column" width={300} height={300} align="center" p="4">
+                      <Text fontSize="lg" mb="4" fontWeight="bold">Qual Fila? </Text>
 
+                                  <HStack m="2">
+                                  <label>
+                                    Fila de Atendimento
+                                  </label>
+                                  <Checkbox {...register("returnQueue")} name="returnQueue"/>
+
+                                  </HStack>
+
+
+                                  <HStack m="2">
+                                  <label>
+                                    Fila de Retorno
+                                  </label>
+                                  <Checkbox {...register("serviceQueue")} name="serviceQueue"/>
+
+                                  </HStack>
+                            <Input label="Tipo de Atendimento" mt="2" {...register("queryType")} name="queryType"/>
+                      <Button mt="4" type="submit" colorScheme="whatsapp">Enviar a Fila</Button>
+                      </Flex> 
+                      </FormControl>
+                      
+                    
+                    </GenericModal>
                 <Table colorScheme="blackAlpha">
                   <Thead>
                     <Tr>
                     <Th>Proprietario</Th>
                       <Th>Porte</Th>
                       <Th>Pedigree/RGA</Th>
+                      <Th>
+                        Está em Fila?
+                      </Th>
               
                     </Tr>
                   </Thead>
@@ -120,7 +222,7 @@ export function DetailsPets() {
                       <Td>{pets.customer?.name}</Td>
                       <Td>{pets.sizePet}</Td>
                       <Td>{pets.rga}</Td>
-                 
+                      <Td>{petIsInQueue}</Td>
                     </Tr>
                   </Tbody>
                 </Table>

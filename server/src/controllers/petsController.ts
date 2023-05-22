@@ -21,7 +21,7 @@ const petSchema = z.object({
 export const petsController = {
 getAllPets: async (request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const pets = await prisma.pets.findMany()
+    const pets = await prisma.pets.findMany({include: {queue: {select: { returnQueue: true, serviceQueue: true, id: true}}, customer: {select: {name: true}}}})
     return reply.send(pets)
   } catch (error) {
     reply.status(404).send(error)
@@ -31,7 +31,12 @@ getAllPets: async (request: FastifyRequest, reply: FastifyReply) => {
 getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
   const { id }: any = request.params
   try {
-    const pet = await prisma.pets.findFirst({ where: { id : parseInt(id)}, include: {customer: {select: { name: true}}, medicineRecords: {select: {exams: true, observations: true}}} })
+    const pet = await prisma.pets.findFirst({ where: { id : parseInt(id)}, 
+    include: {customer: 
+      {select: { name: true, id: true}}, 
+      medicineRecords: {select: {exams: true, observations: true}},
+      queue: {select: {returnQueue: true, serviceQueue: true, id: true}}
+    } })
     return reply.send(pet)
   } catch (error) {
     console.log(error)
@@ -55,7 +60,8 @@ createPet: async (request: FastifyRequest, reply: FastifyReply) =>{
   } = petSchema.parse(request.body)
 
   const { id}: any = request.params
-  try {
+
+   try {
     const petAlreadyExists = await prisma.pets.findFirst({ where:  {
       OR: [
         {name: name},
@@ -84,11 +90,28 @@ createPet: async (request: FastifyRequest, reply: FastifyReply) =>{
           connect: {
             id: parseInt(id)
           }
+        },
+        queue: {
+          create: {
+            returnQueue: false,
+            serviceQueue: false,
+            queryType: "",
+            queueEntry: null,
+          },
         }
       }
     })
   } catch (error) {
     console.log(error)
+  }
+},
+
+petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const pets = await prisma.pets.findMany({where: {queue: {OR: [{returnQueue: true}, {serviceQueue: true}]}}, include: {queue: {select: {returnQueue: true, serviceQueue: true, queryType: true, queueEntry: true }}, customer: {select: {name: true}}}})
+    return reply.send(pets)
+  } catch (error) {
+    reply.status(404).send(error)
   }
 }
  

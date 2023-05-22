@@ -43,6 +43,7 @@ model Customer {
   birthday    String
   balance     Int?
   cep         String
+  vetPreference String?
   pets        Pets[]
   transaction Transaction[]
 }
@@ -59,12 +60,12 @@ model Pets {
   sizePet         String
   bornDate        String
   observations    String
-  
   customer_id     Int
   codPet          String          @unique @default(uuid())
   rga             Int             @unique
   customer        Customer        @relation(fields: [customer_id], references: [id])
   medicineRecords MedicineRecord?
+  queue     Queues?
 }
 
 model Schedule {
@@ -139,4 +140,14 @@ model Groups {
   id      Int          @id @default(autoincrement())
   name    String
   proceds Procedures[]
+}
+
+model Queues {
+  id      Int          @id @default(autoincrement())
+  queryType String?
+  serviceQueue Boolean? @default(false)
+  returnQueue Boolean? @default(false)
+  queueEntry DateTime?
+  pet_id Int @unique
+  pets Pets? @relation(fields: [pet_id], references: [id])
 }
