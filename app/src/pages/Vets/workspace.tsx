@@ -1,9 +1,58 @@
 import { WorkSpaceContainer, WorkSpaceHeader, WorkSpaceContent, WorkSpaceFooter } from "./styles";
 import { Text, Button,ChakraProvider, Flex, Table, Thead, Tr, Td, Tbody, Textarea, HStack} from '@chakra-ui/react'
 import { AiFillMedicineBox, BiHome, MdPets, TbArrowBack, TbMedicalCrossFilled} from 'react-icons/all'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { api } from "../../lib/axios";
+import { LoadingSpinner } from "../../components/Loading";
+
+type Customer = {
+  id: number;
+  name: string;
+  balance: number;
+}
+ type queueProps = {
+  id: number | string;
+  returnQueue?: boolean,
+  serviceQueue?: boolean
+}
+export interface PetProps {
+  id: number
+  name: string;
+  especie: string;
+  corPet: string;
+  observations: string;
+  race: string;
+  rga: number;
+  sizePet: string;
+  weigth: string;
+  sexo: string;
+  status: string;
+  bornDate: string;
+  customer: Customer
+  queue: queueProps
+}
+
+
 export function WorkSpaceVet() {
+
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate()
+  const [pet, setPet] = useState({} as PetProps)
+
+  useEffect(() => {
+    async function getPetDetails() {
+      const response = await api.get(`/pets/${id}`)
+      setPet(response.data)
+    }
+     getPetDetails()
+
+  },[])
+
+
+  console.log("DETALHES PET", pet)
+
+
   return (
     <ChakraProvider>
        <WorkSpaceContainer>
@@ -48,14 +97,20 @@ export function WorkSpaceVet() {
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td>Felipe Augusto</Td>
-                <Td>6 meses R$00</Td>
-                <Td>Mala, felina</Td>
-                <Td>Macho 4.2kg 4 anos</Td>
-                <Td>12:45</Td>
-                <Td>Sem internação</Td>
-              </Tr>
+               {
+            !pet ? (<LoadingSpinner/>): ( <Tr>
+              <Td>{!pet.customer.name ? "error" : pet.customer.name}</Td>
+              <Td></Td>
+              <Td>{`${pet.name}, ${pet.race}`}</Td>
+              <Td>{`${pet.sexo}, ${pet.weigth}`}</Td>
+              <Td>{new Intl.DateTimeFormat("pt-BR",{
+                 hour: "2-digit",
+                 minute: "2-digit",
+                 timeZone: "America/Sao_Paulo"
+              }).format(Date.now())}</Td>
+              <Td>Sem internação</Td>
+            </Tr> )
+               }
             </Tbody>
           </Table>
           <Flex direction="column" mt="2">

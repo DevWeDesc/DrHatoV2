@@ -33,8 +33,8 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
   try {
     const pet = await prisma.pets.findFirst({ where: { id : parseInt(id)}, 
     include: {customer: 
-      {select: { name: true, id: true}}, 
-      medicineRecords: {select: {exams: true, observations: true}},
+      {select: { name: true, id: true, balance: true}}, 
+      medicineRecords: {select: {exams: true, observations: true }},
       queue: {select: {returnQueue: true, serviceQueue: true, id: true}}
     } })
     return reply.send(pet)
@@ -108,7 +108,7 @@ createPet: async (request: FastifyRequest, reply: FastifyReply) =>{
 
 petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const pets = await prisma.pets.findMany({where: {queue: {OR: [{returnQueue: true}, {serviceQueue: true}]}}, include: {queue: {select: {returnQueue: true, serviceQueue: true, queryType: true, queueEntry: true }}, customer: {select: {name: true}}}})
+    const pets = await prisma.pets.findMany({where: {queue: {OR: [{returnQueue: true}, {serviceQueue: true}]}}, include: {queue: {select: {returnQueue: true, serviceQueue: true, queryType: true, queueEntry: true }}, customer: {select: {name: true, vetPreference: true}}}})
     return reply.send(pets)
   } catch (error) {
     reply.status(404).send(error)

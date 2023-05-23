@@ -10,7 +10,7 @@ type params = {
 
 export const queueController = {
     setPetInQueue: async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
-        const {returnQueue, serviceQueue, queueEntry, queryType, vetPreference} = QueueSchema.parse(request.body)
+        const {returnQueue, serviceQueue, queueEntry, queryType,} = QueueSchema.parse(request.body)
         const { id } = request.params
         try {
            await prisma.queues.update({where: {id: parseInt(id) }, data: {returnQueue, serviceQueue, queueEntry, queryType} })

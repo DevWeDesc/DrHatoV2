@@ -34,18 +34,18 @@ model Transaction {
 }
 
 model Customer {
-  id          Int           @id @unique @default(autoincrement())
-  name        String        @unique
-  adress      String
-  phone       String        @unique
-  cpf         String        @unique
-  email       String
-  birthday    String
-  balance     Int?
-  cep         String
+  id            Int           @id @unique @default(autoincrement())
+  name          String        @unique
+  adress        String
+  phone         String        @unique
+  cpf           String        @unique
+  email         String
+  birthday      String
+  balance       Int?
+  cep           String
   vetPreference String?
-  pets        Pets[]
-  transaction Transaction[]
+  pets          Pets[]
+  transaction   Transaction[]
 }
 
 model Pets {
@@ -63,9 +63,9 @@ model Pets {
   customer_id     Int
   codPet          String          @unique @default(uuid())
   rga             Int             @unique
-  customer        Customer        @relation(fields: [customer_id], references: [id])
   medicineRecords MedicineRecord?
-  queue     Queues?
+  customer        Customer        @relation(fields: [customer_id], references: [id])
+  queue           Queues?
 }
 
 model Schedule {
@@ -85,8 +85,8 @@ model Autorizations {
 model MedicineRecord {
   id           String   @id @default(uuid())
   observations String[] @default([""])
-  exams        Exams[]
   petId        Int      @unique
+  exams        Exams[]
   pet          Pets     @relation(fields: [petId], references: [id])
 }
 
@@ -100,9 +100,9 @@ model Exams {
   examsType        String[]
   ageRange         String[]
   applicableGender String[]
-  Sectors          Sectors[]
   medicine_id      String
   medicinesRecord  MedicineRecord? @relation(fields: [medicine_id], references: [id])
+  Sectors          Sectors[]
 }
 
 model Sectors {
@@ -110,9 +110,9 @@ model Sectors {
   name      String
   examId    Int?
   proced_id Int?
-  Exams     Exams?       @relation(fields: [examId], references: [id])
   sectorsId Int?
   proceds   Procedures[]
+  Exams     Exams?       @relation(fields: [examId], references: [id])
 }
 
 model Instructions {
@@ -131,9 +131,9 @@ model Procedures {
   available           Boolean
   observations        String
   group_id            Int
-  groups              Groups?  @relation(fields: [group_id], references: [id])
   sector_id           Int
-  sector              Sectors? @relation(fields: [sector_id], references: [id])
+  groups              Groups   @relation(fields: [group_id], references: [id])
+  sector              Sectors  @relation(fields: [sector_id], references: [id])
 }
 
 model Groups {
@@ -143,11 +143,11 @@ model Groups {
 }
 
 model Queues {
-  id      Int          @id @default(autoincrement())
-  queryType String?
+  id           Int      @id @default(autoincrement())
+  pet_id       Int      @unique
+  queryType    String?
+  returnQueue  Boolean? @default(false)
   serviceQueue Boolean? @default(false)
-  returnQueue Boolean? @default(false)
-  queueEntry DateTime?
-  pet_id Int @unique
-  pets Pets? @relation(fields: [pet_id], references: [id])
+  queueEntry   String?
+  pets         Pets     @relation(fields: [pet_id], references: [id])
 }

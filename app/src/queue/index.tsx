@@ -25,7 +25,7 @@ interface QueueProps {
 ReturnQueue: boolean;
 ServiceQueue: boolean;
 queryType: string,
-queueEntry: Date;
+queueEntry:string | null;
 }
 
 type Customer = {
@@ -99,12 +99,7 @@ const [petsInQueue, setPetsInQueue] = useState<PetsInQueue[]>([])
                       <Td>{pet.customer.name}</Td>
                       <Td>{pet.name}</Td>
                       <Td>{pet.race}</Td>
-                      <Td>{pet.queue.queueEntry.toLocaleString("pt-BR", {
-                          day: "numeric",
-                          month: "numeric",
-                          hour: "numeric",
-                          minute: "numeric",
-                      })}</Td>
+                      <Td>{pet.queue.queueEntry ? pet.queue.queueEntry : "Sem data definida" }</Td>
                       <Td>{pet.codPet.substring(0, 6).concat('...')}</Td>
                       <Td>{pet.customer.vetPreference ? pet.customer.vetPreference : "Sem Preferência"}</Td>
                       <Td>FILA AZUL</Td>

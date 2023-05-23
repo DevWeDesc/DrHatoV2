@@ -23,7 +23,7 @@ export const createCustomer = z.object({
   email: z.string().email(),
   birthday: z.string(),
   cep: z.string(),
-  balance: z.any().optional(),
+  balance: z.number().optional(),
   vetPreference: z.string().optional(),
  })
 
@@ -38,9 +38,8 @@ export const UserSchema = z.object({
 export const QueueSchema = z.object({
   serviceQueue: z.boolean().optional().default(false),
   returnQueue: z.boolean().optional().default(false),
-  queueEntry:  z.any().optional(),
+  queueEntry:  z.string().optional(),
   queryType: z.string().optional(),
-  vetPreference: z.string().optional(),
 })
 
 export const ExamsType = ["lab", "image"]

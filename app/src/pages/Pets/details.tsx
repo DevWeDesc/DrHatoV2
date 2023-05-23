@@ -28,16 +28,17 @@ import { toast } from "react-toastify";
 import moment from 'moment';
 
 
-interface Customer {
-  id: number | string;
-  name: string
+type Customer = {
+  id: number;
+  name: string;
+  balance: number;
 }
-type queueProps = {
+ type queueProps = {
   id: number | string;
   returnQueue?: boolean,
   serviceQueue?: boolean
 }
-interface PetProps {
+export interface PetProps {
   id: number
   name: string;
   especie: string;
@@ -94,15 +95,15 @@ if(PetIsInQueue.returnQueue === true || PetIsInQueue.serviceQueue === true) {
 
 const handleSetFile: SubmitHandler<FieldValues> = async values => {
   try {
-    const formattedData = moment().toISOString()
-  
+    const formattedData = moment().utc().format()
+    const finalData = JSON.stringify(formattedData) 
+    
     const data = {
       returnQueue: values.returnQueue,
       serviceQueue: values.serviceQueue,
       queryType: values.queryType,
-      queryEntry: formattedData
+      queueEntry: finalData
     }
-    console.log(data)
 
     await api.put(`queue/${pets.queue.id}`, data)
     toast.success('Pet colocado na fila com sucesso!')
