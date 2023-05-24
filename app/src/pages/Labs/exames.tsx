@@ -2,7 +2,9 @@ import {
   Box,
   ChakraProvider,
   Flex,
-  Table
+  Table,
+  Td,
+  Tr
 } from '@chakra-ui/react'
 import { Header } from '../../components/admin/Header'
 import { SearchComponent } from '../../components/Search'
@@ -33,6 +35,15 @@ export function LabExames() {
                 <SearchComponent />
                 <Flex  textAlign="center" justify="center">
                   <Table colorScheme="blackAlpha">
+                    <Tr>
+                      <Td>Data Solicitação</Td>
+                      <Td>Animal</Td>
+                      <Td>Exame</Td>
+                      <Td>Veterinário</Td>
+                      <Td>Responsável</Td>
+                      <Td>Imprimir</Td>
+
+                    </Tr>
                   </Table>
                 </Flex>
               </Flex>

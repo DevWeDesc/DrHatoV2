@@ -5,20 +5,27 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { LoadingSpinner } from "../../components/Loading";
+import { SetExamForm } from "../../components/workspaceVet/SetExamForm";
+import { GenericModal } from "../../components/Modal/GenericModal";
 
-type Customer = {
-  id: number;
-  name: string;
-  balance: number;
-}
- type queueProps = {
-  id: number | string;
-  returnQueue?: boolean,
-  serviceQueue?: boolean
-}
+
+
+
+type ExamsProps = [
+  {
+    id: number | string;
+    name: string;
+    price: string;
+    doneExam: boolean
+    requestedData: string;
+  }
+]
 export interface PetProps {
   id: number
   name: string;
+  customerName: string;
+  balance: number;
+  customerId: number;
   especie: string;
   corPet: string;
   observations: string;
@@ -29,8 +36,8 @@ export interface PetProps {
   sexo: string;
   status: string;
   bornDate: string;
-  customer: Customer
-  queue: queueProps
+  exams: ExamsProps;
+  recordId: string | number;
 }
 
 
@@ -39,6 +46,17 @@ export function WorkSpaceVet() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate()
   const [pet, setPet] = useState({} as PetProps)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+
+  function openModal() {
+    setIsModalOpen(true)
+  }
+  function closeModal() {
+    setIsModalOpen(false)
+  }
+
+
 
   useEffect(() => {
     async function getPetDetails() {
@@ -51,7 +69,7 @@ export function WorkSpaceVet() {
 
 
   console.log("DETALHES PET", pet)
-
+''
 
   return (
     <ChakraProvider>
@@ -74,7 +92,7 @@ export function WorkSpaceVet() {
         <Button height={8} colorScheme="whatsapp">INSTRUÇÕES PROPRIETÁRIO</Button>
         <Button height={8} colorScheme="whatsapp">AUTORIZAÇÕES</Button>
         <Button height={8} colorScheme="whatsapp">PROTOCOLOS</Button>
-        <Button height={8} colorScheme="whatsapp">EXAMES</Button>
+        <Button height={8} colorScheme="whatsapp" onClick={() => openModal()}>EXAMES</Button>
         <Button height={8} leftIcon={<MdPets/>} colorScheme="messenger">PRONTUÁRIO DO PET</Button>
         </Flex>
         
@@ -99,8 +117,11 @@ export function WorkSpaceVet() {
             <Tbody>
                {
             !pet ? (<LoadingSpinner/>): ( <Tr>
-              <Td>{!pet.customer.name ? "error" : pet.customer.name}</Td>
-              <Td></Td>
+              <Td>{pet.customerName}</Td>
+              <Td>{new Intl.NumberFormat("pt-BR",{
+                currency: "BRL",
+                style: "currency"
+              }).format(pet.balance)}</Td>
               <Td>{`${pet.name}, ${pet.race}`}</Td>
               <Td>{`${pet.sexo}, ${pet.weigth}`}</Td>
               <Td>{new Intl.DateTimeFormat("pt-BR",{
@@ -119,7 +140,7 @@ export function WorkSpaceVet() {
           </Flex>
         </Flex >
       </div>
-        <div className="div2">
+        <Flex direction="column" className="div2">
           <Flex backgroundColor="cyan.100" w="100%" h="48px" direction="row" align="center" justify="center">
             <Text mr="1">Exames - </Text>
             <Text mr="2" color="red">Vermelho: Por fazer  </Text>
@@ -127,20 +148,23 @@ export function WorkSpaceVet() {
             <Text ml="2" color="green">Verde: pronto</Text>
           </Flex >
         
-          <Flex m="2" direction="column" gap="2">
-            <Flex w="100%" backgroundColor="gray.100" p="2" justify="space-between">
-            <Text fontWeight="bold" color="red" >Biograma Completo</Text>
-            <Text>{ new Intl.DateTimeFormat("pt-BR").format(Date.now()) }</Text>
-            </Flex>
-          
-          <Flex w="100%" backgroundColor="gray.100" p="2" justify="space-between">
-          <Text fontWeight="bold" color="green">Hemograma Felino</Text>
-          <Text>{ new Intl.DateTimeFormat("pt-BR").format(Date.now()) }</Text>
-          </Flex>
+          <Flex m="2" direction="column" gap="2" overflow="auto"
+          >
+            {
+              pet.exams ? pet.exams.map((exam) => (
+                <Flex key={exam.id} w="100%" backgroundColor="gray.100" p="2" justify="space-between">
+
+                <>{exam.doneExam === true ? (<Text color="green.400" fontWeight="bold">{exam.name}</Text>) : (<Text color="red.400" fontWeight="bold">{exam.name}</Text>)}</>
+                <Text>{exam.requestedData }</Text>
+                </Flex>
+              )) : (<Text>Sem exame Solicitado</Text>)
+            }
+       
+        
        
           </Flex>
       
-        </div>
+        </Flex>
       <div className="div3"> 
       <HStack spacing={4} m="2">
         <Button colorScheme="whatsapp">Diagnóstico</Button>
@@ -186,7 +210,9 @@ export function WorkSpaceVet() {
         <Button colorScheme="red">Gravar Alterações</Button>
 
       </Flex>
-        
+       <GenericModal isOpen={isModalOpen} onRequestClose={closeModal} >
+        <SetExamForm recordId={pet.recordId}/>
+       </GenericModal>
       </WorkSpaceFooter>
     </WorkSpaceContainer>
     </ChakraProvider>

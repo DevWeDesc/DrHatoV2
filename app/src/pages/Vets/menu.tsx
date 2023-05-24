@@ -50,7 +50,7 @@ export function MenuVet() {
               <GenericLink
                 name="Pesquisar Cliente"
                 icon={AiOutlineSearch}
-                path="/Home/Vets/Menu"
+                path="/Vets/Menu"
               />
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">

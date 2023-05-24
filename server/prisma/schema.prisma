@@ -83,26 +83,35 @@ model Autorizations {
 }
 
 model MedicineRecord {
-  id           String   @id @default(uuid())
+  id           Int   @id @default(autoincrement())
   observations String[] @default([""])
   petId        Int      @unique
-  exams        Exams[]
   pet          Pets     @relation(fields: [petId], references: [id])
+  petExams     ExamsForPet[]
 }
 
 model Exams {
   id               Int             @id @default(autoincrement())
   name             String
   price            Decimal
-  available        Boolean
+  available        Boolean? @default(false)
+  doneExame        Boolean? @default(false)
   subName          String?
   description      String?
   examsType        String[]
   ageRange         String[]
   applicableGender String[]
-  medicine_id      String
-  medicinesRecord  MedicineRecord? @relation(fields: [medicine_id], references: [id])
   Sectors          Sectors[]
+}
+
+model ExamsForPet {
+  id               Int             @id @default(autoincrement())
+  name             String
+  price            Decimal
+  requesteData String?
+  doneExame        Boolean? @default(false)
+  medicine_id Int
+  medicine MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
 
 model Sectors {

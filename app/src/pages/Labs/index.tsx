@@ -22,9 +22,9 @@ export function LabMenu() {
         <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
           <GenericSidebar>
           <GenericLink icon={BsArrowLeft}  name='Voltar' path="/Home"/>
-          <GenericLink icon={AiOutlineMenu}  name='Menu' path="/Home/Labs"/>
-          <GenericLink icon={IoIosFlask}  name='Laboratório' path="/Home/Labs/Exames"/>
-          <GenericLink icon={BsImages}  name='Laboratório Imagens' path="/Home/Labs/Imagens"/>
+          <GenericLink icon={AiOutlineMenu}  name='Menu' path="/Labs"/>
+          <GenericLink icon={IoIosFlask}  name='Laboratório' path="/Labs/Exames"/>
+          <GenericLink icon={BsImages}  name='Laboratório Imagens' path="/Labs/Imagens"/>
 
            
 
@@ -50,7 +50,7 @@ export function LabMenu() {
                       </Text>
                     </CardBody>
                     <CardFooter>
-                      <Link to="/Home/Labs/Exames">
+                      <Link to="/Labs/Exames">
                       <Button colorScheme="whatsapp">Ir até pesquisa</Button>
                       </Link>
                       
@@ -66,7 +66,7 @@ export function LabMenu() {
                       </Text>
                     </CardBody>
                     <CardFooter>
-                      <Link to="/Home/Labs/Imagens"><Button colorScheme="whatsapp">Ir até pesquisa</Button></Link>
+                      <Link to="/Labs/Imagens"><Button colorScheme="whatsapp">Ir até pesquisa</Button></Link>
                     
                     </CardFooter>
                   </Card>

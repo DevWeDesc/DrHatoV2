@@ -2,18 +2,20 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { ValidationContract } from "../validators/validateContract";
 import { CustomerSchema, ExamSchema, createCustomer } from "../schemas/schemasValidator";
+import { connect } from "http2";
 const prisma = new PrismaClient();
 
 
 type params = {
     id: string;
+    recordId: string;
   }
 
 export const examsController = {
 
    
 createExam: async (request: FastifyRequest, reply: FastifyReply) => {
-    const {name, price, examsType, available,applicableGender, description, subName } = ExamSchema.parse(request.body)
+    const {name, price, examsType, available,applicableGender, description, subName,doneExame } = ExamSchema.parse(request.body)
     const contract = new ValidationContract();
     try {
         await contract.validateExamsType(examsType, "Tipo de exame não válido")
@@ -24,7 +26,7 @@ createExam: async (request: FastifyRequest, reply: FastifyReply) => {
             return
           }
         await prisma.exams.create({
-            data: {name, price, examsType, available, applicableGender, description, subName}
+            data: {name, price, examsType, available, applicableGender, description, subName,}
         })
         reply.status(201).send('Exame criado com Sucesso!')
     } catch (error) {
@@ -85,5 +87,27 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
         console.log(error)
         reply.status(400).send({message: error})
     }
+ },
+
+ setExamInPet: async (request: FastifyRequest<{Params: params }>, reply: FastifyReply) => {
+    const { id, recordId} = request.params
+    const getExame = await prisma.exams.findUnique({where: {id: parseInt(id)}})
+    const formattedData = new Date()
+    const processData = JSON.stringify(new Intl.DateTimeFormat().format(formattedData))
+    if(!getExame || getExame.available === false) {
+        reply.status(400).send("Exame não disponivel/Falha ao criar exame")
+        return
+    }
+    try {
+       await prisma.examsForPet.create({data: {
+        name: getExame.name, 
+        price: getExame.price,
+        doneExame: getExame.doneExame,
+        requesteData: processData,
+        medicine: {connect: {id: parseInt(recordId)}} }})
+    } catch (error) {
+        reply.status(400).send({message: error})
+    }
  }
+
 }

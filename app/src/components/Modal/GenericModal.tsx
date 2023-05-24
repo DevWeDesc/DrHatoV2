@@ -3,9 +3,9 @@ import React, { useState } from "react"
 import Modal from 'react-modal'
 
 interface ModalTransactionProps extends ChakraProps {
-  isOpen: boolean
-  onRequestClose: () => void
-  children: React.ReactNode
+  isOpen: boolean 
+  onRequestClose?: () => void
+  children?: React.ReactNode
 }
 export function GenericModal({isOpen, onRequestClose, children, ...rest}: ModalTransactionProps) {
 

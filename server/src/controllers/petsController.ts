@@ -34,10 +34,39 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
     const pet = await prisma.pets.findFirst({ where: { id : parseInt(id)}, 
     include: {customer: 
       {select: { name: true, id: true, balance: true}}, 
-      medicineRecords: {select: {exams: true, observations: true }},
+      medicineRecords: {select: {petExams: true, observations: true, id: true }},
       queue: {select: {returnQueue: true, serviceQueue: true, id: true}}
     } })
-    return reply.send(pet)
+
+    const petData = { 
+      name: pet?.name,
+      balance: Number(pet?.customer.balance),
+      customerName: pet?.customer.name,
+      customerId: pet?.customer.id,
+      especie: pet?.especie,
+      sexo: pet?.sexo,
+      race: pet?.race,
+      weigth: pet?.weigth,
+      status: pet?.status,
+      corPet: pet?.corPet,
+      sizePet: pet?.sizePet,
+      bornDate: pet?.bornDate,
+      observations: pet?.observations,
+      codPet: pet?.codPet,
+      rga: pet?.rga,
+      recordId: pet?.medicineRecords?.id,
+      exams: pet?.medicineRecords?.petExams.map((exams) => {
+        let examData = {
+          id: exams.id,
+          requestedData: exams.requesteData,
+          name: exams.name,
+        price: exams.price,
+        doneExam: exams.doneExame}
+        return examData
+       }),
+      queue: pet?.queue
+    }
+    return reply.send(petData)
   } catch (error) {
     console.log(error)
   }
@@ -98,6 +127,11 @@ createPet: async (request: FastifyRequest, reply: FastifyReply) =>{
             queryType: "",
             queueEntry: null,
           },
+        },
+        medicineRecords: {
+          create: {
+            observations: [""],
+          }
         }
       }
     })

@@ -95,18 +95,18 @@ if(PetIsInQueue.returnQueue === true || PetIsInQueue.serviceQueue === true) {
 
 const handleSetFile: SubmitHandler<FieldValues> = async values => {
   try {
-    const formattedData = moment().utc().format()
-    const finalData = JSON.stringify(formattedData) 
-    
+    const formattedData = new Date()
+    const processData = JSON.stringify(new Intl.DateTimeFormat().format(formattedData))
+
     const data = {
       returnQueue: values.returnQueue,
       serviceQueue: values.serviceQueue,
       queryType: values.queryType,
-      queueEntry: finalData
+      queueEntry: processData
     }
 
     await api.put(`queue/${pets.queue.id}`, data)
-    toast.success('Pet colocado na fila com sucesso!')
+    toast.success('Pet colocado na fila com sucesso!') 
   } catch (error) {
     toast.error('Falha ao colocar na fila')
   }
