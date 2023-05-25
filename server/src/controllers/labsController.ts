@@ -1,0 +1,71 @@
+import { FastifyRequest, FastifyReply } from "fastify";
+import { PrismaClient } from "@prisma/client";
+import { CustomerSchema, createCustomer } from "../schemas/schemasValidator";
+const prisma = new PrismaClient();
+type params = {
+  id: string;
+  recordId: string;
+}
+
+export const labsController = {
+  getOpenExamsInLab: async (request:FastifyRequest, reply: FastifyReply) => {
+    try {
+      const exams = await prisma.examsForPet.findMany({
+        where: {
+          doneExame: false
+        },
+        orderBy: {requesteData: 'asc'},
+        include: {
+          medicine: {select: {pet: { select: {name: true}}}}
+        }
+
+      })
+      reply.status(200).send(exams)
+    } catch (error) {
+      reply.send({message: {error}}).status(400)
+      console.log(error)
+    }
+  },
+  searchExamsBy: async (request:FastifyRequest<{
+    Querystring: { name?: string; data?: string; petName?: string };
+  }>, reply: FastifyReply) => {
+      const name = request.query.name;
+      const requesteData = request.query.data;
+      const petName = request.query.petName;
+        try {
+          
+          const result = await prisma.examsForPet.findMany({
+            where: {
+                  OR: [
+                    {requesteData: { startsWith: requesteData},
+                        name: {startsWith: name},
+                        medicine: {pet: {name: { startsWith: petName }}}
+                  }
+                  ]
+              },
+              include : {medicine: {select: {pet: {select: {name: true}}}}}
+              })
+
+              const completeResult = result.map((exam) => {
+                let examData = {
+                  name: exam.name,
+                  price: exam.price,
+                  data: exam.requesteData,
+                  petName: exam.medicine.pet.name,
+                  done: exam.doneExame
+                }
+                return examData
+              })
+               
+
+              reply.send(completeResult).status(200)
+        } catch (error) {
+          reply.send({message: error}).status(400)
+          console.log(error)
+        }
+            
+
+
+
+  }
+}

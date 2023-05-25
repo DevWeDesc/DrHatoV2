@@ -90,6 +90,8 @@ export interface ExamsData {
     setGenerateAut: React.Dispatch<React.SetStateAction<AutPDFProps>>
     data: any
     setData: any
+    labData: any, 
+    setLabData: any
     exams: ExamsData[]
     sectors:SectorData[]
     instructions: InstructionsData[]

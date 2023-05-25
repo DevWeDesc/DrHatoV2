@@ -15,6 +15,7 @@ export function DbContextProvider ({children}: DbContextProps) {
   const [dbLoaded, setDbLoaded] = useState(false)
   const [generateAut, setGenerateAut] = useState<AutPDFProps>({})
   const [data, setData] = useState({})
+  const [labData, setLabData] = useState([])
   const [exams, setExams] = useState<ExamsData[]>([])
   const [sectors, setSectors] = useState<SectorData[]>([])
   const [groups, setGroups] = useState<GroupsData[]>([])
@@ -107,7 +108,9 @@ export function DbContextProvider ({children}: DbContextProps) {
         sectors,
         instructions,
         groups,
-        procedures
+        procedures,
+        labData,
+        setLabData
       }}>
           {children}
       </DbContext.Provider>

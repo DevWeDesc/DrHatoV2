@@ -11,9 +11,9 @@ interface UniversalSearchProps {
     path: string;
 }
 
-export function UniversalSearch({ path}: UniversalSearchProps) {
+export function LabsSearch({ path}: UniversalSearchProps) {
 
-const { setData } = useContext(DbContext)
+const { setLabData } = useContext(DbContext)
  
     const {register, handleSubmit} = useForm()
   const handleSearch: SubmitHandler<any> = async (values) => {
@@ -22,34 +22,34 @@ const { setData } = useContext(DbContext)
         const responseName = await api.get(
           `${path}?name=${values.name}`
         );
-        setData(responseName.data);
-        toast.success("Usuário encontrado");
+        setLabData(responseName.data);
+        toast.success("Exame encontrado");
       } catch (error) {
-        toast.error("Usuário não encontrado");
+        toast.error("Exame não encontrado");
       }
     }
 
-    if (values.cpf) {
+    if (values.requesteData) {
       try {
-        const responseCpf = await api.get(
-          `${path}?cpf=${values.cpf}`
+        const responseData = await api.get(
+          `${path}?requesteData=${values.requesteData}`
         );
-        setData(responseCpf.data);
-        toast.success("Usuário encontrado");
+        setLabData(responseData.data);
+        toast.success("Exame encontrado");
       } catch (error) {
-        toast.error("Usuário não encontrado");
+        toast.error("Exame não encontrado");
       }
     }
 
-    if (values.adress) {
+    if (values.petName) {
       try {
-        const responsePhone = await api.get(
-          `${path}?adress=${values.adress}`
+        const responsePetName = await api.get(
+          `${path}?adress=${values.petName}`
         );
-        setData(responsePhone.data);
-        toast.success("Usuário encontrado");
+        setLabData(responsePetName.data);
+        toast.success("Exame encontrado");
       } catch (error) {
-        toast.error("Usuário não encontrado");
+        toast.error("Exame não encontrado");
       }
     }
   };
@@ -59,9 +59,9 @@ const { setData } = useContext(DbContext)
         <Flex direction="row" gap="4">
         <FormControl as="form" onSubmit={handleSubmit(handleSearch)}>
           <HStack>
-        <Input label='Cpf do cliente'  {...register("cpf")} name='cpf' />
-        <Input  label='Nome do Cliente' {...register('name')} name='name'  />
-        <Input   label='Endereço do Cliente' {...register('adress')} name='adress' />
+        <Input label='Data de Solicitação'  {...register("requesteData")} name='requesteData' />
+        <Input  label='Nome do Exame' {...register('name')} name='name'  />
+        <Input   label='Nome do Animal' {...register('petName')} name='petName' />
         <Flex gap="2" align="center" direction="column">
         <Text fontWeight="bold">Pesquisa Universal</Text>
         <Button type="submit" colorScheme="whatsapp" minWidth={220}> Filtrar</Button>

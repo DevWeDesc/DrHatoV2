@@ -20,9 +20,9 @@ export function LabImagens() {
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
           <GenericSidebar>
           <GenericLink icon={BsArrowLeft}  name='Voltar' path="/Home"/>
-          <GenericLink icon={AiOutlineMenu}  name='Menu' path="/Home/Labs"/>
-          <GenericLink icon={IoIosFlask}  name='Laboratório' path="/Home/Labs/Exames"/>
-          <GenericLink icon={BsImages}  name='Laboratório Imagens' path="/Home/Labs/Imagens"/>
+          <GenericLink icon={AiOutlineMenu}  name='Menu' path="/Labs"/>
+          <GenericLink icon={IoIosFlask}  name='Laboratório' path="/Labs/Exames"/>
+          <GenericLink icon={BsImages}  name='Laboratório Imagens' path="/Labs/Imagens"/>
           </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
