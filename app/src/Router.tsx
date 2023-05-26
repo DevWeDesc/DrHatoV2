@@ -41,6 +41,7 @@ import { ProcedureCreate } from "./pages/Procedures/create";
 import { ProcedureEdit } from "./pages/Procedures/edit";
 import { MedicineRecords } from "./pages/Pets/medicinesRecord";
 import { WorkSpaceVet } from "./pages/Vets/workspace";
+import { SetPetExam } from "./pages/Exams/setpetexam";
 
 export function Router() {
   return (
@@ -83,6 +84,8 @@ export function Router() {
         <Route path="/Labs"  element={<LabMenu />} />
         <Route path="/Labs/Exames" element={<LabExames />} />
         <Route path="/Labs/Imagens" element={<LabImagens />} />
+        <Route path="/Labs/Set/:id"  element={<SetPetExam />} />
+
 
         <Route path="/Schedule" element={<Schedules />} />
         <Route path="/Schedule/Menu" element={<ScheduleMenu />} />

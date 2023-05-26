@@ -109,9 +109,12 @@ model ExamsForPet {
   name             String
   price            Decimal
   requesteData String?
+  requestedFor String?
+  responsibleForExam String?
   doneExame        Boolean? @default(false)
   medicine_id Int
   medicine MedicineRecord @relation(fields: [medicine_id], references: [id])
+  examsType        String[] @default(["lab"])
 }
 
 model Sectors {
@@ -160,3 +163,4 @@ model Queues {
   queueEntry   String?
   pets         Pets     @relation(fields: [pet_id], references: [id])
 }
+

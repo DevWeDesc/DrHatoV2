@@ -6,7 +6,8 @@ interface HeaderProps {
   title:  string
 }
 export function Header({title = 'Painel Administrativo'}: HeaderProps) {
-  
+  const userStorage = localStorage.getItem('userSession')
+  const userName = JSON.parse(userStorage as any)
   return (
     <Flex 
     as="header" 
@@ -72,7 +73,7 @@ export function Header({title = 'Painel Administrativo'}: HeaderProps) {
         </HStack>
 
         <Flex align="center" direction="column" >
-          <Text fontSize="md" fontWeight="bold">Dilan</Text>
+          <Text fontSize="md" fontWeight="bold">{userName.username}</Text>
           <Link to="/Home">
           <Text textDecoration="underline" fontSize="lg" fontWeight="medium">Voltar</Text>
           </Link>

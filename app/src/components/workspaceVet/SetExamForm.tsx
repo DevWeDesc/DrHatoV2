@@ -2,9 +2,6 @@ import { Button, ChakraProvider, Flex, FormControl, HStack, Menu, MenuButton, Me
 import { useContext, useState} from 'react'
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import { api } from '../../lib/axios'
-import { Input } from '../admin/Input'
-import { GenericModal } from '../Modal/GenericModal'
-import Modal from 'react-modal'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { DbContext } from '../../contexts/DbContext'
@@ -18,6 +15,8 @@ interface SetExamFormProps {
 export function SetExamForm({recordId}: SetExamFormProps) {
     const {register, handleSubmit} = useForm()
     const [examValue, setExamValue] = useState("");
+    const userStorage = localStorage.getItem('userSession')
+    const userName = JSON.parse(userStorage as any)
     const { exams } = useContext(DbContext)
     const navigate = useNavigate()
     const handleSetExam: SubmitHandler<FieldValues> = async values => {
@@ -25,14 +24,20 @@ export function SetExamForm({recordId}: SetExamFormProps) {
             toast.error("Selecione um exame")
             return
             }
+            let Data = {
+              requestedFor: userName.username
+            }
+           
        try {
-        await api.post(`setexam/${examValue}/${recordId}`)
+        await api.post(`setexam/${examValue}/${recordId}`, Data)
         toast.success("Exame colocado na fila do laboratório")
         navigate(0)
        } catch (error) {
         toast.error("Falha ao colocar exames na fila.")
        }
+     
     }
+
     return (
         <ChakraProvider>
              <FormControl as="form" onSubmit={handleSubmit(handleSetExam)}>
