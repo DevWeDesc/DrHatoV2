@@ -66,6 +66,8 @@ model Pets {
   medicineRecords MedicineRecord?
   customer        Customer        @relation(fields: [customer_id], references: [id])
   queue           Queues?
+  bedId Int @unique
+  bed Bed @relation(fields: [bedId], references: [id])
 }
 
 model Schedule {
@@ -164,3 +166,21 @@ model Queues {
   pets         Pets     @relation(fields: [pet_id], references: [id])
 }
 
+
+model Kennel {
+    id           Int      @id @default(autoincrement())
+    name String?
+    totalBeds Int 
+    beds Bed[]
+     
+
+}
+
+model Bed {
+  id           Int      @id @default(autoincrement())
+  kennelId Int
+  kennel Kennel? @relation(fields: [kennelId], references: [id])
+  pet Pets?
+  isBusy Boolean? @default(false)
+  mustFasting Boolean? @default(false)
+}

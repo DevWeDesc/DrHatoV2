@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
 import { GenericLink } from '../../components/Sidebars/GenericLink'
 import {BsArrowLeft, AiOutlineMenu, IoIosFlask, BsImages } from 'react-icons/all'
-import { Input } from '../../components/admin/Input'
 import { HemoTable } from '../../components/ProceduresTable/HemoTable'
 
 export function SetPetExam() {
