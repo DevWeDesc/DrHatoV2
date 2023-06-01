@@ -60,8 +60,8 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
           id: exams.id,
           requestedData: exams.requesteData,
           name: exams.name,
-        price: exams.price,
-        doneExam: exams.doneExame}
+          price: exams.price,
+           doneExam: exams.doneExame}
         return examData
        }),
       queue: pet?.queue

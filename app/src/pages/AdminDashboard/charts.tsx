@@ -45,7 +45,7 @@ export function AdminCharts() {
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-        <Header />
+        <Header title="Gráficos" />
 
         <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />

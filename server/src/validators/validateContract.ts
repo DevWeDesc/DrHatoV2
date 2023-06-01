@@ -51,6 +51,16 @@ export class ValidationContract {
       ExamsType.some( e => value.includes(e)) ? true : this.errors.push(message)
     }
 
+
+    public async validateBedIsBusy(value: number, message: string){
+      const bedIsBusy = await prisma.bed.findUnique({where: {id: value}, select: {isBusy:true}})
+
+
+      if(bedIsBusy?.isBusy === true){
+        this.errors.push(message)
+      }
+    }
+
     public showErrors(): string[] {
       return this.errors;
     }

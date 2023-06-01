@@ -66,8 +66,7 @@ model Pets {
   medicineRecords MedicineRecord?
   customer        Customer        @relation(fields: [customer_id], references: [id])
   queue           Queues?
-  bedId Int @unique
-  bed Bed @relation(fields: [bedId], references: [id])
+  bed             Bed?
 }
 
 model Schedule {
@@ -85,19 +84,19 @@ model Autorizations {
 }
 
 model MedicineRecord {
-  id           Int   @id @default(autoincrement())
-  observations String[] @default([""])
-  petId        Int      @unique
-  pet          Pets     @relation(fields: [petId], references: [id])
+  id           Int           @id @default(autoincrement())
+  observations String[]      @default([""])
+  petId        Int           @unique
+  pet          Pets          @relation(fields: [petId], references: [id])
   petExams     ExamsForPet[]
 }
 
 model Exams {
-  id               Int             @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   name             String
   price            Decimal
-  available        Boolean? @default(false)
-  doneExame        Boolean? @default(false)
+  available        Boolean?  @default(false)
+  doneExame        Boolean?  @default(false)
   subName          String?
   description      String?
   examsType        String[]
@@ -107,16 +106,16 @@ model Exams {
 }
 
 model ExamsForPet {
-  id               Int             @id @default(autoincrement())
-  name             String
-  price            Decimal
-  requesteData String?
-  requestedFor String?
+  id                 Int            @id @default(autoincrement())
+  name               String
+  price              Decimal
+  requesteData       String?
+  requestedFor       String?
   responsibleForExam String?
-  doneExame        Boolean? @default(false)
-  medicine_id Int
-  medicine MedicineRecord @relation(fields: [medicine_id], references: [id])
-  examsType        String[] @default(["lab"])
+  doneExame          Boolean?       @default(false)
+  medicine_id        Int
+  medicine           MedicineRecord @relation(fields: [medicine_id], references: [id])
+  examsType          String[]       @default(["lab"])
 }
 
 model Sectors {
@@ -166,21 +165,19 @@ model Queues {
   pets         Pets     @relation(fields: [pet_id], references: [id])
 }
 
-
 model Kennel {
-    id           Int      @id @default(autoincrement())
-    name String?
-    totalBeds Int 
-    beds Bed[]
-     
-
+  id        Int     @id @default(autoincrement())
+  name      String?
+  totalBeds Int
+  beds      Bed[]
 }
 
 model Bed {
-  id           Int      @id @default(autoincrement())
-  kennelId Int
-  kennel Kennel? @relation(fields: [kennelId], references: [id])
-  pet Pets?
-  isBusy Boolean? @default(false)
+  id          Int      @id @default(autoincrement())
+  kennelId    Int
+  kennel      Kennel?  @relation(fields: [kennelId], references: [id])
+  petId       Int?     @unique
+  pet         Pets?    @relation(fields: [petId], references: [id])
+  isBusy      Boolean? @default(false)
   mustFasting Boolean? @default(false)
 }

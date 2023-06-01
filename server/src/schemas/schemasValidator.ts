@@ -34,6 +34,18 @@ export const UserSchema = z.object({
   userType: z.any()
 })
  
+export const AdmissionSchema = z.object({
+  name: z.string(),
+  totalBeds: z.number(),
+})
+
+export const BedSchema = z.object({
+  petId: z.number(),
+  isBusy: z.boolean(),
+  mustFasting: z.boolean().optional(),
+  kennelId: z.number(),
+  bedId: z.number(),
+})
 
 export const QueueSchema = z.object({
   serviceQueue: z.boolean().optional().default(false),

@@ -42,6 +42,7 @@ import { ProcedureEdit } from "./pages/Procedures/edit";
 import { MedicineRecords } from "./pages/Pets/medicinesRecord";
 import { WorkSpaceVet } from "./pages/Vets/workspace";
 import { SetPetExam } from "./pages/Exams/setpetexam";
+import { ShowBeds } from "./pages/Admissions/beds";
 
 export function Router() {
   return (
@@ -91,6 +92,7 @@ export function Router() {
         <Route path="/Schedule/Menu" element={<ScheduleMenu />} />
 
         <Route path="/Admissions" element={<Admissions />} />
+        <Route path="/Admissions/Beds" element={<ShowBeds />} />
 
         <Route path="/Medicines" element={<Medicines />} />
         <Route path="/Medicines/Create" element={<CreateMedicine />} />

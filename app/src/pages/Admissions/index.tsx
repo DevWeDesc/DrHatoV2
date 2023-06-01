@@ -13,7 +13,7 @@ import {
   import { SearchComponent } from '../../components/Search'
   import { GenericLink } from '../../components/Sidebars/GenericLink'
   import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
-  import { AiOutlineSearch } from 'react-icons/all'
+  import { FaHospital, BiHome } from 'react-icons/all'
   import { AdminContainer } from '../AdminDashboard/style'
   
 export function Admissions() {
@@ -25,9 +25,14 @@ export function Admissions() {
             <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
-                  name="Pesquisar Cliente"
-                  icon={AiOutlineSearch}
-                  path="/Home/Vets/Menu"
+                  name="Voltar Home"
+                  icon={BiHome}
+                  path="/Home"
+                />
+                  <GenericLink
+                  name="Visualizar Leitos"
+                  icon={FaHospital}
+                  path="/Admissions/Beds"
                 />
               </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
