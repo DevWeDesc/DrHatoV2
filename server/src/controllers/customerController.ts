@@ -15,26 +15,27 @@ export const customerController = {
       return reply.status(404).send({ message: error });
     }
   },
+
+
   searchUser: async (
     request: FastifyRequest<{
-      Querystring: { name?: string; cpf?: string; phone?: string };
+      Querystring: { name?: string; cpf?: string; rg?: string, codPet: string };
     }>,
     reply: FastifyReply
   ) => {
-    const cpf = request.query.cpf;
-    const name = request.query.name;
-    const phone = request.query.phone;
+    const {name, cpf, rg} = request.query
 
     try {
-      const customer = await prisma.customer.findFirst({
+      let customer = await prisma.customer.findMany({
         where: {
-          OR: [{ name: name }, { cpf: cpf }, { phone: phone }],
+          OR: [{ name: {startsWith: name} }, { cpf: {startsWith: cpf} }, { rg: {startsWith: rg} }],
         }, include: { pets: true, transaction: true}
       });
 
-      reply.send(CustomerSchema.parse(customer));
+      reply.send(customer);
     } catch (error) {
       reply.status(404).send(error);
+      console.log(error)
     }
   },
   createUser: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -68,6 +69,6 @@ export const customerController = {
       return acc
     }, 0)
 
-    reply.send(CustomerSchema.parse(customer))
+    reply.send(customer)
   }
 };

@@ -26,9 +26,9 @@ export function Reception() {
             as={Flex}
           >
             <Box textAlign="center"  p="8" bg="gray.100" borderRadius={8}>
-                <Text fontSize={24}>
-                  Recepção Geral
-                  </Text>  
+                <Text fontSize={32} fontWeight="bold" fontStyle="oblique">
+                  RECEPÇÃO GERAL
+                </Text>  
          
               <Flex mt="8" justify="center" direction="column">
                <GridContainer>

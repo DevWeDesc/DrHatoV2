@@ -41,8 +41,8 @@ padding: 1rem;
   border-radius: 4px;
   height: 200px;
   width: 260px;
-  box-shadow: 4px 1px 3px black;
 }
+ 
 .buttonsContainer {
   display: flex;
   flex-direction: column;

@@ -10,7 +10,6 @@ export const CustomerSchema = z.object({
   phone: z.string(),
   balance: z.any(),
   cep: z.string(),
-  
   pets: z.any(),
   transactions: z.any(),
 });

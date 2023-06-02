@@ -1,57 +1,30 @@
-import { Box, Stack, Text, Icon } from "@chakra-ui/react"
-import { RiContactsLine, GiHealthNormal, BsArrowLeft, TbReportMoney, FaWpforms, GrUnorderedList} from "react-icons/all"
+import { Box, Stack, Text, Icon, Flex } from "@chakra-ui/react"
+import { GrUnorderedList, AiFillHome } from "react-icons/all"
 import { Link } from "react-router-dom"
 export function ReceptionSidebar() {
   return (
     <Box as="aside" w="64" mr="8">
       <Stack spacing="12" align="flex-start">
         <Box>
-          <Text fontWeight="bold" color="gray.700" fontSize="small" >GERAL</Text>
+          <Text fontWeight="bold" color="gray.700" fontSize="2xl" >Menu Recepção</Text>
           <Stack spacing="4" mt="8" align="stretch">
 
           <Link to="/Home/">
-            <Box  display="flex" alignItems="center" color="green.300" > 
-            <Icon as={BsArrowLeft} fontSize="20"/>
-              <Text ml="4" fontWeight="medium" color="gray.700">Voltar</Text>
-            </Box>
+            <Flex  display="flex" align="center" color="green.300" > 
+            <Icon as={AiFillHome} fontSize="38"/>
+              <Text ml="4" fontWeight="bold" fontSize={22} color="gray.700">HOME</Text>
+            </Flex>
             </Link>
 
             <Link to="/Recepcao">
-            <Box  display="flex" alignItems="center" color="green.300" > 
-            <Icon as={GrUnorderedList} fontSize="20"/>
-              <Text ml="4" fontWeight="medium" color="gray.700">Todas opções</Text>
-            </Box>
+            <Flex  display="flex" align="center" color="green.300" > 
+            <Icon as={GrUnorderedList} fontSize="38"/>
+              <Text ml="4" fontWeight="bold" fontSize={22} color="gray.700">TODAS OPÇÕES</Text>
+            </Flex>
             </Link>
           
-            <Link to="/Recepcao/Consultas">
-            <Box  display="flex" alignItems="center" color="green.300" > 
-            <Icon as={FaWpforms} fontSize="20"/>
-              <Text ml="4" fontWeight="medium" color="gray.700">Consultas</Text>
-            </Box>
-            </Link>
-
-          <Link to="/Recepcao/Finance">
-          <Box  display="flex" alignItems="center" color="green.300" > 
-            <Icon as={TbReportMoney} fontSize="20"/>
-              <Text ml="4" fontWeight="medium" color="gray.700">Caixas</Text>
-            </Box>
-          </Link>
-
-
-          <Link to="/Admissions">
-          <Box  display="flex" alignItems="center" color="green.300" > 
-            <Icon as={GiHealthNormal} fontSize="20"/>
-              <Text ml="4" fontWeight="medium" color="gray.700">Internações e Exames</Text>
-            </Box>
-          </Link>
-
-          <Link to="/Users">
-          <Box  display="flex" alignItems="center" color="green.300" > 
-            <Icon as={RiContactsLine} fontSize="20"/>
-              <Text ml="4" fontWeight="medium" color="gray.700">Administrativo</Text>
-            </Box>
-          </Link>
-          
+       
+  
           </Stack>
         </Box>
       </Stack>

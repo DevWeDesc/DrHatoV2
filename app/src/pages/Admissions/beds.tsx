@@ -17,8 +17,36 @@ import { GenericLink } from '../../components/Sidebars/GenericLink'
 import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
 import { FaHospital, AiOutlineSearch, MdOutlineBedroomChild } from 'react-icons/all'
 import { AdminContainer } from '../AdminDashboard/style'
+import { useState, useEffect} from 'react'
+import { api } from '../../lib/axios'
+
+type beds = {
+ id: number,
+ busy: boolean,
+ fasting: boolean,
+ petName?: string
+}
+interface Kennels {
+  name: string
+  beds: beds[]
+  totalOcupedBeds: number
+}
+
 
 export function ShowBeds() {
+  const [kennels, setkennels] = useState<Kennels[]>([])
+
+  useEffect(() => {
+    async function GetKennels() {
+      const response = await api.get("/admittedpet")
+      setkennels(response.data)
+    }
+    GetKennels()
+  },[])
+
+  console.log("CANILS LOADED",kennels)
+
+
   return (
       <ChakraProvider>
       <AdminContainer>
@@ -39,82 +67,40 @@ export function ShowBeds() {
             minChildWidth="320px"
             align="flex-start" as={Flex}
             >
-              <Flex 
-              p="8"
-              bg="gray.100"
-              borderRadius={8}
-             direction="column"
-             align="center"
+              {
+                kennels ? kennels.map((kennel) => (
+                  <Flex 
+                  p="8"
+                  bg="gray.100"
+                  borderRadius={8}
+                 direction="column"
+                 align="center"
+    
+                  >
+                    <Text fontSize="lg" mb="4">
+                     {kennel.name}
+                    </Text>
+                    <Flex justify="center" wrap="wrap" gap={2}>
 
-              >
-                <Text fontSize="lg" mb="4">
-                  Pet Love
-                </Text>
-                <Flex justify="center" wrap="wrap" gap={2}>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Vazio</Text>
-                          <MdOutlineBedroomChild color='green' size={44}/>
-                        </Flex>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Teddy</Text>
-                          <MdOutlineBedroomChild color='red' size={44}/>
-                        </Flex>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Vazio</Text>
-                          <MdOutlineBedroomChild color='green' size={44}/>
-                        </Flex>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Vazio</Text>
-                          <MdOutlineBedroomChild color='green' size={44}/>
-                        </Flex>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Vazio</Text>
-                          <MdOutlineBedroomChild color='green' size={44}/>
-                        </Flex>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Vazio</Text>
-                          <MdOutlineBedroomChild color='green' size={44}/>
-                        </Flex>
-                  </Flex>
-              </Flex>
-              <Flex 
-              p="8"
-              bg="gray.100"
-              borderRadius={8}
-             direction="column"
-             align="center"
+                      {kennel.beds.map((bed) => (
+                        <Flex direction="column" align="center" p="2">
 
-              >
-                <Text fontSize="lg" mb="4">
-                 Internação
-                </Text>
-                <Flex justify="center" wrap="wrap" gap={2}>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Vazio</Text>
-                          <MdOutlineBedroomChild color='green' size={44}/>
-                        </Flex>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Vazio</Text>
-                          <MdOutlineBedroomChild color='green' size={44}/>
-                        </Flex>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Vazio</Text>
-                          <MdOutlineBedroomChild color='green' size={44}/>
-                        </Flex>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Vazio</Text>
-                          <MdOutlineBedroomChild color='green' size={44}/>
-                        </Flex>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Vazio</Text>
-                          <MdOutlineBedroomChild color='green' size={44}/>
-                        </Flex>
-                        <Flex direction="column" align="center">
-                            <Text>Ocupante: Vazio</Text>
-                          <MdOutlineBedroomChild color='green' size={44}/>
-                        </Flex>
+                            <Flex direction="column" align="center" gap={4}>
+                            <Text>{bed.petName ? bed.petName : "Vazio"}</Text>
+                            <Text>Leito Nº {bed.id}</Text>
+                            </Flex>
+
+                      
+                    {bed.busy === true ? (  <MdOutlineBedroomChild color='red' size={44}/>) : (  <MdOutlineBedroomChild color='green' size={44}/>)}
+                    </Flex>
+                      ))}
+                            
+                      
+                      </Flex>
                   </Flex>
-              </Flex>
+                )) : ("Sem internações no momento!")
+              }
+              
             </SimpleGrid>
  
             </Flex>

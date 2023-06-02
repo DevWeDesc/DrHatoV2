@@ -92,6 +92,8 @@ export interface ExamsData {
     setData: any
     labData: any, 
     setLabData: any
+    customer: any,
+    setCustomers: any,
     exams: ExamsData[]
     sectors:SectorData[]
     instructions: InstructionsData[]

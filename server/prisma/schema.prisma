@@ -37,9 +37,13 @@ model Customer {
   id            Int           @id @unique @default(autoincrement())
   name          String        @unique
   adress        String
+  district      String?
   phone         String        @unique
+  tell          String?
   cpf           String        @unique
-  email         String
+  rg            String?   
+  birthDay      String?
+  email         String?
   birthday      String
   balance       Int?
   cep           String

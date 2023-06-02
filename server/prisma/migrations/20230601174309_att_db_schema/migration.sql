@@ -1,8 +1,0 @@
--- DropForeignKey
-ALTER TABLE "Bed" DROP CONSTRAINT "Bed_petId_fkey";
-
--- AlterTable
-ALTER TABLE "Bed" ALTER COLUMN "petId" DROP NOT NULL;
-
--- AddForeignKey
-ALTER TABLE "Bed" ADD CONSTRAINT "Bed_petId_fkey" FOREIGN KEY ("petId") REFERENCES "Pets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
