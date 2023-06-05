@@ -16,16 +16,22 @@ import {
   Button,
   HStack,
   Textarea,
+  RadioGroup,
+  Radio,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
 import { StyledBox } from "../../components/Header/style";
 import { ReceptionSidebar } from "../../components/Sidebars/ReceptionBar";
 import { AiFillTags, MdPets as Burger } from "react-icons/all";
-
+import { toast } from "react-toastify";
+import moment from 'moment';
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { api } from "../../lib/axios";
 import { WorkSpaceContent } from "../Vets/styles";
 import { PetProps } from "../Pets/details";
+import { FieldValues, SubmitHandler } from "react-hook-form";
+import { DbContext } from "../../contexts/DbContext";
+
 
 interface CustomerProps {
   name: string;
@@ -36,13 +42,18 @@ interface CustomerProps {
   balance: number;
   birthday: string | number;
   cep: string
-  pets: [];
+  pets: PetProps[];
   tell: string;
   rg: string;
 }
 
 export function Customer() {
   const { id } = useParams<{ id: string }>();
+  const  navigate = useNavigate()
+  const { vets } = useContext(DbContext)
+  const [petId, setPetId] = useState("")
+  const [queryType, setQueryType] = useState("")
+  const [vetPreference, setVetPreference] = useState("")
   const [customer, setCustomer] = useState<CustomerProps>({
     name: "",
     adress: "",
@@ -65,7 +76,35 @@ export function Customer() {
     }
     loadCustomer();
   }, [id]);
+  
+async function setPetInQueue () {
 
+
+  if(queryType == "" || petId == "" || vetPreference == ""){
+    toast.error(`Antes de colocar o Pet na Fila e necessário selecionar todos campos obrigatórios\n
+    1. Selecione o Pet\n,
+    2. Selecione o Tipo de Atendimento\n
+    3. Selecione o Veterinário`)
+  }
+
+  try {
+    const formattedData = new Date()
+    const processData = new Intl.DateTimeFormat().format(formattedData)
+
+    const data = {
+      vetPreference: vetPreference,
+      queryType: queryType,
+      queueEntry: processData,
+      petIsInQueue: true
+    }
+
+
+    await api.put(`queue/${petId}`, data)
+    toast.success('Pet colocado na fila com sucesso!') 
+  } catch (error) {
+    toast.error('Falha ao colocar na fila')
+  }
+}
 
 
 
@@ -116,11 +155,16 @@ export function Customer() {
 
             <Flex  direction="column"  bgColor="gray.100" rounded={4} p="2" className="div2" align="center" textAlign="center" >
               <Text fontWeight="black" bgColor="green.100" width="500px" rounded={4}  >SELECIONE UM ANIMAL PARA CONTINUAR</Text>
-              <Button mb="2" colorScheme="teal" height="28px">ou adicione um novo animal</Button>
-              <Flex overflow="auto">
-                <Table>
-                  <Thead bgColor="linkedin.100" border="2px">
+              <Button onClick={() => navigate("/Recepcao/Create")} mb="2" colorScheme="teal" height="28px">ou adicione um novo animal</Button>
+              <Flex overflow="auto" overflowX="auto" w="100%" height="100%">
+             
+                <Table  flexDirection="column" >
+                  
+                  <Thead >
                     <Tr>
+                      <Td fontWeight="bold" border="2px">
+                        Selecione o pet
+                      </Td>
                       <Td fontWeight="bold" border="2px">
                         Nome 
                       </Td>
@@ -133,7 +177,7 @@ export function Customer() {
                       <Td fontWeight="bold" border="2px">
                         Idade
                       </Td>
-                      <Td fontWeight="bold">
+                      <Td fontWeight="bold"  border="2px">
                         Etiqueta
                       </Td>
                     </Tr>
@@ -141,8 +185,13 @@ export function Customer() {
                   {
 
                      customer.pets ? customer.pets.map((pet: PetProps) => (
-                      <Tbody>
-                      <Tr bgColor="white" height="22px">
+                      <Tbody  >
+                      <Tr  key={pet.id} bgColor="white">
+                        <Td >
+                        <RadioGroup onChange={setPetId} value={petId}>
+                        <Radio borderColor="teal.800"   colorScheme="green" value={pet.id.toString()} />
+                        </RadioGroup>
+                        </Td>
                         <Td fontWeight="black">
                          {pet.name}
                         </Td>
@@ -199,23 +248,51 @@ export function Customer() {
             </Flex>
 
             <Flex  direction="column"  bgColor="gray.100" rounded={4} p="2" className="div4" align="center" textAlign="center" >
-              <Flex gap={4} align="center" justify="center">
-                <Flex direction="column">  
-                  <Text>SELECIONAR VETERINARIO</Text>
-                  <Button colorScheme="whatsapp">DANIEL</Button>
+         
+              <Flex gap={8} justify="center" w="100%" overflow="auto" height="100%">
+                <Flex  direction="column" overflow="auto" height="100%" >  
+                  <Text  mt="4" fontWeight="bold" pb="2">SELECIONAR VETERINARIO</Text>
+                  
+                      {
+                        vets.map((vet) => (
+                          <RadioGroup key={vet.id} onChange={setVetPreference} value={vetPreference}>
+                            <Flex direction="column">   
+                              
+                              <Radio  mb="2"  borderColor="teal.800"   colorScheme="green"  value={vet.name.toString()}>{vet.name}</Radio>
 
+                            </Flex>
+                         
+                          </RadioGroup>
+                        ))
+                      }
                 </Flex>
                 
-                <Flex direction="column">  
-                  <Text>SELECIONAR ATENDIMENTO</Text>
-                  <Button colorScheme="whatsapp">RETORNO</Button>
+                <Flex direction="column" overflow="auto" height="100%">  
+                  <Text mt="4" fontWeight="bold" pb="2">SELECIONAR ATENDIMENTO</Text>
+                  <RadioGroup  onChange={setQueryType} value={queryType}>
+                    <Flex direction="column" >
+
+                  <Radio mb="2"  borderColor="teal.800"   colorScheme="green" value='Avaliação'>Avaliação</Radio>
+                  <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value='Cancelar'>Cancelar</Radio>
+                  <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value='Consulta'>Consulta</Radio>
+                  <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Consulta ESP">Consulta ESP</Radio>
+                  <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Consulta PetLove">Consulta PetLove</Radio>
+                  <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Consulta Triagem">Consulta Triagem</Radio>
+                  <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Exame Externo">Exame Externo</Radio>
+                  <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Orientação">Orientação</Radio>
+                  <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Retorno ESP">Retorno ESP</Radio>
+                  <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Telefone">Telefone</Radio>
+                    </Flex>
+              
+             
+                    
+                  </RadioGroup>
 
                 </Flex>
-                <Button colorScheme="linkedin">GRAVAR</Button>
-
+             
               </Flex>
                
-                  
+              <Button mt="2" m="4" onClick={() => setPetInQueue()} colorScheme="teal">GRAVAR</Button>
             </Flex>
         </WorkSpaceContent>
         </Flex>

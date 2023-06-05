@@ -6,7 +6,6 @@ import {
     ChakraProvider,
   } from "@chakra-ui/react";
   import { ReceptionCreateNewConsultForm } from "../../components/Forms/ReceptionCreateNewConsultForm";
-  import { SearchConsultForm } from "../../components/Forms/SearchConsultForm";
   import { ReceptionSidebar } from "../../components/Sidebars/ReceptionBar";
   
   export function CreateCustomer() {
@@ -19,16 +18,16 @@ import {
             <SimpleGrid
               flex="1"
               gap="4"
-              minChildWidth="320px"
+           
               align="flex-start"
               as={Flex}
             >
-              <Box textAlign="center"  p="8" bg="gray.100" borderRadius={8}>
-                <Text fontSize="lg" mb="4">
+              <Flex direction="column" textAlign="center" p="8" bg="gray.100" borderRadius={8} w="100%" height={600} overflow="auto">
+                <Text fontSize="lg" mb="4" fontWeight="bold">
                 Cadastrar Cliente
                 </Text>
                 <ReceptionCreateNewConsultForm />
-              </Box>
+              </Flex>
             </SimpleGrid>
           </Flex>
         </Flex>

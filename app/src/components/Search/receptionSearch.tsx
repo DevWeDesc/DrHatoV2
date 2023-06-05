@@ -2,7 +2,7 @@ import {ChakraProvider,Flex, Button, Text, FormControl, HStack } from '@chakra-u
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { DbContext } from '../../contexts/DbContext';
@@ -13,8 +13,8 @@ interface UniversalSearchProps {
 
 export function RecepetionSearch({ path}: UniversalSearchProps) {
 const navigate = useNavigate()
-const { setCustomers } = useContext(DbContext)
- 
+const { setCustomers, customer } = useContext(DbContext)
+
     const {register, handleSubmit} = useForm()
   const handleSearch: SubmitHandler<any> = async (values) => {
     if (values.name) {
@@ -22,10 +22,22 @@ const { setCustomers } = useContext(DbContext)
         const responseName = await api.get(
           `${path}?name=${values.name}`
         );
+
+     
+
+        
         setCustomers(responseName.data);
-        toast.success("Exame encontrado");
+
+
+
+        if (Object.keys(customer).length == 0) {
+          toast.error("Cliente não encontrado");
+        } else {
+          toast.success("Cliente encontrado");
+        }
+ 
       } catch (error) {
-        toast.error("Exame não encontrado");
+        toast.error("Cliente não encontrado");
       }
     }
 
@@ -34,10 +46,15 @@ const { setCustomers } = useContext(DbContext)
         const responseData = await api.get(
           `${path}?cpf=${values.cpf}`
         );
+        
         setCustomers(responseData.data);
-        toast.success("Exame encontrado");
+        if (Object.keys(customer).length == 0) {
+          toast.error("Cliente não encontrado");
+        } else {
+          toast.success("Cliente encontrado");
+        }
       } catch (error) {
-        toast.error("Exame não encontrado");
+        toast.error("Cliente não encontrado");
       }
     }
 
@@ -47,9 +64,13 @@ const { setCustomers } = useContext(DbContext)
           `${path}?rg=${values.rg}`
         );
         setCustomers(responserg.data);
-        toast.success("Exame encontrado");
+        if (Object.keys(customer).length == 0) {
+          toast.error("Cliente não encontrado");
+        } else {
+          toast.success("Cliente encontrado");
+        }
       } catch (error) {
-        toast.error("Exame não encontrado");
+        toast.error("Cliente não encontrado");
       }
     }
   };

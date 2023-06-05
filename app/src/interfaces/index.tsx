@@ -9,9 +9,10 @@ export interface UserData {
   export interface VetData {
     id?: number | string; 
     name:     String
-    speciality: String
-    crmv:      number
-    schedule: []
+    crmv:     number
+    schedule?: []
+    userType?: []
+    userIsVet?: boolean
   
   }
 
@@ -96,6 +97,7 @@ export interface ExamsData {
     setCustomers: any,
     exams: ExamsData[]
     sectors:SectorData[]
+    vets: VetData[]
     instructions: InstructionsData[]
     setExams: React.Dispatch<React.SetStateAction<ExamsData[]>>
     refresh: boolean

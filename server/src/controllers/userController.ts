@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { ValidationContract } from "../validators/validateContract";
 import {  UserSchema  } from "../schemas/schemasValidator";
+import { z } from "zod";
 const prisma = new PrismaClient();
 
 
@@ -76,6 +77,20 @@ deleteUser: async (request: FastifyRequest, reply: FastifyReply) => {
   } catch (error) {
      reply.status(400)
      console.log(error)
+  }
+},
+findVetUsers: async (request: FastifyRequest, reply: FastifyReply) => {
+  const vetUsers = await prisma.user.findMany({
+    where: {
+      userIsVet: true
+    }
+  })
+
+  try {
+    reply.send(vetUsers).status(200)
+  } catch (error) {
+    console.error(error)
+    reply.status(400).send({message: error})
   }
 }
 }

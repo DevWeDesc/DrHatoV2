@@ -15,7 +15,7 @@ import {
   MenuList,
   Button
 } from '@chakra-ui/react'
-import { useContext, useState} from 'react'
+import { useContext, useEffect, useState} from 'react'
 import { Header } from '../../components/admin/Header'
 import { GenericLink } from '../../components/Sidebars/GenericLink'
 import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
@@ -28,9 +28,26 @@ import { StyledBox } from '../../components/Header/style'
 import { MdPets as Burger } from "react-icons/all";
 import { toast } from 'react-toastify'
 import { LoadingSpinner } from '../../components/Loading'
+import { api } from '../../lib/axios'
+import { Queue } from 'phosphor-react'
+
+
+
+
+interface QueueProps {
+  id: string | number;
+  name: string;
+  customerName: string;
+  codPet: string;
+  queueEntry: string;
+  vetPreference: string;
+  customerCpf: string;
+  totalInQueue: number;
+}
 
 export function MenuVet() {
   const [petValue, setPetValue] = useState("");
+  const [inQueue, setInQueue] = useState<QueueProps[]>([])
   let {data} = useContext(DbContext)
   const navigate = useNavigate()
   const handleNavigateWorkSpace = () => {
@@ -40,6 +57,17 @@ export function MenuVet() {
     } 
     navigate(`/Vets/Workspace/${petValue}`)
   }
+
+useEffect(() => {
+ async function getQueue() {
+  const response = await api.get('/pets/queue')
+  setInQueue(response.data)
+ } 
+ getQueue()
+}, [inQueue.length])
+
+console.log("IN QUEUE",inQueue)
+
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -56,6 +84,7 @@ export function MenuVet() {
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
                 <UniversalSearch path='queryall' />
+                <Button colorScheme="teal" onClick={() => navigate("/queue")}><>TOTAL NA FILA: {inQueue[0]}</></Button>
                 <Flex  textAlign="center" justify="center">
                   <Table colorScheme="blackAlpha">
                     <Thead>
@@ -114,15 +143,25 @@ export function MenuVet() {
                           </Menu>
                           </Td>
                           <Td>92487</Td>
-                          <Td>  04/04/2023</Td>
+                          <Td>04/04/2023</Td>
                         
                           <Td>25:53</Td>
                           <Td>{user.vetPreference ? user.vetPreference : "Sem Preferência"}</Td>
                           <Td>0</Td>
                         </Tr>
-                    ) ): (<Tr>
-                     <Td><LoadingSpinner /></Td>
-                    </Tr>) }
+                    ) ): 
+                    inQueue.map((queue: any) => (<Tr>
+                      <Td>{queue.customerCpf}</Td>
+                      <Td>{queue.customerName}</Td>
+                      <Td><Link to={`/Vets/Workspace/${queue.id}`}>
+                      {queue.name}
+                      </Link> </Td>
+                      <Td>{queue.codPet}</Td>
+                      <Td>{queue.queueEntry}</Td>
+                      <Td>Empty</Td>
+                      <Td>{queue.vetPreference}</Td>
+                      <Td>Empty</Td>
+                    </Tr>)) }
               
                     </Tbody>
                   </Table>

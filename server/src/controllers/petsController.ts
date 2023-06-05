@@ -21,7 +21,7 @@ const petSchema = z.object({
 export const petsController = {
 getAllPets: async (request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const pets = await prisma.pets.findMany({include: {queue: {select: { returnQueue: true, serviceQueue: true, id: true}}, customer: {select: {name: true}}}})
+    const pets = await prisma.pets.findMany({include: {queue: {select: {  id: true, queryType: true, vetPreference: true}}, customer: {select: {name: true}}}})
     return reply.send(pets)
   } catch (error) {
     reply.status(404).send(error)
@@ -35,7 +35,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
     include: {customer: 
       {select: { name: true, id: true, balance: true}}, 
       medicineRecords: {select: {petExams: true, observations: true, id: true }},
-      queue: {select: {returnQueue: true, serviceQueue: true, id: true}}
+      queue: {select: { id: true, queryType: true, vetPreference: true}}
     } })
 
     const petData = { 
@@ -122,8 +122,7 @@ createPet: async (request: FastifyRequest, reply: FastifyReply) =>{
         },
         queue: {
           create: {
-            returnQueue: false,
-            serviceQueue: false,
+            vetPreference: "",
             queryType: "",
             queueEntry: null,
           },
@@ -142,8 +141,36 @@ createPet: async (request: FastifyRequest, reply: FastifyReply) =>{
 
 petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const pets = await prisma.pets.findMany({where: {queue: {OR: [{returnQueue: true}, {serviceQueue: true}]}}, include: {queue: {select: {returnQueue: true, serviceQueue: true, queryType: true, queueEntry: true }}, customer: {select: {name: true, vetPreference: true}}}})
-    return reply.send(pets)
+    const pets = await prisma.pets.findMany({ where: {
+      queue: {petIsInQueue: true}
+    },include: {queue: {select: {vetPreference: true, queryType: true, queueEntry: true, petIsInQueue: true }}, customer: {select: {name: true, vetPreference: true, cpf: true}}}})
+
+    const totalInQueue = await prisma.queues.count({
+      where: {petIsInQueue: true}
+    })
+    const response = pets.map((pet) => {
+      let data = {
+        name: pet.name,
+        id: pet.id,
+        customerName: pet.customer.name,
+        vetPreference: pet.queue?.vetPreference,
+        codPet: pet.codPet.substring(0,6).concat("..."),
+        queueEntry: pet.queue?.queueEntry,
+        race: pet.race,
+        customerCpf: pet.customer.cpf,
+        queryType: pet.queue?.queryType,
+      }
+      return data
+    })
+
+    const data = [
+      totalInQueue,
+      ...response
+    ]
+
+
+
+    return reply.send(data)
   } catch (error) {
     reply.status(404).send(error)
   }

@@ -21,24 +21,15 @@ import { toast } from "react-toastify";
 
 
 
-interface QueueProps {
-ReturnQueue: boolean;
-ServiceQueue: boolean;
-queryType: string,
-queueEntry:string | null;
-}
-
-type Customer = {
-  name: string;
-  vetPreference: string,
-}
 interface PetsInQueue {
   id: number | string;
   name: string;
-  customer: Customer;
+  customerName: string;
   race: string;
   codPet: string;
-  queue: QueueProps,
+ queueEntry: string;
+ queryType: string;
+ vetPreference: string;
 }
 
 export function QueueSistem() {
@@ -95,13 +86,13 @@ const [petsInQueue, setPetsInQueue] = useState<PetsInQueue[]>([])
                 {
                   petsInQueue != null ? petsInQueue.map((pet) => (
                       <Tr key={pet.id}>
-                      <Td color="black">{pet.queue.queryType}</Td>  
-                      <Td>{pet.customer.name}</Td>
+                      <Td color="black">{pet.queryType}</Td>  
                       <Td>{pet.name}</Td>
+                      <Td>{pet.customerName}</Td>
                       <Td>{pet.race}</Td>
-                      <Td>{pet.queue.queueEntry ? pet.queue.queueEntry : "Sem data definida" }</Td>
-                      <Td>{pet.codPet.substring(0, 6).concat('...')}</Td>
-                      <Td>{pet.customer.vetPreference ? pet.customer.vetPreference : "Sem Preferência"}</Td>
+                      <Td>{pet.queueEntry ? pet.queueEntry : "Sem data definida" }</Td>
+                      <Td>{pet.codPet}</Td>
+                      <Td>{pet.vetPreference ? pet.vetPreference : "Sem Preferência"}</Td>
                       <Td>FILA AZUL</Td>
                     </Tr>
                     

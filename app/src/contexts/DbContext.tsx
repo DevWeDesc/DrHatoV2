@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
-import { IDBContext, AutorizationData, UserData, AutPDFProps, ExamsData, SectorData, InstructionsData, GroupsData, ProceduresData } from '../interfaces';
+import { IDBContext, AutorizationData, UserData, AutPDFProps, ExamsData, SectorData, InstructionsData, GroupsData, ProceduresData, VetData } from '../interfaces';
 import { api } from '../lib/axios';
 
 type DbContextProps = {
@@ -22,7 +22,9 @@ export function DbContextProvider ({children}: DbContextProps) {
   const [groups, setGroups] = useState<GroupsData[]>([])
   const [procedures, setProcedures] = useState<ProceduresData[]>([])
   const [instructions, setIntructions] = useState<InstructionsData[]>([])
+  const [vets, SetVetsList] = useState<VetData[]>([])
   const [refresh, setRefresh] = useState(false);
+
 
 
   
@@ -62,9 +64,14 @@ export function DbContextProvider ({children}: DbContextProps) {
         return response.data
       }
 
+      const getVetsListData =  async () => {
+        const response = await api.get('vets')
+        return response.data
+      }
+
     
-      Promise.all([getAutorizations(), getUserListData(), getExamesListData(), getSectorsListData(), getInstructionsListData(), getGroupsListData(), getProceduresListData()])
-        .then(([autorizations, userListData, exams, sectors, instructions, groups, procedures]) => {
+      Promise.all([getAutorizations(), getUserListData(), getExamesListData(), getSectorsListData(), getInstructionsListData(), getGroupsListData(), getProceduresListData(), getVetsListData()])
+        .then(([autorizations, userListData, exams, sectors, instructions, groups, procedures, vets]) => {
           setAutorization(autorizations)
           setUserListData(userListData)
           setExams(exams)
@@ -72,6 +79,7 @@ export function DbContextProvider ({children}: DbContextProps) {
           setIntructions(instructions)
           setGroups(groups)
           setProcedures(procedures)
+          SetVetsList(vets)
     
           setTimeout(()=>{
             setDbLoaded(true)
@@ -113,7 +121,8 @@ export function DbContextProvider ({children}: DbContextProps) {
         labData,
         setLabData,
         customer,
-        setCustomers
+        setCustomers,
+        vets
       }}>
           {children}
       </DbContext.Provider>

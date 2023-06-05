@@ -18,6 +18,7 @@ model User {
   username String
   password String
   crmv     Int?
+  userIsVet Boolean? @default(false)
   userType String[]
   schedule Schedule[]
 }
@@ -47,7 +48,9 @@ model Customer {
   birthday      String
   balance       Int?
   cep           String
+  kindPerson String?
   vetPreference String?
+  howKnowUs     String?
   pets          Pets[]
   transaction   Transaction[]
 }
@@ -163,9 +166,9 @@ model Queues {
   id           Int      @id @default(autoincrement())
   pet_id       Int      @unique
   queryType    String?
-  returnQueue  Boolean? @default(false)
-  serviceQueue Boolean? @default(false)
+  vetPreference String?
   queueEntry   String?
+  petIsInQueue Boolean? @default(false)
   pets         Pets     @relation(fields: [pet_id], references: [id])
 }
 

@@ -19,6 +19,7 @@ import { DbContext } from "../../contexts/DbContext";
   
   export function ReceptionConsults() {
     const {customer} = useContext(DbContext)
+    console.log(customer)
     return (
       <ChakraProvider>
   

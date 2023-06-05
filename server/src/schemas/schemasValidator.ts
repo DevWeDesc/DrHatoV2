@@ -17,13 +17,18 @@ export const CustomerSchema = z.object({
 export const createCustomer = z.object({
   name: z.string(),
   adress: z.string(),
+  district: z.string().optional(),
   phone: z.string(),
+  tell: z.string().optional(),
   cpf: z.string(),
+  rg: z.string().optional(),
   email: z.string().email(),
   birthday: z.string(),
   cep: z.string(),
   balance: z.number().optional(),
   vetPreference: z.string().optional(),
+  howKnowUs: z.string().optional(),
+  kindPerson: z.string().optional()
  })
 
 export const UserSchema = z.object({
@@ -47,10 +52,10 @@ export const BedSchema = z.object({
 })
 
 export const QueueSchema = z.object({
-  serviceQueue: z.boolean().optional().default(false),
-  returnQueue: z.boolean().optional().default(false),
+  vetPreference: z.string().optional(),
   queueEntry:  z.string().optional(),
   queryType: z.string().optional(),
+  petIsInQueue: z.boolean().optional()
 })
 
 export const ExamsType = ["lab", "image"]

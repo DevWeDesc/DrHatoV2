@@ -24,8 +24,7 @@ import { api } from "../../lib/axios";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "../../components/admin/Input";
-import { toast } from "react-toastify";
-import moment from 'moment';
+
 
 
 type Customer = {
@@ -93,24 +92,6 @@ if(PetIsInQueue.returnQueue === true || PetIsInQueue.serviceQueue === true) {
 }
  
 
-const handleSetFile: SubmitHandler<FieldValues> = async values => {
-  try {
-    const formattedData = new Date()
-    const processData = JSON.stringify(new Intl.DateTimeFormat().format(formattedData))
-
-    const data = {
-      returnQueue: values.returnQueue,
-      serviceQueue: values.serviceQueue,
-      queryType: values.queryType,
-      queueEntry: processData
-    }
-
-    await api.put(`queue/${pets.queue.id}`, data)
-    toast.success('Pet colocado na fila com sucesso!') 
-  } catch (error) {
-    toast.error('Falha ao colocar na fila')
-  }
-}
 
   return (
     <ChakraProvider>
