@@ -13,14 +13,14 @@ datasource db {
 }
 
 model User {
-  id       Int        @id @default(autoincrement())
-  name     String     @unique
-  username String
-  password String
-  crmv     Int?
-  userIsVet Boolean? @default(false)
-  userType String[]
-  schedule Schedule[]
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  username  String
+  password  String
+  crmv      Int?
+  userIsVet Boolean?   @default(false)
+  userType  String[]
+  schedule  Schedule[]
 }
 
 model Transaction {
@@ -42,13 +42,13 @@ model Customer {
   phone         String        @unique
   tell          String?
   cpf           String        @unique
-  rg            String?   
+  rg            String?
   birthDay      String?
   email         String?
   birthday      String
   balance       Int?
   cep           String
-  kindPerson String?
+  kindPerson    String?
   vetPreference String?
   howKnowUs     String?
   pets          Pets[]
@@ -61,14 +61,15 @@ model Pets {
   especie         String
   sexo            String
   race            String
-  weigth          String
-  status          String
-  corPet          String
-  sizePet         String
+  weigth          String?
+  haveChip        Boolean?
+  corPet          String?
+  sizePet         String?
   bornDate        String
-  observations    String
+  observations    String?
   customer_id     Int
   codPet          String          @unique @default(uuid())
+  isCastred       Boolean?
   rga             Int             @unique
   medicineRecords MedicineRecord?
   customer        Customer        @relation(fields: [customer_id], references: [id])
@@ -163,13 +164,13 @@ model Groups {
 }
 
 model Queues {
-  id           Int      @id @default(autoincrement())
-  pet_id       Int      @unique
-  queryType    String?
+  id            Int      @id @default(autoincrement())
+  pet_id        Int      @unique
+  queryType     String?
   vetPreference String?
-  queueEntry   String?
-  petIsInQueue Boolean? @default(false)
-  pets         Pets     @relation(fields: [pet_id], references: [id])
+  queueEntry    String?
+  petIsInQueue  Boolean? @default(false)
+  pets          Pets     @relation(fields: [pet_id], references: [id])
 }
 
 model Kennel {

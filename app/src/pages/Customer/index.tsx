@@ -34,6 +34,7 @@ import { DbContext } from "../../contexts/DbContext";
 
 
 interface CustomerProps {
+  id: string | number;
   name: string;
   adress: string;
   phone: string;
@@ -55,6 +56,7 @@ export function Customer() {
   const [queryType, setQueryType] = useState("")
   const [vetPreference, setVetPreference] = useState("")
   const [customer, setCustomer] = useState<CustomerProps>({
+    id: "",
     name: "",
     adress: "",
     email: "",
@@ -155,7 +157,7 @@ async function setPetInQueue () {
 
             <Flex  direction="column"  bgColor="gray.100" rounded={4} p="2" className="div2" align="center" textAlign="center" >
               <Text fontWeight="black" bgColor="green.100" width="500px" rounded={4}  >SELECIONE UM ANIMAL PARA CONTINUAR</Text>
-              <Button onClick={() => navigate("/Recepcao/Create")} mb="2" colorScheme="teal" height="28px">ou adicione um novo animal</Button>
+              <Button onClick={() => navigate(`/Recepcao/Consultas/Clientes/Pets/Create/${customer.id}`)} mb="2" colorScheme="teal" height="28px">ou adicione um novo animal</Button>
               <Flex overflow="auto" overflowX="auto" w="100%" height="100%">
              
                 <Table  flexDirection="column" >
