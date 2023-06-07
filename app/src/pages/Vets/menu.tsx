@@ -158,7 +158,7 @@ console.log("IN QUEUE",inQueue)
                       </Link> </Td>
                       <Td>{queue.codPet}</Td>
                       <Td>{queue.queueEntry}</Td>
-                      <Td>Empty</Td>
+                      <Td>{queue.ouor}</Td>
                       <Td>{queue.vetPreference}</Td>
                       <Td>Empty</Td>
                     </Tr>)) }

@@ -23,18 +23,10 @@ const { setCustomers, customer } = useContext(DbContext)
           `${path}?name=${values.name}`
         );
 
-     
-
-        
         setCustomers(responseName.data);
 
-
-
-        if (Object.keys(customer).length == 0) {
-          toast.error("Cliente não encontrado");
-        } else {
           toast.success("Cliente encontrado");
-        }
+       
  
       } catch (error) {
         toast.error("Cliente não encontrado");

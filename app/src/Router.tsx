@@ -43,6 +43,7 @@ import { MedicineRecords } from "./pages/Pets/medicinesRecord";
 import { WorkSpaceVet } from "./pages/Vets/workspace";
 import { SetPetExam } from "./pages/Exams/setpetexam";
 import { ShowBeds } from "./pages/Admissions/beds";
+import { EditCustomer } from "./pages/Customer/edit";
 
 export function Router() {
   return (
@@ -111,6 +112,7 @@ export function Router() {
         />
         <Route path="/Pets/MedicineRecord/:id" element={<MedicineRecords/>} />
         <Route path="/Recepcao/Create" element={<CreateCustomer />} />
+        <Route path="/Recepcao/Customer/Edit/:id" element={<EditCustomer />} />
         <Route path="/Recepcao/Finance" element={<Finance />} />
 
         <Route path="/Customer/Balance/:id" element={<BalanceHistory />} />

@@ -1,22 +1,10 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
+import { petSchema } from "../schemas/schemasValidator";
 const prisma = new PrismaClient();
 
 
-const petSchema = z.object({
-  name: z.string(),
-  especie: z.string(),
-  sexo: z.string(),
-  race: z.string(),
-  weigth: z.string(),
-  status: z.string(),
-  corPet: z.string(),
-  sizePet: z.string(),
-  bornDate: z.string(),
-  observations: z.string(),
-  rga: z.string(),
-})
 
 export const petsController = {
 getAllPets: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -35,7 +23,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
     include: {customer: 
       {select: { name: true, id: true, balance: true}}, 
       medicineRecords: {select: {petExams: true, observations: true, id: true }},
-      queue: {select: { id: true, queryType: true, vetPreference: true}}
+      queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true}}
     } })
 
     const petData = { 
@@ -46,14 +34,16 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
       especie: pet?.especie,
       sexo: pet?.sexo,
       race: pet?.race,
+      castred: pet?.isCastred,
+      chip: pet?.haveChip,
       weigth: pet?.weigth,
-      status: pet?.status,
       corPet: pet?.corPet,
       sizePet: pet?.sizePet,
       bornDate: pet?.bornDate,
       observations: pet?.observations,
       codPet: pet?.codPet,
-      rga: pet?.rga,
+      more: pet?.queue?.moreInfos,
+      ouor: pet?.queue?.queueOur,
       recordId: pet?.medicineRecords?.id,
       exams: pet?.medicineRecords?.petExams.map((exams) => {
         let examData = {
@@ -79,24 +69,18 @@ createPet: async (request: FastifyRequest, reply: FastifyReply) =>{
     sexo,
     race,
     weigth,
-    status,
+    haveChip,
+    isCastred,
     corPet,
-    sizePet,
     bornDate,
     observations,
-    rga,
-    
   } = petSchema.parse(request.body)
 
   const { id}: any = request.params
 
    try {
-    const petAlreadyExists = await prisma.pets.findFirst({ where:  {
-      OR: [
-        {name: name},
-        {rga: parseInt(rga)}
-      ]
-    }})
+    const petAlreadyExists = await prisma.pets.findFirst({ where:  {name: name}})
+
     if(petAlreadyExists) {
       reply.status(404).send('Pet already exists')
       return
@@ -109,12 +93,11 @@ createPet: async (request: FastifyRequest, reply: FastifyReply) =>{
         sexo,
         race,
         weigth,
-        status,
+        haveChip,
+        isCastred,
         corPet,
-        sizePet,
         bornDate,
         observations,
-        rga: parseInt(rga),
         customer: {
           connect: {
             id: parseInt(id)
@@ -134,8 +117,11 @@ createPet: async (request: FastifyRequest, reply: FastifyReply) =>{
         }
       }
     })
+
+   reply.status(201).send("Sucesso") 
   } catch (error) {
-    console.log(error)
+  reply.send("FALHA")
+
   }
 },
 
@@ -143,7 +129,7 @@ petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
   try {
     const pets = await prisma.pets.findMany({ where: {
       queue: {petIsInQueue: true}
-    },include: {queue: {select: {vetPreference: true, queryType: true, queueEntry: true, petIsInQueue: true }}, customer: {select: {name: true, vetPreference: true, cpf: true}}}})
+    },include: {queue: {select: {vetPreference: true, queryType: true, queueEntry: true, petIsInQueue: true, queueOur: true, moreInfos: true }}, customer: {select: {name: true, vetPreference: true, cpf: true}}}})
 
     const totalInQueue = await prisma.queues.count({
       where: {petIsInQueue: true}
@@ -156,6 +142,8 @@ petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
         vetPreference: pet.queue?.vetPreference,
         codPet: pet.codPet.substring(0,6).concat("..."),
         queueEntry: pet.queue?.queueEntry,
+        ouor: pet.queue?.queueOur,
+        more: pet.queue?.moreInfos,
         race: pet.race,
         customerCpf: pet.customer.cpf,
         queryType: pet.queue?.queryType,

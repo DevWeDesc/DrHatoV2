@@ -29,13 +29,15 @@ interface CreateNewPetProps {
     porte: string;
     sexo: string;
     rga: number;
-    haveChip: string;
+    haveChip: boolean;
+    isCastred: boolean;
     obs: string
 }
 export function CreatePetsForm() {
     const { register, handleSubmit} = useForm()
     const { id } = useParams<{ id: string }>();
-    const [raceState, setEspecie] = useState("");
+    const [especieState, setEspecie] = useState("");
+    const [raceState, setRace] = useState("");
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedMonth, setSelectedMonth] = useState('');
     const [selectSex, setSelectedSex] = useState('');
@@ -53,9 +55,9 @@ export function CreatePetsForm() {
   
    let selectRaces
     switch (true) {
-      case raceState === "Felina":
+      case especieState === "Felina":
         selectRaces = (
-          <Select borderColor="gray.900">
+          <Select  {...register("race")} name="race" borderColor="gray.900">
              <option value="Birmanês">Birmanês</option>
 <option value="Persa">Persa</option>
 <option value="British Blue">British Blue</option>
@@ -83,9 +85,9 @@ export function CreatePetsForm() {
         );
         break;
     
-      case raceState === "Canina":
+      case especieState === "Canina":
         selectRaces = (
-          <Select borderColor="gray.900">
+          <Select  {...register("race")} name="race" borderColor="gray.900">
              <option value="Pastor Suíço">Pastor Suíço</option>
 <option value="Spaniel Japonês">Spaniel Japonês</option>
 <option value="Springer Spaniel Inglês">Springer Spaniel Inglês</option>
@@ -140,9 +142,9 @@ export function CreatePetsForm() {
         );
         break;
     
-      case raceState === "Ave":
+      case especieState === "Ave":
         selectRaces = (
-          <Select borderColor="gray.900">
+          <Select  {...register("race")} name="race" borderColor="gray.900">
              <option value="Canário">Canário</option>
 <option value="Codorna">Codorna</option>
 <option value="Galo">Galo</option>
@@ -176,9 +178,9 @@ export function CreatePetsForm() {
         );
         break;
     
-      case raceState === "Roedor":
+      case especieState === "Roedor":
         selectRaces = (
-          <Select borderColor="gray.900">
+          <Select   {...register("race")} name="race" borderColor="gray.900">
              <option value="Esquilo da Mongólia">Esquilo da Mongólia</option>
               <option value="Esquilo">Esquilo</option>
               <option value="Hamster">Hamster</option>
@@ -190,17 +192,17 @@ export function CreatePetsForm() {
         );
         break;
     
-      case raceState === "Silvestre":
+      case especieState === "Silvestre":
         selectRaces = (
-          <Select borderColor="gray.900">
+          <Select   {...register("race")} name="race" borderColor="gray.900">
              <option value="Furão">Furão</option>
           </Select>
         );
         break;
     
-      case raceState === "Primata":
+      case especieState === "Primata":
         selectRaces = (
-          <Select borderColor="gray.900">
+          <Select  {...register("race")} name="race" borderColor="gray.900">
               <option value="Mico Estrela
                 ">Mico Estrela
                 </option>
@@ -211,9 +213,9 @@ export function CreatePetsForm() {
         );
         break;
     
-      case raceState === "Réptil":
+      case especieState === "Réptil":
         selectRaces = (
-          <Select borderColor="gray.900">
+          <Select  {...register("race")} name="race" borderColor="gray.900">
              <option value="Iguana">Iguana</option>
             <option value="Red Slider">Red Slider</option>
             <option value="Jibóia">Jibóia</option>
@@ -223,17 +225,17 @@ export function CreatePetsForm() {
         );
         break;
     
-      case raceState === "Quelônio":
+      case especieState === "Quelônio":
         selectRaces = (
-          <Select borderColor="gray.900">
+          <Select  {...register("race")} name="race" borderColor="gray.900">
               <option value="Tigre d'água">Tigre d'água</option>
           </Select>
         );
         break;
     
-      case raceState === "Peixe":
+      case especieState === "Peixe":
         selectRaces = (
-          <Select borderColor="gray.900">
+          <Select  {...register("race")} name="race" borderColor="gray.900">
                <option value="PEIXONAUTA">PEIXONAUTA</option>
           </Select>
         );
@@ -241,7 +243,7 @@ export function CreatePetsForm() {
     
       default:
         selectRaces = (
-          <Select borderColor="gray.900">
+          <Select onChange={(ev) => setRace(ev.target.value)}  borderColor="gray.900">
              <option value="NOTVALUE">SELECIONE A ESPECIE</option>
           </Select>
         );
@@ -250,32 +252,33 @@ export function CreatePetsForm() {
     
 
     const handleCreateNewCliente: SubmitHandler<CreateNewPetProps>  = async (values) => {
-      /*const data = {
+
+
+      let fullAge = `Anos: ${selectedYear} Meses: ${selectedMonth}`
+      const data = {
         name: values.name,
-        especie: values.especie,
-        sexo: values.sexo,
+        especie: especieState,
+        sexo: selectSex,
         race: values.race,
         weigth: values.peso,
-        status: values.status,
+        haveChip: values.haveChip,
         corPet: values.cor,
-        sizePet: values.porte,
-        bornDate: values.bornDate,
+        sizePet: "",
+        bornDate: fullAge,
         observations: values.obs,
-        rga: values.rga
+        isCastred: values.isCastred,
       }
-      */
-        
-     
+    
       try {
-      /*  await api.post(`/pets/${id}`, data)
-        toast.success('pet cadastrado com sucesso')*/
+       await api.post(`/pets/${id}`, data)
+        toast.success('pet cadastrado com sucesso')
         console.log(values.especie)
       } catch (error) {
        
         console.error(error)
         toast.error('Falha ao cadastrar pet, verifique se o mesmo ja não existe')
       }
-      console.log(values)
+      console.log(data)
     }
      return (
       <ChakraProvider>
@@ -286,6 +289,28 @@ export function CreatePetsForm() {
         <VStack pl="8">
         <FormLabel htmlFor="name">Nome do Pet</FormLabel>
         <Input {...register("name")} id="name"  maxWidth={320} name="name"  />
+
+
+        <FormLabel htmlFor="especie">Especie do PET</FormLabel>
+        <Select name="especie" onChange={(ev) => setEspecie(ev.target.value)} borderColor="gray.900" placeholder='Selecione a Especie do ANIMAL'>
+        <option value="Felina">Felina</option>
+        <option value="Canina">Canina</option>
+        <option value="Ave">Ave</option>
+        <option value="Roedor">Roedor</option>
+        <option value="Silvestre">Silvestre</option>
+        <option value="Primata">Primata</option>
+        <option value="Réptil">Réptil</option>
+        <option value="Quelônio">Quelônio</option>
+        <option value="Peixe">Peixe</option>
+
+        </Select>
+
+        <FormLabel htmlFor="race">Raça</FormLabel>
+        <>{selectRaces}</>
+
+
+        <FormLabel htmlFor="cor">Cor do pet</FormLabel>
+        <Input {...register("cor")} id="cor"  maxWidth={320} name="cor"  />
 
         <FormLabel fontWeight="bold" htmlFor="bornDate">Idade</FormLabel>
         <HStack>
@@ -307,25 +332,7 @@ export function CreatePetsForm() {
         </Select>
         </HStack>
 
-        <FormLabel htmlFor="cor">Cor do pet</FormLabel>
-        <Input {...register("cor")} id="cor"  maxWidth={320} name="cor"  />
-
-        <FormLabel htmlFor="especie">Especie do PET</FormLabel>
-        <Select name="especie" onChange={(ev) => setEspecie(ev.target.value)} borderColor="gray.900" placeholder='Selecione a Especie do ANIMAL'>
-        <option value="Felina">Felina</option>
-        <option value="Canina">Canina</option>
-        <option value="Ave">Ave</option>
-        <option value="Roedor">Roedor</option>
-        <option value="Silvestre">Silvestre</option>
-        <option value="Primata">Primata</option>
-        <option value="Réptil">Réptil</option>
-        <option value="Quelônio">Quelônio</option>
-        <option value="Peixe">Peixe</option>
-
-        </Select>
-
-        <FormLabel htmlFor="race">Raça</FormLabel>
-          <>{selectRaces}</>
+ 
         </VStack>
         <VStack pl="8">
         <FormLabel htmlFor="sexo">Sexo do Pet</FormLabel>
@@ -339,16 +346,13 @@ export function CreatePetsForm() {
 
     
         <FormLabel fontWeight="bold" htmlFor="isCastred">Animal e Castrado?</FormLabel>
-        <Checkbox borderColor="gray.900" {...register("isCastred")} id="isCastred"  maxWidth={320} name="isCastrated"  />
-
-        <FormLabel htmlFor="porte">porte do Pet</FormLabel>
-        <Input {...register("porte")} id="porte"  maxWidth={320} name="porte"  />
+        <Checkbox borderColor="gray.900" {...register("isCastred")} id="isCastred"  maxWidth={320} name="isCastred"  />
 
         <FormLabel fontWeight="bold" htmlFor="haveChip">Animal e Microchipado?</FormLabel>
         <Checkbox borderColor="gray.900" {...register("haveChip")} id="haveChip"  maxWidth={320} name="haveChip"  />
 
         <FormLabel fontWeight="bold" pt="4" htmlFor="peso">Peso</FormLabel>
-        <Input {...register("peso")} id="peso"  maxWidth={320} name="peso"  />
+        <Input {...register("peso")} id="peso"  maxWidth={320} name="peso" type="number"  />
 
         </VStack>
 

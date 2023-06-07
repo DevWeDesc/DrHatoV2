@@ -39,15 +39,16 @@ model Customer {
   name          String        @unique
   adress        String
   district      String?
+  cep           String?
+  neighbour     String?
+  state         String?
   phone         String        @unique
   tell          String?
   cpf           String        @unique
   rg            String?
-  birthDay      String?
   email         String?
   birthday      String
   balance       Int?
-  cep           String
   kindPerson    String?
   vetPreference String?
   howKnowUs     String?
@@ -64,13 +65,12 @@ model Pets {
   weigth          String?
   haveChip        Boolean?
   corPet          String?
-  sizePet         String?
+  sizePet         String?       @default("")
   bornDate        String
   observations    String?
   customer_id     Int
   codPet          String          @unique @default(uuid())
   isCastred       Boolean?
-  rga             Int             @unique
   medicineRecords MedicineRecord?
   customer        Customer        @relation(fields: [customer_id], references: [id])
   queue           Queues?
@@ -169,6 +169,8 @@ model Queues {
   queryType     String?
   vetPreference String?
   queueEntry    String?
+  queueOur      String?
+  moreInfos     String?
   petIsInQueue  Boolean? @default(false)
   pets          Pets     @relation(fields: [pet_id], references: [id])
 }

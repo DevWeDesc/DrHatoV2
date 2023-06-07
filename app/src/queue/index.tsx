@@ -90,9 +90,9 @@ const [petsInQueue, setPetsInQueue] = useState<PetsInQueue[]>([])
                       <Td>{pet.name}</Td>
                       <Td>{pet.customerName}</Td>
                       <Td>{pet.race}</Td>
-                      <Td>{pet.queueEntry ? pet.queueEntry : "Sem data definida" }</Td>
+                      <Td>{pet.queueEntry}</Td>
                       <Td>{pet.codPet}</Td>
-                      <Td>{pet.vetPreference ? pet.vetPreference : "Sem Preferência"}</Td>
+                      <Td>{pet.vetPreference}</Td>
                       <Td>FILA AZUL</Td>
                     </Tr>
                     

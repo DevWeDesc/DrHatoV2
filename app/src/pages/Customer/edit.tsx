@@ -5,10 +5,11 @@ import {
     SimpleGrid,
     ChakraProvider,
   } from "@chakra-ui/react";
+import { ReceptionEditCustomerForm } from "../../components/Forms/RecepetionEditCustomerForm";
   import { ReceptionCreateNewConsultForm } from "../../components/Forms/ReceptionCreateNewConsultForm";
   import { ReceptionSidebar } from "../../components/Sidebars/ReceptionBar";
   
-  export function CreateCustomer() {
+  export function EditCustomer() {
     return (
       <ChakraProvider>
   
@@ -24,7 +25,7 @@ import {
             >
               <Flex direction="column"  p="2" textAlign="center" bg="gray.100" borderRadius={8} w="100%" overflow="auto">
                
-                <ReceptionCreateNewConsultForm />
+                <ReceptionEditCustomerForm />
               </Flex>
             </SimpleGrid>
           </Flex>

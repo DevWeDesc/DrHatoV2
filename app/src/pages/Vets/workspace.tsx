@@ -20,6 +20,12 @@ type ExamsProps = [
     requestedData: string;
   }
 ]
+
+
+type QueueProps = {
+  moreInfos: string;
+  queueOur: string;
+}
 export interface PetProps {
   id: number
   name: string;
@@ -37,6 +43,7 @@ export interface PetProps {
   status: string;
   bornDate: string;
   exams: ExamsProps;
+  queue: QueueProps
   recordId: string | number;
 }
 
@@ -124,19 +131,15 @@ export function WorkSpaceVet() {
               }).format(pet.balance)}</Td>
               <Td>{`${pet.name}, ${pet.race}`}</Td>
               <Td>{`${pet.sexo}, ${pet.weigth}`}</Td>
-              <Td>{new Intl.DateTimeFormat("pt-BR",{
-                 hour: "2-digit",
-                 minute: "2-digit",
-                 timeZone: "America/Sao_Paulo"
-              }).format(Date.now())}</Td>
-              <Td>Sem internação</Td>
+              <Td>{pet.queue?.queueOur}</Td>
+              <Td></Td>
             </Tr> )
                }
             </Tbody>
           </Table>
           <Flex direction="column" mt="2">
             <Text fontSize="lg" m="2">Observações</Text>
-            <Textarea></Textarea>
+            <Textarea color="red.900" value={pet.queue?.moreInfos}></Textarea>
           </Flex>
         </Flex >
       </div>

@@ -14,6 +14,22 @@ export const CustomerSchema = z.object({
   transactions: z.any(),
 });
 
+
+export const petSchema = z.object({
+  name: z.string(),
+  especie: z.string(),
+  sexo: z.string(),
+  race: z.string(),
+  weigth: z.string().optional(),
+  haveChip: z.boolean().optional(),
+  isCastred: z.boolean().optional(),
+  corPet: z.string(),
+  sizePet: z.string(),
+  bornDate: z.string(),
+  observations: z.string().optional(),
+  rga: z.number().optional(),
+})
+
 export const createCustomer = z.object({
   name: z.string(),
   adress: z.string(),
@@ -28,7 +44,10 @@ export const createCustomer = z.object({
   balance: z.number().optional(),
   vetPreference: z.string().optional(),
   howKnowUs: z.string().optional(),
-  kindPerson: z.string().optional()
+  kindPerson: z.string().optional(),
+  state: z.string().optional(),
+  neighbour: z.string().optional()
+
  })
 
 export const UserSchema = z.object({
@@ -54,6 +73,8 @@ export const BedSchema = z.object({
 export const QueueSchema = z.object({
   vetPreference: z.string().optional(),
   queueEntry:  z.string().optional(),
+  queueOur: z.string().optional(),
+  moreInfos: z.string().optional(),
   queryType: z.string().optional(),
   petIsInQueue: z.boolean().optional()
 })

@@ -17,6 +17,7 @@ import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
 import { toast } from 'react-toastify'
 import { useState} from 'react'
+import { useParams } from "react-router-dom";
 interface CreateNewClienteProps {
     name: string;
     adress: string;
@@ -32,8 +33,9 @@ interface CreateNewClienteProps {
     state: string;
     neighbour: string;
 }
-export function ReceptionCreateNewConsultForm() {
+export function ReceptionEditCustomerForm() {
     const { register, handleSubmit} = useForm()
+    const { id } = useParams<{ id: string }>();
     const [howKnow, setHowKnow] = useState("")
     const [kindPerson, setKindPerson] = useState("")
     const handleCreateNewCliente: SubmitHandler<CreateNewClienteProps>  = async (values) => {
@@ -55,11 +57,11 @@ export function ReceptionCreateNewConsultForm() {
         
      }
         try {
-        await api.post('/customers', data)
-         toast.success('Usuário cadastrado')
+        await api.put(`/customer/${id}`, data)
+         toast.success('Usuário Editado com sucesso')
          console.log(data)
         } catch (error) {
-          toast.error("Falha ao cadastrar novo usuário")
+          toast.error("Falha ao editar usuário")
           console.log(error)
         }
         
@@ -218,30 +220,7 @@ export function ReceptionCreateNewConsultForm() {
         </Flex>
 
 
-        <Flex direction="column" className="COMO NOS CONHECEU">
-        <VStack>
-          <Text  color="red.400" fontWeight="bold" textAlign="center">Como nos conheceu ?</Text>
-          <RadioGroup onChange={setHowKnow} value={howKnow}>
-              <Flex direction="column" pl="8" >
-    
-              <Radio mb="2"  borderColor="teal.800"   colorScheme="green" value='Petshop'>Cliente do PETSHOP</Radio>
-              <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value='Facebook'>Facebook</Radio>
-              <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value='Fachada Hospital'>Fachada Hospital</Radio>
-              <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Indicação">Indicação de amigo</Radio>
-              <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Instragram" >Instagram</Radio>
-              <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="ClienteHato" >Já e cliente HATO</Radio>
-              <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="PlacaRua" >Placa de Rua</Radio>
-              <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="SiteBusca" >Site de Busca</Radio>
-              <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Twitter" >Twitter</Radio>
-              <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Outros" >Outros/Indicação</Radio>
- 
-              </Flex>
-          </RadioGroup>
 
-        
-        </VStack>
-
-        </Flex>
       
         
 
@@ -249,7 +228,7 @@ export function ReceptionCreateNewConsultForm() {
        
 
 
-        <Button w={300} mt="8" colorScheme="whatsapp" type="submit">Cadastrar</Button>
+        <Button w={300} mt="8" colorScheme="yellow" type="submit">EDITAR</Button>
        
         </FormControl>
       </ChakraProvider>

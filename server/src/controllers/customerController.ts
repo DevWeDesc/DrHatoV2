@@ -42,7 +42,7 @@ export const customerController = {
   createUser: async (request: FastifyRequest, reply: FastifyReply) => {
        const contract = new ValidationContract() ;
 
-       const {name, adress, district   , rg  ,phone, tell, email, cpf, birthday, balance, cep, vetPreference, howKnowUs, kindPerson} = createCustomer.parse(request.body)
+       const {name, adress, district, rg  ,phone, tell, email, cpf, birthday, balance, cep, vetPreference, howKnowUs, kindPerson, neighbour, state} = createCustomer.parse(request.body)
        try {
 
         await contract.customerAlreadyExists(cpf, 'Usuário já existe!')
@@ -53,7 +53,7 @@ export const customerController = {
         }
 
         await prisma.customer.create({
-          data: {name, adress, phone, email, cpf, birthday, balance, cep, vetPreference, district, howKnowUs, rg, tell, kindPerson }
+          data: {name, adress, phone, email, cpf, birthday, balance, cep, district, howKnowUs, rg, tell, kindPerson, neighbour, state }
         })
        } catch (error) {
         console.error(error)
