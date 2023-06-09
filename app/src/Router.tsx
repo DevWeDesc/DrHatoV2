@@ -44,6 +44,7 @@ import { WorkSpaceVet } from "./pages/Vets/workspace";
 import { SetPetExam } from "./pages/Exams/setpetexam";
 import { ShowBeds } from "./pages/Admissions/beds";
 import { EditCustomer } from "./pages/Customer/edit";
+import { ChangeConsult } from "./pages/Reception/changeConsult";
 
 export function Router() {
   return (
@@ -100,6 +101,7 @@ export function Router() {
 
         <Route path="/Recepcao" element={<Reception />} />
         <Route path="/Recepcao/Consultas" element={<ReceptionConsults />} />
+        <Route path="/Recepcao/Change" element={<ChangeConsult />} />
         <Route path="/Recepcao/Consultas/Clientes/:id" element={<Customer />} />
         <Route path="/Recepcao/Consultas/Clientes/Pets" element={<Pets />} />
         <Route
