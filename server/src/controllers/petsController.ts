@@ -151,14 +151,10 @@ petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
       return data
     })
 
-    const data = [
-      totalInQueue,
-      ...response
-    ]
 
 
 
-    return reply.send(data)
+    return reply.send({response, totalInQueue})
   } catch (error) {
     reply.status(404).send(error)
   }

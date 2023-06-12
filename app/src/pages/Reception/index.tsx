@@ -42,7 +42,10 @@ export function Reception() {
                    
                     <div className="buttonsContainer">
                       <Link to="/Recepcao/Consultas"><Button minWidth={200} colorScheme="whatsapp" >Nova Consulta</Button></Link>
-                      <Button colorScheme="whatsapp" >Alterar Consulta</Button>
+                      <Link to="/Recepcao/Change">
+                      <Button minWidth={200} colorScheme="whatsapp" >Alterar Consulta</Button>
+                      </Link>
+                    
                       <Link to="/Recepcao/Create"><Button colorScheme="whatsapp" >Cadastro de Clientes</Button></Link>
                     </div>
                   </div>
