@@ -162,6 +162,4 @@ petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
   } catch (error) {
     reply.status(404).send(error)
   }
-}
- 
-}
+}}
