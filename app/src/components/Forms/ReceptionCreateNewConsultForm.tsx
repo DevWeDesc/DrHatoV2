@@ -226,7 +226,7 @@ export function ReceptionCreateNewConsultForm() {
     
               <Radio mb="2"  borderColor="teal.800"   colorScheme="green" value='Petshop'>Cliente do PETSHOP</Radio>
               <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value='Facebook'>Facebook</Radio>
-              <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value='Fachada Hospital'>Fachada Hospital</Radio>
+              <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value='FachadaHospital'>Fachada Hospital</Radio>
               <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Indicação">Indicação de amigo</Radio>
               <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="Instragram" >Instagram</Radio>
               <Radio mb="2" borderColor="teal.800"   colorScheme="green"  value="ClienteHato" >Já e cliente HATO</Radio>

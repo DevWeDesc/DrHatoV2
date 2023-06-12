@@ -8,11 +8,12 @@ export interface UserData {
   }
   export interface VetData {
     id?: number | string; 
-    name:     String
-    crmv:     number
+    name:     String;
+    crmv:     number;
+    speciality: string;
     schedule?: []
     userType?: []
-    userIsVet?: boolean
+    userIsVet?: boolean;
   
   }
 

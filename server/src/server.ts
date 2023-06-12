@@ -14,6 +14,7 @@ import { searchsRoutes } from './routes/search.routes'
 import { queueRoutes } from './routes/queue.routes'
 import { labsRoutes } from './routes/labs.routes'
 import { admissionsRoutes } from './routes/admissions.routes'
+import { chartsRoutes } from './routes/charts.routes'
 
 const app = fastify()
 
@@ -32,6 +33,7 @@ app.register(searchsRoutes)
 app.register(queueRoutes)
 app.register(labsRoutes)
 app.register(admissionsRoutes)
+app.register(chartsRoutes)
 
 
 

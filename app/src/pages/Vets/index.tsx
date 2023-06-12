@@ -24,7 +24,7 @@ import { DbContext } from "../../contexts/DbContext";
 import { AdminContainer } from "../AdminDashboard/style";
 
 export function VetsList() {
-  const { vetList } = useContext(DbContext);
+  const { vets } = useContext(DbContext);
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -39,7 +39,7 @@ export function VetsList() {
                   Veterinários
                 </Heading>
 
-                <Link to="/Home/Vets/Create">
+                <Link to="/Vets/Create">
                   <Button
                     as="a"
                     size="sm"
@@ -63,8 +63,8 @@ export function VetsList() {
                 </Thead>
 
                 <Tbody>
-                  {vetList ? (
-                    vetList.map((vet) => (
+                  {vets ? (
+                    vets.map((vet) => (
                       <Tr key={vet.id}>
                         <Td px="6">
                           <Text fontWeight="bold" color="gray.800">
@@ -74,18 +74,18 @@ export function VetsList() {
                         <Td>
                           <Box>
                             <Text fontWeight="bold" color="gray.800">
-                              {vet.crmv}
+                              {vet.crmv ? vet.crmv : "Não informado"}
                             </Text>
                           </Box>
                         </Td>
                         <Td>
                           <Text fontWeight="bold" color="gray.800">
-                            {vet.speciality}
+                            {vet.speciality ? vet.speciality : "Não definido"}
                           </Text>
                         </Td>
 
                         <Td>
-                          <Link to={`/Home/Users/Edit/${vet.id}`}>
+                          <Link to={`/Users/Edit/${vet.id}`}>
                             <Button
                               as="a"
                               size="sm"
@@ -98,7 +98,7 @@ export function VetsList() {
                           </Link>
                         </Td>
                         <Td>
-                          <Link to={`/Home/Users/Edit/${vet.id}`}>
+                          <Link to={`/Users/Edit/${vet.id}`}>
                             <Button
                               as="a"
                               size="sm"

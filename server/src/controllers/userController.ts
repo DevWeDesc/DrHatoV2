@@ -24,7 +24,7 @@ createUser: async (request: FastifyRequest, reply: FastifyReply)=> {
 },
 
 getUsers: async (request: FastifyRequest, reply: FastifyReply)=> {
-  const perPage = 5;
+  const perPage = 10;
   const users = await prisma.user.findMany();
   const total = Math.ceil(users.length / perPage);
   //@ts-ignore
@@ -49,14 +49,15 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
 
 editUser: async (request: FastifyRequest, reply: FastifyReply) => {
   const{ id}: any = request.params
-  const { username, password, userType } = UserSchema.parse(request.body) 
+  const {name, username, password,userIsVet } = UserSchema.parse(request.body) 
   try {
      await prisma.user.update({
         where: { id: parseInt(id) },
         data: {  
+           name: name,
            username: username,
            password: password,
-           userType: userType,
+           userIsVet: userIsVet
         }
      })
      reply.status(201)

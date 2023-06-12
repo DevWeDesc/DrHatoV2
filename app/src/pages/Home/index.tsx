@@ -24,7 +24,7 @@ export function Home() {
           </div>
         </div>
         <div className="section-3">
-        <PlantVetTable />
+      {/* <PlantVetTable />*/}   
         </div>
       </HomeContainer>
     </ChakraProvider>

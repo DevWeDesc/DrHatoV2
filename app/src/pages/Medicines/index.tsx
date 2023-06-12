@@ -31,13 +31,13 @@ export function Medicines() {
                <GenericLink
                 name="Lista de Medicamentos"
                 icon={MdOutlineListAlt}
-                path="/Home/Medicines"
+                path="/Medicines"
               />
 
               <GenericLink
                 name="Incluir Medicamento"
                 icon={GiHealthIncrease}
-                path="/Home/Medicines/Create"
+                path="/Medicines/Create"
               />
 
             </GenericSidebar>

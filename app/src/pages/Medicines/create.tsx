@@ -32,13 +32,13 @@ export function CreateMedicine() {
                <GenericLink
                 name="Lista de Medicamentos"
                 icon={MdOutlineListAlt}
-                path="/Home/Medicines"
+                path="/Medicines"
               />
 
               <GenericLink
                 name="Incluir Medicamento"
                 icon={GiHealthIncrease}
-                path="/Home/Vets/Menu"
+                path="/Vets/Menu"
               />
             </GenericSidebar>
             <Flex flex="1" maxHeight={800} borderRadius={8} align="center" justify="center" bg="gray.200" p="8">

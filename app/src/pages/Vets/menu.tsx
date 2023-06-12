@@ -35,19 +35,14 @@ import { Queue } from 'phosphor-react'
 
 
 interface QueueProps {
-  id: string | number;
-  name: string;
-  customerName: string;
-  codPet: string;
-  queueEntry: string;
-  vetPreference: string;
-  customerCpf: string;
+  response: []
   totalInQueue: number;
 }
 
 export function MenuVet() {
   const [petValue, setPetValue] = useState("");
   const [inQueue, setInQueue] = useState<QueueProps[]>([])
+  const [totalInQueue, setTotalInQueue] = useState(0 as any)
   let {data} = useContext(DbContext)
   const navigate = useNavigate()
   const handleNavigateWorkSpace = () => {
@@ -61,7 +56,9 @@ export function MenuVet() {
 useEffect(() => {
  async function getQueue() {
   const response = await api.get('/pets/queue')
-  setInQueue(response.data)
+  const total = await api.get('/pets/queue')
+  setTotalInQueue(total.data)
+  setInQueue(response.data.response)
  } 
  getQueue()
 }, [inQueue.length])
@@ -84,7 +81,7 @@ console.log("IN QUEUE",inQueue)
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
                 <UniversalSearch path='queryall' />
-                <Button colorScheme="teal" onClick={() => navigate("/queue")}><>TOTAL NA FILA: {inQueue[0]}</></Button>
+                <Button colorScheme="teal" onClick={() => navigate("/Queue")}><>TOTAL NA FILA: {totalInQueue.totalInQueue}</></Button>
                 <Flex  textAlign="center" justify="center">
                   <Table colorScheme="blackAlpha">
                     <Thead>

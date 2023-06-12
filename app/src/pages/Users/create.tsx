@@ -75,7 +75,7 @@ export function CreateUser() {
 
               <Flex mt="8" justify="center">
               <HStack>
-                <Button onClick={() => navigate('/Home/Users')} colorScheme="teal">Cancelar</Button>
+                <Button onClick={() => navigate('/Users')} colorScheme="teal">Cancelar</Button>
                 <Button type="submit" colorScheme="whatsapp">Cadastrar</Button>
               </HStack>
               </Flex>

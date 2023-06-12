@@ -5,7 +5,7 @@ export const  HomeContainer = styled.div`
   display: grid; 
   
 align-items: flex-start;
-  grid-template-columns: 0.5fr 2fr 0.5fr; 
+  grid-template-columns: 0.5fr 2fr; 
   gap: 0px 0px; 
   grid-template-areas: 
     "section-1 section-2 section-3"

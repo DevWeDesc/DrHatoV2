@@ -6,17 +6,20 @@ import {
 } from "@chakra-ui/react";
 
 import { BiLeftArrowAlt  } from 'react-icons/all'
+import { useParams } from "react-router-dom";
 import { CreatePetsForm } from "../../components/Forms/CreatePetsForm";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 
 export function CreatePets() {
+
+  const { id} = useParams()
   return (
     <ChakraProvider>
       <Flex direction="column" h="100vh">
         <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
          <GenericSidebar>
-          <GenericLink name="Voltar" path="/Recepcao/Consultas/Clientes/1" icon={BiLeftArrowAlt} />
+          <GenericLink name="Voltar" path={`/Recepcao/Consultas/Clientes/${id}`} icon={BiLeftArrowAlt} />
          </GenericSidebar>
           <SimpleGrid
             flex="1"

@@ -147,6 +147,7 @@ petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
         race: pet.race,
         customerCpf: pet.customer.cpf,
         queryType: pet.queue?.queryType,
+        totalInQueue
       }
       return data
     })

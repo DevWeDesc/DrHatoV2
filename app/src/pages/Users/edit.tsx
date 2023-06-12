@@ -1,4 +1,4 @@
-import { Text, Flex, Box, SimpleGrid, ChakraProvider,  Table, Thead, Tbody, Tr, Th, Td, FormControl, Button, HStack } from '@chakra-ui/react'
+import { Text, Flex, Box, SimpleGrid, ChakraProvider,  Table, Thead, Tbody, Tr, Th, Td, FormControl, Button, HStack, Checkbox, VStack } from '@chakra-ui/react'
 import { AxiosRequestConfig } from 'axios';
 import { useState, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -22,6 +22,7 @@ interface EditUserProps {
   password: string;
   username: string;
   userType: string;
+  userIsVet: boolean
 }
 
 export function EditUser() {
@@ -45,9 +46,10 @@ export function EditUser() {
 
   const handleEditUser: SubmitHandler<EditUserProps> = async (values) => {
     const data = {
+      name: values.username,
       username: values.username,
       password: values.password,
-      userType: values.userType,
+      userIsVet: values.userIsVet
     }
     try {
       await api.put(`/users/${id}`, data)
@@ -56,6 +58,7 @@ export function EditUser() {
       toast.error('falha ao editar usuário')
     }
   }
+  
   const handleDeleteUser: SubmitHandler<EditUserProps> = async () => {
     try {
    
@@ -103,9 +106,21 @@ export function EditUser() {
                 </Table>
                   <FormControl as="form" alignItems="center">
                     <FormContainer>
+                    <Input {...register('name')} name='name' label='Novo login de usuário' />
                     <Input {...register('username')} name='username' label='Novo nome de usuário' />
                     <Input {...register('password')} name='password' label='Nova senha de usuário' />
-                    <Input {...register('userType')} name='userType' label='Tipo de Usuário' />
+    
+
+            <HStack mt="4">
+
+
+              <VStack>
+              <label htmlFor="userIsVet">USUÁRIO E VETERINÁRIO?</label>
+                    <Checkbox size="lg" colorScheme="whatsapp" borderColor="gray.900" {...register('userIsVet')} name="userIsVet" id="userIsVet" />
+              </VStack>
+               
+            </HStack>
+                    
 
                 
           

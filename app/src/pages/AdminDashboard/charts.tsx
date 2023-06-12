@@ -4,43 +4,74 @@ import { Flex } from "@chakra-ui/react"
 import Chart from 'react-apexcharts'
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
+import { useEffect, useState } from "react";
+import { api } from "../../lib/axios";
 
-const options ={
-  chart: {
-    toolbar: {
-      show: true
-    },
-    zoom: {
-      enabled: false
-    },
-    foreColor: theme.colors.gray[700],
-    dataLabels: {
-      enabled: false
-    },
-    tooltip: {
-      enabled: false
-    },
-    
-  },
-  xaxis: {
-    type: 'category',
-    categories: ['Segunda'
-    , 'Terça','Quarta','Quinta','Sexta','Sábado', 'Domingo'
-  ]
-    
-  }
 
+
+
+
+
+interface MarketingChartProps {
+  Facebook: number | 0;
+  SiteBusca: number | 0;
+  FachadaHospital: number | 0;
+  Indicação: number | 0;
+  Instragram: number | 0;
+  Petshop: number | 0;
+  ClienteHato: number | 0;
+  PlacaRua: number | 0;
+  Twitter: number | 0;
+  Outros: number | 0;
 }
 
-
-const series = [
-  {name: ['Internados'], data: [8,2,3,6,1,14,7]}
-]
-
-
-
 export function AdminCharts() {
+  const [marketing, setMarketing] = useState({} as MarketingChartProps)
+
+  const series = [
+    {name: ['Marketing'], data: [marketing.Petshop, marketing.Facebook, marketing.FachadaHospital, marketing.Indicação, marketing.Instragram, marketing.ClienteHato, marketing.PlacaRua, marketing.SiteBusca, marketing.Twitter, marketing.Outros]}
+  ]
+
+  const options ={
+    chart: {
+      toolbar: {
+        show: true
+      },
+      zoom: {
+        enabled: false
+      },
+      foreColor: theme.colors.gray[700],
+      dataLabels: {
+        enabled: false
+      },
+      tooltip: {
+        enabled: false
+      },
+      
+    },
+    xaxis: {
+      type: 'category',
+      categories: ['Petshop'
+      , 'Facebook','Fachada Hospital','Indicação Amigo','Instagram','Cliente HATO', 'Placa de Rua', 'Site de Busca', 'Twitter', 'Outros'
+    ]
+      
+    }
   
+  }
+  
+  
+  
+  useEffect(() =>{
+    async function getMarketingChart() {
+      const response = await api.get('/marketing')
+      setMarketing(response.data)
+    }
+
+    getMarketingChart()
+  },[])
+
+  console.log('RESPOSTA DO MARKETING', marketing)
+
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -53,7 +84,7 @@ export function AdminCharts() {
             <SimpleGrid 
             flex="1"
             gap="4"
-            minChildWidth="320px"
+            minChildWidth="420px"
             align="flex-start" as={Flex}
             >
               <Box 
@@ -62,20 +93,11 @@ export function AdminCharts() {
               borderRadius={8}
               >
                 <Text fontSize="lg" mb="4">
-                  Pacientes Semanal
+                  Como o cliente nos conheceu !
                 </Text>
                 <Chart options={options as any} series={series as any} type="area" height={160} />
               </Box>
-              <Box 
-              p="8"
-              bg="gray.100"
-              borderRadius={8}
-              >
-                <Text fontSize="lg" mb="4">
-                  Internações Semanal
-                </Text>
-                <Chart options={options as any} series={series as any} type="area" height={160} />
-              </Box>
+         
             </SimpleGrid>
         </Flex>
         </Flex>
