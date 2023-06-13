@@ -7,11 +7,7 @@ data.forEach((element : any) => {
     const key = element.howKnowUs;
     total[key] = (total[key] || 0) + 1;
 });
-
-console.log(total)
-
 return total;
-
 
 }
 
