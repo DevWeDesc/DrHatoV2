@@ -20,7 +20,7 @@ background-color: #eaeaea;
 `
 export const WorkSpaceContent = styled.div `
 width: 100%;
-height: 90vh;
+height: 80vh;
 display: grid;
 grid-template-columns: repeat(4, 1fr);
 grid-template-rows: repeat(4, 1fr);
@@ -34,6 +34,7 @@ grid-row-gap: 0px;
 .div1 {
   border-right: 1px solid black;
   border-bottom: 1px solid black;
+  overflow: auto;
 }
 .div2 {
   border-bottom: 1px solid black;

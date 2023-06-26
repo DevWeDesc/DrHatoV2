@@ -11,6 +11,10 @@ export const customerController = {
       const allUser = await prisma.customer.findMany({
         include: { pets: true, transaction: true},
       });
+
+      const teste = await prisma.customer.findMany({
+        where: { adress: "Rua teste"}
+      })
       return reply.send(allUser);
     } catch (error) {
       return reply.status(404).send({ message: error });

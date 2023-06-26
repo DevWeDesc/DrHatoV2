@@ -10,7 +10,7 @@ export const userController = {
 createUser: async (request: FastifyRequest, reply: FastifyReply)=> {
   const { name, username, password, userType} = UserSchema.parse(request.body)
   let contract = new ValidationContract();
-
+  
   await contract.userAlreadyExists(name, 'Usuário já existe!')
   if(contract.hadError()){
     reply.status(400).send(contract.showErrors())

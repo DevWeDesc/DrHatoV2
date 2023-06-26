@@ -15,7 +15,7 @@ export const examsController = {
 
    
 createExam: async (request: FastifyRequest, reply: FastifyReply) => {
-    const {name, price, examsType, available,applicableGender, description, subName,doneExame } = ExamSchema.parse(request.body)
+    const {name, price, examsType, available,applicableGender, description, subName, doneExame } = ExamSchema.parse(request.body)
     const contract = new ValidationContract();
     try {
         await contract.validateExamsType(examsType, "Tipo de exame não válido")

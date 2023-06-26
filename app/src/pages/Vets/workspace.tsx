@@ -1,5 +1,5 @@
 import { WorkSpaceContainer, WorkSpaceHeader, WorkSpaceContent, WorkSpaceFooter } from "./styles";
-import { Text, Button,ChakraProvider, Flex, Table, Thead, Tr, Td, Tbody, Textarea, HStack} from '@chakra-ui/react'
+import { Text, Button,ChakraProvider, Flex, Table, Thead, Tr, Td, Tbody, Textarea, HStack, VStack} from '@chakra-ui/react'
 import { AiFillMedicineBox, BiHome, MdPets, TbArrowBack, TbMedicalCrossFilled} from 'react-icons/all'
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -53,9 +53,8 @@ export function WorkSpaceVet() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate()
   const [pet, setPet] = useState({} as PetProps)
+  const [modalTwo, setModalTwoOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-
   function openModal() {
     setIsModalOpen(true)
   }
@@ -63,6 +62,12 @@ export function WorkSpaceVet() {
     setIsModalOpen(false)
   }
 
+function openModalTwo() {
+  setModalTwoOpen(true)
+}
+function closeModalTwo() {
+  setModalTwoOpen(false)
+}
 
 
   useEffect(() => {
@@ -94,13 +99,16 @@ export function WorkSpaceVet() {
           >Voltar</Button>
           </Flex>
        
-        <Flex justify="space-between" gap="2" m="2">
+        <Flex flexWrap="wrap" justify="space-between" gap="2" m="4" p="2">
         <Button height={8} colorScheme="whatsapp">FORMULÁRIOS</Button>
         <Button height={8} colorScheme="whatsapp">INSTRUÇÕES PROPRIETÁRIO</Button>
         <Button height={8} colorScheme="whatsapp">AUTORIZAÇÕES</Button>
         <Button height={8} colorScheme="whatsapp">PROTOCOLOS</Button>
         <Button height={8} colorScheme="whatsapp" onClick={() => openModal()}>EXAMES</Button>
+        <Button height={8} colorScheme="whatsapp">PROCEDIMENTOS</Button>
+        <Button height={8} colorScheme="whatsapp">VACINAS</Button>
         <Button height={8} leftIcon={<MdPets/>} colorScheme="messenger">PRONTUÁRIO DO PET</Button>
+    
         </Flex>
         
         </Flex>
@@ -109,39 +117,47 @@ export function WorkSpaceVet() {
       </WorkSpaceHeader>
       <WorkSpaceContent>
       <div className="div1">
-        <Flex m="4" gap="2"  direction="column" >
-          <Table dir="column">
-            <Thead>
-              <Tr>
-                <Td>Cliente</Td>
-                <Td>Gastos</Td>
-                <Td>Animal</Td>
-                <Td>Detalhes</Td>
-                <Td>Horário</Td>
-                <Td>Internações</Td>
-              </Tr>
-            </Thead>
-            <Tbody>
-               {
-            !pet ? (<LoadingSpinner/>): ( <Tr>
-              <Td>{pet.customerName}</Td>
-              <Td>{new Intl.NumberFormat("pt-BR",{
+        <Flex m="4" gap="2"  direction="row" >
+          <VStack>
+          <Text  fontWeight="bold"  >Cliente</Text>
+          <Text  fontWeight="bold"  >Gastos</Text>
+          <Text  fontWeight="bold"  >Animal</Text>
+          <Text  fontWeight="bold"  >Horário</Text>
+          <Text  fontWeight="bold"  >Internações</Text>
+          <Text  fontWeight="bold"  >Plano de Saúde</Text>
+          </VStack>
+        <VStack>
+          <Text border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100">{pet.customerName}</Text>
+          <Text
+          border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
+          >{new Intl.NumberFormat("pt-BR",{
                 currency: "BRL",
                 style: "currency"
-              }).format(pet.balance)}</Td>
-              <Td>{`${pet.name}, ${pet.race}`}</Td>
-              <Td>{`${pet.sexo}, ${pet.weigth}`}</Td>
-              <Td>{pet.queue?.queueOur}</Td>
-              <Td></Td>
-            </Tr> )
-               }
-            </Tbody>
-          </Table>
-          <Flex direction="column" mt="2">
+              }).format(pet.balance)}</Text>
+              <Text
+              border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
+              >
+              {`${pet.name}, ${pet.race}`}
+              </Text>
+
+              <Text
+              border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
+              >
+              {`${pet.sexo}, ${pet.weigth}`}
+              </Text>
+              <Text
+              border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
+              >{pet.queue?.queueOur}</Text>
+              <Text
+              border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
+              >NÃO POSSUI</Text>
+        </VStack>
+       
+        </Flex >
+        <Flex direction="column" m="4">
             <Text fontSize="lg" m="2">Observações</Text>
             <Textarea color="red.900" value={pet.queue?.moreInfos}></Textarea>
           </Flex>
-        </Flex >
       </div>
         <Flex direction="column" className="div2">
           <Flex backgroundColor="cyan.100" w="100%" h="48px" direction="row" align="center" justify="center">
@@ -208,8 +224,8 @@ export function WorkSpaceVet() {
       <Flex justify="space-evenly" align="center" width="100%" height="100%">
 
       <Button colorScheme="teal">Imprimir Receita</Button>
-        <Button colorScheme="linkedin">Imprimir Raio-X</Button>
-        <Button colorScheme="orange">Imprimir Solicitação Exames</Button>
+        <Button colorScheme="whatsapp">Imprimir Raio-X</Button>
+        <Button colorScheme="whatsapp">Imprimir Solicitação Exames</Button>
         <Button colorScheme="red">Gravar Alterações</Button>
 
       </Flex>
