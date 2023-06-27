@@ -30,6 +30,7 @@ import { toast } from 'react-toastify'
 import { LoadingSpinner } from '../../components/Loading'
 import { api } from '../../lib/axios'
 import { Queue } from 'phosphor-react'
+import { VetsSearch } from '../../components/Search/vetsSearch'
 
 
 
@@ -80,7 +81,7 @@ console.log("IN QUEUE",inQueue)
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
-                <UniversalSearch path='queryall' />
+               <VetsSearch path='queryall' />
                 <Button colorScheme="teal" onClick={() => navigate("/Queue")}><>TOTAL NA FILA: {totalInQueue.totalInQueue}</></Button>
                 <Flex  textAlign="center" justify="center">
                   <Table colorScheme="blackAlpha">
