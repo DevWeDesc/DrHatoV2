@@ -54,14 +54,6 @@ export function WorkSpaceVet() {
   const navigate = useNavigate()
   const [pet, setPet] = useState({} as PetProps)
   const [modalTwo, setModalTwoOpen] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  function openModal() {
-    setIsModalOpen(true)
-  }
-  function closeModal() {
-    setIsModalOpen(false)
-  }
-
 function openModalTwo() {
   setModalTwoOpen(true)
 }
@@ -104,10 +96,10 @@ function closeModalTwo() {
         <Button height={8} colorScheme="whatsapp">INSTRUÇÕES PROPRIETÁRIO</Button>
         <Button height={8} colorScheme="whatsapp">AUTORIZAÇÕES</Button>
         <Button height={8} colorScheme="whatsapp">PROTOCOLOS</Button>
-        <Button height={8} colorScheme="whatsapp" onClick={() => openModal()}>EXAMES</Button>
-        <Button height={8} colorScheme="whatsapp">PROCEDIMENTOS</Button>
+        <Button height={8} colorScheme="whatsapp" onClick={() => navigate(`/WorkSpace/Exam/${id}`)}>EXAMES</Button>
+        <Button height={8} colorScheme="whatsapp" onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}>PROCEDIMENTOS</Button>
         <Button height={8} colorScheme="whatsapp">VACINAS</Button>
-        <Button height={8} leftIcon={<MdPets/>} colorScheme="messenger">PRONTUÁRIO DO PET</Button>
+        <Button height={8} leftIcon={<MdPets/>} colorScheme="messenger" onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}>PRONTUÁRIO DO PET</Button>
     
         </Flex>
         
@@ -117,16 +109,16 @@ function closeModalTwo() {
       </WorkSpaceHeader>
       <WorkSpaceContent>
       <div className="div1">
-        <Flex m="4" gap="2"  direction="row" >
-          <VStack>
+        <Flex m="4" gap="4" justify="space-evenly" direction="row" align="center" >
+          <Flex gap={2}direction="column" align="center">
           <Text  fontWeight="bold"  >Cliente</Text>
           <Text  fontWeight="bold"  >Gastos</Text>
           <Text  fontWeight="bold"  >Animal</Text>
           <Text  fontWeight="bold"  >Horário</Text>
           <Text  fontWeight="bold"  >Internações</Text>
           <Text  fontWeight="bold"  >Plano de Saúde</Text>
-          </VStack>
-        <VStack>
+          </Flex> 
+        <Flex direction="column" gap={2} align="center">
           <Text border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100">{pet.customerName}</Text>
           <Text
           border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
@@ -137,21 +129,21 @@ function closeModalTwo() {
               <Text
               border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
               >
-              {`${pet.name}, ${pet.race}`}
-              </Text>
-
-              <Text
-              border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
-              >
-              {`${pet.sexo}, ${pet.weigth}`}
+              {`${pet.name}, Raça:${pet.race}`}, {`${pet.sexo}, Peso:${pet.weigth}Kg`}
               </Text>
               <Text
               border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
               >{pet.queue?.queueOur}</Text>
               <Text
               border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
+              >
+                  Animal não se encontra internado
+              </Text>
+      
+              <Text
+              border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
               >NÃO POSSUI</Text>
-        </VStack>
+        </Flex>
        
         </Flex >
         <Flex direction="column" m="4">
@@ -223,15 +215,13 @@ function closeModalTwo() {
       <WorkSpaceFooter>
       <Flex justify="space-evenly" align="center" width="100%" height="100%">
 
-      <Button colorScheme="teal">Imprimir Receita</Button>
+      <Button colorScheme="whatsapp">Imprimir Receita</Button>
         <Button colorScheme="whatsapp">Imprimir Raio-X</Button>
         <Button colorScheme="whatsapp">Imprimir Solicitação Exames</Button>
         <Button colorScheme="red">Gravar Alterações</Button>
 
       </Flex>
-       <GenericModal isOpen={isModalOpen} onRequestClose={closeModal} >
-        <SetExamForm recordId={pet.recordId}/>
-       </GenericModal>
+     
       </WorkSpaceFooter>
     </WorkSpaceContainer>
     </ChakraProvider>
