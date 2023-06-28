@@ -70,7 +70,6 @@ export interface PetProps {
 
 export function WorkSpaceVet() {
   const { id } = useParams<{ id: string }>();
-<<<<<<< HEAD
   const navigate = useNavigate();
   const [pet, setPet] = useState({} as PetProps);
   const [modalTwo, setModalTwoOpen] = useState(false);
@@ -88,18 +87,6 @@ export function WorkSpaceVet() {
   function closeModalTwo() {
     setModalTwoOpen(false);
   }
-=======
-  const navigate = useNavigate()
-  const [pet, setPet] = useState({} as PetProps)
-  const [modalTwo, setModalTwoOpen] = useState(false)
-function openModalTwo() {
-  setModalTwoOpen(true)
-}
-function closeModalTwo() {
-  setModalTwoOpen(false)
-}
-
->>>>>>> 8603fe574e07800f2a994edb2456e06f277671d2
 
   useEffect(() => {
     async function getPetDetails() {
@@ -114,7 +101,6 @@ function closeModalTwo() {
 
   return (
     <ChakraProvider>
-<<<<<<< HEAD
       <WorkSpaceContainer>
         <WorkSpaceHeader>
           <Flex
@@ -122,91 +108,6 @@ function closeModalTwo() {
             align="center"
             width="100%"
             height="100%"
-=======
-       <WorkSpaceContainer>
-      <WorkSpaceHeader>
-        <Flex justify="space-between" align="center" width="100%" height="100%">
-          <Flex align="center" gap="2" >
-          <Text m="2" fontSize="2xl" fontWeight="bold">WorkSpace Veterinário</Text>
-          <Button colorScheme="teal" leftIcon={<BiHome size={24}/>}
-          onClick={() => navigate('/Home')}
-          >Home</Button>
-
-          <Button colorScheme="yellow" leftIcon={<TbArrowBack size={24}/>}
-          onClick={() => navigate('/Vets/Menu')}
-          >Voltar</Button>
-          </Flex>
-       
-        <Flex flexWrap="wrap" justify="space-between" gap="2" m="4" p="2">
-        <Button height={8} colorScheme="whatsapp">FORMULÁRIOS</Button>
-        <Button height={8} colorScheme="whatsapp">INSTRUÇÕES PROPRIETÁRIO</Button>
-        <Button height={8} colorScheme="whatsapp">AUTORIZAÇÕES</Button>
-        <Button height={8} colorScheme="whatsapp">PROTOCOLOS</Button>
-        <Button height={8} colorScheme="whatsapp" onClick={() => navigate(`/WorkSpace/Exam/${id}`)}>EXAMES</Button>
-        <Button height={8} colorScheme="whatsapp" onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}>PROCEDIMENTOS</Button>
-        <Button height={8} colorScheme="whatsapp">VACINAS</Button>
-        <Button height={8} leftIcon={<MdPets/>} colorScheme="messenger" onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}>PRONTUÁRIO DO PET</Button>
-    
-        </Flex>
-        
-        </Flex>
-       
-
-      </WorkSpaceHeader>
-      <WorkSpaceContent>
-      <div className="div1">
-        <Flex m="4" gap="4" justify="space-evenly" direction="row" align="center" >
-          <Flex gap={2}direction="column" align="center">
-          <Text  fontWeight="bold"  >Cliente</Text>
-          <Text  fontWeight="bold"  >Gastos</Text>
-          <Text  fontWeight="bold"  >Animal</Text>
-          <Text  fontWeight="bold"  >Horário</Text>
-          <Text  fontWeight="bold"  >Internações</Text>
-          <Text  fontWeight="bold"  >Plano de Saúde</Text>
-          </Flex> 
-        <Flex direction="column" gap={2} align="center">
-          <Text border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100">{pet.customerName}</Text>
-          <Text
-          border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
-          >{new Intl.NumberFormat("pt-BR",{
-                currency: "BRL",
-                style: "currency"
-              }).format(pet.balance)}</Text>
-              <Text
-              border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
-              >
-              {`${pet.name}, Raça:${pet.race}`}, {`${pet.sexo}, Peso:${pet.weigth}Kg`}
-              </Text>
-              <Text
-              border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
-              >{pet.queue?.queueOur}</Text>
-              <Text
-              border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
-              >
-                  Animal não se encontra internado
-              </Text>
-      
-              <Text
-              border="1px" width="400px" rounded="4px"  fontWeight="bold" textAlign="center" bgColor="gray.100"
-              >NÃO POSSUI</Text>
-        </Flex>
-       
-        </Flex >
-        <Flex direction="column" m="4">
-            <Text fontSize="lg" m="2">Observações</Text>
-            <Textarea color="red.900" value={pet.queue?.moreInfos}></Textarea>
-          </Flex>
-      </div>
-        <Flex direction="column" className="div2">
-          <Flex backgroundColor="cyan.100" w="100%" h="48px" direction="row" align="center" justify="center">
-            <Text mr="1">Exames - </Text>
-            <Text mr="2" color="red">Vermelho: Por fazer  </Text>
-            /
-            <Text ml="2" color="green">Verde: pronto</Text>
-          </Flex >
-        
-          <Flex m="2" direction="column" gap="2" overflow="auto"
->>>>>>> 8603fe574e07800f2a994edb2456e06f277671d2
           >
             <Flex align="center" gap="2">
               <Text m="2" fontSize="2xl" fontWeight="bold">
@@ -468,30 +369,11 @@ function closeModalTwo() {
             <Button colorScheme="whatsapp">Imprimir Solicitação Exames</Button>
             <Button colorScheme="red">Gravar Alterações</Button>
           </Flex>
-<<<<<<< HEAD
           <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
             <SetExamForm recordId={pet.recordId} />
           </GenericModal>
         </WorkSpaceFooter>
       </WorkSpaceContainer>
-=======
-
-       </div>
-
-      </WorkSpaceContent>
-      <WorkSpaceFooter>
-      <Flex justify="space-evenly" align="center" width="100%" height="100%">
-
-      <Button colorScheme="whatsapp">Imprimir Receita</Button>
-        <Button colorScheme="whatsapp">Imprimir Raio-X</Button>
-        <Button colorScheme="whatsapp">Imprimir Solicitação Exames</Button>
-        <Button colorScheme="red">Gravar Alterações</Button>
-
-      </Flex>
-     
-      </WorkSpaceFooter>
-    </WorkSpaceContainer>
->>>>>>> 8603fe574e07800f2a994edb2456e06f277671d2
     </ChakraProvider>
   );
 }
