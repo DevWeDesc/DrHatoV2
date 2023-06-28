@@ -45,6 +45,8 @@ import { SetPetExam } from "./pages/Exams/setpetexam";
 import { ShowBeds } from "./pages/Admissions/beds";
 import { EditCustomer } from "./pages/Customer/edit";
 import { ChangeConsult } from "./pages/Reception/changeConsult";
+import { VetExams } from "./pages/Vets/WorkSpaceVets/exams";
+import { ProceduresVet } from "./pages/Vets/WorkSpaceVets/procedures";
 
 export function Router() {
   return (
@@ -83,6 +85,11 @@ export function Router() {
         <Route path="/Vets/Menu" element={<MenuVet />} />
         <Route path="/Vets/Create" element={<CreateVet />} />
         <Route path="/Vets/WorkSpace/:id" element={<WorkSpaceVet />} />
+
+         {/* VETS WORKSPACE PATHS */}
+        <Route path="/WorkSpace/Exam/:id" element={<VetExams/>} />
+        <Route path="/WorkSpace/Procedures/:id" element={<ProceduresVet/>} />
+        {/* VETS WORKSPACE PATHS END */}
 
         <Route path="/Labs"  element={<LabMenu />} />
         <Route path="/Labs/Exames" element={<LabExames />} />
