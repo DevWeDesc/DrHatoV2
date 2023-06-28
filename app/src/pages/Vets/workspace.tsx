@@ -72,7 +72,6 @@ export function WorkSpaceVet() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [pet, setPet] = useState({} as PetProps);
-  const [modalTwo, setModalTwoOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   function openModal() {
     setIsModalOpen(true);
@@ -81,12 +80,6 @@ export function WorkSpaceVet() {
     setIsModalOpen(false);
   }
 
-  function openModalTwo() {
-    setModalTwoOpen(true);
-  }
-  function closeModalTwo() {
-    setModalTwoOpen(false);
-  }
 
   useEffect(() => {
     async function getPetDetails() {
@@ -146,17 +139,19 @@ export function WorkSpaceVet() {
               <Button
                 height={8}
                 colorScheme="whatsapp"
-                onClick={() => openModal()}
+                onClick={() => navigate(`/WorkSpace/Exam/${id}`)}
               >
                 EXAMES
               </Button>
-              <Button height={8} colorScheme="whatsapp">
+              <Button
+                  onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}
+              height={8} colorScheme="whatsapp">
                 PROCEDIMENTOS
               </Button>
               <Button height={8} colorScheme="whatsapp">
                 VACINAS
               </Button>
-              <Button height={8} leftIcon={<MdPets />} colorScheme="messenger">
+              <Button height={8} onClick={() => navigate(`/Pets/MedicineRecord/${id}`)} leftIcon={<MdPets />} colorScheme="messenger">
                 PRONTUÁRIO DO PET
               </Button>
             </Flex>
@@ -369,9 +364,6 @@ export function WorkSpaceVet() {
             <Button colorScheme="whatsapp">Imprimir Solicitação Exames</Button>
             <Button colorScheme="red">Gravar Alterações</Button>
           </Flex>
-          <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-            <SetExamForm recordId={pet.recordId} />
-          </GenericModal>
         </WorkSpaceFooter>
       </WorkSpaceContainer>
     </ChakraProvider>
