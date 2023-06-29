@@ -125,19 +125,32 @@ export function MedicineRecords() {
      
         <Flex width="600px" direction="column" className="one" >
 
-         <Flex height="50%" w="100%" textAlign="center">
+         <Flex height="50%" w="100%" textAlign="center" direction="column">
           <Flex w="100%" height="38px" bgColor="gray.100" align="center" justify="center">
           <Text fontWeight="bold" >VACINAS</Text>
           </Flex>
-            
+          <Flex w="100%" height="38px" bgColor="gray.200" gap={2} align="center" justify="space-evenly">
+          <Text fontWeight="bold" >TIPOS</Text>
+          <Text fontWeight="bold" >DATA</Text>
+          </Flex>
+            <Flex direction="row" w="100%" h="100%" overflowY="auto">
+              <Flex w="100%" h="38px" bgColor="cyan.100" align="center"  border="2px" justify="space-evenly">
+              <Text fontWeight="bold" >Anti Rabica</Text>
+             <Text fontWeight="bold" >11/04/22</Text>
+              </Flex>
+         
+            </Flex>
          </Flex >
 
 
-         <Flex height="50%" w="100%" textAlign="center">
+         <Flex direction="column" height="50%" w="100%" textAlign="center">
           <Flex w="100%" height="38px" bgColor="gray.100" align="center" justify="center">
           <Text fontWeight="bold" >CIRURGIAS</Text>
           </Flex>
-            
+          <Flex w="100%" height="38px" bgColor="gray.200" gap={2} align="center" justify="space-evenly">
+          <Text fontWeight="bold" >TIPOS</Text>
+          <Text fontWeight="bold" >DATA</Text>
+          </Flex>
          </Flex >
 
      
@@ -146,17 +159,30 @@ export function MedicineRecords() {
 
 
         <Flex ml="1" width="600px" direction="column"  className="two">
-          <Flex height="50%" w="100%" textAlign="center">
+          <Flex height="50%" w="100%" textAlign="center" direction="column">
           <Flex w="100%" height="38px" bgColor="gray.100" align="center" justify="center">
           <Text fontWeight="bold" >EXAMES</Text>
           </Flex>
-            
+          <Flex w="100%" height="38px" bgColor="gray.200" gap={2} align="center" justify="space-evenly">
+          <Text fontWeight="bold" >TIPOS</Text>
+          <Text fontWeight="bold" >DATA</Text>
+          </Flex>
+          <Flex height="100%" width="100%" overflowY="auto">
+
+          </Flex>
+          <Flex w="100%" height="38px" bgColor="gray.100" gap={2} align="center" justify="space-evenly">
+          <Text fontWeight="bold" color="red">Vermelhos/Por Fazer</Text>
+          <Text fontWeight="bold" color="green" >Verde/Pronto</Text>
+          </Flex>
          </Flex >
-         <Flex height="50%" w="100%" textAlign="center">
+         <Flex height="50%" w="100%" textAlign="center" direction="column">
           <Flex w="100%" height="38px" bgColor="gray.100" align="center" justify="center">
           <Text fontWeight="bold" >INTERNAÇÕES</Text>
           </Flex>
-            
+          <Flex w="100%" height="38px" bgColor="gray.200" gap={2} align="center" justify="space-evenly">
+          <Text fontWeight="bold" >TIPOS</Text>
+          <Text fontWeight="bold" >DATA</Text>
+          </Flex>
          </Flex >
         </Flex>
 

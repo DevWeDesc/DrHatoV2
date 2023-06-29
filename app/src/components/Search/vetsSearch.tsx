@@ -17,7 +17,6 @@ const { setData } = useContext(DbContext)
  
     const {register, handleSubmit} = useForm()
 
-    /*
   const handleSearch: SubmitHandler<any> = async (values) => {
     if (values.name) {
       try {
@@ -55,11 +54,10 @@ const { setData } = useContext(DbContext)
       }
     }
   };
-*/
   return (
     <ChakraProvider>
         <Flex direction="row" gap="4">
-        <FormControl as="form" >
+        <FormControl as="form" onSubmit={handleSubmit(handleSearch)}>
           <VStack>
 
             <HStack >
