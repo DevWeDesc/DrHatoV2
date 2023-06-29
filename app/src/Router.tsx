@@ -47,16 +47,15 @@ import { EditCustomer } from "./pages/Customer/edit";
 import { ChangeConsult } from "./pages/Reception/changeConsult";
 import { VetExams } from "./pages/Vets/WorkSpaceVets/exams";
 import { ProceduresVet } from "./pages/Vets/WorkSpaceVets/procedures";
-
+import { DataExames } from "./pages/Labs/dataExames";
 export function Router() {
   return (
     <Routes>
-        <Route path="/" element={<Login />} />
-        <Route element={<DefaultLayout />}>
+      <Route path="/" element={<Login />} />
+      <Route element={<DefaultLayout />}>
         <Route path="/Home" element={<Home />} />
 
         <Route path="/Queue" element={<QueueSistem />} />
-
 
         <Route path="/Admin" element={<AdminMain />} />
         <Route path="/Admin/Charts" element={<AdminCharts />} />
@@ -65,15 +64,14 @@ export function Router() {
           path="/Admin/Autorizations/:id"
           element={<AutorizationsEdit />}
         />
-         <Route path="/Admin/Exams" element={<ExamesList />} />
-         <Route path="/Admin/Exams/:id" element={<ExamsEdit />} />
-         <Route path="/Admin/Exams/Details/:id" element={<ExamDetail />} />
-         <Route path="/Admin/Sectors" element={<SectorsList />} />
-         <Route path="/Admin/Instructions" element={<InstructionsList />} />
-         <Route path="/Admin/Procedures" element={<ProceduresList />} />
-         <Route path="/Admin/Procedures/Create" element={<ProcedureCreate />} />
-         <Route path="/Admin/Procedures/Edit/:id" element={<ProcedureEdit />} />
-
+        <Route path="/Admin/Exams" element={<ExamesList />} />
+        <Route path="/Admin/Exams/:id" element={<ExamsEdit />} />
+        <Route path="/Admin/Exams/Details/:id" element={<ExamDetail />} />
+        <Route path="/Admin/Sectors" element={<SectorsList />} />
+        <Route path="/Admin/Instructions" element={<InstructionsList />} />
+        <Route path="/Admin/Procedures" element={<ProceduresList />} />
+        <Route path="/Admin/Procedures/Create" element={<ProcedureCreate />} />
+        <Route path="/Admin/Procedures/Edit/:id" element={<ProcedureEdit />} />
 
         <Route path="/Autorizations" element={<GenerateAutorizations />} />
 
@@ -86,16 +84,16 @@ export function Router() {
         <Route path="/Vets/Create" element={<CreateVet />} />
         <Route path="/Vets/WorkSpace/:id" element={<WorkSpaceVet />} />
 
-         {/* VETS WORKSPACE PATHS */}
-        <Route path="/WorkSpace/Exam/:id" element={<VetExams/>} />
-        <Route path="/WorkSpace/Procedures/:id" element={<ProceduresVet/>} />
+        {/* VETS WORKSPACE PATHS */}
+        <Route path="/WorkSpace/Exam/:id" element={<VetExams />} />
+        <Route path="/WorkSpace/Procedures/:id" element={<ProceduresVet />} />
         {/* VETS WORKSPACE PATHS END */}
 
-        <Route path="/Labs"  element={<LabMenu />} />
+        <Route path="/Labs" element={<LabMenu />} />
         <Route path="/Labs/Exames" element={<LabExames />} />
+        <Route path="/Labs/Exames/:id" element={<DataExames />} />
         <Route path="/Labs/Imagens" element={<LabImagens />} />
-        <Route path="/Labs/Set/:id"  element={<SetPetExam />} />
-
+        <Route path="/Labs/Set/:id" element={<SetPetExam />} />
 
         <Route path="/Schedule" element={<Schedules />} />
         <Route path="/Schedule/Menu" element={<ScheduleMenu />} />
@@ -119,7 +117,7 @@ export function Router() {
           path="/Recepcao/Consultas/Clientes/Pets/Details/:id"
           element={<DetailsPets />}
         />
-        <Route path="/Pets/MedicineRecord/:id" element={<MedicineRecords/>} />
+        <Route path="/Pets/MedicineRecord/:id" element={<MedicineRecords />} />
         <Route path="/Recepcao/Create" element={<CreateCustomer />} />
         <Route path="/Recepcao/Customer/Edit/:id" element={<EditCustomer />} />
         <Route path="/Recepcao/Finance" element={<Finance />} />
