@@ -3,8 +3,6 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { z } from "zod";
 const prisma = new PrismaClient();
 
-
-
 export const searchController = {
  getAll: async (request: FastifyRequest<{
     Querystring: { name?: string; cpf?: string; adress?: string };
@@ -35,56 +33,65 @@ export const searchController = {
   },
 
 
-  vetsBigSearchs: async(request: FastifyRequest,  reply: FastifyReply) => {
-    const vetsSearchSchema = z.object({
-      initialData: z.string().optional(),
-      finalData: z.string().optional(),
-      isFinished: z.boolean().optional(),
-      isHospitalized: z.boolean().optional(),
-      codPet: z.string().optional(),
-      name: z.string().optional(),
-      petName: z.string().optional(),
-    })
-    const { initialData, finalData,codPet, isFinished, isHospitalized, name, petName} = vetsSearchSchema.parse(request.body)
-    try {
-      let response;
-      if(initialData && finalData) {
-        response = await prisma.customer.findMany({
-          where: {
-            OR: [
-              {pets: {some: {queue: {queueEntry: {startsWith: initialData} || {endsWith: finalData}}}}}
-            ]
-          }, include: {pets: {select: {queue: true}}}
-        })
-      } else if (isFinished === true || isHospitalized === true) {
-        response = await prisma.bed.findMany({
-          where: {
-            OR: [
-              {isBusy: isHospitalized}
-            ]
-          }, include: {pet: {select: {queue: true}}}
-        })
-      } else {
-        response = await prisma.customer.findMany({
-          where: {
-            OR: [
-              {name: {startsWith: name} },
-              {pets: {none: {name: {startsWith: petName}}}},
-              {pets: {none: {codPet: {startsWith: codPet}}}}
-            ]
+  vetsBigSearchs: async(request: FastifyRequest<{Querystring: {initialData?: string, finalData?: string,
+    codPet?: string, isHospitalized?: string, name?: string, petName?: string}}>,  reply: FastifyReply) => {
+      try {
+        const initialData = request.query.initialData ? request.query.initialData : "";
+        const finalData = request.query.finalData ? request.query.finalData : "";
+        const codPet = request.query.codPet ? request.query.codPet : "";
+        const name = request.query.name ? request.query.name : "";
+        const petName = request.query.petName ? request.query.petName : "";
+        const isHospitalized = request.query.isHospitalized ? request.query.isHospitalized : "";
+        let response;
+        switch(true) {
+          case !!name: 
+          response = await prisma.customer.findMany({ 
+              where: {name: { startsWith: name}},
+              include: {
+                pets: {include: {queue: true}},
+              },
+            })
+          break;
+          case !!petName: 
+          response = await prisma.pets.findMany({
+            where: {name: {startsWith: petName} }, include: {customer: {select: {name: true}}},  
+          })
+          break;
+          case !!codPet: 
+          response = await prisma.customer.findFirst({
+           where: {pets: {some: {codPet: {startsWith: codPet}}}}, include: {
+            pets: {include: {queue: true}},
           },
-          include: { pets: {select: {queue: true}}}
-        })
-      }
-
-
+          })
+          break;
+          case !!initialData && !!finalData: 
+          response = await prisma.customer.findMany({
+            where: {pets: {some: {queue: {queueEntry: { gte: initialData, lte: finalData}}}}},include: {pets: {select: {name: true, queue: {select: {queueEntry: true}}  }}}
+          })
+          break;
+          case !!initialData: 
+          response = await prisma.customer.findMany({
+           where: {pets: {some: {queue: {queueEntry : { startsWith: initialData }}}}},include: {pets: {select: {name: true, queue: {select: {queueEntry: true}} }}} 
+          })
+          break;
+          case !!finalData: 
+          response = await prisma.customer.findMany({
+           where: {pets: {some: {queue: {queueEntry: { startsWith: finalData}}}}},include: {pets: {select: {name: true, queue: {select: {queueEntry: true}}  }}}
+          })
+          break;
+      
+          case !!isHospitalized: 
+          response = await prisma.customer.findMany({
+            where: {pets: {some: {bed: { isBusy: true}}}},include: {pets: {select: {name: true, }}}
+          })
+          break;
+          default: 
+          response = await prisma.customer.findMany({include: {pets: {select: {queue: true}}}})
+        }
         reply.send(response).status(200)
     } catch (error) {
       reply.status(400).send({ message: error})
+      console.log()
       console.log(error)
     }
-  }
-
-
-
-}
+  }}

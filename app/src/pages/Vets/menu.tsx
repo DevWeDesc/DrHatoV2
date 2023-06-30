@@ -81,7 +81,7 @@ console.log("IN QUEUE",inQueue)
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
-               <VetsSearch path='queryall' />
+               <VetsSearch path='filtredquery' />
                 <Button colorScheme="teal" onClick={() => navigate("/Queue")}><>TOTAL NA FILA: {totalInQueue.totalInQueue}</></Button>
                 <Flex  textAlign="center" justify="center">
                   <Table colorScheme="blackAlpha">
@@ -100,7 +100,7 @@ console.log("IN QUEUE",inQueue)
 
                     <Tbody>
                       
-                    {  Object.keys(data).length >= 1 ? data.map((user: any) => (
+                    { data >= 1 ? data.map((user: any) => (
                       <Tr key={user.id}>
                           <Td>{user.cpf}</Td>
                           
