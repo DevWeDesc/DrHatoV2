@@ -25,7 +25,7 @@ import {
   TbArrowBack,
   TbMedicalCrossFilled,
 } from "react-icons/all";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { LoadingSpinner } from "../../components/Loading";
@@ -80,7 +80,6 @@ export function WorkSpaceVet() {
     setIsModalOpen(false);
   }
 
-
   useEffect(() => {
     async function getPetDetails() {
       const response = await api.get(`/pets/${id}`);
@@ -125,10 +124,19 @@ export function WorkSpaceVet() {
 
             <Flex flexWrap="wrap" justify="flex-start" gap="2" m="4" p="2">
               <Button onClick={() => openModal()} height={8} colorScheme="whatsapp">
+
+            <Flex flexWrap="wrap" justify="space-between" gap="2" m="4" p="2">
+              <Button
+                onClick={() => openModal()}
+                height={8}
+                colorScheme="whatsapp"
+              
                 FORMULÁRIOS
               </Button>
               <Button height={8} colorScheme="whatsapp">
-                INSTRUÇÕES PROPRIETÁRIO
+                <Link to={`/WorkSpace/instructions/${id}`}>
+                  INSTRUÇÕES PROPRIETÁRIO
+                </Link>
               </Button>
               <Button height={8} colorScheme="whatsapp">
                 AUTORIZAÇÕES
@@ -144,13 +152,20 @@ export function WorkSpaceVet() {
                 EXAMES
               </Button>
               <Button
-                  onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}
-              height={8} colorScheme="whatsapp">
+                onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}
+                height={8}
+                colorScheme="whatsapp"
+              >
                 PROCEDIMENTOS
               </Button>
-              <Button height={8} colorScheme="whatsapp" onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)} >
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)}
+              >
                 VACINAS
               </Button>
+
               <Button height={8} colorScheme="whatsapp">
                 CIRURGIAS
               </Button>
@@ -159,6 +174,12 @@ export function WorkSpaceVet() {
               </Button>
 
               <Button height={8} onClick={() => navigate(`/Pets/MedicineRecord/${id}`)} leftIcon={<MdPets />} colorScheme="messenger">
+              <Button
+                height={8}
+                onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}
+                leftIcon={<MdPets />}
+                colorScheme="messenger"
+              >
                 PRONTUÁRIO DO PET
               </Button>
             </Flex>
@@ -391,8 +412,15 @@ export function WorkSpaceVet() {
                           FICHA DE MEDICAÇÃO
                         </Button>
                         </Flex>
-                      
 
+      <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+        <Flex direction="column" gap="4" border="2px" m="4" p="4" rounded={8}>
+          <Button colorScheme="whatsapp">FICHA ANESTÉSICA PERSONALIZADA</Button>
+
+
+          <Button colorScheme="whatsapp">FICHA DE PARÂMETROS</Button>
+          <Button colorScheme="whatsapp">FICHA DE MEDICAÇÃO</Button>
+        </Flex>
       </GenericModal>
     </ChakraProvider>
   );
