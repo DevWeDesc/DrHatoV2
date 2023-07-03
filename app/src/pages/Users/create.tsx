@@ -23,9 +23,9 @@ import { Input } from "../../components/admin/Input";
 import { SubmitHandler } from "react-hook-form/dist/types";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
-<<<<<<< HEAD
+
 import { useState } from "react";
-=======
+
 import * as yup from "yup";
 
 const schema = yup
@@ -36,7 +36,6 @@ const schema = yup
     isAdmin: yup.bool().required("Nível de usuario obrigatorio"),
   })
   .required();
->>>>>>> 22923f9e9f47d278cfed3a4a5e8c33d8179f41fc
 
 export function CreateUser() {
   const {
