@@ -25,6 +25,12 @@ export class ValidationContract {
         }
     }
 
+    public async userHasAllToBeCreated(value: {name: string; username: string; password: string, userType?: string, userIsVet?: boolean, crmv?: number}, message: string) {
+        if(value.name == "" || value.username == "" || value.password == ""){
+          this.errors.push(message)
+        }
+    }
+
 
     public async procedureAlreadyExist(value: string, message: string) {
       const procedureExist = await prisma.procedures.findUnique({

@@ -9,6 +9,8 @@ import {
   VStack,
   SimpleGrid,
   HStack,
+  useStatStyles,
+  Select,
 } from "@chakra-ui/react";
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
@@ -21,6 +23,9 @@ import { Input } from "../../components/admin/Input";
 import { SubmitHandler } from "react-hook-form/dist/types";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
+
+import { useState } from "react";
+=======
 import * as yup from "yup";
 
 const schema = yup
@@ -39,20 +44,29 @@ export function CreateUser() {
     formState: { errors },
   } = useForm({});
   const navigate = useNavigate();
+  const [userType, setUserType] = useState("");
 
   const handleCreateUser: SubmitHandler<CreateUserFormData> = async (
     values
   ) => {
+
+
+    if(userType === "null") {
+      toast.error("Selecione o tipo de usuário");
+      return
+    } 
     try {
-      await api.post("/users", {
-        name: values.name,
-        username: values.username,
-        password: values.password,
-        isAdmin: true,
-      });
-      toast.success("Usuário cadastrado");
+        await api.post("/users", {
+          name: values.name,
+          username: values.username,
+          password: values.password,
+          userType: [`${userType}`],
+        });
+        toast.success("Usuário cadastrado");
+        
+      console.log(values)
     } catch (error) {
-      toast.error("Usuário cadastrado");
+      toast.error("Falha ao cadastrar usuário");
     }
   };
 
@@ -67,21 +81,19 @@ export function CreateUser() {
             <Box
               flex="1"
               textAlign="center"
-              maxHeight={500}
-              maxWidth={800}
               borderRadius={8}
               bg="gray.200"
               p="8"
             >
-              <Heading size="lg" fontWeight="normal">
+              <Heading size="lg" mb="4" fontWeight="normal">
                 Criar usuário
               </Heading>
-              <Divider my="6" borderColor="green.300" />
-
-              <VStack spacing="6">
-                <SimpleGrid minChildWidth="320px" spacing="8" w="100%">
+    
+              
                   <FormContainer>
                     <Flex
+                     w="100%"
+                     height="100%"
                       as="form"
                       align="center"
                       direction="column"
@@ -90,7 +102,7 @@ export function CreateUser() {
                       <Input
                         {...register("name")}
                         label="Seu login"
-                        maxWidth={400}
+                        maxWidth={450}
                         name="name"
                         id="name"
                         placeholder="insira o login de usuário"
@@ -99,7 +111,7 @@ export function CreateUser() {
                       <Input
                         {...register("password")}
                         label="Sua senha"
-                        maxWidth={400}
+                        maxWidth={450}
                         name="password"
                         id="password"
                         type="password"
@@ -110,39 +122,19 @@ export function CreateUser() {
                         {...register("username")}
                         label="Nome de usuário"
                         alignItems="center"
-                        maxWidth={400}
+                        maxWidth={450}
                         name="username"
                         id="username"
                         type="password"
                         placeholder="Nome de usuário"
                       />
-
-                      <Text fontWeight="medium">
-                        o usuário será administrador ?
-                      </Text>
-
-                      <HStack display="flex" align="center" textAlign="center">
-                        <Input
-                          {...register("isAdmin")}
-                          maxWidth={4}
-                          maxHeight={6}
-                          label="sim"
-                          name="isAdmin"
-                          id="sim"
-                          type="radio"
-                          value="true"
-                        />
-                        <Input
-                          {...register("isAdmin")}
-                          maxWidth={4}
-                          maxHeight={6}
-                          label="não"
-                          name="isAdmin"
-                          id="não"
-                          type="radio"
-                          value="false"
-                        />
-                      </HStack>
+                          <Select  name="userType" value="null" maxWidth={450} border="2px" mt="4" textAlign="center" onChange={(ev) => setUserType(ev.target.value)} >
+                          <option value="null">SELECIONE O TIPO DE USUÁRIO</option>
+                            <option value="admin">ADMINISTRADOR</option>
+                            <option value="reception">RECEPCIONISTA</option>
+                            <option value="vet">VETERINÁRIO</option>
+                            
+                          </Select>
 
                       <Flex mt="8" justify="center">
                         <HStack>
@@ -159,8 +151,7 @@ export function CreateUser() {
                       </Flex>
                     </Flex>
                   </FormContainer>
-                </SimpleGrid>
-              </VStack>
+                
             </Box>
           </Flex>
         </Flex>
