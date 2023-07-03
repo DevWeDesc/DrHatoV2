@@ -55,7 +55,7 @@ export function VetInstructions() {
                 rounded="0"
                 type="text"
                 h="45px"
-                value={pet.name}
+                value={pet.name ? pet.name : "N/A"}
               />
             </Flex>
             <Flex border="1px solid black">
