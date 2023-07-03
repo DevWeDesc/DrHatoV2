@@ -23,10 +23,27 @@ import { Input } from "../../components/admin/Input";
 import { SubmitHandler } from "react-hook-form/dist/types";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
+<<<<<<< HEAD
 import { useState } from "react";
+=======
+import * as yup from "yup";
+
+const schema = yup
+  .object({
+    name: yup.string().required("Login de usuario obrigatório"),
+    username: yup.string().required("UserName de usuario obrigatório"),
+    password: yup.string().required("Senha de usuario obrigatório"),
+    isAdmin: yup.bool().required("Nível de usuario obrigatorio"),
+  })
+  .required();
+>>>>>>> 22923f9e9f47d278cfed3a4a5e8c33d8179f41fc
 
 export function CreateUser() {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({});
   const navigate = useNavigate();
   const [userType, setUserType] = useState("");
 

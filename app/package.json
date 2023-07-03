@@ -30,7 +30,8 @@
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.9.0",
     "react-toastify": "^9.1.1",
-    "styled-components": "^5.3.9"
+    "styled-components": "^5.3.9",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@types/pdfmake": "^0.2.2",
