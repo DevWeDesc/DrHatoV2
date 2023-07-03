@@ -17,6 +17,7 @@ import {
   Textarea,
   HStack,
   VStack,
+  Select
 } from "@chakra-ui/react";
 import {
   AiFillMedicineBox,
@@ -31,7 +32,7 @@ import { api } from "../../lib/axios";
 import { LoadingSpinner } from "../../components/Loading";
 import { SetExamForm } from "../../components/workspaceVet/SetExamForm";
 import { GenericModal } from "../../components/Modal/GenericModal";
-import { Select } from "@chakra-ui/react";
+
 
 type ExamsProps = [
   {
@@ -158,7 +159,9 @@ export function WorkSpaceVet() {
               <Button height={8} colorScheme="whatsapp">
                 CIRURGIAS
               </Button>
-              <Button height={8} colorScheme="whatsapp">
+              <Button height={8} colorScheme="whatsapp"
+              onClick={() => navigate(`/WorkSpace/Admissions/${id}`)}
+              >
                 INTERNAR
               </Button>
       

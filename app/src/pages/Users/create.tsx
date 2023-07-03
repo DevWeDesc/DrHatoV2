@@ -11,7 +11,7 @@ import {
   HStack,
   useStatStyles,
   Select,
-} from "@chakra-ui/react";
+} from "@chakra-ui/react"
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { AdminContainer } from "../AdminDashboard/style";

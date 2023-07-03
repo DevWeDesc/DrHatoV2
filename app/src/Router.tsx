@@ -51,6 +51,7 @@ import { DataExames } from "./pages/Labs/dataExames";
 import { Vaccines } from "./pages/Vets/WorkSpaceVets/vaccines";
 import { Protocols } from "./pages/Vets/WorkSpaceVets/protocols";
 import { VetInstructions } from "./pages/Vets/WorkSpaceVets/instructions";
+import {  VetsAdmissions } from "./pages/Vets/WorkSpaceVets/admissions";
 export function Router() {
   return (
     <Routes>
@@ -93,6 +94,7 @@ export function Router() {
         <Route path="/WorkSpace/Vaccines/:id" element={<Vaccines/>} />
         <Route path="/WorkSpace/Protocols/:id" element={<Protocols/>} />
         <Route path="/WorkSpace/Instructions/:id" element={<VetInstructions/>} />
+        <Route path="/WorkSpace/Admissions/:id" element={<VetsAdmissions/>} />
 
         {/* VETS WORKSPACE PATHS END */}
 

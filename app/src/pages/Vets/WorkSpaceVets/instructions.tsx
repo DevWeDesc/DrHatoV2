@@ -1,4 +1,4 @@
-import { ChakraProvider, Flex, Button, Text, Select } from "@chakra-ui/react";
+import { ChakraProvider, Flex, Button, Text, Select } from "@chakra-ui/react"
 import { useState, useEffect } from "react";
 import { BiHome } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";

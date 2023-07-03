@@ -1,4 +1,4 @@
-import {ChakraProvider, Flex, Table, Tr, Td, Th, Thead, Tbody, TableContainer, Button, Checkbox, HStack, Text } from "@chakra-ui/react";
+import {ChakraProvider, Flex, Table, Tr, Td, Th, Thead, Tbody, TableContainer, Button, Checkbox, HStack, Text } from "@chakra-ui/react"
 import { BiHome } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
@@ -84,7 +84,7 @@ export function VetExams () {
 
       <Flex w="100%" height="45vh"direction="column" >
           <Flex height="48px" w="100%" bgColor="cyan.100" align="center" justify="center" gap={4}>
-             <HStack>  <Button colorScheme="teal" w="300px">FILTRAR POR NOME</Button> <Input h="38px" name="filter" /></HStack> <Button colorScheme="whatsapp">INCLUIR NOVO EXAME</Button>
+             <HStack>  <Button colorScheme="teal" w="300px">FILTRAR POR NOME</Button> <Input height="38px" name="filter" /></HStack> <Button colorScheme="whatsapp">INCLUIR NOVO EXAME</Button>
           </Flex>
         <TableContainer w="100%" height="100%">
         <Table>
