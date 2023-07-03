@@ -154,7 +154,7 @@ export function AsideMenu() {
       )
       break
 
-    case userPermissions.userType.includes('user'):
+    case userPermissions.userType.includes('reception'):
       asideMenu = (
         <>
           <Accordion defaultIndex={[0]} allowMultiple>

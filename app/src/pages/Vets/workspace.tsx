@@ -123,7 +123,7 @@ export function WorkSpaceVet() {
               </Button>
             </Flex>
 
-            <Flex flexWrap="wrap" justify="space-between" gap="2" m="4" p="2">
+            <Flex flexWrap="wrap" justify="flex-start" gap="2" m="4" p="2">
               <Button onClick={() => openModal()} height={8} colorScheme="whatsapp">
                 FORMULÁRIOS
               </Button>
@@ -133,7 +133,7 @@ export function WorkSpaceVet() {
               <Button height={8} colorScheme="whatsapp">
                 AUTORIZAÇÕES
               </Button>
-              <Button height={8} colorScheme="whatsapp">
+              <Button height={8} colorScheme="whatsapp" onClick={() => navigate(`/WorkSpace/Protocols/${id}`)}>
                 PROTOCOLOS
               </Button>
               <Button
@@ -151,6 +151,13 @@ export function WorkSpaceVet() {
               <Button height={8} colorScheme="whatsapp" onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)} >
                 VACINAS
               </Button>
+              <Button height={8} colorScheme="whatsapp">
+                CIRURGIAS
+              </Button>
+              <Button height={8} colorScheme="whatsapp">
+                INTERNAÇÕES
+              </Button>
+
               <Button height={8} onClick={() => navigate(`/Pets/MedicineRecord/${id}`)} leftIcon={<MdPets />} colorScheme="messenger">
                 PRONTUÁRIO DO PET
               </Button>
@@ -368,7 +375,7 @@ export function WorkSpaceVet() {
       </WorkSpaceContainer>
           <GenericModal    isOpen={isModalOpen}
                       onRequestClose={closeModal} >
-                        <Flex direction="column"  gap="4" border='2px' m="4" p="4" rounded={8}>
+                        <Flex direction="column"  gap="4" m="4" p="4" rounded={8}>
                         <Button colorScheme="whatsapp">
                           FICHA ANESTÉSICA PERSONALIZADA
                          

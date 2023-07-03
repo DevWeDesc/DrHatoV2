@@ -8,10 +8,11 @@ const prisma = new PrismaClient();
 
 export const userController = {
 createUser: async (request: FastifyRequest, reply: FastifyReply)=> {
-  const { name, username, password, userType} = UserSchema.parse(request.body)
+  const { name, username, password, userType, userIsVet, crmv} = UserSchema.parse(request.body)
   let contract = new ValidationContract();
   
   await contract.userAlreadyExists(name, 'Usuário já existe!')
+  await contract.userHasAllToBeCreated({name, password, username}, "Usuário não tem todos campos obrigatórios")
   if(contract.hadError()){
     reply.status(400).send(contract.showErrors())
     contract.clearErrors()
@@ -19,7 +20,7 @@ createUser: async (request: FastifyRequest, reply: FastifyReply)=> {
   }
 
   await prisma.user.create({
-      data: { name, username, password, userType}
+      data: { name, username, password, userType, userIsVet, crmv}
   })
 },
 

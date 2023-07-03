@@ -4,7 +4,6 @@ import {
     Menu,
     MenuButton,
     MenuList,
-    Text,
     Button
   } from '@chakra-ui/react'
   import { StyledBox } from "../Header/style"
