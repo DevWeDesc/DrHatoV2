@@ -22,13 +22,14 @@ import { SubmitHandler } from "react-hook-form/dist/types";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const schema = yup
   .object({
     name: yup.string().required("Login de usuario obrigatório"),
     username: yup.string().required("UserName de usuario obrigatório"),
     password: yup.string().required("Senha de usuario obrigatório"),
-    isAdmin: yup.bool().required("Nível de usuario obrigatorio"),
+    isAdmin: yup.bool().required("Escolha algum"),
   })
   .required();
 
@@ -37,7 +38,7 @@ export function CreateUser() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({});
+  } = useForm({ resolver: yupResolver(schema) });
   const navigate = useNavigate();
 
   const handleCreateUser: SubmitHandler<CreateUserFormData> = async (
@@ -67,7 +68,6 @@ export function CreateUser() {
             <Box
               flex="1"
               textAlign="center"
-              maxHeight={500}
               maxWidth={800}
               borderRadius={8}
               bg="gray.200"
@@ -94,6 +94,7 @@ export function CreateUser() {
                         name="name"
                         id="name"
                         placeholder="insira o login de usuário"
+                        error={errors.name}
                       />
 
                       <Input
@@ -104,6 +105,7 @@ export function CreateUser() {
                         id="password"
                         type="password"
                         placeholder="insira a senha"
+                        error={errors.password}
                       />
 
                       <Input
@@ -113,8 +115,9 @@ export function CreateUser() {
                         maxWidth={400}
                         name="username"
                         id="username"
-                        type="password"
+                        type="text"
                         placeholder="Nome de usuário"
+                        error={errors.username}
                       />
 
                       <Text fontWeight="medium">
@@ -131,6 +134,7 @@ export function CreateUser() {
                           id="sim"
                           type="radio"
                           value="true"
+                          error={errors.isAdmin}
                         />
                         <Input
                           {...register("isAdmin")}
@@ -141,6 +145,7 @@ export function CreateUser() {
                           id="não"
                           type="radio"
                           value="false"
+                          error={errors.isAdmin}
                         />
                       </HStack>
 
