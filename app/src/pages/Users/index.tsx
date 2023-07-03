@@ -80,7 +80,9 @@ import { AdminContainer } from "../AdminDashboard/style";
                       </Box>
                     </Td>
                     <Td>
-                      <Text fontWeight="bold" color="gray.800">{ user.userType.includes("admin") ? "ADMINISTRADOR" : user.userType.includes("vet") ? "VETERINÁRIO" : "USUÁRIO" }</Text>
+                      <Text fontWeight="bold" color="gray.800">{ user.userType.includes("admin") ? "ADMINISTRADOR" : user.userType.includes("vet") ? "VETERINÁRIO" : 
+                      user.userType.includes("reception") ? "RECEPCIONISTA" : "USUÁRIO"
+                      }</Text>
                     </Td>
   
                     
@@ -91,7 +93,7 @@ import { AdminContainer } from "../AdminDashboard/style";
                       leftIcon={<Icon as={RiPencilLine}/>}
                       >
                         Editar
-                  </Button>
+                    </Button>
                   </Link>
                  
                     </Td>
