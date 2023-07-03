@@ -1,64 +1,72 @@
 import { AdminContainer } from "./style";
-import { Box, Button, ChakraProvider, SimpleGrid, Text, theme } from '@chakra-ui/react'
-import { Flex } from "@chakra-ui/react"
+import {
+  Box,
+  Button,
+  ChakraProvider,
+  SimpleGrid,
+  Text,
+  theme,
+} from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { Link } from "react-router-dom";
 
-
-
-
 export function AdminMain() {
-  
   return (
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-        <Header title="Painel Administrativo" />
+          <Header title="Painel Administrativo" />
 
-        <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+          <Flex w="100%" my="6" maxWidth={"100%"} mx="auto" px="6">
             <Sidebar />
+            <SimpleGrid flex="1" w="100%" align="flex-start" as={Flex}>
+              <Flex h="80vh" justify="center" gap="5">
+                <Flex direction="column" w="45%" gap="2">
+                  <Link to="/Admin/Autorizations">
+                    <Button colorScheme="whatsapp" w="100%" py="10">
+                      Cadastro de Autorizações
+                    </Button>
+                  </Link>
+                  <Link to="/Admin/Instructions">
+                    <Button colorScheme="whatsapp" w="100%" py="10">
+                      Cadastro de Instruções
+                    </Button>
+                  </Link>
 
-            <SimpleGrid 
-            flex="1"
-            gap="4"
-            minChildWidth="320px"
-            align="flex-start" as={Flex}
-            >
-              <Flex wrap="wrap" gap="4">
-                <Link to="/Admin/Autorizations">
-                <Button colorScheme="whatsapp">Cadastro de Autorizações</Button>
-                </Link>
-                <Link to="/Admin/Instructions">
-                <Button colorScheme="whatsapp">Cadastro de Instruções</Button>
-                </Link>
-                
-               
-                 <Link to="/Admin/Exams">
-                 <Button colorScheme="whatsapp">Cadastro de Exames</Button>
-                 </Link>
-            
-                <Link to="/Admin/Procedures">
-                    <Button colorScheme="whatsapp">Cadastro de Procedimentos</Button>
-                </Link>
-               
-               
-                 <Link to="/Admin/Sectors">
-                 <Button colorScheme="whatsapp">Cadastro de Setores</Button>
-                 </Link>
-                 <Button colorScheme="whatsapp">Cadastro de Vacinas</Button>
+                  <Link to="/Admin/Exams">
+                    <Button colorScheme="whatsapp" w="100%" py="10">
+                      Cadastro de Exames
+                    </Button>
+                  </Link>
 
-     
-        
-                 <Button colorScheme="whatsapp">Relatórios</Button>
-         
+                  <Link to="/Admin/Procedures">
+                    <Button colorScheme="whatsapp" w="100%" py="10">
+                      Cadastro de Procedimentos
+                    </Button>
+                  </Link>
+                </Flex>
+                <Flex direction="column" w="50%" gap="2">
+                  <Link to="/Admin/Sectors">
+                    <Button colorScheme="whatsapp" w="100%" py="10">
+                      Cadastro de Setores
+                    </Button>
+                  </Link>
+                  <Button colorScheme="whatsapp" py="10">
+                    Cadastro de Vacinas
+                  </Button>
+
+                  <Button colorScheme="whatsapp" py="10">
+                    Relatórios
+                  </Button>
+                </Flex>
               </Flex>
-          
             </SimpleGrid>
+          </Flex>
         </Flex>
-        </Flex>
-    </AdminContainer>
+      </AdminContainer>
     </ChakraProvider>
-  )
+  );
 }
