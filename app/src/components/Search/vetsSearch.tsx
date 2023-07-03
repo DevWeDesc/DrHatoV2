@@ -6,6 +6,7 @@ import { useState, useContext } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { DbContext } from '../../contexts/DbContext';
+import convertData from '../../helpers/convertData';
 
 interface UniversalSearchProps {
     path: string;
@@ -14,45 +15,35 @@ interface UniversalSearchProps {
 export function VetsSearch({ path}: UniversalSearchProps) {
 
 const { setData } = useContext(DbContext)
- 
+
+
     const {register, handleSubmit} = useForm()
 
   const handleSearch: SubmitHandler<any> = async (values) => {
-    if (values.name) {
-      try {
-        const responseName = await api.get(
-          `${path}?name=${values.name}`
-        );
-        setData(responseName.data);
-        toast.success("Usuário encontrado");
-      } catch (error) {
-        toast.error("Usuário não encontrado");
-      }
-    }
 
-    if (values.cpf) {
-      try {
-        const responseCpf = await api.get(
-          `${path}?cpf=${values.cpf}`
-        );
-        setData(responseCpf.data);
-        toast.success("Usuário encontrado");
-      } catch (error) {
-        toast.error("Usuário não encontrado");
+      let startDate = convertData(values.initialData);
+      let endDate = convertData(values.finalData)
+  
+      console.log(values.isHospitalized)
+    let response;
+    switch(true) {
+      case !!values.name:
+        response = await api.get(`filtredquery?name=${values.name}`)    
+        break; 
+      case !!values.codPet:
+        response = await api.get(`filtredquery?codPet=${values.codPet}`)
+        break;
+        case !!values.petName: 
+        response = await api.get(`filtredquery?petName=${values.petName}`)
+        break;
+        case !!values.initialData && !!values.finalData:
+          response = await api.get(`filtredquery?initialData=${startDate}&finalData=${endDate}`)
+          break;
+        case !!values.initialData:
+          response = await api.get(`filtredquery?initialData=${startDate}`)
+        break;
       }
-    }
-
-    if (values.adress) {
-      try {
-        const responsePhone = await api.get(
-          `${path}?adress=${values.adress}`
-        );
-        setData(responsePhone.data);
-        toast.success("Usuário encontrado");
-      } catch (error) {
-        toast.error("Usuário não encontrado");
-      }
-    }
+      console.log(response?.data)
   };
   return (
     <ChakraProvider>
@@ -61,18 +52,15 @@ const { setData } = useContext(DbContext)
           <VStack>
 
             <HStack >
-            <Input type="date" label='Data Inicial'  {...register("codPet")} name='cpf' />
-            <Input   type="date" label='Data Final' {...register('name')} name='name'  />
+            <Input type="date" label='Data Inicial'  {...register("initialData")} name='initialData' />
+            <Input   type="date" label='Data Final' {...register('finalData')} name='finalData'  />
 
 
             <Flex pl="4" direction="column" gap={4}>
 
-            <HStack>
-              <Checkbox borderColor="gray.900" />
-              <FormLabel>FINALIZADOS</FormLabel>
-              </HStack>
+   
               <HStack>
-              <Checkbox borderColor="gray.900" />
+              <Checkbox borderColor="gray.900" {...register("isHospitalized")} name="isHospitalized" />
               <FormLabel>INTERNADOS</FormLabel>
               </HStack>
              
@@ -86,9 +74,9 @@ const { setData } = useContext(DbContext)
 
 
           <HStack>
-        <Input label='Código Animal'  {...register("codPet")} name='cpf' />
+        <Input label='Código Animal'  {...register("codPet")} name='codPet' />
         <Input  label='Nome do Cliente' {...register('name')} name='name'  />
-        <Input   label='Nome do Animal' {...register('petName')} name='adress' />
+        <Input   label='Nome do Animal' {...register('petName')} name='petName' />
         <Flex gap="2" align="center" direction="column">
         <Text fontWeight="bold">Pesquisa Universal</Text>
         <Button type="submit" colorScheme="whatsapp" minWidth={220}> Filtrar</Button>
