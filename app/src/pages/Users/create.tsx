@@ -25,7 +25,7 @@ import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 
 import { useState } from "react";
-=======
+
 import * as yup from "yup";
 
 const schema = yup

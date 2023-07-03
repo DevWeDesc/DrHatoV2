@@ -50,6 +50,7 @@ export function VetInstructions() {
                 Animal Selecionado
               </Text>
               <Input
+                name="namePet"
                 borderY="0"
                 rounded="0"
                 type="text"
