@@ -14,7 +14,7 @@ interface UniversalSearchProps {
 
 export function VetsSearch({ path}: UniversalSearchProps) {
 
-const { setData } = useContext(DbContext)
+const { setData, data } = useContext(DbContext)
 
 
     const {register, handleSubmit} = useForm()
@@ -23,8 +23,7 @@ const { setData } = useContext(DbContext)
 
       let startDate = convertData(values.initialData);
       let endDate = convertData(values.finalData)
-  
-      console.log(values.isHospitalized)
+        console.log(data)
     let response;
     switch(true) {
       case !!values.name:
@@ -36,14 +35,14 @@ const { setData } = useContext(DbContext)
         case !!values.petName: 
         response = await api.get(`filtredquery?petName=${values.petName}`)
         break;
-        case !!values.initialData && !!values.finalData:
+        case !!values.initialData:
           response = await api.get(`filtredquery?initialData=${startDate}&finalData=${endDate}`)
           break;
-        case !!values.initialData:
-          response = await api.get(`filtredquery?initialData=${startDate}`)
+        case !!values.finalData:
+          response = await api.get(`filtredquery?initialData=${startDate}&finalData=${endDate}`)
         break;
       }
-      console.log(response?.data)
+      setData(response?.data)
   };
   return (
     <ChakraProvider>
