@@ -52,6 +52,8 @@ import { Vaccines } from "./pages/Vets/WorkSpaceVets/vaccines";
 import { Protocols } from "./pages/Vets/WorkSpaceVets/protocols";
 import { VetInstructions } from "./pages/Vets/WorkSpaceVets/instructions";
 import {  VetsAdmissions } from "./pages/Vets/WorkSpaceVets/admissions";
+import { VetsSurgeries } from "./pages/Vets/WorkSpaceVets/sergeries";
+
 export function Router() {
   return (
     <Routes>
@@ -95,6 +97,7 @@ export function Router() {
         <Route path="/WorkSpace/Protocols/:id" element={<Protocols/>} />
         <Route path="/WorkSpace/Instructions/:id" element={<VetInstructions/>} />
         <Route path="/WorkSpace/Admissions/:id" element={<VetsAdmissions/>} />
+        <Route path="/WorkSpace/Surgeries/:id" element={<VetsSurgeries/>} />
 
         {/* VETS WORKSPACE PATHS END */}
 

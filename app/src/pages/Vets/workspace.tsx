@@ -164,7 +164,7 @@ export function WorkSpaceVet() {
               <Button height={8} colorScheme="whatsapp" onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)} >
                 VACINAS
               </Button>
-              <Button height={8} colorScheme="whatsapp">
+              <Button height={8} colorScheme="whatsapp" onClick={() => navigate(`/WorkSpace/Surgeries/${id}`)}>
                 CIRURGIAS
               </Button>
               <Button height={8} colorScheme="whatsapp"
