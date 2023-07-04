@@ -23,17 +23,16 @@ import { Input } from "../../components/admin/Input";
 import { SubmitHandler } from "react-hook-form/dist/types";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
-
-import { useState } from "react";
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import * as yup from "yup";
+import { useState } from "react";
 
 const schema = yup
   .object({
     name: yup.string().required("Login de usuario obrigatório"),
     username: yup.string().required("UserName de usuario obrigatório"),
     password: yup.string().required("Senha de usuario obrigatório"),
-    isAdmin: yup.bool().required("Nível de usuario obrigatorio"),
   })
   .required();
 
@@ -42,7 +41,7 @@ export function CreateUser() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({});
+  } = useForm({ resolver: yupResolver(schema)});
   const navigate = useNavigate();
   const [userType, setUserType] = useState("");
 
@@ -106,6 +105,7 @@ export function CreateUser() {
                         name="name"
                         id="name"
                         placeholder="insira o login de usuário"
+                        error={errors.name}
                       />
 
                       <Input
@@ -116,6 +116,7 @@ export function CreateUser() {
                         id="password"
                         type="password"
                         placeholder="insira a senha"
+                        error={errors.password}
                       />
 
                       <Input
@@ -127,6 +128,7 @@ export function CreateUser() {
                         id="username"
                         type="password"
                         placeholder="Nome de usuário"
+                        error={errors.username}
                       />
                           <Select  name="userType" value="null" maxWidth={450} border="2px" mt="4" textAlign="center" onChange={(ev) => setUserType(ev.target.value)} >
                           <option value="null">SELECIONE O TIPO DE USUÁRIO</option>
