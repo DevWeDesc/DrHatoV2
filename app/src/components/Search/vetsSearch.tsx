@@ -21,28 +21,65 @@ const { setData, data } = useContext(DbContext)
 
   const handleSearch: SubmitHandler<any> = async (values) => {
 
-      let startDate = convertData(values.initialData);
-      let endDate = convertData(values.finalData)
-        console.log(data)
-    let response;
-    switch(true) {
-      case !!values.name:
-        response = await api.get(`filtredquery?name=${values.name}`)    
-        break; 
-      case !!values.codPet:
-        response = await api.get(`filtredquery?codPet=${values.codPet}`)
-        break;
-        case !!values.petName: 
-        response = await api.get(`filtredquery?petName=${values.petName}`)
-        break;
-        case !!values.initialData:
-          response = await api.get(`filtredquery?initialData=${startDate}&finalData=${endDate}`)
-          break;
-        case !!values.finalData:
-          response = await api.get(`filtredquery?initialData=${startDate}&finalData=${endDate}`)
-        break;
+    let originDate = values.initialDate;
+    let dataSplit = originDate.split('-');
+    let startDate = dataSplit[2] + '/' + dataSplit[1] + '/' + dataSplit[0];
+   console.log(values)
+    if (values.name) {
+      try {
+        const responseName = await api.get(
+          `${path}?name=${values.name}`
+        );
+        setData(responseName.data);
+        toast.success("Usuário encontrado");
+      } catch (error) {
+        toast.error("Usuário não encontrado");
       }
-      setData(response?.data)
+    }
+
+    if (values.codPet) {
+      try {
+        const responseCodPet = await api.get(
+          `${path}?codPet=${values.codPet}`
+        );
+        setData(responseCodPet.data);
+        toast.success("Usuário encontrado");
+      } catch (error) {
+        toast.error("Usuário não encontrado");
+      }
+    }
+
+    if (values.petName) {
+      try {
+        const responsePetName = await api.get(
+          `${path}?petName=${values.petName}`
+        );
+        setData(responsePetName.data);
+        toast.success("Usuário encontrado");
+      } catch (error) {
+        toast.error("Usuário não encontrado");
+      }
+    }
+    
+    if(values.initialDate) {
+      try {
+        const responseInitialData = await api.get(`${path}?initialDate=${startDate}`)
+        setData(responseInitialData)
+        toast.success("Usuário encontrado");
+      } catch (error) {
+        toast.error("Usuário não encontrado");
+      }
+    }
+
+    if(values.finalDate) {
+      try {
+        const responsefinalData = await api.get(`${path}?finalData=${values.finalData}`)
+        setData(responsefinalData)
+        toast.success("Usuário encontrado");
+      } catch (error) {
+        toast.error("Usuário não encontrado");
+      }
+    }
   };
   return (
     <ChakraProvider>
@@ -51,27 +88,20 @@ const { setData, data } = useContext(DbContext)
           <VStack>
 
             <HStack >
-            <Input type="date" label='Data Inicial'  {...register("initialData")} name='initialData' />
-            <Input   type="date" label='Data Final' {...register('finalData')} name='finalData'  />
-
-
+            <Input type="date" label='Data Inicial'  {...register("initialDate")} name='initialDate' />
+            <Input   type="date" label='Data Final' {...register('finalDate')} name='finalDate'  />
             <Flex pl="4" direction="column" gap={4}>
-
-   
+            <HStack>
+              <Checkbox borderColor="gray.900" />
+              <FormLabel>FINALIZADOS</FormLabel>
+              </HStack>
               <HStack>
               <Checkbox borderColor="gray.900" {...register("isHospitalized")} name="isHospitalized" />
               <FormLabel>INTERNADOS</FormLabel>
               </HStack>
-             
-              
+
             </Flex>
             </HStack>
-
-            
-
-
-
-
           <HStack>
         <Input label='Código Animal'  {...register("codPet")} name='codPet' />
         <Input  label='Nome do Cliente' {...register('name')} name='name'  />
