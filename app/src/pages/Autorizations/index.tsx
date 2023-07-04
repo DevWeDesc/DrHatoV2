@@ -37,6 +37,7 @@ import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { toast } from "react-toastify";
+import { VetsSearch } from "../../components/Search/vetsSearch";
 export function GenerateAutorizations() {
   const { autorization, setGenerateAut } = useContext(DbContext);
   const { data } = useContext(DbContext);
@@ -96,7 +97,7 @@ export function GenerateAutorizations() {
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
-                <SearchComponent />
+                <VetsSearch path="filtredquery" />
 
                 <Accordion defaultIndex={[0]} allowMultiple>
                   <AccordionItem>

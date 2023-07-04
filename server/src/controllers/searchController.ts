@@ -3,8 +3,6 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { z } from "zod";
 const prisma = new PrismaClient();
 
-
-
 export const searchController = {
  getAll: async (request: FastifyRequest<{
     Querystring: { name?: string; cpf?: string; adress?: string };

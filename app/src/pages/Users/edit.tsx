@@ -1,4 +1,4 @@
-import { Text, Flex, Box, SimpleGrid, ChakraProvider,  Table, Thead, Tbody, Tr, Th, Td, FormControl, Button, HStack, Checkbox, VStack } from '@chakra-ui/react'
+import { Text, Flex, Box, SimpleGrid, ChakraProvider,  Table, Thead, Tbody, Tr, Th, Td, FormControl, Button, HStack, Checkbox, VStack } from "@chakra-ui/react"
 import { AxiosRequestConfig } from 'axios';
 import { useState, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';

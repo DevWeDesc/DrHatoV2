@@ -6,6 +6,7 @@ import { useState, useContext } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { DbContext } from '../../contexts/DbContext';
+import convertData from '../../helpers/convertData';
 
 interface UniversalSearchProps {
     path: string;
@@ -13,8 +14,9 @@ interface UniversalSearchProps {
 
 export function VetsSearch({ path}: UniversalSearchProps) {
 
-const { setData } = useContext(DbContext)
- 
+const { setData, data } = useContext(DbContext)
+
+
     const {register, handleSubmit} = useForm()
 
   const handleSearch: SubmitHandler<any> = async (values) => {
@@ -94,7 +96,7 @@ const { setData } = useContext(DbContext)
               <FormLabel>FINALIZADOS</FormLabel>
               </HStack>
               <HStack>
-              <Checkbox borderColor="gray.900" />
+              <Checkbox borderColor="gray.900" {...register("isHospitalized")} name="isHospitalized" />
               <FormLabel>INTERNADOS</FormLabel>
               </HStack>
 

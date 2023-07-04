@@ -114,7 +114,7 @@ export function CardsMenu() {
           icon={<AiFillCheckCircle fill="#46720c" size={36} />}
         /></>)
         break;
-        case userPermissions.userType.includes("user"):
+        case userPermissions.userType.includes("reception"):
           menu = (<>
            <CardNavigation
             path="/Recepcao"

@@ -55,7 +55,8 @@ export const UserSchema = z.object({
   username: z.string(),
   password: z.string(),
   userType: z.any(),
-  userIsVet: z.boolean().optional()
+  userIsVet: z.boolean().optional(),
+  crmv: z.number().optional()
 })
  
 export const AdmissionSchema = z.object({

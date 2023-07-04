@@ -100,7 +100,7 @@ console.log("IN QUEUE",inQueue)
 
                     <Tbody>
                       
-                    {  Object.keys(data).length >= 1 ? data.map((user: any) => (
+                    { Object.keys(data).length >= 1 ? data.map((user: any) => (
                       <Tr key={user.id}>
                           <Td>{user.cpf}</Td>
                           
