@@ -32,6 +32,8 @@ import { api } from "../../lib/axios";
 import { LoadingSpinner } from "../../components/Loading";
 import { SetExamForm } from "../../components/workspaceVet/SetExamForm";
 import { GenericModal } from "../../components/Modal/GenericModal";
+import { VetInstructions } from "./WorkSpaceVets/instructions";
+import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
 
 
 type ExamsProps = [
@@ -74,13 +76,19 @@ export function WorkSpaceVet() {
   const navigate = useNavigate();
   const [pet, setPet] = useState({} as PetProps);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAutorizationModalOpen, setAutorizationModalOpen ] = useState(false);
   function openModal() {
     setIsModalOpen(true);
   }
   function closeModal() {
     setIsModalOpen(false);
   }
-
+  function openAutorizationModal() {
+     setAutorizationModalOpen(true);
+  }
+  function closeAutorizationModal() {
+    setAutorizationModalOpen(false);
+  }
 
   useEffect(() => {
     async function getPetDetails() {
@@ -133,7 +141,7 @@ export function WorkSpaceVet() {
               >
                 INSTRUÇÕES PROPRIETÁRIO
               </Button>
-              <Button height={8} colorScheme="whatsapp">
+              <Button height={8} colorScheme="whatsapp"  onClick={() => openAutorizationModal()}>
                 AUTORIZAÇÕES
               </Button>
               <Button height={8} colorScheme="whatsapp"
@@ -398,8 +406,23 @@ export function WorkSpaceVet() {
                           FICHA DE MEDICAÇÃO
                         </Button>
                         </Flex>
-                      
+      </GenericModal>
 
+      <GenericModal
+      isOpen={isAutorizationModalOpen}
+      onRequestClose={closeAutorizationModal}
+      >
+        <Flex direction="column" align="center" gap="8">
+
+          <Text fontWeight="bold" fontSize="2xl">{pet.name}</Text>
+          <Select bgColor="gray.100" borderColor="black" placeholder='Selecione a Autorização'>
+        <option value='option1'>Option 1</option>
+        <option value='option2'>Option 2</option>
+        <option value='option3'>Option 3</option>
+          </Select>
+        <WorkVetAutorization/>
+        </Flex>
+        
       </GenericModal>
     </ChakraProvider>
   );
