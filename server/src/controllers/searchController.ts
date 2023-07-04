@@ -39,52 +39,34 @@ export const searchController = {
     const vetsSearchSchema = z.object({
       initialData: z.string().optional(),
       finalData: z.string().optional(),
-      isFinished: z.boolean().optional(),
-      isHospitalized: z.boolean().optional(),
+      isHospitalized: z.string().optional(),
       codPet: z.string().optional(),
       name: z.string().optional(),
       petName: z.string().optional(),
     })
-    const { initialData, finalData,codPet, isFinished, isHospitalized, name, petName} = vetsSearchSchema.parse(request.body)
     try {
-      let response;
-      if(initialData && finalData) {
-        response = await prisma.customer.findMany({
-          where: {
-            OR: [
-              {pets: {some: {queue: {queueEntry: {startsWith: initialData} || {endsWith: finalData}}}}}
-            ]
-          }, include: {pets: {select: {queue: true}}}
-        })
-      } else if (isFinished === true || isHospitalized === true) {
-        response = await prisma.bed.findMany({
-          where: {
-            OR: [
-              {isBusy: isHospitalized}
-            ]
-          }, include: {pet: {select: {queue: true}}}
-        })
-      } else {
-        response = await prisma.customer.findMany({
-          where: {
-            OR: [
-              {name: {startsWith: name} },
-              {pets: {none: {name: {startsWith: petName}}}},
-              {pets: {none: {codPet: {startsWith: codPet}}}}
-            ]
-          },
-          include: { pets: {select: {queue: true}}}
-        })
-      }
+     const { name,petName,codPet,initialData,finalData,isHospitalized} = vetsSearchSchema.parse(request.query)
 
+     const response = await prisma.customer.findFirstOrThrow({
+      where: {
+        OR: [
+          {pets: {some:{queue: {queryType: initialData}}}},
+          {pets: {some:{queue: {queryType: finalData}}}},
+          {name: name},
+          {pets: {some: {name: petName}}},
+          {pets: {some: {codPet: codPet}}},
+          {pets: {some: {bed: {isBusy: Boolean(isHospitalized)}}}},
+        ]
+      }, include: {
+        pets: {include: {queue: true}},
+      },
+     })
 
-        reply.send(response).status(200)
+     reply.send(response)
     } catch (error) {
-      reply.status(400).send({ message: error})
-      console.log(error)
+      reply.status(400).send(error)
+      console.error(error)
     }
   }
-
-
 
 }

@@ -18,6 +18,11 @@ const { setData } = useContext(DbContext)
     const {register, handleSubmit} = useForm()
 
   const handleSearch: SubmitHandler<any> = async (values) => {
+
+    let originDate = values.initialDate;
+    let dataSplit = originDate.split('-');
+    let startDate = dataSplit[2] + '/' + dataSplit[1] + '/' + dataSplit[0];
+   console.log(values)
     if (values.name) {
       try {
         const responseName = await api.get(
@@ -30,24 +35,44 @@ const { setData } = useContext(DbContext)
       }
     }
 
-    if (values.cpf) {
+    if (values.codPet) {
       try {
-        const responseCpf = await api.get(
-          `${path}?cpf=${values.cpf}`
+        const responseCodPet = await api.get(
+          `${path}?codPet=${values.codPet}`
         );
-        setData(responseCpf.data);
+        setData(responseCodPet.data);
         toast.success("Usuário encontrado");
       } catch (error) {
         toast.error("Usuário não encontrado");
       }
     }
 
-    if (values.adress) {
+    if (values.petName) {
       try {
-        const responsePhone = await api.get(
-          `${path}?adress=${values.adress}`
+        const responsePetName = await api.get(
+          `${path}?petName=${values.petName}`
         );
-        setData(responsePhone.data);
+        setData(responsePetName.data);
+        toast.success("Usuário encontrado");
+      } catch (error) {
+        toast.error("Usuário não encontrado");
+      }
+    }
+    
+    if(values.initialDate) {
+      try {
+        const responseInitialData = await api.get(`${path}?initialDate=${startDate}`)
+        setData(responseInitialData)
+        toast.success("Usuário encontrado");
+      } catch (error) {
+        toast.error("Usuário não encontrado");
+      }
+    }
+
+    if(values.finalDate) {
+      try {
+        const responsefinalData = await api.get(`${path}?finalData=${values.finalData}`)
+        setData(responsefinalData)
         toast.success("Usuário encontrado");
       } catch (error) {
         toast.error("Usuário não encontrado");
@@ -61,12 +86,9 @@ const { setData } = useContext(DbContext)
           <VStack>
 
             <HStack >
-            <Input type="date" label='Data Inicial'  {...register("codPet")} name='cpf' />
-            <Input   type="date" label='Data Final' {...register('name')} name='name'  />
-
-
+            <Input type="date" label='Data Inicial'  {...register("initialDate")} name='initialDate' />
+            <Input   type="date" label='Data Final' {...register('finalDate')} name='finalDate'  />
             <Flex pl="4" direction="column" gap={4}>
-
             <HStack>
               <Checkbox borderColor="gray.900" />
               <FormLabel>FINALIZADOS</FormLabel>
@@ -75,20 +97,13 @@ const { setData } = useContext(DbContext)
               <Checkbox borderColor="gray.900" />
               <FormLabel>INTERNADOS</FormLabel>
               </HStack>
-             
-              
+
             </Flex>
             </HStack>
-
-            
-
-
-
-
           <HStack>
-        <Input label='Código Animal'  {...register("codPet")} name='cpf' />
+        <Input label='Código Animal'  {...register("codPet")} name='codPet' />
         <Input  label='Nome do Cliente' {...register('name')} name='name'  />
-        <Input   label='Nome do Animal' {...register('petName')} name='adress' />
+        <Input   label='Nome do Animal' {...register('petName')} name='petName' />
         <Flex gap="2" align="center" direction="column">
         <Text fontWeight="bold">Pesquisa Universal</Text>
         <Button type="submit" colorScheme="whatsapp" minWidth={220}> Filtrar</Button>
