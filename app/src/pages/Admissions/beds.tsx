@@ -48,19 +48,6 @@ export function ShowBeds() {
 
 
   return (
-      <ChakraProvider>
-      <AdminContainer>
-        <Flex direction="column" h="100vh">
-          <Header title="Painel Internações" />
-          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-            <GenericSidebar>
-              <GenericLink
-                name="Pesquisar"
-                icon={AiOutlineSearch}
-                path="/Admissions"
-              />
-            </GenericSidebar>
-          
             <SimpleGrid 
             flex="1"
             gap="4"
@@ -102,11 +89,5 @@ export function ShowBeds() {
               }
               
             </SimpleGrid>
- 
-            </Flex>
-          </Flex>
-        
-      </AdminContainer>
-    </ChakraProvider>
   )
 }
