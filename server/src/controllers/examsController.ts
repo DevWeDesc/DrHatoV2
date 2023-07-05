@@ -124,6 +124,19 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
     } catch (error) {
         console.log(error)
     }
+ },
+
+ finishPetExam: async (request: FastifyRequest<{ Params: { id: string;}}>, reply: FastifyReply) => {
+    const { id } = request.params 
+
+
+    try {
+        await prisma.examsForPet.update({
+            where: {id: parseInt(id)}, data: {doneExame: true}
+        })
+    } catch (error) {
+        
+    }
  }
 
 }

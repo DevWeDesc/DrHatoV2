@@ -88,7 +88,7 @@ useEffect(() => {
       </Flex>
 
       <Flex w="100%" height="45vh" align="center" overflowY="auto">
-        <TableContainer w="100%" height="100%">
+        <TableContainer overflowY="auto" w="100%" height="100%">
         <Table>
           <Thead>
             <Tr bgColor="cyan.100" >
@@ -116,7 +116,7 @@ useEffect(() => {
           </Thead>
 
 
-          <Tbody>
+          <Tbody >
             {petDetails.exams?.map( (exam) => (
               <Tr key={exam.id}>
               <Td border="2px"  fontSize="1xl" fontWeight="bold" color="green.700">

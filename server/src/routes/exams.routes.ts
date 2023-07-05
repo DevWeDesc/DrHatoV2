@@ -10,3 +10,4 @@ export async function examsRoutes(app: FastifyInstance) {
     app.delete('/exams/:id', examsController.deleteExam)
     app.delete('/petexam/:id', examsController.removePetExam)
 }
+

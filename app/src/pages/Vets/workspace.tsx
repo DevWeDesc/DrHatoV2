@@ -241,9 +241,9 @@ export function WorkSpaceVet() {
                   rounded="4px"
                   fontWeight="bold"
                   textAlign="center"
-                  bgColor="gray.100"
+                  bgColor="green.100"
                 >
-                  {pet.queue?.queueOur}
+                  ANIMAL NÃO SE ENCONTRA INTERNADO
                 </Text>
                 <Select
                   border="1px"
