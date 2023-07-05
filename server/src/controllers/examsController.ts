@@ -135,7 +135,7 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
             where: {id: parseInt(id)}, data: {doneExame: true}
         })
     } catch (error) {
-        
+        console.log(error)
     }
  }
 
