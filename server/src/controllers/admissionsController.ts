@@ -85,7 +85,6 @@ export const admissionsController = {
     }
   },
 
-
   getBusyAndAdmittedPets: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const response = await prisma.kennel.findMany({

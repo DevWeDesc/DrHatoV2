@@ -91,7 +91,7 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
 
  setExamInPet: async (request: FastifyRequest<{Params: params, Body: { requestedFor: string} }>, reply: FastifyReply) => {
     const { id, recordId} = request.params
-    const { requestedFor }= request.body
+    const  requestedFor = null
     const getExame = await prisma.exams.findUnique({where: {id: parseInt(id)}})
     const formattedData = new Date()
     const processData = new Intl.DateTimeFormat().format(formattedData)
@@ -110,6 +110,19 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
         medicine: {connect: {id: parseInt(recordId)}} }})
     } catch (error) {
         reply.status(400).send({message: error})
+        console.log(error)
+    }
+ },
+
+ removePetExam: async (request: FastifyRequest<{ Params: { id: string;}}>, reply: FastifyReply) => {
+    const {id} = request.params
+    try {
+        await prisma.examsForPet.delete({
+            where: {id: parseInt(id)}
+        })
+        reply.status(200).send("Sucesso ao deletar")
+    } catch (error) {
+        console.log(error)
     }
  }
 

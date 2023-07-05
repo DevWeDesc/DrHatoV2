@@ -14,7 +14,8 @@ export function DbContextProvider ({children}: DbContextProps) {
   const [autorization, setAutorization] = useState<AutorizationData[]>([])
   const [dbLoaded, setDbLoaded] = useState(false)
   const [generateAut, setGenerateAut] = useState<AutPDFProps>({})
-  const [data, setData] = useState({})
+  const [dataCustomer, setDataCustomer] = useState({})
+  const [dataPet, setDataPet] = useState({})
   const [customer, setCustomers] = useState([])
   const [labData, setLabData] = useState([])
   const [exams, setExams] = useState<ExamsData[]>([])
@@ -107,8 +108,10 @@ export function DbContextProvider ({children}: DbContextProps) {
         setAutorization, 
         generateAut, 
         setGenerateAut, 
-        data, 
-        setData, 
+        dataCustomer, 
+        setDataCustomer,
+        dataPet,
+        setDataPet,
         exams, 
         setExams,
         refresh,
