@@ -80,6 +80,9 @@ export function Createsurgeries() {
               <Text bg="red.300" border="1px solid black" pl="1" w="10vw">
                 De 7KG á 15KG
               </Text>
+              <Text border="1px solid black" pl="1" w="10vw">
+                De 16KG á 35KG
+              </Text>
               <Text border="1px solid black" pl="2" w="10vw">
                 + de 35KG
               </Text>

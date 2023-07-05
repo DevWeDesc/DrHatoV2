@@ -51,8 +51,10 @@ import { DataExames } from "./pages/Labs/dataExames";
 import { Vaccines } from "./pages/Vets/WorkSpaceVets/vaccines";
 import { Protocols } from "./pages/Vets/WorkSpaceVets/protocols";
 import { VetInstructions } from "./pages/Vets/WorkSpaceVets/instructions";
-import {  VetsAdmissions } from "./pages/Vets/WorkSpaceVets/admissions";
+import { VetsAdmissions } from "./pages/Vets/WorkSpaceVets/admissions";
 import { VetsSurgeries } from "./pages/Vets/WorkSpaceVets/sergeries";
+import AdmissionDetails from "./pages/Admissions/details";
+import SurgeriesAdmission from "./components/Admission/surgeriesadmission";
 
 export function Router() {
   return (
@@ -93,11 +95,14 @@ export function Router() {
         {/* VETS WORKSPACE PATHS */}
         <Route path="/WorkSpace/Exam/:id" element={<VetExams />} />
         <Route path="/WorkSpace/Procedures/:id" element={<ProceduresVet />} />
-        <Route path="/WorkSpace/Vaccines/:id" element={<Vaccines/>} />
-        <Route path="/WorkSpace/Protocols/:id" element={<Protocols/>} />
-        <Route path="/WorkSpace/Instructions/:id" element={<VetInstructions/>} />
-        <Route path="/WorkSpace/Admissions/:id" element={<VetsAdmissions/>} />
-        <Route path="/WorkSpace/Surgeries/:id" element={<VetsSurgeries/>} />
+        <Route path="/WorkSpace/Vaccines/:id" element={<Vaccines />} />
+        <Route path="/WorkSpace/Protocols/:id" element={<Protocols />} />
+        <Route
+          path="/WorkSpace/Instructions/:id"
+          element={<VetInstructions />}
+        />
+        <Route path="/WorkSpace/Admissions/:id" element={<VetsAdmissions />} />
+        <Route path="/WorkSpace/Surgeries/:id" element={<VetsSurgeries />} />
 
         {/* VETS WORKSPACE PATHS END */}
 
@@ -111,6 +116,11 @@ export function Router() {
         <Route path="/Schedule/Menu" element={<ScheduleMenu />} />
 
         <Route path="/Admissions" element={<Admissions />} />
+        <Route path="/Admissions/:id" element={<AdmissionDetails />} />
+        <Route
+          path="/Admissions/Surgeries/:id"
+          element={<SurgeriesAdmission />}
+        />
         <Route path="/Admissions/Beds" element={<ShowBeds />} />
 
         <Route path="/Medicines" element={<Medicines />} />
