@@ -10,11 +10,6 @@ import {
   Stack,
   background,
 } from "@chakra-ui/react";
-
-//import { Header } from "../admin/Header";
-//import { GenericLink } from "../Sidebars/GenericLink";
-//import { GenericSidebar } from "../Sidebars/GenericSideBar";
-
 import { BiHome, MdPets, TbArrowBack } from "react-icons/all";
 import { AdminContainer } from "../../../pages/AdminDashboard/style";
 import { WorkSpaceHeader } from "../../../pages/Vets/styles";
@@ -62,13 +57,14 @@ export default function DetailsAdmissions() {
                   //onClick={() => openModal()}
                   height={8}
                   colorScheme="whatsapp"
+                  onClick={() => navigate(`/Admissions/Procedures/${id}`)}
                 >
                   Procedimentos
                 </Button>
                 <Button
                   height={8}
                   colorScheme="whatsapp"
-                  //onClick={() => navigate(`/WorkSpace/Instructions/${id}`)}
+                  onClick={() => navigate(`/Admissions/Vaccines/${id}`)}
                 >
                   Vacinas
                 </Button>
@@ -76,6 +72,7 @@ export default function DetailsAdmissions() {
                   height={8}
                   colorScheme="whatsapp"
                   //onClick={() => openAutorizationModal()}
+                  onClick={() => navigate(`/Admissions/Exams/${id}`)}
                 >
                   Exames
                 </Button>

@@ -53,8 +53,11 @@ import { Protocols } from "./pages/Vets/WorkSpaceVets/protocols";
 import { VetInstructions } from "./pages/Vets/WorkSpaceVets/instructions";
 import { VetsAdmissions } from "./pages/Vets/WorkSpaceVets/admissions";
 import { VetsSurgeries } from "./pages/Vets/WorkSpaceVets/sergeries";
-import AdmissionDetails from "./pages/Admissions/details";
-import SurgeriesAdmission from "./components/Admission/surgeriesadmission";
+import { AdmissionDetails } from "./pages/Admissions/details";
+import { SurgeriesAdmission } from "./components/Admission/surgeriesadmission";
+import { AdmissionExams } from "./pages/Admissions/exams";
+import AdmissionsVaccines from "./pages/Admissions/vaccines";
+import ProceduresAdmisisonPage from "./components/Admission/ProceduresPage";
 
 export function Router() {
   return (
@@ -117,6 +120,15 @@ export function Router() {
 
         <Route path="/Admissions" element={<Admissions />} />
         <Route path="/Admissions/:id" element={<AdmissionDetails />} />
+        <Route
+          path="/Admissions/Procedures/:id"
+          element={<ProceduresAdmisisonPage />}
+        />
+        <Route
+          path="/Admissions/Vaccines/:id"
+          element={<AdmissionsVaccines />}
+        />
+        <Route path="/Admissions/Exams/:id" element={<AdmissionExams />} />
         <Route
           path="/Admissions/Surgeries/:id"
           element={<SurgeriesAdmission />}
