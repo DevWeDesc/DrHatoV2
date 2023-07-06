@@ -39,7 +39,7 @@ export function SearchAdmission() {
   const [petValue, setPetValue] = useState("");
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [totalInQueue, setTotalInQueue] = useState(0 as any);
-  let { data } = useContext(DbContext);
+  let { dataCustomer } = useContext(DbContext);
   const navigate = useNavigate();
   const handleNavigateWorkSpace = () => {
     if (!petValue) {
@@ -58,8 +58,7 @@ export function SearchAdmission() {
     }
     getQueue();
   }, [inQueue.length]);
-  console.log(data);
-  console.log("IN QUEUE", inQueue);
+
 
   return (
     <ChakraProvider>
@@ -94,8 +93,8 @@ export function SearchAdmission() {
                     </Thead>
 
                     <Tbody>
-                      {Object.keys(data).length >= 1
-                        ? data.map((user: any) => (
+                      {Object.keys(dataCustomer).length >= 1
+                        ? dataCustomer.map((user: any) => (
                             <Tr key={user.id}>
                               <Td>{user.cpf}</Td>
 
