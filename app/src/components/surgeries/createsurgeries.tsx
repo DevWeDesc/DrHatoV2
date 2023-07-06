@@ -1,4 +1,3 @@
-import React from "react";
 import {
   ChakraProvider,
   Flex,
@@ -7,6 +6,7 @@ import {
   Select,
   Button,
 } from "@chakra-ui/react";
+
 export function Createsurgeries() {
   return (
     <ChakraProvider>
