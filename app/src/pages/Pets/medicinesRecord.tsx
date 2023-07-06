@@ -19,6 +19,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect} from 'react'
 import { api } from "../../lib/axios";
 import { MedicineContainer } from "./style";
+import { PetDetaisl } from "../../interfaces";
 
 
 interface Customer {
@@ -46,21 +47,24 @@ interface PetProps {
 
 export function MedicineRecords() {
   const { id } = useParams<{ id: string }>();
-  const [pets, setPets] = useState({} as PetProps);
+  const [pets, setPets] = useState({} as PetDetaisl);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function getPet () {
-      try {
-        const response  = await api.get(`/pets/${id}`)
-        setPets(response.data)
-      } catch (error) {
-        console.log(error)
-      }
-  
+
+  async function getPet () {
+    try {
+      const response  = await api.get(`/pets/${id}`)
+      setPets(response.data)
+    } catch (error) {
+      console.log(error)
     }
+
+  }
+
+  useEffect(() => {
     getPet()
-  },[pets.id])
+  },[])
+
 
 
   return (
@@ -163,12 +167,31 @@ export function MedicineRecords() {
           <Flex w="100%" height="38px" bgColor="gray.100" align="center" justify="center">
           <Text fontWeight="bold" >EXAMES</Text>
           </Flex>
-          <Flex w="100%" height="38px" bgColor="gray.200" gap={2} align="center" justify="space-evenly">
+          <Flex w="100%" height="38px" bgColor="gray.200" gap={2} align="center" pl="6" pr="6" justify="space-between">
           <Text fontWeight="bold" >TIPOS</Text>
           <Text fontWeight="bold" >DATA</Text>
           </Flex>
-          <Flex height="100%" width="100%" overflowY="auto">
+          <Flex direction="column" height="100%" width="100%" overflowY="auto">
+              {
+                pets.exams?.map((exam) => (
 
+                  <Flex key={exam.id} border="2px" bgColor="cyan.100" align="center" height="38px" width="100%" pl="6" pr="6" justify="space-between">
+                      {exam.doneExam === true ? (
+                        <Text color="green.400" fontWeight="bold">
+                          {exam.name}
+                        </Text>
+                      ) : (
+                        <Text color="red.400" fontWeight="bold">
+                          {exam.name}
+                        </Text>
+                      )}
+                      <Text fontWeight="bold" fontSize="lg">{exam.requestedData}</Text>
+                      
+                  </Flex>
+                  
+                  
+                ))
+              }
           </Flex>
           <Flex w="100%" height="38px" bgColor="gray.100" gap={2} align="center" justify="space-evenly">
           <Text fontWeight="bold" color="red">Vermelhos/Por Fazer</Text>

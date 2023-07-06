@@ -90,12 +90,14 @@ export interface ExamsData {
     dbLoaded: boolean
     generateAut: AutPDFProps
     setGenerateAut: React.Dispatch<React.SetStateAction<AutPDFProps>>
-    data: any
-    setData: any
-    labData: any, 
+    dataCustomer: any
+    setDataCustomer: any
+    dataPet: any
+    setDataPet: any
+    labData: any
     setLabData: any
-    customer: any,
-    setCustomers: any,
+    customer: any
+    setCustomers: any
     exams: ExamsData[]
     sectors:SectorData[]
     vets: VetData[]
@@ -125,3 +127,32 @@ export interface CreateUserFormData {
   isAdmin: boolean;
 }
 
+export interface ExamsProps  {
+  id: number;
+  requestedData: string;
+  name: string;
+  price: string;
+  doneExam: boolean;
+  coleted?: number;
+}
+
+export interface PetDetaisl {
+  id: number | string;
+  name: string;
+  balance: number;
+  customerName: string;
+  customerId: string;
+  especie: string;
+  sexo: string;
+  race: string;
+  castred: boolean;
+  chip: boolean;
+  weigth: string;
+  corPet: string;
+  sizePet: string;
+  bornDate: string;
+  observations: string;
+  recordId: number | string;
+  codPet: string;
+  exams: ExamsProps[];
+}

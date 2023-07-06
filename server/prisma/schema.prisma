@@ -191,3 +191,14 @@ model Bed {
   isBusy      Boolean? @default(false)
   mustFasting Boolean? @default(false)
 }
+
+// When make admissions logic
+// model Admissions {
+//   id          Int      @id @default(autoincrement())
+//   entryOur DateTime   
+//   exitOur DateTime? 
+//   status Boolean @default(false)
+//   dailyRate Decimal
+//   hospitalizedDays Int
+//   totalDebt Int
+// }
