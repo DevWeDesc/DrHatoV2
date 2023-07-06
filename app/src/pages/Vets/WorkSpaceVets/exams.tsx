@@ -1,11 +1,75 @@
 import {ChakraProvider, Flex, Table, Tr, Td, Th, Thead, Tbody, TableContainer, Button, Checkbox, HStack, Text } from "@chakra-ui/react"
+import { useEffect, useState } from "react";
 import { BiHome } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Input } from "../../../components/admin/Input";
+import { ExamsData, ExamsProps, PetDetaisl } from "../../../interfaces";
+import { api } from "../../../lib/axios";
+
+
+
 
 export function VetExams () {
   const { id } = useParams<{ id: string }>();
+  const [petDetails, setPetDetails] = useState({} as PetDetaisl);
+  const [exams, setExams ] = useState([])
+  const [examId, setExamId] = useState(0)
+  const [reloadData, setReloadData] = useState(false);
+
+  async function getPetExams () {
+        const response = await api.get(`/pets/${id}`)
+        setPetDetails(response.data)
+
+        const exams = await api.get("/exams")
+        setExams(exams.data)
+  }
+
+
+ async function setExamInPet ()  {
+    try {
+      await api.post(`/setexam/${examId}/${petDetails.recordId}`)
+      setReloadData(true);
+      toast.success("Exame criado com Sucesso")
+    } catch (error) {
+      toast.error("Falha ao cadastrar exame!")
+    }
+  }
+
+
+  async function deleteExam (examId: string | number) {
+    try {
+        const confirmation = window.confirm("DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?")
+
+        if(confirmation === true) {
+          await api.delete(`/petexam/${examId}`)
+          setReloadData(true);
+          toast.warning("Deletado com sucesso!")
+        } else {
+          return
+        }
+        
+    } catch (error) {
+      toast.error("Falha ao Deletar!")
+      console.log(error)
+    }
+  }
+
+useEffect(() => {
+  getPetExams ()
+},[])
+  
+  useEffect(() => {
+    if (reloadData === true) {
+      getPetExams ()
+      setReloadData(false); // Reseta o estado para evitar chamadas infinitas
+    }
+  }, [reloadData])
+
+
+
+  console.log("ESTADO DE CHAMADA  API", petDetails)
   const navigate = useNavigate()
   return (
     <ChakraProvider>
@@ -24,7 +88,7 @@ export function VetExams () {
       </Flex>
 
       <Flex w="100%" height="45vh" align="center" overflowY="auto">
-        <TableContainer w="100%" height="100%">
+        <TableContainer overflowY="auto" w="100%" height="100%">
         <Table>
           <Thead>
             <Tr bgColor="cyan.100" >
@@ -52,28 +116,30 @@ export function VetExams () {
           </Thead>
 
 
-          <Tbody>
-            <Tr>
-            <Td border="2px"  fontSize="1xl" fontWeight="bold" color="green.700">
-               HEMOGRAMA COMPLETO
-              </Td>
-              <Td border="2px"  fontSize="1xl" fontWeight="bold">
-                828
-              </Td>
-              <Td border="2px"  fontSize="1xl" fontWeight="bold">
-                27/06/2023
-              </Td>
-              <Td border="2px"  fontSize="1xl" fontWeight="bold">
-                PRONTO
-              </Td>
-
-              <Td border="2px"  fontSize="1xl" fontWeight="bold">
-                --
-              </Td>
-              <Td border="2px"  fontSize="1xl" fontWeight="bold">
-                ETIQUETA
-              </Td>
-            </Tr>
+          <Tbody >
+            {petDetails.exams?.map( (exam) => (
+              <Tr key={exam.id}>
+              <Td border="2px"  fontSize="1xl" fontWeight="bold" color="green.700">
+                 {exam.name}
+                </Td>
+                <Td border="2px"  fontSize="1xl" fontWeight="bold">
+                  {exam.coleted != null ? exam.coleted : "Sem coleta"}
+                </Td>
+                <Td border="2px"  fontSize="1xl" fontWeight="bold">
+                  {exam.requestedData}
+                </Td>
+                <Td border="2px"  fontSize="1xl" fontWeight="bold">
+                  {exam.doneExam === true ? "SIM" : "NÃO"}
+                </Td>
+  
+                <Td border="2px"  fontSize="1xl" fontWeight="bold">
+                 <Button colorScheme="red" onClick={() =>  deleteExam(exam.id)}>EXCLUIR ?</Button>
+                </Td>
+                <Td border="2px"  fontSize="1xl" fontWeight="bold">
+                  ETIQUETA
+                </Td>
+              </Tr>
+            ))}
           </Tbody>
          </Table>
         </TableContainer>
@@ -84,9 +150,9 @@ export function VetExams () {
 
       <Flex w="100%" height="45vh"direction="column" >
           <Flex height="48px" w="100%" bgColor="cyan.100" align="center" justify="center" gap={4}>
-             <HStack>  <Button colorScheme="teal" w="300px">FILTRAR POR NOME</Button> <Input height="38px" name="filter" /></HStack> <Button colorScheme="whatsapp">INCLUIR NOVO EXAME</Button>
+             <HStack>  <Button colorScheme="teal" w="300px">FILTRAR POR NOME</Button> <Input height="38px" name="filter" /></HStack> <Button onClick={setExamInPet} colorScheme="whatsapp">INCLUIR NOVO EXAME</Button>
           </Flex>
-        <TableContainer w="100%" height="100%">
+        <TableContainer w="100%" height="100%" overflowY="auto">
         <Table>
           <Thead>
             <Tr >
@@ -102,17 +168,21 @@ export function VetExams () {
               </Tr>
               </Thead>
               <Tbody>
-                <Tr >
+               {
+                exams.map((exam: ExamsProps) => (
+                  <Tr key={exam.id} >
                   <Td border="2px">
-                    <Checkbox borderColor="black" size="lg" />
+                    <Checkbox onChange={(ev) => ev.target.checked === true ? setExamId(exam.id) : setExamId(0)}  value={exam.id}   borderColor="black" size="lg" />
                   </Td>
                   <Td  border="2px">
-                    Exemplo 1
+                    {exam.name}
                   </Td>
                   <Td  border="2px">
-                   R$ 299,99
+                   R$ {exam.price}
                   </Td>
                 </Tr>
+                ))
+               }
               </Tbody>
             </Table>
              </TableContainer>

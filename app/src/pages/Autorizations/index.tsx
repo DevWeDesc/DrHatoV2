@@ -39,8 +39,7 @@ import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { toast } from "react-toastify";
 import { VetsSearch } from "../../components/Search/vetsSearch";
 export function GenerateAutorizations() {
-  const { autorization, setGenerateAut } = useContext(DbContext);
-  const { data } = useContext(DbContext);
+  const { autorization, setGenerateAut, dataCustomer } = useContext(DbContext);
   const [value, setValue] = useState("");
   const [petValue, setPetValue] = useState("");
   const autorizations = autorization ? autorization : null;
@@ -54,12 +53,12 @@ export function GenerateAutorizations() {
 
     try {
     const response = await api.get(`/autorizations/${value}`);
-    const petDesc = data.pets.find( (pet: any) => pet.id == petValue)
+    const petDesc = dataCustomer.pets?.find( (pet: any) => pet.id == petValue)
     const dataAut = response.data;
     const autorization = {
-      name: data.name,
-      adress: data.adress,
-      cpf: data.cpf,
+      name: dataCustomer.name,
+      adress: dataCustomer.adress,
+      cpf: dataCustomer.cpf,
       autName: dataAut.name,
       autText: dataAut.text,
       petName: petDesc.name,
@@ -145,12 +144,12 @@ export function GenerateAutorizations() {
                     </Thead>
                     <Tbody>
                       <Tr>
-                        <Td>{data.name}</Td>
-                        <Td>{data.adress}</Td>
-                        <Td>{data.phone}</Td>
-                        <Td>{data.cpf}</Td>
-                        <Td>{data.email}</Td>
-                        <Td>{data.birthday}</Td>
+                        <Td>{dataCustomer.name}</Td>
+                        <Td>{dataCustomer.adress}</Td>
+                        <Td>{dataCustomer.phone}</Td>
+                        <Td>{dataCustomer.cpf}</Td>
+                        <Td>{dataCustomer.email}</Td>
+                        <Td>{dataCustomer.birthday}</Td>
                         <Td>
                           <Menu>
                             <MenuButton
@@ -162,8 +161,8 @@ export function GenerateAutorizations() {
                                 <Text>pets</Text>
                               </StyledBox>
                             </MenuButton>
-                            <MenuList key={data.id} bg="green.100">
-                              {data.pets?.map((pets: any) => (
+                            <MenuList key={dataCustomer.id} bg="green.100">
+                              {dataCustomer.pets?.map((pets: any) => (
                                 <Flex
                                   key={pets.id}
                                   direction="column"

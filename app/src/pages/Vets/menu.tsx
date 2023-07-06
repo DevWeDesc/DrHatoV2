@@ -15,7 +15,7 @@ import {
   MenuList,
   Button
 } from '@chakra-ui/react'
-import { useContext, useEffect, useState} from 'react'
+import { ReactNode, useContext, useEffect, useState} from 'react'
 import { Header } from '../../components/admin/Header'
 import { GenericLink } from '../../components/Sidebars/GenericLink'
 import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
@@ -41,11 +41,20 @@ interface QueueProps {
 }
 
 export function MenuVet() {
+  let {dataCustomer, dataPet} = useContext(DbContext)
   const [petValue, setPetValue] = useState("");
   const [inQueue, setInQueue] = useState<QueueProps[]>([])
   const [totalInQueue, setTotalInQueue] = useState(0 as any)
-  let {data} = useContext(DbContext)
   const navigate = useNavigate()
+  useEffect(() => {
+    async function getQueue() {
+     const response = await api.get('/pets/queue')
+     const total = await api.get('/pets/queue')
+     setTotalInQueue(total.data)
+     setInQueue(response.data.response)
+    } 
+    getQueue()
+   }, [inQueue.length])
   const handleNavigateWorkSpace = () => {
     if(!petValue) {
       toast.error("Selecione um PET")
@@ -53,19 +62,128 @@ export function MenuVet() {
     } 
     navigate(`/Vets/Workspace/${petValue}`)
   }
+    console.log("PET RESPONSE", dataPet)
 
-useEffect(() => {
- async function getQueue() {
-  const response = await api.get('/pets/queue')
-  const total = await api.get('/pets/queue')
-  setTotalInQueue(total.data)
-  setInQueue(response.data.response)
- } 
- getQueue()
-}, [inQueue.length])
+    let typeTable: ReactNode;
+    switch (true) {
+      case  Object.keys(dataCustomer).length >= 1:
+      typeTable = (       <Table colorScheme="blackAlpha">
+      <Thead>
+        <Tr>
+          <Th>CPF</Th>
+          <Th>Cliente</Th>
+          <Th>Animal</Th>
+          <Th>Código</Th>
+          <Th>Data</Th>
+          <Th>Hora</Th>
+          <Th>Preferência</Th>
+          <Th>Especialidade</Th>
+        </Tr>
+      </Thead>
 
-console.log("IN QUEUE",inQueue)
+      <Tbody>
+      {
+                dataCustomer.map((customer: any) => (
+                  <Tr key={customer.id}>
+                  <Td>{customer.cpf}</Td>
+                  
+                  <Td><Button colorScheme="whatsapp" onClick={() => handleNavigateWorkSpace()}>{customer.name}</Button></Td>
+                  
+                 
+                  <Td>
+                  <Menu>
+                    <MenuButton
+                      border="1px"
+                      as={Button}
+                      rightIcon={<Burger />}
+                    >
+                      <StyledBox>
+                        <Text>pets</Text>
+                      </StyledBox>
+                    </MenuButton>
+                    <MenuList bg="green.100">
+                      {customer.pets?.map((pets: any) => (
+                        <Flex
+                          direction="column"
+                          align="center"
+                          p="2px"
+                          gap="2"
+                          key={pets.id}
+                        >
+                      <RadioGroup onChange={setPetValue} value={petValue}>
+                        <Radio
+                          bgColor={petValue == pets.id ? "green" : "red"}
+                          value={pets.id as any}
+                        >
+                          {pets.name}
+                        </Radio>
+                      </RadioGroup>
+                        </Flex>
+                      ))}
+                    </MenuList>
+                  </Menu>
+                  </Td>
+                  <Td>92487</Td>
+                  <Td>04/04/2023</Td>
+                
+                  <Td>25:53</Td>
+                  <Td>{customer.vetPreference ? customer.vetPreference : "Sem Preferência"}</Td>
+                  <Td>0</Td>
+                </Tr>
+                ))
+                 }
 
+
+      </Tbody>
+    </Table>)
+      break;
+      case Object.keys(dataPet).length >= 1:
+                
+      typeTable = (<>
+      <Table colorScheme="blackAlpha">
+      <Thead>
+        <Tr>
+          <Th>Nome</Th>
+    
+          <Th>Código</Th>
+          <Th>Nascimento</Th>
+          <Th>Preferência</Th>
+          <Th>Especialidade</Th>
+        </Tr>
+      </Thead>
+
+      <Tbody>
+      {
+                dataPet.map((pet: any) => (
+                  <Tr key={pet.id}>
+
+                  
+                  <Td><Button colorScheme="whatsapp" onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}>{pet.name}</Button></Td>
+                  
+                 
+                  <Td>
+                    {pet.codPet}
+                  </Td>
+                 
+                  <Td>{pet.bornDate}</Td>
+              
+                  <Td>{pet.vetPreference ? pet.vetPreference : "Sem Preferência"}</Td>
+                  <Td>0</Td>
+                </Tr>
+                ))
+                 }
+
+
+      </Tbody>
+    </Table>
+      
+      </>)
+                 
+        break;
+    }
+
+
+    console.log("DATA RESPONSE", dataCustomer)
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -84,86 +202,7 @@ console.log("IN QUEUE",inQueue)
                <VetsSearch path='vetsearch' />
                 <Button colorScheme="teal" onClick={() => navigate("/Queue")}><>TOTAL NA FILA: {totalInQueue.totalInQueue}</></Button>
                 <Flex  textAlign="center" justify="center">
-                  <Table colorScheme="blackAlpha">
-                    <Thead>
-                      <Tr>
-                        <Th>CPF</Th>
-                        <Th>Cliente</Th>
-                        <Th>Animal</Th>
-                        <Th>Código</Th>
-                        <Th>Data</Th>
-                        <Th>Hora</Th>
-                        <Th>Preferência</Th>
-                        <Th>Especialidade</Th>
-                      </Tr>
-                    </Thead>
-
-                    <Tbody>
-                      
-                    { Object.keys(data).length >= 1 ? data.map((user: any) => (
-                      <Tr key={user.id}>
-                          <Td>{user.cpf}</Td>
-                          
-                          <Td><Button colorScheme="whatsapp" onClick={() => handleNavigateWorkSpace()}>{user.name}</Button></Td>
-                          
-                         
-                          <Td>
-                          <Menu>
-                            <MenuButton
-                              border="1px"
-                              as={Button}
-                              rightIcon={<Burger />}
-                            >
-                              <StyledBox>
-                                <Text>pets</Text>
-                              </StyledBox>
-                            </MenuButton>
-                            <MenuList bg="green.100">
-                              {user.pets?.map((pets: any) => (
-                                <Flex
-                                  direction="column"
-                                  align="center"
-                                  p="2px"
-                                  gap="2"
-                                  key={pets.id}
-                                >
-                              <RadioGroup onChange={setPetValue} value={petValue}>
-                                <Radio
-                                  bgColor={petValue == pets.id ? "green" : "red"}
-                                  value={pets.id as any}
-                                >
-                                  {pets.name}
-                                </Radio>
-                              </RadioGroup>
-                                </Flex>
-                              ))}
-                            </MenuList>
-                          </Menu>
-                          </Td>
-                          <Td>92487</Td>
-                          <Td>04/04/2023</Td>
-                        
-                          <Td>25:53</Td>
-                          <Td>{user.vetPreference ? user.vetPreference : "Sem Preferência"}</Td>
-                          <Td>0</Td>
-                        </Tr>
-                    ) ): 
-                    inQueue.map((queue: any) => (
-                    <Tr key={queue.id}>
-                      <Td>{queue.customerCpf}</Td>
-                      <Td>{queue.customerName}</Td>
-                      <Td><Link to={`/Vets/Workspace/${queue.id}`}>
-                      {queue.name}
-                      </Link> </Td>
-                      <Td>{queue.codPet}</Td>
-                      <Td>{queue.queueEntry}</Td>
-                      <Td>{queue.ouor}</Td>
-                      <Td>{queue.vetPreference}</Td>
-                      <Td>Empty</Td>
-                    </Tr>)) }
-              
-                    </Tbody>
-                  </Table>
+                {typeTable}
                 </Flex>
               </Flex>
             </Box>
