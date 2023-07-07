@@ -54,10 +54,11 @@ export function AdminMain() {
                       Cadastro de Setores
                     </Button>
                   </Link>
-                  <Button colorScheme="whatsapp" py="10">
-                    Cadastro de Vacinas
-                  </Button>
-
+                  <Link to="/Admin/Vaccines">
+                    <Button colorScheme="whatsapp" w="100%" py="10">
+                      Cadastro de Vacinas
+                    </Button>
+                  </Link>
                   <Button colorScheme="whatsapp" py="10">
                     Relatórios
                   </Button>

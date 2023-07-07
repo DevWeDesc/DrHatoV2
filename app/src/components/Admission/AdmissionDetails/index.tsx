@@ -18,6 +18,7 @@ import { useState } from "react";
 
 export default function DetailsAdmissions() {
   const [admissiondiary, setAdmissionDiary] = useState<number | any>(0);
+  const [confirmation, setConfirmation] = useState<boolean>(false);
   const { id } = useParams();
   const navigate = useNavigate();
   return (
@@ -272,6 +273,7 @@ export default function DetailsAdmissions() {
                       </Flex>
                     </Box>
                   )}
+
                   {admissiondiary > 0 && (
                     <Flex direction="column">
                       <Flex>
@@ -499,10 +501,12 @@ export default function DetailsAdmissions() {
                         _active={{
                           boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.2)",
                         }}
-                        onClick={() => setAdmissionDiary(0)}
+                        onClick={() => setConfirmation(true)}
                       >
                         Encerrar Diárias
                       </Button>
+                      {confirmation === true &&
+                        confirm("Certeza que deseja Finalizar a Diaria?")}
                     </Flex>
                   )}
                 </Flex>

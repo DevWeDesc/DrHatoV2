@@ -58,6 +58,9 @@ import { SurgeriesAdmission } from "./components/Admission/surgeriesadmission";
 import { AdmissionExams } from "./pages/Admissions/exams";
 import AdmissionsVaccines from "./pages/Admissions/vaccines";
 import ProceduresAdmisisonPage from "./components/Admission/ProceduresPage";
+import AdmissionProtocols from "./pages/Admissions/protocols";
+import EditProtocols from "./pages/Admissions/editProtocols";
+import AdminVaccines from "./pages/AdminDashboard/vaccines";
 
 export function Router() {
   return (
@@ -69,6 +72,8 @@ export function Router() {
         <Route path="/Queue" element={<QueueSistem />} />
 
         <Route path="/Admin" element={<AdminMain />} />
+        <Route path="/Admin/Vaccines" element={<AdminVaccines />} />
+
         <Route path="/Admin/Charts" element={<AdminCharts />} />
         <Route path="/Admin/Autorizations" element={<Autorizations />} />
         <Route
@@ -119,6 +124,9 @@ export function Router() {
         <Route path="/Schedule/Menu" element={<ScheduleMenu />} />
 
         <Route path="/Admissions" element={<Admissions />} />
+        <Route path="/Admissions/Protocols" element={<AdmissionProtocols />} />
+        <Route path="/Admissions/Protocols/:id" element={<EditProtocols />} />
+
         <Route path="/Admissions/:id" element={<AdmissionDetails />} />
         <Route
           path="/Admissions/Procedures/:id"
@@ -155,6 +163,7 @@ export function Router() {
         <Route path="/Recepcao/Create" element={<CreateCustomer />} />
         <Route path="/Recepcao/Customer/Edit/:id" element={<EditCustomer />} />
         <Route path="/Recepcao/Finance" element={<Finance />} />
+        <Route path="/Recepcao/" element={<Reception />} />
 
         <Route path="/Customer/Balance/:id" element={<BalanceHistory />} />
       </Route>

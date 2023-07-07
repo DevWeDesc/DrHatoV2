@@ -29,6 +29,7 @@ import { MdPets as Burger } from "react-icons/all";
 import { toast } from "react-toastify";
 import { api } from "../../lib/axios";
 import { AdmissionSearch } from "../Search/admissionSearch";
+import { SiProtocolsdotio } from "react-icons/all";
 
 interface QueueProps {
   response: [];
@@ -59,7 +60,6 @@ export function SearchAdmission() {
     getQueue();
   }, [inQueue.length]);
 
-
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -71,6 +71,11 @@ export function SearchAdmission() {
                 name="Pesquisar Cliente"
                 icon={AiOutlineSearch}
                 path="/Vets/Menu"
+              />
+              <GenericLink
+                name="Protocolos"
+                icon={SiProtocolsdotio}
+                path="/Admissions/Protocols"
               />
             </GenericSidebar>
             <Box w="100%" borderRadius={8} bg="gray.200" p="8">

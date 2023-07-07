@@ -1,104 +1,43 @@
 import {
-  Text,
-  Box,
-  Button,
   ChakraProvider,
   Flex,
   Heading,
-  Icon,
-  Table,
-  Tbody,
-  Td,
-  Th,
+  Button,
   Thead,
   Tr,
+  Th,
+  Tbody,
+  Td,
   FormControl,
-  HStack,
-  CheckboxGroup,
-  Checkbox,
+  Input,
+  Box,
+  Icon,
+  Table,
+  Text,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import React from "react";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { Header } from "../../components/admin/Header";
 import { Paginaton } from "../../components/admin/Pagination";
-import { Sidebar } from "../../components/admin/Sidebar";
 import { LoadingSpinner } from "../../components/Loading";
-import { DbContext } from "../../contexts/DbContext";
+import { AdminContainer } from "./style";
+import { Sidebar } from "../../components/admin/Sidebar";
+import { Header } from "../../components/admin/Header";
 import { GenericModal } from "../../components/Modal/GenericModal";
-import { AdminContainer } from "../AdminDashboard/style";
-import { api } from "../../lib/axios";
-import { toast } from "react-toastify";
-import { Input } from "../../components/admin/Input";
+import { useState } from "react";
 
-export function SectorsList() {
-  const { sectors } = useContext(DbContext);
-  const { register, handleSubmit } = useForm();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export default function AdminVaccines() {
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
-  const navigate = useNavigate();
-
-  function openModal() {
-    setIsModalOpen(true);
-  }
-  function closeModal() {
-    setIsModalOpen(false);
-  }
-
   function openModalTwo() {
     setIsModalOpenTwo(true);
   }
   function closeModalTwo() {
     setIsModalOpenTwo(false);
   }
-
-  const handleCreateSector: SubmitHandler<FieldValues> = async (values) => {
-    try {
-      const data = {
-        name: values.name,
-      };
-      await api.post("sectors", data);
-      toast.success("Setor criado com sucesso");
-      navigate(0);
-    } catch (error) {
-      toast.error("Falha ao criar novo setor");
-    }
-  };
-
-  async function handleDeleteSector(id: string | number) {
-    const confirm = window.confirm(
-      "Deletar e uma operação irreversivel deseja mesmo continuar?"
-    );
-    try {
-      if (confirm === true) {
-        await api.delete(`sectors/${id}`);
-        toast.success("Setor deletdo com sucesso");
-        navigate(0);
-      }
-    } catch (error) {
-      toast.error("Falha ao criar novo setor");
-    }
-  }
-
-  const handleEditSector: SubmitHandler<FieldValues> = async (values) => {
-    try {
-      const data = {
-        name: values.name,
-      };
-      await api.put(`sectors/${values.id}`, data);
-      toast.success("Setor editado com sucesso");
-      navigate(0);
-    } catch (error) {
-      toast.error("Falha ao editar novo setor");
-    }
-  };
-
   return (
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Exames" />
+          <Header title="Vacinas" />
 
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />
@@ -110,7 +49,7 @@ export function SectorsList() {
                 align="center"
               >
                 <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                  Setores
+                  Vacinas
                 </Heading>
 
                 <Button
@@ -120,9 +59,9 @@ export function SectorsList() {
                   py="8"
                   colorScheme="whatsapp"
                   leftIcon={<Icon as={RiAddLine} />}
-                  onClick={() => openModal()}
+                  //onClick={() => openModal()}
                 >
-                  Cadastrar novo Setor
+                  Cadastrar nova Vacina
                 </Button>
               </Flex>
 
@@ -130,17 +69,18 @@ export function SectorsList() {
                 <Thead>
                   <Tr>
                     <Th fontSize="18" borderColor="black">
-                      Nome
+                      Vacina
                     </Th>
+                    <Th borderColor="black"></Th>
                     <Th fontSize="18" borderColor="black">
-                      Id do Setor
+                      Valor
                     </Th>
                     <Th borderColor="black"></Th>
                   </Tr>
                 </Thead>
 
                 <Tbody>
-                  {sectors ? (
+                  {/*sectors ? (
                     sectors.map((sector) => (
                       <Tr key={sector.id}>
                         <Td borderColor="black">
@@ -178,19 +118,54 @@ export function SectorsList() {
                     ))
                   ) : (
                     <LoadingSpinner />
-                  )}
+                  )*/}
+                  <Tr key={0}>
+                    <Td borderColor="black">
+                      <Text fontWeight="bold" color="gray.800">
+                        Anti Rabica
+                      </Text>
+                    </Td>
+                    <Td borderColor="black"></Td>
+                    <Td borderColor="black">R$60,00</Td>
+
+                    <Td borderColor="black">
+                      <Flex gap="2" ml="50%">
+                        <Button
+                          as="a"
+                          size="md"
+                          fontSize="md"
+                          colorScheme="yellow"
+                          leftIcon={<Icon as={RiPencilLine} />}
+                          onClick={() => openModalTwo()}
+                        >
+                          Editar Vacina
+                        </Button>
+                        <Button
+                          as="a"
+                          size="md"
+                          fontSize="md"
+                          colorScheme="red"
+                          leftIcon={<Icon as={RiPencilLine} />}
+                          //onClick={() => handleDeleteSector(sector.id)}
+                        >
+                          Deletar Vacina
+                        </Button>
+                      </Flex>
+                    </Td>
+                  </Tr>
                 </Tbody>
               </Table>
-              <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+              <GenericModal /*isOpen={isModalOpen} onRequestClose={closeModal}*/
+              >
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleCreateSector)}
+                  //onSubmit={handleSubmit(handleCreateSector)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
                 >
                   <Input
-                    {...register("name")}
+                    ///{...register("name")}
                     name="name"
                     label="Nome do Setor"
                     mb="4"
@@ -208,27 +183,28 @@ export function SectorsList() {
               >
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleEditSector)}
+                  //onSubmit={handleSubmit(handleEditSector)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
                 >
-                  <Text>Editar Setor</Text>
+                  <Text>Editar Vacina</Text>
                   <Input
-                    {...register("name")}
+                    //{...register("name")}
                     name="name"
                     label="Nome do Setor"
                     mb="4"
                   />
+                  <Text>Editar Preço</Text>
                   <Input
-                    {...register("id")}
+                    //{...register("id")}
                     name="id"
                     label="Id do setor"
                     mb="4"
                   />
 
-                  <Button w="100%" type="submit" colorScheme="green" m="2">
-                    Cadastrar
+                  <Button w="100%" type="submit" colorScheme="yellow" m="2">
+                    Editar Vacina
                   </Button>
                 </FormControl>
               </GenericModal>
