@@ -53,7 +53,9 @@ export function LabExames() {
                     <Tr>
                       <Td>Data Solicitação</Td>
                       <Td>Animal</Td>
-                      <Link to={`/Labs/Exames/${1}`}>Exame</Link>
+                      <Td fontWeight="bold">
+                        <Link to={`/Labs/Exames/${1}`}>Exame</Link>
+                      </Td>
                       <Td>Veterinário</Td>
                       <Td>Responsável</Td>
                       <Td>Imprimir</Td>

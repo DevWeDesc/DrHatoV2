@@ -50,6 +50,8 @@ export function SearchAdmission() {
     navigate(`/Vets/Workspace/${petValue}`);
   };
 
+  console.log(inQueue);
+
   useEffect(() => {
     async function getQueue() {
       const response = await api.get("/pets/queue");
@@ -106,7 +108,9 @@ export function SearchAdmission() {
                               <Td>
                                 <Button
                                   colorScheme="whatsapp"
-                                  onClick={() => handleNavigateWorkSpace()}
+                                  onClick={() =>
+                                    navigate(`/Admissions/${user.id}`)
+                                  }
                                 >
                                   {user.name}
                                 </Button>

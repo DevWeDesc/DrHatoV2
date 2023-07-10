@@ -94,7 +94,7 @@ export function Autorizations() {
                         w="100%"
                         mb="5"
                       >
-                        Procedimentos
+                        Autorizações
                       </Heading>
                       <Button
                         w="100%"
@@ -111,7 +111,6 @@ export function Autorizations() {
                         w="100%"
                         fontSize="23"
                         fontWeight="bold"
-                        borderY="1px solid black"
                         mt="4"
                         py="2"
                         pl="2"
@@ -122,20 +121,28 @@ export function Autorizations() {
                         fontWeight="bold"
                         fontSize="18"
                         pl="2"
+                        pr="1"
                         py="2"
                         m="0"
                         w="100%"
-                        borderBottom="1px solid black"
+                        borderY="1px solid black"
                         textAlign="left"
                       >
                         {autorizations != null ? (
                           autorizations.map((item) => (
-                            <Link
-                              key={item.id}
-                              to={`/Admin/Autorizations/${item.id}`}
-                            >
-                              <Text>{item.name}</Text>
-                            </Link>
+                            <>
+                              <Link
+                                key={item.id}
+                                to={`/Admin/Autorizations/${item.id}`}
+                              >
+                                <Flex align="center" justify="space-between">
+                                  <Text>{item.name} </Text>
+                                  {!!item.name && (
+                                    <Button colorScheme="yellow">Editar</Button>
+                                  )}
+                                </Flex>
+                              </Link>
+                            </>
                           ))
                         ) : (
                           <LoadingSpinner />

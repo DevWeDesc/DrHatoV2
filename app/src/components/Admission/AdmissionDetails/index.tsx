@@ -17,10 +17,11 @@ import { useNavigate, useParams } from "react-router";
 import { useState } from "react";
 
 export default function DetailsAdmissions() {
-  const [admissiondiary, setAdmissionDiary] = useState<number | any>(0);
+  const [admissiondiary, setAdmissionDiary] = useState<number | boolean>(false);
   const [confirmation, setConfirmation] = useState<boolean>(false);
   const { id } = useParams();
   const navigate = useNavigate();
+
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -220,7 +221,7 @@ export default function DetailsAdmissions() {
                   _active={{ boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.5)" }}
                   onClick={() => {
                     console.log(admissiondiary);
-                    setAdmissionDiary(admissiondiary + 1);
+                    setAdmissionDiary(true);
                   }}
                 >
                   {" "}
@@ -228,7 +229,7 @@ export default function DetailsAdmissions() {
                 </Button>
 
                 <Flex>
-                  {admissiondiary === 0 && (
+                  {admissiondiary === false && (
                     <Box w="100%">
                       <Flex direction="column" w="100">
                         <Text
@@ -274,7 +275,7 @@ export default function DetailsAdmissions() {
                     </Box>
                   )}
 
-                  {admissiondiary > 0 && (
+                  {admissiondiary === true && (
                     <Flex direction="column">
                       <Flex>
                         <Text
@@ -501,12 +502,12 @@ export default function DetailsAdmissions() {
                         _active={{
                           boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.2)",
                         }}
-                        onClick={() => setConfirmation(true)}
+                        onClick={() => {
+                          setAdmissionDiary(false);
+                        }}
                       >
                         Encerrar Diárias
                       </Button>
-                      {confirmation === true &&
-                        confirm("Certeza que deseja Finalizar a Diaria?")}
                     </Flex>
                   )}
                 </Flex>
