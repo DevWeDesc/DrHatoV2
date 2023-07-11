@@ -61,6 +61,8 @@ import ProceduresAdmisisonPage from "./components/Admission/ProceduresPage";
 import AdmissionProtocols from "./pages/Admissions/protocols";
 import EditProtocols from "./pages/Admissions/editProtocols";
 import AdminVaccines from "./pages/AdminDashboard/vaccines";
+import Surgeries from "./pages/Surgeries";
+import SurgeriesDetails from "./pages/Surgeries/SurgeriesDetails";
 
 export function Router() {
   return (
@@ -164,6 +166,9 @@ export function Router() {
         <Route path="/Recepcao/Customer/Edit/:id" element={<EditCustomer />} />
         <Route path="/Recepcao/Finance" element={<Finance />} />
         <Route path="/Recepcao/" element={<Reception />} />
+
+        <Route path="/Surgeries/" element={<Surgeries />} />
+        <Route path="/Surgeries/:id" element={<SurgeriesDetails />} />
 
         <Route path="/Customer/Balance/:id" element={<BalanceHistory />} />
       </Route>
