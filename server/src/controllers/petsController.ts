@@ -58,6 +58,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
         let vacineData = {
           id: vaccine.id,
           name: vaccine.name,
+          requestedDate: vaccine.requestedDate,
           applicableDate: vaccine.applicationDate
         }
         return vacineData

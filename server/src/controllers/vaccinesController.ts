@@ -44,14 +44,14 @@ export const vaccinesController = {
     setVaccineInPet: async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
         const { id, recordId} = request.params
         const vaccine = await prisma.vaccines.findUnique({where: {id: parseInt(id)}})
-        const applicationDate = getFormattedDateTime()
+        const requestedDate = getFormattedDateTime()
         if(!vaccine) {
             reply.status(400).send("Falha ao buscar vacina/Falha ao criar vacina")
             return
         }
         try {
             await prisma.vaccinesForPet.create({
-                data: {name: vaccine?.name, price: vaccine?.price, description: vaccine?.description, applicationDate, medicine: {connect: { id: parseInt(recordId)}}}
+                data: {name: vaccine?.name, price: vaccine?.price, description: vaccine?.description, requestedDate, medicine: {connect: { id: parseInt(recordId)}}}
             })
 
             reply.status(201).send("Vacina adicionada ao PET")
