@@ -59,6 +59,15 @@ export const UserSchema = z.object({
   crmv: z.number().optional()
 })
  
+export const VaccineSchema = z.object({
+  name: z.string(),
+  price: z.number(),
+  description: z.string()
+})
+
+
+
+
 export const AdmissionSchema = z.object({
   name: z.string(),
   totalBeds: z.number(),
