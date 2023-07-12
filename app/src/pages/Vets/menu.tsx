@@ -48,11 +48,15 @@ export function MenuVet() {
     async function getQueue() {
       const response = await api.get("/pets/queue");
       const total = await api.get("/pets/queue");
+      const Pets = await api.get("/pets");
       setTotalInQueue(total.data);
       setInQueue(response.data.response);
     }
     getQueue();
   }, [inQueue.length]);
+
+  console.log(totalInQueue);
+
   const handleNavigateWorkSpace = () => {
     if (!petValue) {
       toast.error("Selecione um PET");
@@ -139,7 +143,7 @@ export function MenuVet() {
         </Table>
       );
       break;
-    case Object.keys(dataPet).length >= 1:
+    case dataPet.length >= 1:
       typeTable = (
         <>
           <Table colorScheme="blackAlpha">

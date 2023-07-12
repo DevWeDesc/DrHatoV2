@@ -3,13 +3,21 @@ import {
   Button,
   ChakraProvider,
   Flex,
+  Menu,
+  MenuButton,
+  MenuList,
+  Radio,
+  RadioGroup,
   Table,
   Tbody,
   Td,
+  Th,
+  Thead,
   Tr,
+  Text,
 } from "@chakra-ui/react";
 import { Header } from "../../components/admin/Header";
-import { useContext } from "react";
+import { ReactNode, useContext, useEffect, useState } from "react";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import {
@@ -17,72 +25,208 @@ import {
   BsArrowLeft,
   IoIosFlask,
   BsImages,
+  AiOutlineSearch,
 } from "react-icons/all";
 import { AdminContainer } from "../AdminDashboard/style";
 import { LabsSearch } from "../../components/Search/labsSearch";
 import { DbContext } from "../../contexts/DbContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { StyledBox } from "../../components/Header/style";
+import { VetsSearch } from "../../components/Search/vetsSearch";
+import { api } from "../../lib/axios";
+import { MdPets as Burger } from "react-icons/all";
+
+interface QueueProps {
+  response: [];
+  totalInQueue: number;
+}
 
 export function LabExames() {
-  const { labData } = useContext(DbContext);
+  let { dataCustomer, dataPet } = useContext(DbContext);
+  const [petValue, setPetValue] = useState("");
+  const [labs, setLabs] = useState([]);
+  const [inQueue, setInQueue] = useState<QueueProps[]>([]);
+  const [totalInQueue, setTotalInQueue] = useState(0 as any);
+  const navigate = useNavigate();
+  useEffect(() => {
+    async function getQueue() {
+      const response = await api.get("/pets/queue");
+      const total = await api.get("/pets/queue");
+      const labs = await api.get("/labs");
+      // const total = await api.get("/pets/queue");
+      setLabs(labs.data);
+      setTotalInQueue(total.data);
+      setInQueue(response.data.response);
+    }
+    getQueue();
+  }, [inQueue.length]);
+  const handleNavigateWorkSpace = () => {
+    if (!petValue) {
+      toast.error("Selecione um PET");
+      return;
+    }
+    navigate(`/Vets/Workspace/${petValue}`);
+  };
+  //console.log(labs.medicine.pet.name);
+  // console.log("PET RESPONSE", dataPet);
+
+  let typeTable: ReactNode;
+  switch (true) {
+    case Object.keys(dataCustomer).length >= 1:
+      typeTable = (
+        <Table colorScheme="blackAlpha">
+          <Thead>
+            <Tr>
+              <Th>CPF</Th>
+              <Th>Cliente</Th>
+              <Th>Animal</Th>
+              <Th>Código</Th>
+              <Th>Data</Th>
+              <Th>Hora</Th>
+              <Th>Preferência</Th>
+              <Th>Especialidade</Th>
+            </Tr>
+          </Thead>
+
+          <Tbody>
+            {dataCustomer.map((customer: any) => (
+              <Tr key={customer.id}>
+                <Td>{customer.cpf}</Td>
+
+                <Td>
+                  <Button
+                    colorScheme="whatsapp"
+                    onClick={() => handleNavigateWorkSpace()}
+                  >
+                    {customer.name}
+                  </Button>
+                </Td>
+
+                <Td>
+                  <Menu>
+                    <MenuButton border="1px" as={Button} rightIcon={<Burger />}>
+                      <StyledBox>
+                        <Text>pets</Text>
+                      </StyledBox>
+                    </MenuButton>
+                    <MenuList bg="green.100">
+                      {customer.pets?.map((pets: any) => (
+                        <Flex
+                          direction="column"
+                          align="center"
+                          p="2px"
+                          gap="2"
+                          key={pets.id}
+                        >
+                          <RadioGroup onChange={setPetValue} value={petValue}>
+                            <Radio
+                              bgColor={petValue == pets.id ? "green" : "red"}
+                              value={pets.id as any}
+                            >
+                              {pets.name}
+                            </Radio>
+                          </RadioGroup>
+                        </Flex>
+                      ))}
+                    </MenuList>
+                  </Menu>
+                </Td>
+                <Td>92487</Td>
+                <Td>04/04/2023</Td>
+
+                <Td>25:53</Td>
+                <Td>
+                  {customer.vetPreference
+                    ? customer.vetPreference
+                    : "Sem Preferência"}
+                </Td>
+                <Td>0</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      );
+      break;
+    case labs.length >= 1:
+      typeTable = (
+        <>
+          <Table colorScheme="blackAlpha">
+            <Thead>
+              <Tr>
+                <Th>Data</Th>
+                <Th>Nome</Th>
+                <Th>Exame</Th>
+                <Th>Veterinário</Th>
+                <Th>Status</Th>
+                <Th>Responsável</Th>
+              </Tr>
+            </Thead>
+
+            <Tbody>
+              {labs.map((pet: any) => (
+                <>
+                  {pet.doneExame === false && (
+                    <Tr key={pet.id}>
+                      <Td>
+                        {/*<Button
+                      colorScheme="whatsapp"
+                      onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
+              >*/}
+                        {pet.requesteData}
+                        {/*</Button>*/}
+                      </Td>
+
+                      <Td
+                        cursor="pointer"
+                        onClick={() => navigate(`/Labs/Set/${pet.id}`)}
+                      >
+                        {pet.medicine.pet.name}
+                      </Td>
+
+                      <Td>{pet.name}</Td>
+
+                      <Td>
+                        {pet.responsibleForExam === null
+                          ? "Não Adicionado"
+                          : pet.responsibleForExam}
+                      </Td>
+                      <Td>À Fazer</Td>
+                      <Th>Não Adicionado</Th>
+                    </Tr>
+                  )}
+                </>
+              ))}
+            </Tbody>
+          </Table>
+        </>
+      );
+
+      break;
+  }
+
+  console.log("DATA RESPONSE", dataCustomer);
   return (
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Painel Lab Exames" />
+          <Header title="Painel Veterinário" />
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <GenericSidebar>
-              <GenericLink icon={BsArrowLeft} name="Voltar" path="/Home" />
-              <GenericLink icon={AiOutlineMenu} name="Menu" path="/Labs" />
               <GenericLink
-                icon={IoIosFlask}
-                name="Laboratório"
-                path="/Labs/Exames"
-              />
-              <GenericLink
-                icon={BsImages}
-                name="Laboratório Imagens"
-                path="/Labs/Imagens"
+                name="Pesquisar Cliente"
+                icon={AiOutlineSearch}
+                path="/Vets/Menu"
               />
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
-                <LabsSearch path="labsearch" />
+                <VetsSearch path="vetsearch" />
+                <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
+                  <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
+                </Button>
                 <Flex textAlign="center" justify="center">
-                  <Table colorScheme="blackAlpha">
-                    <Tr>
-                      <Td>Data Solicitação</Td>
-                      <Td>Animal</Td>
-                      <Td fontWeight="bold">
-                        <Link to={`/Labs/Exames/${1}`}>Exame</Link>
-                      </Td>
-                      <Td>Veterinário</Td>
-                      <Td>Responsável</Td>
-                      <Td>Imprimir</Td>
-                    </Tr>
-                    <Tbody>
-                      {labData ? (
-                        labData.map((exam: any) => (
-                          <Tr>
-                            <Td>{exam.data}</Td>
-                            <Td>
-                              <Link to={`/Labs/Set/${exam.id}`}>
-                                {exam.petName}
-                              </Link>
-                            </Td>
-                            <Td>{exam.name}</Td>
-                            <Td>{exam.requested}</Td>
-                            <Td>Empty</Td>
-                            <Td>
-                              <Button colorScheme="green">Etiqueta</Button>
-                            </Td>
-                          </Tr>
-                        ))
-                      ) : (
-                        <Tr></Tr>
-                      )}
-                    </Tbody>
-                  </Table>
+                  {typeTable}
                 </Flex>
               </Flex>
             </Box>
