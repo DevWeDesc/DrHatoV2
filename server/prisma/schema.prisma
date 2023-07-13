@@ -97,6 +97,7 @@ model MedicineRecord {
   petId        Int           @unique
   pet          Pets          @relation(fields: [petId], references: [id])
   petExams     ExamsForPet[]
+  petVaccines  VaccinesForPet[]
 }
 
 model Exams {
@@ -191,6 +192,28 @@ model Bed {
   isBusy      Boolean? @default(false)
   mustFasting Boolean? @default(false)
 }
+
+
+model Vaccines {
+    id          Int      @id @default(autoincrement())
+    name String
+    price Decimal
+    description String
+}
+
+
+model VaccinesForPet {
+    id          Int      @id @default(autoincrement())
+    name String
+    price Decimal
+    description String
+    requestedDate DateTime
+    applicationDate DateTime?
+    medicine_id        Int
+    medicine           MedicineRecord @relation(fields: [medicine_id], references: [id])
+}
+
+
 
 // When make admissions logic
 // model Admissions {

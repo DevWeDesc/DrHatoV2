@@ -1,8 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { ValidationContract } from "../validators/validateContract";
-import { CustomerSchema, ExamSchema, createCustomer } from "../schemas/schemasValidator";
-import { connect } from "http2";
+import {  ExamSchema  } from "../schemas/schemasValidator";
 const prisma = new PrismaClient();
 
 
@@ -15,7 +14,7 @@ export const examsController = {
 
    
 createExam: async (request: FastifyRequest, reply: FastifyReply) => {
-    const {name, price, examsType, available,applicableGender, description, subName, doneExame } = ExamSchema.parse(request.body)
+    const {name, price, examsType, available,applicableGender, description, subName } = ExamSchema.parse(request.body)
     const contract = new ValidationContract();
     try {
         await contract.validateExamsType(examsType, "Tipo de exame não válido")
