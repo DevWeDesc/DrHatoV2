@@ -143,6 +143,14 @@ export interface VacinnesProps{
   requestedDate: Date | string;
 }
 
+export interface SugeriesProps {
+      id: number;
+			name: string;
+      price: number;
+		  scheduledDate?: Date
+			completedDat?: Date
+      }
+
 export interface PetDetaisl {
   id: number | string;
   name: string;
@@ -163,4 +171,5 @@ export interface PetDetaisl {
   codPet: string;
   exams: ExamsProps[];
   vaccines: VacinnesProps[];
+  surgeries:  SugeriesProps[];
 }

@@ -5,4 +5,5 @@ export async function surgeriesRoutes(app: FastifyInstance) {
   app.post("/surgeries", surgeriesController.createSurgerie)
   app.get("/surgeries", surgeriesController.getSurgeries)
   app.post("/surgeries/:id/:recordId", surgeriesController.setSurgerieInPet)
+  app.delete("/surgeries/:id", surgeriesController.excludePetSugerie)
 }

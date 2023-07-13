@@ -67,6 +67,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
         let surgeriesData = {
           id: surgerie.id,
           name: surgerie.name,
+          price: surgerie.price,
           scheduledDate: surgerie.scheduledDate,
           completedDate: surgerie.completeDate
         }
