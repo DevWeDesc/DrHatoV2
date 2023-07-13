@@ -9,30 +9,85 @@ import {
   Tbody,
   Td,
   FormControl,
-  Input,
   Box,
   Icon,
   Table,
   Text,
+  Textarea,
+  FormLabel,
 } from "@chakra-ui/react";
-import React from "react";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Paginaton } from "../../components/admin/Pagination";
-import { LoadingSpinner } from "../../components/Loading";
 import { AdminContainer } from "./style";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { Header } from "../../components/admin/Header";
 import { GenericModal } from "../../components/Modal/GenericModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { api } from "../../lib/axios";
+import { toast } from "react-toastify";
+import { Input } from "../../components/admin/Input";
+
+
+interface VaccinesProps {
+  id: number | string;
+  name: string;
+  price: number;
+  description: string;
+}
 
 export default function AdminVaccines() {
-  const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
-  function openModalTwo() {
-    setIsModalOpenTwo(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { register, handleSubmit } = useForm();
+  const [vaccines, setVaccines] = useState<VaccinesProps[]>([])
+  const [reloadData, setReloadData] = useState(false);
+  const handleCreateVaccine: SubmitHandler<FieldValues> = async (values) => {
+    try {
+      const data = {
+        name: values.name,
+        price: Number(values.price),
+        description: values.description
+      };
+      await api.post("vaccines", data);
+      setReloadData(true);
+      toast.success("Vacina criada com sucesso");
+    } catch (error) {
+      toast.error("Falha ao criar nova Vacina");
+      console.log(error);
+    }
+  }; 
+  async function GetVaccine() {
+    try {
+     const response = await api.get("/vaccines")
+     
+      setVaccines(response.data)
+    } catch (error) {
+      console.log(error)
+    }
   }
-  function closeModalTwo() {
-    setIsModalOpenTwo(false);
+
+ 
+  useEffect(() => {
+    GetVaccine()
+   }, [])
+
+
+   useEffect(() => {
+    if (reloadData === true) {
+      GetVaccine() 
+      setReloadData(false); // Reseta o estado para evitar chamadas infinitas
+    }
+  }, [reloadData])
+
+   console.log("TESTE CHAMADAS API", vaccines) 
+
+  function openModal() {
+    setIsModalOpen(true);
   }
+  function closeModal() {
+    setIsModalOpen(false);
+  }
+
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -59,7 +114,7 @@ export default function AdminVaccines() {
                   py="8"
                   colorScheme="whatsapp"
                   leftIcon={<Icon as={RiAddLine} />}
-                  //onClick={() => openModal()}
+                  onClick={() => openModal()}
                 >
                   Cadastrar nova Vacina
                 </Button>
@@ -80,134 +135,75 @@ export default function AdminVaccines() {
                 </Thead>
 
                 <Tbody>
-                  {/*sectors ? (
-                    sectors.map((sector) => (
-                      <Tr key={sector.id}>
-                        <Td borderColor="black">
-                          <Text fontWeight="bold" color="gray.800">
-                            {sector.name}
-                          </Text>
-                        </Td>
-                        <Td borderColor="black">{sector.id}</Td>
 
-                        <Td borderColor="black">
-                          <Flex gap="2" ml="50%">
-                            <Button
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="yellow"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => openModalTwo()}
-                            >
-                              Editar setor
-                            </Button>
-                            <Button
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="red"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => handleDeleteSector(sector.id)}
-                            >
-                              Deletar Setor
-                            </Button>
-                          </Flex>
-                        </Td>
-                      </Tr>
+                  {
+                    vaccines.map((vaccine) => (
+                      <Tr key={vaccine.id}>
+                      <Td borderColor="black">
+                        <Text fontWeight="bold" color="gray.800">
+                          {vaccine.name}
+                        </Text>
+                      </Td>
+                      <Td borderColor="black"></Td>
+                      <Td borderColor="black">R${vaccine.price}</Td>
+  
+                      <Td borderColor="black">
+                        <Flex gap="2" ml="50%">
+                          <Button
+                           alignItems="center" 
+                            as="a"
+                            size="md"
+                            fontSize="md"
+                            colorScheme="yellow"
+                            width={220}
+                            leftIcon={<Icon size={28} as={RiPencilLine} />}
+                            onClick={() => openModal()}
+                          >
+                            Editar Vacina
+                          </Button>
+                          <Button
+                            width={220}
+                            as="a"
+                            size="md"
+                            fontSize="md"
+                            colorScheme="red"
+                            leftIcon={<Icon as={RiPencilLine} />}
+                            //onClick={() => handleDeleteSector(sector.id)}
+                          >
+                            Deletar Vacina
+                          </Button>
+                        </Flex>
+                      </Td>
+                    </Tr>
                     ))
-                  ) : (
-                    <LoadingSpinner />
-                  )*/}
-                  <Tr key={0}>
-                    <Td borderColor="black">
-                      <Text fontWeight="bold" color="gray.800">
-                        Anti Rabica
-                      </Text>
-                    </Td>
-                    <Td borderColor="black"></Td>
-                    <Td borderColor="black">R$60,00</Td>
-
-                    <Td borderColor="black">
-                      <Flex gap="2" ml="50%">
-                        <Button
-                          as="a"
-                          size="md"
-                          fontSize="md"
-                          colorScheme="yellow"
-                          leftIcon={<Icon as={RiPencilLine} />}
-                          onClick={() => openModalTwo()}
-                        >
-                          Editar Vacina
-                        </Button>
-                        <Button
-                          as="a"
-                          size="md"
-                          fontSize="md"
-                          colorScheme="red"
-                          leftIcon={<Icon as={RiPencilLine} />}
-                          //onClick={() => handleDeleteSector(sector.id)}
-                        >
-                          Deletar Vacina
-                        </Button>
-                      </Flex>
-                    </Td>
-                  </Tr>
+                  }
+          
                 </Tbody>
               </Table>
-              <GenericModal /*isOpen={isModalOpen} onRequestClose={closeModal}*/
-              >
-                <FormControl
-                  as="form"
-                  //onSubmit={handleSubmit(handleCreateSector)}
-                  display="flex"
-                  flexDir="column"
-                  alignItems="center"
-                >
-                  <Input
-                    ///{...register("name")}
-                    name="name"
-                    label="Nome do Setor"
-                    mb="4"
-                  />
+              <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}
+              >   
+              <FormControl as="form" onSubmit={handleSubmit(handleCreateVaccine)}>
 
-                  <Button w="100%" type="submit" colorScheme="green" m="2">
-                    Cadastrar
-                  </Button>
-                </FormControl>
+                <Flex direction="column" m="4" gap="4" align="center" width="480px" height="680px">
+                <Input {...register("name")} name="name" label="Nome da Vacina: " />
+              <Input {...register("price")} name="price" label="Preço da Vacina: " />
+
+
+                   <FormLabel htmlFor="description">Descrição da Vacina: </FormLabel>
+                  <Textarea borderColor="gray.900" height="500px" {...register("description")} name="description"  />
+
+
+
+                  <Button type="submit" colorScheme="whatsapp">CADASTRAR</Button>
+                </Flex>
+      
+             
+              </FormControl>
+                
+          
               </GenericModal>
 
-              <GenericModal
-                isOpen={isModalOpenTwo}
-                onRequestClose={closeModalTwo}
-              >
-                <FormControl
-                  as="form"
-                  //onSubmit={handleSubmit(handleEditSector)}
-                  display="flex"
-                  flexDir="column"
-                  alignItems="center"
-                >
-                  <Text>Editar Vacina</Text>
-                  <Input
-                    //{...register("name")}
-                    name="name"
-                    label="Nome do Setor"
-                    mb="4"
-                  />
-                  <Text>Editar Preço</Text>
-                  <Input
-                    //{...register("id")}
-                    name="id"
-                    label="Id do setor"
-                    mb="4"
-                  />
-
-                  <Button w="100%" type="submit" colorScheme="yellow" m="2">
-                    Editar Vacina
-                  </Button>
-                </FormControl>
-              </GenericModal>
+   
 
               <Paginaton />
             </Box>

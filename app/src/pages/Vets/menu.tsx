@@ -187,8 +187,6 @@ export function MenuVet() {
 
       break;
   }
-
-  console.log("DATA RESPONSE", dataCustomer);
   return (
     <ChakraProvider>
       <AdminContainer>
