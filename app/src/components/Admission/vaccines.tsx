@@ -14,7 +14,7 @@ import { AdminContainer } from "../../pages/AdminDashboard/style";
 import { WorkSpaceHeader } from "../../pages/Vets/styles";
 import ProceduresAdmissions from "./procedures";
 
-export default function VaccinesAdmisison() {
+export default function VaccinesAdmission() {
   const [listExam, setListExam] = useState<boolean>(false);
   const [nameExam, setNameExam] = useState<string>("");
   const [priceExam, setPriceExam] = useState<string>("");

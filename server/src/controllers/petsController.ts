@@ -22,7 +22,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
     const pet = await prisma.pets.findFirst({ where: { id : parseInt(id)}, 
     include: {customer: 
       {select: { name: true, id: true, balance: true}}, 
-      medicineRecords: {select: {petExams: true, observations: true, id: true }},
+      medicineRecords: {select: {petExams: true, observations: true, id: true, petVaccines: true }},
       queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true}}
     } })
 
@@ -53,6 +53,15 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
           price: exams.price,
            doneExam: exams.doneExame}
         return examData
+       }),
+       vaccines: pet?.medicineRecords?.petVaccines.map((vaccine) => {
+        let vacineData = {
+          id: vaccine.id,
+          name: vaccine.name,
+          requestedDate: vaccine.requestedDate,
+          applicableDate: vaccine.applicationDate
+        }
+        return vacineData
        }),
       queue: pet?.queue
     }

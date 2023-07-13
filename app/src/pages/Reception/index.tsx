@@ -121,9 +121,11 @@ export function Reception() {
                       </div>
 
                       <div className="buttonsContainer">
-                        <Button minWidth={200} colorScheme="whatsapp">
-                          Financeiro
-                        </Button>
+                        <Link to="/Recepcao/Financeiro">
+                          <Button minWidth={200} colorScheme="whatsapp">
+                            Financeiro
+                          </Button>
+                        </Link>
                         <Button colorScheme="whatsapp">
                           Cadastro de Clinicas
                         </Button>

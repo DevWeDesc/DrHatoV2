@@ -1,4 +1,4 @@
-import { AdminContainer } from "./style";
+import { AdminContainer } from "../AdminDashboard/style";
 import {
   Box,
   Button,
@@ -13,12 +13,12 @@ import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { Link } from "react-router-dom";
 
-export function AdminMain() {
+export function Reports() {
   return (
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Painel Administrativo" />
+          <Header title="Painel de Relatórios" />
 
           <Flex w="100%" my="6" maxWidth={"100%"} mx="auto" px="6">
             <Sidebar />
@@ -27,24 +27,24 @@ export function AdminMain() {
                 <Flex direction="column" w="45%" gap="2">
                   <Link to="/Admin/Autorizations">
                     <Button colorScheme="whatsapp" w="100%" py="10">
-                      Cadastro de Autorizações
+                      Relatórios de Autorizações
                     </Button>
                   </Link>
                   <Link to="/Admin/Instructions">
                     <Button colorScheme="whatsapp" w="100%" py="10">
-                      Cadastro de Instruções
+                      Relatórios de Instruções
                     </Button>
                   </Link>
 
                   <Link to="/Admin/Exams">
                     <Button colorScheme="whatsapp" w="100%" py="10">
-                      Cadastro de Exames
+                      Relatórios de Exames
                     </Button>
                   </Link>
 
                   <Link to="/Admin/Procedures">
                     <Button colorScheme="whatsapp" w="100%" py="10">
-                      Cadastro de Procedimentos
+                      Relatórios de Procedimentos
                     </Button>
                   </Link>
                 </Flex>
@@ -52,22 +52,22 @@ export function AdminMain() {
                 <Flex direction="column" w="50%" gap="2">
                   <Link to="/Admin/Hospitalization">
                     <Button colorScheme="whatsapp" w="100%" py="10">
-                      Cadastro de Leitos para Internação
+                      Relatórios de Leitos para Internação
                     </Button>
                   </Link>
                   <Link to="/Admin/Sectors">
                     <Button colorScheme="whatsapp" w="100%" py="10">
-                      Cadastro de Setores
+                      Relatórios de Setores
                     </Button>
                   </Link>
                   <Link to="/Admin/SurgeryCenter">
                     <Button colorScheme="whatsapp" w="100%" py="10">
-                      Cadastro de Centro Cirurgico
+                      Relatórios de Centro Cirurgico
                     </Button>
                   </Link>
                   <Link to="/Admin/Vaccines">
                     <Button colorScheme="whatsapp" w="100%" py="10">
-                      Cadastro de Vacinas
+                      Relatórios de Vacinas
                     </Button>
                   </Link>
                 </Flex>

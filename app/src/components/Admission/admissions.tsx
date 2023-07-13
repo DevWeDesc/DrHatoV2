@@ -29,6 +29,7 @@ import { MdPets as Burger } from "react-icons/all";
 import { toast } from "react-toastify";
 import { api } from "../../lib/axios";
 import { AdmissionSearch } from "../Search/admissionSearch";
+import { SiProtocolsdotio } from "react-icons/all";
 
 interface QueueProps {
   response: [];
@@ -49,6 +50,8 @@ export function SearchAdmission() {
     navigate(`/Vets/Workspace/${petValue}`);
   };
 
+  console.log(inQueue);
+
   useEffect(() => {
     async function getQueue() {
       const response = await api.get("/pets/queue");
@@ -58,7 +61,6 @@ export function SearchAdmission() {
     }
     getQueue();
   }, [inQueue.length]);
-
 
   return (
     <ChakraProvider>
@@ -71,6 +73,11 @@ export function SearchAdmission() {
                 name="Pesquisar Cliente"
                 icon={AiOutlineSearch}
                 path="/Vets/Menu"
+              />
+              <GenericLink
+                name="Protocolos"
+                icon={SiProtocolsdotio}
+                path="/Admissions/Protocols"
               />
             </GenericSidebar>
             <Box w="100%" borderRadius={8} bg="gray.200" p="8">
@@ -101,7 +108,9 @@ export function SearchAdmission() {
                               <Td>
                                 <Button
                                   colorScheme="whatsapp"
-                                  onClick={() => handleNavigateWorkSpace()}
+                                  onClick={() =>
+                                    navigate(`/Admissions/${user.id}`)
+                                  }
                                 >
                                   {user.name}
                                 </Button>

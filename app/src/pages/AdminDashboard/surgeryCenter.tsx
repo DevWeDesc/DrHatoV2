@@ -32,8 +32,7 @@ import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 
-export function SectorsList() {
-  const { sectors } = useContext(DbContext);
+export function SurgeryCenter() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
@@ -98,7 +97,7 @@ export function SectorsList() {
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Exames" />
+          <Header title="Centro Cirúrgico" />
 
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />
@@ -110,7 +109,7 @@ export function SectorsList() {
                 align="center"
               >
                 <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                  Setores
+                  Centro Cirurgico
                 </Heading>
 
                 <Button
@@ -122,7 +121,7 @@ export function SectorsList() {
                   leftIcon={<Icon as={RiAddLine} />}
                   onClick={() => openModal()}
                 >
-                  Cadastrar novo Setor
+                  Cadastrar novo Centro Cirúrgico
                 </Button>
               </Flex>
 
@@ -133,52 +132,51 @@ export function SectorsList() {
                       Nome
                     </Th>
                     <Th fontSize="18" borderColor="black">
-                      Id do Setor
+                      Slots
                     </Th>
                     <Th borderColor="black"></Th>
                   </Tr>
                 </Thead>
 
                 <Tbody>
-                  {sectors ? (
-                    sectors.map((sector) => (
-                      <Tr key={sector.id}>
-                        <Td borderColor="black">
-                          <Text fontWeight="bold" color="gray.800">
-                            {sector.name}
-                          </Text>
-                        </Td>
-                        <Td borderColor="black">{sector.id}</Td>
+                  {/*sectors ? (
+                    sectors.map((sector) => (*/}
 
-                        <Td borderColor="black">
-                          <Flex gap="2" ml="50%">
-                            <Button
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="yellow"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => openModalTwo()}
-                            >
-                              Editar setor
-                            </Button>
-                            <Button
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="red"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => handleDeleteSector(sector.id)}
-                            >
-                              Deletar Setor
-                            </Button>
-                          </Flex>
-                        </Td>
-                      </Tr>
-                    ))
-                  ) : (
-                    <LoadingSpinner />
-                  )}
+                  <Tr key="0">
+                    <Td borderColor="black">
+                      <Text fontWeight="bold" color="gray.800"></Text>
+                    </Td>
+                    <Td borderColor="black"></Td>
+
+                    <Td borderColor="black">
+                      <Flex gap="2" ml="40%">
+                        <Button
+                          as="a"
+                          size="md"
+                          fontSize="md"
+                          colorScheme="yellow"
+                          leftIcon={<Icon as={RiPencilLine} />}
+                          onClick={() => openModalTwo()}
+                        >
+                          Editar Centro Cirurgico
+                        </Button>
+                        <Button
+                          as="a"
+                          size="md"
+                          fontSize="md"
+                          colorScheme="red"
+                          leftIcon={<Icon as={RiPencilLine} />}
+                          onClick={() => handleDeleteSector("")}
+                        >
+                          Deletar Centro Cirurgico
+                        </Button>
+                      </Flex>
+                    </Td>
+                  </Tr>
+                  {/*))
+                  )
+                  : (
+                  <LoadingSpinner />)*/}
                 </Tbody>
               </Table>
               <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
@@ -192,7 +190,14 @@ export function SectorsList() {
                   <Input
                     {...register("name")}
                     name="name"
-                    label="Nome do Setor"
+                    label="Nome do Centro cirurgico"
+                    mb="4"
+                  />
+
+                  <Input
+                    {...register("name")}
+                    name="name"
+                    label="Slots"
                     mb="4"
                   />
 
@@ -213,17 +218,24 @@ export function SectorsList() {
                   flexDir="column"
                   alignItems="center"
                 >
-                  <Text>Editar Setor</Text>
-                  <Input
-                    {...register("name")}
-                    name="name"
-                    label="Nome do Setor"
-                    mb="4"
-                  />
+                  <Text pb="15">Editar Centro cirurgico</Text>
                   <Input
                     {...register("id")}
                     name="id"
-                    label="Id do setor"
+                    label="Id do Centro cirurgico"
+                    mb="4"
+                  />
+                  <Input
+                    {...register("name")}
+                    name="name"
+                    label="Nome do Centro cirurgico"
+                    mb="4"
+                  />
+
+                  <Input
+                    {...register("id")}
+                    name="id"
+                    label="Slots do Centro cirurgico"
                     mb="4"
                   />
 

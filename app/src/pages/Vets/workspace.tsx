@@ -17,7 +17,7 @@ import {
   Textarea,
   HStack,
   VStack,
-  Select
+  Select,
 } from "@chakra-ui/react";
 import {
   AiFillMedicineBox,
@@ -34,7 +34,6 @@ import { SetExamForm } from "../../components/workspaceVet/SetExamForm";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { VetInstructions } from "./WorkSpaceVets/instructions";
 import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
-
 
 type ExamsProps = [
   {
@@ -76,7 +75,7 @@ export function WorkSpaceVet() {
   const navigate = useNavigate();
   const [pet, setPet] = useState({} as PetProps);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAutorizationModalOpen, setAutorizationModalOpen ] = useState(false);
+  const [isAutorizationModalOpen, setAutorizationModalOpen] = useState(false);
   function openModal() {
     setIsModalOpen(true);
   }
@@ -84,7 +83,7 @@ export function WorkSpaceVet() {
     setIsModalOpen(false);
   }
   function openAutorizationModal() {
-     setAutorizationModalOpen(true);
+    setAutorizationModalOpen(true);
   }
   function closeAutorizationModal() {
     setAutorizationModalOpen(false);
@@ -133,19 +132,31 @@ export function WorkSpaceVet() {
             </Flex>
 
             <Flex flexWrap="wrap" justify="start" gap="2" m="4" p="2">
-              <Button onClick={() => openModal()} height={8} colorScheme="whatsapp">
+              <Button
+                onClick={() => openModal()}
+                height={8}
+                colorScheme="whatsapp"
+              >
                 FORMULÁRIOS
               </Button>
-              <Button height={8} colorScheme="whatsapp"
-              onClick={() => navigate(`/WorkSpace/Instructions/${id}`)}
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Instructions/${id}`)}
               >
                 INSTRUÇÕES PROPRIETÁRIO
               </Button>
-              <Button height={8} colorScheme="whatsapp"  onClick={() => openAutorizationModal()}>
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => openAutorizationModal()}
+              >
                 AUTORIZAÇÕES
               </Button>
-              <Button height={8} colorScheme="whatsapp"
-              onClick={() => navigate(`/WorkSpace/Protocols/${id}`)}
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Protocols/${id}`)}
               >
                 PROTOCOLOS
               </Button>
@@ -157,23 +168,40 @@ export function WorkSpaceVet() {
                 EXAMES
               </Button>
               <Button
-                  onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}
-              height={8} colorScheme="whatsapp">
+                onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}
+                height={8}
+                colorScheme="whatsapp"
+              >
                 PROCEDIMENTOS
               </Button>
-              <Button height={8} colorScheme="whatsapp" onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)} >
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)}
+              >
                 VACINAS
               </Button>
-              <Button height={8} colorScheme="whatsapp" onClick={() => navigate(`/WorkSpace/Surgeries/${id}`)}>
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Surgeries/${id}`)}
+              >
                 CIRURGIAS
               </Button>
-              <Button height={8} colorScheme="whatsapp"
-              onClick={() => navigate(`/WorkSpace/Admissions/${id}`)}
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Admissions/${id}`)}
               >
                 INTERNAR
               </Button>
-      
-              <Button height={8} onClick={() => navigate(`/Pets/MedicineRecord/${id}`)} leftIcon={<MdPets />} colorScheme="messenger">
+
+              <Button
+                height={8}
+                onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}
+                leftIcon={<MdPets />}
+                colorScheme="messenger"
+              >
                 PRONTUÁRIO DO PET
               </Button>
             </Flex>
@@ -183,17 +211,59 @@ export function WorkSpaceVet() {
           <div className="div1">
             <Flex m="4" gap="2" direction="row">
               <VStack>
-                <Text fontWeight="bold">Cliente</Text>
-                <Text fontWeight="bold">Gastos</Text>
-                <Text fontWeight="bold">Animal</Text>
-                <Text fontWeight="bold">Horário</Text>
-                <Text fontWeight="bold">Internações</Text>
-                <Text fontWeight="bold">Plano de Saúde</Text>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Cliente
+                </Text>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Gastos
+                </Text>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Animal
+                </Text>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Horário
+                </Text>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Internações
+                </Text>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Plano de Saúde
+                </Text>
               </VStack>
-              <VStack>
+              <VStack w="100%">
                 <Text
                   border="1px"
-                  width="400px"
+                  width="100%"
                   rounded="4px"
                   fontWeight="bold"
                   textAlign="center"
@@ -202,8 +272,8 @@ export function WorkSpaceVet() {
                   {pet.customerName}
                 </Text>
                 <Text
+                  width="100%"
                   border="1px"
-                  width="400px"
                   rounded="4px"
                   fontWeight="bold"
                   textAlign="center"
@@ -215,8 +285,8 @@ export function WorkSpaceVet() {
                   }).format(pet.balance)}
                 </Text>
                 <Text
+                  width="100%"
                   border="1px"
-                  width="400px"
                   rounded="4px"
                   fontWeight="bold"
                   textAlign="center"
@@ -226,8 +296,8 @@ export function WorkSpaceVet() {
                 </Text>
 
                 <Text
+                  width="100%"
                   border="1px"
-                  width="400px"
                   rounded="4px"
                   fontWeight="bold"
                   textAlign="center"
@@ -236,8 +306,8 @@ export function WorkSpaceVet() {
                   {`${pet.sexo}, ${pet.weigth}`}
                 </Text>
                 <Text
+                  width="100%"
                   border="1px"
-                  width="400px"
                   rounded="4px"
                   fontWeight="bold"
                   textAlign="center"
@@ -248,7 +318,7 @@ export function WorkSpaceVet() {
                 <Select
                   border="1px"
                   height="26px"
-                  width="400px"
+                  width="100%"
                   rounded="4px"
                   fontWeight="bold"
                   textAlign="center"
@@ -260,11 +330,15 @@ export function WorkSpaceVet() {
                 </Select>
               </VStack>
             </Flex>
-            <Flex direction="column" m="4">
-              <Text fontSize="lg" m="2">
+            <Flex direction="column" mx="4">
+              <Text fontSize="md" mx="2" mt="0" fontWeight="bold">
                 Observações
               </Text>
-              <Textarea color="red.900" value={pet.queue?.moreInfos}></Textarea>
+              <Textarea
+                color="red.900"
+                borderColor="black"
+                value={pet.queue?.moreInfos}
+              ></Textarea>
             </Flex>
           </div>
           <Flex direction="column" className="div2">
@@ -316,28 +390,44 @@ export function WorkSpaceVet() {
             </Flex>
           </Flex>
           <div className="div3">
-            <HStack spacing={4} m="2">
-              <Button colorScheme="whatsapp">Diagnóstico</Button>
-              <Button colorScheme="whatsapp">Prescrição</Button>
-              <Button colorScheme="whatsapp">Sintomas</Button>
-              <Button colorScheme="whatsapp">Solicitar Exame</Button>
+            <HStack spacing={4} m="2" w="100%">
+              <Button w="25%" colorScheme="whatsapp">
+                Diagnóstico
+              </Button>
+              <Button w="25%" colorScheme="whatsapp">
+                Prescrição
+              </Button>
+              <Button w="25%" colorScheme="whatsapp">
+                Sintomas
+              </Button>
+              <Button w="25%" colorScheme="whatsapp">
+                Solicitar Exame
+              </Button>
             </HStack>
             <Textarea
               border="1px"
               minHeight={220}
               m="2"
-              maxWidth={600}
+              maxWidth="100%"
             ></Textarea>
           </div>
           <div className="div4">
             <Flex justify="space-between" gap="2" m="2">
-              <Button leftIcon={<MdPets />} height={8} colorScheme="whatsapp">
+              <Button
+                leftIcon={<MdPets />}
+                height={8}
+                colorScheme="whatsapp"
+                w="33%"
+                py="5"
+              >
                 Outros Animais
               </Button>
               <Button
                 leftIcon={<TbMedicalCrossFilled />}
                 height={8}
                 colorScheme="whatsapp"
+                w="33%"
+                py="5"
               >
                 Vacinas
               </Button>
@@ -345,6 +435,8 @@ export function WorkSpaceVet() {
                 leftIcon={<AiFillMedicineBox />}
                 height={8}
                 colorScheme="whatsapp"
+                w="33%"
+                py="5"
               >
                 Cirurgias
               </Button>
@@ -380,49 +472,52 @@ export function WorkSpaceVet() {
             align="center"
             width="100%"
             height="100%"
+            px="2"
           >
-            <Button colorScheme="teal">Imprimir Receita</Button>
-            <Button colorScheme="whatsapp">Imprimir Raio-X</Button>
-            <Button colorScheme="whatsapp">Imprimir Solicitação Exames</Button>
-            <Button colorScheme="red">Gravar Alterações</Button>
+            <Button colorScheme="teal" w="25%" mr="3" py="6">
+              Imprimir Receita
+            </Button>
+            <Button colorScheme="whatsapp" w="25%" mr="3" py="6">
+              Imprimir Raio-X
+            </Button>
+            <Button colorScheme="whatsapp" w="25%" mr="3" py="6">
+              Imprimir Solicitação Exames
+            </Button>
+            <Button colorScheme="red" w="25%" py="6">
+              Gravar Alterações
+            </Button>
           </Flex>
         </WorkSpaceFooter>
       </WorkSpaceContainer>
-          <GenericModal    isOpen={isModalOpen}
-                      onRequestClose={closeModal} >
-                        <Flex direction="column"  gap="4" border='2px' m="4" p="4" rounded={8}>
-                        <Button colorScheme="whatsapp">
-                          FICHA ANESTÉSICA PERSONALIZADA
-                         
-                        </Button>
-                        <Button colorScheme="whatsapp"> 
-                        FICHA ANESTÉSICA TOMOGRAFIA
-                        </Button>
+      <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+        <Flex direction="column" gap="4" border="2px" m="4" p="4" rounded={8}>
+          <Button colorScheme="whatsapp">FICHA ANESTÉSICA PERSONALIZADA</Button>
+          <Button colorScheme="whatsapp">FICHA ANESTÉSICA TOMOGRAFIA</Button>
 
-                        <Button colorScheme="whatsapp">
-                          FICHA DE PARÂMETROS
-                        </Button>
-                        <Button colorScheme="whatsapp"> 
-                          FICHA DE MEDICAÇÃO
-                        </Button>
-                        </Flex>
+          <Button colorScheme="whatsapp">FICHA DE PARÂMETROS</Button>
+          <Button colorScheme="whatsapp">FICHA DE MEDICAÇÃO</Button>
+        </Flex>
       </GenericModal>
 
       <GenericModal
-      isOpen={isAutorizationModalOpen}
-      onRequestClose={closeAutorizationModal}
+        isOpen={isAutorizationModalOpen}
+        onRequestClose={closeAutorizationModal}
       >
         <Flex direction="column" align="center" gap="8">
-
-          <Text fontWeight="bold" fontSize="2xl">{pet.name}</Text>
-          <Select bgColor="gray.100" borderColor="black" placeholder='Selecione a Autorização'>
-        <option value='option1'>Option 1</option>
-        <option value='option2'>Option 2</option>
-        <option value='option3'>Option 3</option>
+          <Text fontWeight="bold" fontSize="2xl">
+            {pet.name}
+          </Text>
+          <Select
+            bgColor="gray.100"
+            borderColor="black"
+            placeholder="Selecione a Autorização"
+          >
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
           </Select>
-        <WorkVetAutorization/>
+          <WorkVetAutorization />
         </Flex>
-        
       </GenericModal>
     </ChakraProvider>
   );

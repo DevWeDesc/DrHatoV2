@@ -1,51 +1,46 @@
 import {
   Box,
-  Button,
   ChakraProvider,
   Flex,
+  Table,
+  Tr,
+  Td,
+  Thead,
+  Tbody,
+  Th,
+  Text,
+  RadioGroup,
+  Radio,
   Menu,
   MenuButton,
   MenuList,
-  Radio,
-  RadioGroup,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  Text,
+  Button,
 } from "@chakra-ui/react";
-import { Header } from "../../components/admin/Header";
 import { ReactNode, useContext, useEffect, useState } from "react";
+import { Header } from "../../components/admin/Header";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import {
-  AiOutlineMenu,
-  BsArrowLeft,
-  IoIosFlask,
-  BsImages,
-  AiOutlineSearch,
-} from "react-icons/all";
+import { AiOutlineSearch } from "react-icons/all";
 import { AdminContainer } from "../AdminDashboard/style";
-import { LabsSearch } from "../../components/Search/labsSearch";
-import { DbContext } from "../../contexts/DbContext";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { UniversalSearch } from "../../components/Search/universalSearch";
+import { DbContext } from "../../contexts/DbContext";
 import { StyledBox } from "../../components/Header/style";
-import { VetsSearch } from "../../components/Search/vetsSearch";
-import { api } from "../../lib/axios";
 import { MdPets as Burger } from "react-icons/all";
+import { toast } from "react-toastify";
+import { LoadingSpinner } from "../../components/Loading";
+import { api } from "../../lib/axios";
+import { Queue } from "phosphor-react";
+import { VetsSearch } from "../../components/Search/vetsSearch";
 
 interface QueueProps {
   response: [];
   totalInQueue: number;
 }
 
-export function LabExames() {
+export default function Surgeries() {
   let { dataCustomer, dataPet } = useContext(DbContext);
   const [petValue, setPetValue] = useState("");
-  const [labs, setLabs] = useState([]);
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [totalInQueue, setTotalInQueue] = useState(0 as any);
   const navigate = useNavigate();
@@ -53,27 +48,19 @@ export function LabExames() {
     async function getQueue() {
       const response = await api.get("/pets/queue");
       const total = await api.get("/pets/queue");
-      const labs = await api.get("/labs");
-      // const total = await api.get("/pets/queue");
-      setLabs(labs.data);
       setTotalInQueue(total.data);
       setInQueue(response.data.response);
     }
     getQueue();
   }, [inQueue.length]);
-  const handleNavigateWorkSpace = () => {
+  const handleNavigateSurgeries = () => {
     if (!petValue) {
       toast.error("Selecione um PET");
       return;
     }
-    navigate(`/Vets/Workspace/${petValue}`);
+    navigate(`/Surgeries/${petValue}`);
   };
-  //console.log(labs.medicine.pet.name);
-  // console.log("PET RESPONSE", dataPet);
-
-  const petz: any = labs.map((pet: any) => {
-    return pet.id === 3 ? console.log(pet) : console.log("erro");
-  });
+  console.log("PET RESPONSE", dataPet);
 
   let typeTable: ReactNode;
   switch (true) {
@@ -101,7 +88,7 @@ export function LabExames() {
                 <Td>
                   <Button
                     colorScheme="whatsapp"
-                    onClick={() => handleNavigateWorkSpace()}
+                    onClick={() => handleNavigateSurgeries()}
                   >
                     {customer.name}
                   </Button>
@@ -152,54 +139,42 @@ export function LabExames() {
         </Table>
       );
       break;
-    case labs.length >= 1:
+    case Object.keys(dataPet).length >= 1:
       typeTable = (
         <>
           <Table colorScheme="blackAlpha">
             <Thead>
               <Tr>
-                <Th>Data</Th>
                 <Th>Nome</Th>
-                <Th>Exame</Th>
-                <Th>Veterinário</Th>
-                <Th>Status</Th>
-                <Th>Responsável</Th>
+
+                <Th>Código</Th>
+                <Th>Nascimento</Th>
+                <Th>Preferência</Th>
+                <Th>Especialidade</Th>
               </Tr>
             </Thead>
 
             <Tbody>
-              {labs.map((pet: any) => (
-                <>
-                  {pet.doneExame === false && (
-                    <Tr key={pet.id}>
-                      <Td>
-                        {/*<Button
+              {dataPet.map((pet: any) => (
+                <Tr key={pet.id}>
+                  <Td>
+                    <Button
                       colorScheme="whatsapp"
                       onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
-              >*/}
-                        {pet.requesteData}
-                        {/*</Button>*/}
-                      </Td>
+                    >
+                      {pet.name}
+                    </Button>
+                  </Td>
 
-                      <Td
-                        cursor="pointer"
-                        onClick={() => navigate(`/Labs/Set/${pet.id}`)}
-                      >
-                        {pet.medicine.pet.name}
-                      </Td>
+                  <Td>{pet.codPet}</Td>
 
-                      <Td>{pet.name}</Td>
+                  <Td>{pet.bornDate}</Td>
 
-                      <Td>
-                        {pet.responsibleForExam === null
-                          ? "Não Adicionado"
-                          : pet.responsibleForExam}
-                      </Td>
-                      <Td>À Fazer</Td>
-                      <Th>Não Adicionado</Th>
-                    </Tr>
-                  )}
-                </>
+                  <Td>
+                    {pet.vetPreference ? pet.vetPreference : "Sem Preferência"}
+                  </Td>
+                  <Td>0</Td>
+                </Tr>
               ))}
             </Tbody>
           </Table>
@@ -214,7 +189,7 @@ export function LabExames() {
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Painel Veterinário" />
+          <Header title="Painel de Ciururgias" />
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <GenericSidebar>
               <GenericLink

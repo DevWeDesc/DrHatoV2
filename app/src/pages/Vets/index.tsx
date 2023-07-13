@@ -2,7 +2,8 @@ import {
   Text,
   Box,
   Button,
-  ChakraProvider, Flex,
+  ChakraProvider,
+  Flex,
   Heading,
   Icon,
   Table,
@@ -10,7 +11,7 @@ import {
   Td,
   Th,
   Thead,
-  Tr
+  Tr,
 } from "@chakra-ui/react";
 import { useContext } from "react";
 import { RiAddLine, RiPencilLine, RiUserSearchLine } from "react-icons/all";
@@ -25,29 +26,37 @@ import { AdminContainer } from "../AdminDashboard/style";
 
 export function VetsList() {
   const { vets } = useContext(DbContext);
+  // console.log(vets);
   return (
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Painel Administrativo"/>
+          <Header title="Painel Administrativo" />
 
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
-              <Flex mb="8" justify="space-between" align="center">
-                <Heading size="lg" fontWeight="normal">
+              <Flex
+                mb="8"
+                direction="column"
+                justify="space-between"
+                align="center"
+              >
+                <Heading width="100%" fontSize="30" fontWeight="bold">
                   Veterinários
                 </Heading>
 
-                <Link to="/Vets/Create">
+                <Link to="/Vets/Create" style={{ width: "100%" }}>
                   <Button
                     as="a"
-                    size="sm"
-                    fontSize="sm"
-                    colorScheme="green"
+                    mt="5"
+                    width="100%"
+                    py="8"
+                    fontSize="20"
+                    colorScheme="whatsapp"
                     leftIcon={<Icon as={RiAddLine} />}
                   >
-                    Criar novo
+                    Adicionar Veterinário
                   </Button>
                 </Link>
               </Flex>
@@ -55,10 +64,17 @@ export function VetsList() {
               <Table colorScheme="blackAlpha">
                 <Thead>
                   <Tr>
-                    <Th>Veterinário</Th>
-                    <Th>CRMV</Th>
-                    <Th>Especialidade</Th>
-                    <Th width="8"></Th>
+                    <Th borderColor="black" fontSize="18">
+                      Veterinário
+                    </Th>
+                    <Th borderColor="black" fontSize="18">
+                      CRMV
+                    </Th>
+                    <Th borderColor="black" fontSize="18">
+                      Especialidade
+                    </Th>
+                    <Th width="8" borderColor="black" fontSize="18"></Th>
+                    <Th width="8" borderColor="black" fontSize="18"></Th>
                   </Tr>
                 </Thead>
 
@@ -66,44 +82,52 @@ export function VetsList() {
                   {vets ? (
                     vets.map((vet) => (
                       <Tr key={vet.id}>
-                        <Td px="6">
-                          <Text fontWeight="bold" color="gray.800">
+                        <Td px="6" borderColor="black">
+                          <Text
+                            fontWeight="bold"
+                            fontSize="16"
+                            color="gray.800"
+                          >
                             {vet.name}
                           </Text>
                         </Td>
-                        <Td>
+                        <Td borderColor="black">
                           <Box>
-                            <Text fontWeight="bold" color="gray.800">
+                            <Text
+                              fontWeight="bold"
+                              fontSize="16"
+                              color="gray.800"
+                            >
                               {vet.crmv ? vet.crmv : "Não informado"}
                             </Text>
                           </Box>
                         </Td>
-                        <Td>
+                        <Td borderColor="black">
                           <Text fontWeight="bold" color="gray.800">
                             {vet.speciality ? vet.speciality : "Não definido"}
                           </Text>
                         </Td>
 
-                        <Td>
+                        <Td borderColor="black">
                           <Link to={`/Users/Edit/${vet.id}`}>
                             <Button
                               as="a"
-                              size="sm"
-                              fontSize="sm"
-                              colorScheme="green"
+                              size="md"
+                              fontSize="md"
+                              colorScheme="yellow"
                               leftIcon={<Icon as={RiPencilLine} />}
                             >
                               Editar
                             </Button>
                           </Link>
                         </Td>
-                        <Td>
+                        <Td borderColor="black">
                           <Link to={`/Users/Edit/${vet.id}`}>
                             <Button
                               as="a"
-                              size="sm"
-                              fontSize="sm"
-                              colorScheme="yellow"
+                              size="md"
+                              fontSize="md"
+                              colorScheme="cyan"
                               leftIcon={<Icon as={RiUserSearchLine} />}
                             >
                               Detalhes
