@@ -71,6 +71,10 @@ export function LabExames() {
   //console.log(labs.medicine.pet.name);
   // console.log("PET RESPONSE", dataPet);
 
+  const petz: any = labs.map((pet: any) => {
+    return pet.id === 3 ? console.log(pet) : console.log("erro");
+  });
+
   let typeTable: ReactNode;
   switch (true) {
     case Object.keys(dataCustomer).length >= 1:

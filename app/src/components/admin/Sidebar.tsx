@@ -70,12 +70,19 @@ export function Sidebar() {
             FINANCEIRO
           </Text>
           <Stack spacing="4" mt="8" align="stretch">
-            <Box display="flex" alignItems="center" color="green.300">
-              <Icon as={TbReportAnalytics} fontSize="25" />
-              <Text ml="4" fontWeight="medium" fontSize="25" color="gray.700">
-                Relatórios
-              </Text>
-            </Box>
+            <Link to="/Reports">
+              <Box
+                display="flex"
+                alignItems="center"
+                color="green.300"
+                cursor="pointer"
+              >
+                <Icon as={TbReportAnalytics} fontSize="25" />
+                <Text ml="4" fontWeight="medium" fontSize="25" color="gray.700">
+                  Relatórios
+                </Text>
+              </Box>
+            </Link>
             <Box display="flex" alignItems="center" color="green.300">
               <Icon as={TbPigMoney} fontSize="25" />
               <Text ml="4" fontWeight="medium" fontSize="25" color="gray.700">

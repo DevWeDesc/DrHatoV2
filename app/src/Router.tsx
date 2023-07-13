@@ -63,6 +63,9 @@ import EditProtocols from "./pages/Admissions/editProtocols";
 import AdminVaccines from "./pages/AdminDashboard/vaccines";
 import Surgeries from "./pages/Surgeries";
 import SurgeriesDetails from "./pages/Surgeries/SurgeriesDetails";
+import { SurgeryCenter } from "./pages/AdminDashboard/surgeryCenter";
+import { Hospitalization } from "./pages/AdminDashboard/hospitalization";
+import { Reports } from "./pages/Reports/index";
 
 export function Router() {
   return (
@@ -70,6 +73,7 @@ export function Router() {
       <Route path="/" element={<Login />} />
       <Route element={<DefaultLayout />}>
         <Route path="/Home" element={<Home />} />
+        <Route path="/Reports" element={<Reports />} />
 
         <Route path="/Queue" element={<QueueSistem />} />
 
@@ -90,6 +94,8 @@ export function Router() {
         <Route path="/Admin/Procedures" element={<ProceduresList />} />
         <Route path="/Admin/Procedures/Create" element={<ProcedureCreate />} />
         <Route path="/Admin/Procedures/Edit/:id" element={<ProcedureEdit />} />
+        <Route path="/Admin/SurgeryCenter" element={<SurgeryCenter />} />
+        <Route path="/Admin/Hospitalization" element={<Hospitalization />} />
 
         <Route path="/Autorizations" element={<GenerateAutorizations />} />
 
