@@ -136,6 +136,13 @@ export interface ExamsProps  {
   coleted?: number;
 }
 
+export interface VacinnesProps{
+  id: number;
+  name: string;
+  price: number;
+  requestedDate: Date | string;
+}
+
 export interface PetDetaisl {
   id: number | string;
   name: string;
@@ -155,4 +162,5 @@ export interface PetDetaisl {
   recordId: number | string;
   codPet: string;
   exams: ExamsProps[];
+  vaccines: VacinnesProps[];
 }
