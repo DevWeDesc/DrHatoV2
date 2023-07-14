@@ -18,6 +18,8 @@ import {
   HStack,
   VStack,
   Select,
+  TableContainer,
+  Th,
 } from "@chakra-ui/react";
 import {
   AiFillMedicineBox,
@@ -34,48 +36,17 @@ import { SetExamForm } from "../../components/workspaceVet/SetExamForm";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { VetInstructions } from "./WorkSpaceVets/instructions";
 import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
+import { PetDetaisl } from "../../interfaces";
 
-type ExamsProps = [
-  {
-    id: number | string;
-    name: string;
-    price: string;
-    doneExam: boolean;
-    requestedData: string;
-  }
-];
-
-type QueueProps = {
-  moreInfos: string;
-  queueOur: string;
-};
-export interface PetProps {
-  id: number;
-  name: string;
-  customerName: string;
-  balance: number;
-  customerId: number;
-  especie: string;
-  corPet: string;
-  observations: string;
-  race: string;
-  rga: number;
-  sizePet: string;
-  weigth: string;
-  sexo: string;
-  status: string;
-  bornDate: string;
-  exams: ExamsProps;
-  queue: QueueProps;
-  recordId: string | number;
-}
 
 export function WorkSpaceVet() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [pet, setPet] = useState({} as PetProps);
+  const [pet, setPet] = useState({} as PetDetaisl);
+  const [handleViewComponent, setHandleViewComponent] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAutorizationModalOpen, setAutorizationModalOpen] = useState(false);
+  const [reloadData, setReloadData] = useState(false);
   function openModal() {
     setIsModalOpen(true);
   }
@@ -89,16 +60,124 @@ export function WorkSpaceVet() {
     setAutorizationModalOpen(false);
   }
 
+  const handleChangePet = async (newPetId: number) => {
+    navigate(`/Vets/Workspace/${newPetId}`)
+    setReloadData(true);
+  }
+  async function getPetDetails() {
+    const response = await api.get(`/pets/${id}`);
+    setPet(response.data);
+  }
+
   useEffect(() => {
-    async function getPetDetails() {
-      const response = await api.get(`/pets/${id}`);
-      setPet(response.data);
-    }
     getPetDetails();
   }, []);
 
-  console.log("DETALHES PET", pet);
-  ("");
+  
+  useEffect(() => {
+    if (reloadData === true) {
+      getPetDetails();
+      setReloadData(false); // Reseta o estado para evitar chamadas infinitas
+    }
+  }, [reloadData])
+
+
+  
+  let viewComponent;
+  switch(true) {
+    case handleViewComponent == "allPets":
+      viewComponent = (
+          <TableContainer overflowY="auto" height="100%">
+            <Table >
+              <Thead>
+                <Tr>
+                  <Th>
+                      IR ATÉ PET
+                  </Th>
+                  <Th>
+                      NOME
+                  </Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {
+                  pet.customerPets?.map((pets) => (
+                    <Tr key={pets.id}>
+                      <Td><Button onClick={() => handleChangePet(pets.id)} colorScheme="whatsapp">IR ATÉ O PET</Button></Td>
+                        <Td>
+                          {pets.name ? pets.name : "SEM OUTROS ANIMAIS"}
+                        </Td>
+                    </Tr>
+                  ))
+                }
+              </Tbody>
+            </Table>
+          </TableContainer>
+      
+      )
+      break;
+      case handleViewComponent == "vaccines":
+        viewComponent = (
+          <TableContainer overflowY="auto" height="100%">
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>
+                    DATA
+                </Th>
+                <Th>
+                    NOME
+                </Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {
+                pet.vaccines?.map((vacine) => (
+                  <Tr key={vacine.id}>
+                    <Td>{vacine.requestedDate.toString()}</Td>
+                    <Td>{vacine.name}</Td>
+                  </Tr>
+                ))
+              }
+            </Tbody>
+          </Table>
+        </TableContainer>
+        )
+        break;
+        case handleViewComponent == "surgeries":
+        viewComponent = (
+          <TableContainer>
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>
+                    DATA
+                </Th>
+                <Th>
+                    NOME
+                </Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {
+                pet.surgeries?.map((surgerie) => (
+                  <Tr key={surgerie.id}>
+                    <Td>{surgerie.completedDate ? surgerie.completedDate.toString() : "NÃO CONCLUIDA" }</Td>
+                    <Td>{surgerie.name}</Td>
+                  </Tr>
+                ))
+              }
+            </Tbody>
+          </Table>
+        </TableContainer>
+        )
+        break;
+        default:
+          viewComponent = (
+            <> <h1>NADA A EXIBIR</h1> </>
+          )
+          break; 
+  }
 
   return (
     <ChakraProvider>
@@ -419,6 +498,7 @@ export function WorkSpaceVet() {
                 colorScheme="whatsapp"
                 w="33%"
                 py="5"
+                onClick={() => setHandleViewComponent("allPets")}
               >
                 Outros Animais
               </Button>
@@ -428,6 +508,7 @@ export function WorkSpaceVet() {
                 colorScheme="whatsapp"
                 w="33%"
                 py="5"
+                onClick={() => setHandleViewComponent("vaccines")}
               >
                 Vacinas
               </Button>
@@ -437,32 +518,14 @@ export function WorkSpaceVet() {
                 colorScheme="whatsapp"
                 w="33%"
                 py="5"
+                onClick={() => setHandleViewComponent("surgeries")}
               >
                 Cirurgias
               </Button>
             </Flex>
 
-            <Flex m="2" direction="column" gap="2">
-              <Flex
-                w="100%"
-                backgroundColor="gray.100"
-                p="4"
-                justify="space-between"
-              ></Flex>
-
-              <Flex
-                w="100%"
-                backgroundColor="gray.100"
-                p="4"
-                justify="space-between"
-              ></Flex>
-
-              <Flex
-                w="100%"
-                backgroundColor="gray.100"
-                p="4"
-                justify="space-between"
-              ></Flex>
+            <Flex width="100%" maxHeight="800px" m="2" direction="column" gap="2" overflowY="auto">
+             {viewComponent}
             </Flex>
           </div>
         </WorkSpaceContent>

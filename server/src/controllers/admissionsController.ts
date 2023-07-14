@@ -21,7 +21,6 @@ export const admissionsController = {
 
         })
       }
-
       await prisma.kennel.create({
         data: { name, totalBeds, beds: {
           createMany: {
