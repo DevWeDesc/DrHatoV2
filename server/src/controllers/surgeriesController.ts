@@ -56,6 +56,19 @@ export const surgeriesController = {
       reply.send({message: error})
       console.log(error)
     }
+  },
+
+  excludePetSugerie: async (request: FastifyRequest<{ Params: params }>, reply: FastifyReply) => {
+     const {id } = request.params
+     try {
+        await prisma.surgeriesForPet.delete({
+          where: {id: parseInt(id)}
+        })
+        reply.send("Deletado com sucesso").status(203)
+     } catch (error) {
+      reply.send({message: error})
+      console.log(error)
+     }
   }
 
 }
