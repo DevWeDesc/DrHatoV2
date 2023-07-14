@@ -140,6 +140,7 @@ export interface VacinnesProps{
   id: number;
   name: string;
   price: number;
+  doneExam: boolean;
   requestedDate: Date | string;
 }
 
@@ -148,9 +149,19 @@ export interface SugeriesProps {
 			name: string;
       price: number;
 		  scheduledDate?: Date
-			completedDat?: Date
+			completedDate?: Date
       }
 
+      type QueueProps = {
+        moreInfos: string;
+        queueOur: string;
+      };
+
+  type customerPetsProps = {
+    id: number;
+    name: string;
+
+  }    
 export interface PetDetaisl {
   id: number | string;
   name: string;
@@ -169,7 +180,9 @@ export interface PetDetaisl {
   observations: string;
   recordId: number | string;
   codPet: string;
+  queue: QueueProps;
   exams: ExamsProps[];
   vaccines: VacinnesProps[];
   surgeries:  SugeriesProps[];
+  customerPets: customerPetsProps[]
 }
