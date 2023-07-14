@@ -16,7 +16,7 @@ import { Flex } from "@chakra-ui/react";
 import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { DbContext } from "../../contexts/DbContext";
 import { Link } from "react-router-dom";
@@ -33,6 +33,8 @@ export function Autorizations() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { autorization } = useContext(DbContext);
   const { register, handleSubmit } = useForm();
+  const [reloadData, setReloadData] = useState<boolean>(false);
+  const [allAutorization, setAllAutorization] = useState([]);
   const autorizations = autorization ? autorization : null;
 
   const handleAutorization: SubmitHandler<FieldValues> = async (values) => {
@@ -42,6 +44,7 @@ export function Autorizations() {
         text: values.text,
       };
       await api.post("autorizations", data);
+      setReloadData(true);
       toast.success("Autorização criada com sucesso");
     } catch (error) {
       toast.error("Falha ao criar nova autorização");
@@ -56,6 +59,22 @@ export function Autorizations() {
   function closeModal() {
     setIsModalOpen(false);
   }
+
+  async function getAutorizations() {
+    const AllAutorizations: any = await api.get("/autorizations");
+    setAllAutorization(AllAutorizations.data);
+  }
+
+  useEffect(() => {
+    getAutorizations();
+  }, []);
+
+  useEffect(() => {
+    if (reloadData === true) {
+      getAutorizations();
+      setReloadData(false);
+    }
+  }, [reloadData]);
 
   return (
     <ChakraProvider>
@@ -125,23 +144,29 @@ export function Autorizations() {
                         py="2"
                         m="0"
                         w="100%"
-                        borderY="1px solid black"
+                        borderTop="1px solid black"
                         textAlign="left"
                       >
-                        {autorizations != null ? (
-                          autorizations.map((item) => (
+                        {allAutorization != null ? (
+                          allAutorization.map((item: any) => (
                             <>
-                              <Link
-                                key={item.id}
-                                to={`/Admin/Autorizations/${item.id}`}
-                              >
-                                <Flex align="center" justify="space-between">
-                                  <Text>{item.name} </Text>
-                                  {!!item.name && (
+                              {!!item.name && (
+                                <Link
+                                  key={item.id}
+                                  to={`/Admin/Autorizations/${item.id}`}
+                                >
+                                  <Flex
+                                    py="1"
+                                    align="center"
+                                    justify="space-between"
+                                    borderBottom="1px solid black"
+                                  >
+                                    <Text>{item.name} </Text>
+
                                     <Button colorScheme="yellow">Editar</Button>
-                                  )}
-                                </Flex>
-                              </Link>
+                                  </Flex>
+                                </Link>
+                              )}
                             </>
                           ))
                         ) : (

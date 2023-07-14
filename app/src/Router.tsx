@@ -66,6 +66,7 @@ import SurgeriesDetails from "./pages/Surgeries/SurgeriesDetails";
 import { SurgeryCenter } from "./pages/AdminDashboard/surgeryCenter";
 import { Hospitalization } from "./pages/AdminDashboard/hospitalization";
 import { Reports } from "./pages/Reports/index";
+import { AdminSurgery } from "./pages/AdminDashboard/surgeryes";
 
 export function Router() {
   return (
@@ -79,6 +80,7 @@ export function Router() {
 
         <Route path="/Admin" element={<AdminMain />} />
         <Route path="/Admin/Vaccines" element={<AdminVaccines />} />
+        <Route path="/Admin/Surgeryes" element={<AdminSurgery />} />
 
         <Route path="/Admin/Charts" element={<AdminCharts />} />
         <Route path="/Admin/Autorizations" element={<Autorizations />} />
