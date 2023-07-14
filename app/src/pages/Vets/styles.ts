@@ -48,7 +48,7 @@ grid-row-gap: 0px;
  
 }
 .div4 {
-
+  overflow: auto;
 }
 
 `

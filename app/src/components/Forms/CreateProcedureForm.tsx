@@ -1,34 +1,22 @@
 import {
   Text,
-  Box,
   FormControl,
-  HStack,
-  CheckboxGroup,
   Checkbox,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionIcon,
-  AccordionPanel,
-  RadioGroup,
-  Radio,
-  VStack,
   Button,
   Textarea,
   Flex,
-  TagLabel,
+  Select,
 } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { DbContext } from "../../contexts/DbContext";
 import { Input } from "../../components/admin/Input";
-import { AiOutlineArrowDown } from "react-icons/ai";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 
@@ -147,8 +135,9 @@ export function CreateProcedureForm({ path, method }: any) {
             direction="column"
             ml="20"
             bg="white"
-            height="100%"
+            height="50%"
             justifyContent="space-between"
+            overflowY="auto"
             py="10"
             px="10"
           >
@@ -184,7 +173,7 @@ export function CreateProcedureForm({ path, method }: any) {
                 name="applicableGender"
                 borderColor="gray.800"
               />
-              <label htmlFor="">Procedimento é uma vacina</label>
+              <label htmlFor="">Procedimento é uma Vacina</label>
             </Flex>
             <Flex gap="2">
               <Checkbox
@@ -197,76 +186,7 @@ export function CreateProcedureForm({ path, method }: any) {
               />
               <label htmlFor="">Procedimento é uma Cirurgia</label>
             </Flex>
-            <Flex gap="2">
-              <Checkbox
-                type="radio"
-                {...register("applicableGender")}
-                value={"macho"}
-                colorScheme="green"
-                name="applicableGender"
-                borderColor="gray.800"
-              />
-              <label htmlFor="">
-                Deve aparecer como procedimento nas consultas
-              </label>
-            </Flex>
-            <Flex gap="2">
-              <Checkbox
-                type="radio"
-                {...register("applicableGender")}
-                value={"macho"}
-                colorScheme="green"
-                name="applicableGender"
-                borderColor="gray.800"
-              />
-              <label htmlFor="">
-                Deve aparecer como procedimento nas Internações
-              </label>
-            </Flex>
-            <Flex gap="2">
-              <Checkbox
-                type="radio"
-                {...register("applicableGender")}
-                value={"macho"}
-                colorScheme="green"
-                name="applicableGender"
-                borderColor="gray.800"
-              />
-              <label htmlFor="">Deve ser cobrado nas Consultas</label>
-            </Flex>
-            <Flex gap="2">
-              <Checkbox
-                type="radio"
-                {...register("applicableGender")}
-                value={"macho"}
-                colorScheme="green"
-                name="applicableGender"
-                borderColor="gray.800"
-              />
-              <label htmlFor="">Deve ser cobrado nas Internações</label>
-            </Flex>
-            <Flex gap="2">
-              <Checkbox
-                type="radio"
-                {...register("applicableGender")}
-                value={"macho"}
-                colorScheme="green"
-                name="applicableGender"
-                borderColor="gray.800"
-              />
-              <label htmlFor="">Procedimento deve dar baixa em estoque</label>
-            </Flex>
-            <Flex gap="2">
-              <Checkbox
-                type="radio"
-                {...register("applicableGender")}
-                value={"macho"}
-                colorScheme="green"
-                name="applicableGender"
-                borderColor="gray.800"
-              />
-              <label htmlFor="">Obrigatório</label>
-            </Flex>
+
             <Flex gap="2">
               <Checkbox
                 {...register("available")}
@@ -276,94 +196,46 @@ export function CreateProcedureForm({ path, method }: any) {
               />
               <label htmlFor="available">Disponivel</label>
             </Flex>
-            <Flex gap="2">
-              <Checkbox
-                {...register("available")}
-                id="available"
-                name="available"
-                borderColor="gray.900"
-              />
-              <label htmlFor="available">
-                Pode ser executado em qualquer tipo de evento
-              </label>
-            </Flex>
-            <Flex gap="2">
-              <Checkbox
-                {...register("available")}
-                id="available"
-                name="available"
-                borderColor="gray.900"
-              />
-              <label htmlFor="available">Plano de saude PetLove</label>
-            </Flex>
           </Flex>
-          {/*
-          <HStack gap="2" mt="4">
-            <Accordion defaultIndex={[0]} allowMultiple>
-              <AccordionItem>
-                <h2 className="acordionTitle">
-                  <AccordionButton gap="1rem">
-                    <AiOutlineArrowDown size={26} />
-                    <Box as="span" flex="1" textAlign="left">
-                      Grupos
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  <div className="submenus">
-                    {groups?.map((item) => (
-                      <>
-                        <VStack key={item.id}>
-                          <RadioGroup onChange={setValue} value={value}>
-                            <Radio
-                              bgColor={value == item.id ? "green" : "red"}
-                              value={item.id as any}
-                            >
-                              {item.name}
-                            </Radio>
-                          </RadioGroup>
-                        </VStack>
-                      </>
-                    ))}
-                  </div>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
+          <Flex
+            shadow="0px 0px 10px rgba(0, 0, 0, 0.5)"
+            direction="column"
+            ml="20"
+            mt="4"
+            bg="white"
+            height="50%"
+            align="centers"
+            gap="4"
+            overflowY="auto"
+            py="10"
+            px="10"
+          >
+            <label htmlFor="" style={{ fontWeight: "bold", fontSize: "17px" }}>
+              PERTENCE A ALGUM GRUPO?
+            </label>
+            <Select placeholder="SELECIONE O GRUPO" bgColor="gray.300">
+              {
+                groups.map((group) => (
+                 
+                   <option key={group.id} value={group.id}>{group.name}</option>
+                
+                ))
+              }
+            </Select>
 
-            <Accordion defaultIndex={[0]} allowMultiple>
-              <AccordionItem>
-                <h2 className="acordionTitle">
-                  <AccordionButton gap="1rem">
-                    <AiOutlineArrowDown size={26} />
-                    <Box as="span" flex="1" textAlign="left">
-                      Setores
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  <div className="submenus">
-                    {sectors?.map((item) => (
-                      <>
-                        <VStack key={item.id}>
-                          <RadioGroup onChange={setValueOne} value={valueOne}>
-                            <Radio
-                              bgColor={valueOne == item.id ? "green" : "red"}
-                              value={item.id as any}
-                            >
-                              {item.name}
-                            </Radio>
-                          </RadioGroup>
-                        </VStack>
-                      </>
-                    ))}
-                  </div>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
-          </HStack>
-                    */}
+            <label htmlFor="" style={{ fontWeight: "bold", fontSize: "17px" }}>
+              PERTENCE A ALGUM SETOR?
+            </label>
+            <Select placeholder="SELECIONE O SETOR" bgColor="gray.300">
+            {
+                sectors.map((sector) => (
+                
+                   <option key={sector.id} value={sector.id}>{sector.name}</option>
+               
+                ))
+              }
+            </Select>
+          </Flex>
         </Flex>
       </Flex>
 

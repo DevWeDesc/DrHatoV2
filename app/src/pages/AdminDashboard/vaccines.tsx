@@ -79,7 +79,6 @@ export default function AdminVaccines() {
     }
   }, [reloadData])
 
-   console.log("TESTE CHAMADAS API", vaccines) 
 
   function openModal() {
     setIsModalOpen(true);
