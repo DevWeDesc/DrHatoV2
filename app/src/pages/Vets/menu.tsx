@@ -41,6 +41,7 @@ interface QueueProps {
 export function MenuVet() {
   let { dataCustomer, dataPet } = useContext(DbContext);
   const [petValue, setPetValue] = useState("");
+  const [petTotal, setPetTotal] = useState([]);
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [totalInQueue, setTotalInQueue] = useState(0 as any);
   const navigate = useNavigate();
@@ -51,11 +52,14 @@ export function MenuVet() {
       const Pets = await api.get("/pets");
       setTotalInQueue(total.data);
       setInQueue(response.data.response);
+      setPetTotal(total.data.response);
     }
     getQueue();
   }, [inQueue.length]);
 
-  console.log(totalInQueue);
+  console.log(petTotal);
+
+  //console.log(totalInQueue);
 
   const handleNavigateWorkSpace = () => {
     if (!petValue) {
@@ -64,7 +68,7 @@ export function MenuVet() {
     }
     navigate(`/Vets/Workspace/${petValue}`);
   };
-  console.log("PET RESPONSE", dataPet);
+  //console.log("PET RESPONSE", dataPet);
 
   let typeTable: ReactNode;
   switch (true) {
@@ -143,37 +147,45 @@ export function MenuVet() {
         </Table>
       );
       break;
-    case dataPet.length >= 1:
+    case Object.keys(totalInQueue).length >= 1:
       typeTable = (
         <>
           <Table colorScheme="blackAlpha">
             <Thead>
               <Tr>
-                <Th>Nome</Th>
-
+                <Th>CPF</Th>
+                <Th>Cliente</Th>
+                <Th>Animal</Th>
                 <Th>Código</Th>
-                <Th>Nascimento</Th>
+                <Th>Data</Th>
+                <Th>Hora</Th>
                 <Th>Preferência</Th>
                 <Th>Especialidade</Th>
               </Tr>
             </Thead>
 
             <Tbody>
-              {dataPet.map((pet: any) => (
-                <Tr key={pet.id}>
+              {petTotal.map((pet: any) => (
+                <Tr
+                  key={pet.id}
+                  cursor="pointer"
+                  onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
+                >
                   <Td>
-                    <Button
-                      colorScheme="whatsapp"
-                      onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
-                    >
-                      {pet.name}
-                    </Button>
+                    <Text colorScheme="whatsapp">{pet.customerCpf}</Text>
                   </Td>
 
+                  <Td>{pet.customerName}</Td>
+
+                  <Td
+                    cursor="pointer"
+                    onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
+                  >
+                    {pet.name}
+                  </Td>
                   <Td>{pet.codPet}</Td>
-
-                  <Td>{pet.bornDate}</Td>
-
+                  <Td>{pet.queueEntry}</Td>
+                  <Td>{pet.ouor}</Td>
                   <Td>
                     {pet.vetPreference ? pet.vetPreference : "Sem Preferência"}
                   </Td>

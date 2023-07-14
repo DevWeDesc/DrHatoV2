@@ -16,12 +16,10 @@ import {
   HStack,
   CheckboxGroup,
   Checkbox,
-  Textarea,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
-import { AiOutlineDownload } from "react-icons/all";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
 import { Paginaton } from "../../components/admin/Pagination";
@@ -33,32 +31,16 @@ import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
-import * as pdfMake from "pdfmake/build/pdfmake";
-import * as pdfFonts from "pdfmake/build/vfs_fonts";
-import { TDocumentDefinitions } from "pdfmake/interfaces";
-import Surgeries from "../Surgeries";
-//@ts-ignore
-pdfMake.addVirtualFileSystem(pdfFonts);
-// Create styles
 
-export function InstructionsList() {
-  //const { instructions } = useContext(DbContext);
+export function AdminSurgery() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
+  const [surgeries, setSurgeries] = useState([]);
   const [reloadData, setReloadData] = useState<boolean>(false);
-  const [allInstructions, setAllInstructions] = useState([]);
 
   const navigate = useNavigate();
 
-  function handleCreateInstruction(name: string, description: string) {
-    const docDefinition: TDocumentDefinitions = {
-      content: [`Nome: ${name}\n\n ${description}`],
-      pageMargins: [50, 50],
-      pageSize: "A4",
-    };
-    pdfMake.createPdf(docDefinition).open();
-  }
   function openModal() {
     setIsModalOpen(true);
   }
@@ -77,13 +59,13 @@ export function InstructionsList() {
     try {
       const data = {
         name: values.name,
-        description: values.description,
+        price: parseInt(values.price),
       };
-      await api.post("instructions", data);
+      await api.post("surgeries", data);
       setReloadData(true);
-      toast.success("Instrução criada com sucesso");
+      toast.success("Cirurgia criada com sucesso");
     } catch (error) {
-      toast.error("Falha ao criar nova Instrução");
+      toast.error("Falha ao criar nova cirurgia");
     }
   };
 
@@ -93,41 +75,39 @@ export function InstructionsList() {
     );
     try {
       if (confirm === true) {
-        await api.delete(`instructions/${id}`);
-        setReloadData(true);
-        toast.success("Instrução deletada sucesso");
+        await api.delete(`sectors/${id}`);
+        toast.success("Setor deletdo com sucesso");
       }
     } catch (error) {
-      toast.error("Falha ao deletar");
+      toast.error("Falha ao criar novo setor");
     }
   }
 
-  const handleEditInstructions: SubmitHandler<FieldValues> = async (values) => {
+  const handleEditSector: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
         name: values.name,
-        description: values.description,
       };
-      await api.put(`instructions/${values.id}`, data);
-      setReloadData(true);
-      toast.success("Instrução editada com sucesso");
+      await api.put(`sectors/${values.id}`, data);
+      toast.success("Setor editado com sucesso");
+      navigate(0);
     } catch (error) {
-      toast.error("Falha ao editar nova instrução");
+      toast.error("Falha ao editar novo setor");
     }
   };
 
-  async function getInstructions() {
-    const Instructions = await api.get("/instructions");
-    setAllInstructions(Instructions.data);
+  async function getSurgeryes() {
+    const Surgeries = await api.get("/surgeries");
+    setSurgeries(Surgeries.data);
   }
 
   useEffect(() => {
-    getInstructions();
+    getSurgeryes();
   }, []);
 
   useEffect(() => {
     if (reloadData === true) {
-      getInstructions();
+      getSurgeryes();
       setReloadData(false);
     }
   }, [reloadData]);
@@ -136,107 +116,82 @@ export function InstructionsList() {
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Instruções" />
+          <Header title="Painel de Cirurgia" />
 
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex
                 mb="8"
-                direction="column"
                 justify="space-between"
+                direction="column"
                 align="center"
               >
-                <Heading width="100%" fontSize="30" fontWeight="bold">
-                  Instruções
+                <Heading size="lg" fontWeight="bold" w="100%" mb="5">
+                  Painel de Cirurgia
                 </Heading>
 
                 <Button
                   as="a"
-                  mt="5"
                   width="100%"
-                  py="8"
                   fontSize="20"
+                  py="8"
                   colorScheme="whatsapp"
-                  leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                  leftIcon={<Icon as={RiAddLine} />}
                   onClick={() => openModal()}
                 >
-                  Cadastrar nova Instrução
+                  Cadastrar nova Cirurgia
                 </Button>
               </Flex>
 
               <Table colorScheme="blackAlpha">
                 <Thead>
-                  <Tr borderColor="black">
-                    <Th borderColor="black" fontSize="18">
+                  <Tr>
+                    <Th fontSize="18" borderColor="black">
                       Nome
                     </Th>
-                    <Th borderColor="black" fontSize="18">
-                      Id do Instrução
+                    <Th fontSize="18" borderColor="black">
+                      Preço
                     </Th>
                     <Th borderColor="black"></Th>
                   </Tr>
                 </Thead>
 
                 <Tbody>
-                  {allInstructions ? (
-                    allInstructions.map((sector: any) => (
-                      <Tr key={sector.id}>
+                  {surgeries ? (
+                    surgeries.map((surgery: any) => (
+                      <Tr key={surgery.id}>
                         <Td borderColor="black">
-                          <Text
-                            fontWeight="bold"
-                            fontSize="16"
-                            color="gray.800"
-                          >
-                            {sector.name}
+                          <Text fontWeight="bold" color="gray.800">
+                            {surgery.name}
                           </Text>
                         </Td>
-                        <Td borderColor="black" fontSize="16" fontWeight="bold">
-                          {sector.id}
+                        <Td borderColor="black" fontWeight="bold">
+                          {" "}
+                          {surgery.price}
                         </Td>
 
                         <Td borderColor="black">
-                          <Flex ml="16%">
+                          <Flex gap="2" ml="40%">
                             <Button
                               as="a"
                               size="md"
                               fontSize="md"
                               colorScheme="yellow"
-                              mr="3"
                               leftIcon={<Icon as={RiPencilLine} />}
                               onClick={() => openModalTwo()}
                             >
-                              Editar Instrução
+                              Editar Cirurgia
                             </Button>
-
                             <Button
                               as="a"
                               size="md"
                               fontSize="md"
                               colorScheme="red"
                               leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => handleDeleteSector(sector.id)}
-                              mr="3"
+                              onClick={() => handleDeleteSector("")}
                             >
-                              Deletar Instrução
-                            </Button>
-
-                            <Button
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="cyan"
-                              mr="3"
-                              color="white"
-                              leftIcon={<Icon as={AiOutlineDownload} />}
-                              onClick={() =>
-                                handleCreateInstruction(
-                                  sector.name,
-                                  sector.description
-                                )
-                              }
-                            >
-                              Gerar PDF
+                              Deletar Cirurgia
                             </Button>
                           </Flex>
                         </Td>
@@ -258,17 +213,16 @@ export function InstructionsList() {
                   <Input
                     {...register("name")}
                     name="name"
-                    label="Nome da Instrução"
+                    label="Nome da Cirurgia"
                     mb="4"
                   />
-                  <label>Descrição da Instrução</label>
-                  <Textarea
-                    {...register("description")}
-                    name="description"
-                    minHeight={300}
-                    minWidth={300}
-                    borderColor="gray.900"
-                  ></Textarea>
+
+                  <Input
+                    {...register("price")}
+                    name="price"
+                    label="Preço"
+                    mb="4"
+                  />
 
                   <Button w="100%" type="submit" colorScheme="green" m="2">
                     Cadastrar
@@ -282,33 +236,31 @@ export function InstructionsList() {
               >
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleEditInstructions)}
+                  onSubmit={handleSubmit(handleEditSector)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
                 >
-                  <Text>Editar Setor</Text>
-                  <Input
-                    {...register("name")}
-                    name="name"
-                    label="Nome da Instrução"
-                    mb="4"
-                  />
+                  <Text pb="15">Editar Centro cirurgico</Text>
                   <Input
                     {...register("id")}
                     name="id"
-                    label="Id da Instrução"
+                    label="Id da cirurgia"
+                    mb="4"
+                  />
+                  <Input
+                    {...register("name")}
+                    name="name"
+                    label="Nome da cirurgia"
                     mb="4"
                   />
 
-                  <label>Descrição da Instrução</label>
-                  <Textarea
-                    {...register("description")}
-                    name="description"
-                    minHeight={300}
-                    minWidth={300}
-                    borderColor="gray.900"
-                  ></Textarea>
+                  <Input
+                    {...register("id")}
+                    name="id"
+                    label="Preço da cirurgia"
+                    mb="4"
+                  />
 
                   <Button w="100%" type="submit" colorScheme="green" m="2">
                     Cadastrar

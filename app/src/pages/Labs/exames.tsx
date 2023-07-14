@@ -66,7 +66,7 @@ export function LabExames() {
       toast.error("Selecione um PET");
       return;
     }
-    navigate(`/Vets/Workspace/${petValue}`);
+    navigate(`/Labs/Set/${petValue}`);
   };
   //console.log(labs.medicine.pet.name);
   // console.log("PET RESPONSE", dataPet);
@@ -171,7 +171,11 @@ export function LabExames() {
               {labs.map((pet: any) => (
                 <>
                   {pet.doneExame === false && (
-                    <Tr key={pet.id}>
+                    <Tr
+                      key={pet.id}
+                      cursor="pointer"
+                      onClick={() => navigate(`/Labs/Set/${pet.id}`)}
+                    >
                       <Td>
                         {/*<Button
                       colorScheme="whatsapp"
@@ -181,12 +185,7 @@ export function LabExames() {
                         {/*</Button>*/}
                       </Td>
 
-                      <Td
-                        cursor="pointer"
-                        onClick={() => navigate(`/Labs/Set/${pet.id}`)}
-                      >
-                        {pet.medicine.pet.name}
-                      </Td>
+                      <Td>{pet.medicine.pet.name}</Td>
 
                       <Td>{pet.name}</Td>
 
@@ -227,7 +226,7 @@ export function LabExames() {
               <Flex mb="8" gap="8" direction="column" align="center">
                 <VetsSearch path="vetsearch" />
                 <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
-                  <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
+                  <>TOTAL NA FILA: {labs.length}</>
                 </Button>
                 <Flex textAlign="center" justify="center">
                   {typeTable}

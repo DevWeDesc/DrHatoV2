@@ -13,7 +13,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { RiAddLine, RiPencilLine, RiUserSearchLine } from "react-icons/all";
 import { Link } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
@@ -26,7 +26,8 @@ import { AdminContainer } from "../AdminDashboard/style";
 
 export function VetsList() {
   const { vets } = useContext(DbContext);
-  // console.log(vets);
+  const [vet, setVet] = useState([]);
+
   return (
     <ChakraProvider>
       <AdminContainer>

@@ -36,6 +36,8 @@ export function Hospitalization() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
+  const [beds, setBeds] = useState<any>([]);
+  const [reloadData, setReloadData] = useState<boolean>(false);
   const navigate = useNavigate();
 
   function openModal() {
@@ -56,12 +58,13 @@ export function Hospitalization() {
     try {
       const data = {
         name: values.name,
+        totalBeds: parseInt(values.totalBeds),
       };
-      await api.post("sectors", data);
-      toast.success("Setor criado com sucesso");
-      navigate(0);
+      await api.post("/admissions", data);
+      setReloadData(true);
+      toast.success("Leito criado com sucesso!");
     } catch (error) {
-      toast.error("Falha ao criar novo setor");
+      toast.error("Falha ao criar novo Leito");
     }
   };
 
@@ -72,8 +75,8 @@ export function Hospitalization() {
     try {
       if (confirm === true) {
         await api.delete(`sectors/${id}`);
-        toast.success("Setor deletdo com sucesso");
-        navigate(0);
+        setReloadData(true);
+        toast.success("Leito deletado com sucesso");
       }
     } catch (error) {
       toast.error("Falha ao criar novo setor");
@@ -84,15 +87,34 @@ export function Hospitalization() {
     try {
       const data = {
         name: values.name,
+        totalBeds: values.totalBeds,
       };
       await api.put(`sectors/${values.id}`, data);
-      toast.success("Setor editado com sucesso");
-      navigate(0);
+      setReloadData(true);
+      toast.success("Leitos editado com sucesso");
     } catch (error) {
-      toast.error("Falha ao editar novo setor");
+      toast.error("Falha ao editar novo Leitos");
     }
   };
 
+  async function getBeds() {
+    try {
+      const totalBeds = await api.get("/admissions");
+      setBeds(totalBeds.data);
+    } catch (error) {
+      console.error("Erro para consumir", error);
+    }
+  }
+  useEffect(() => {
+    getBeds();
+  }, []);
+
+  useEffect(() => {
+    if (reloadData === true) {
+      getBeds();
+      setReloadData(false);
+    }
+  }, [reloadData]);
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -101,7 +123,14 @@ export function Hospitalization() {
 
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+            <Box
+              flex="1"
+              borderRadius={8}
+              bg="gray.200"
+              p="8"
+              h="85vh"
+              overflow="auto"
+            >
               <Flex
                 mb="8"
                 justify="space-between"
@@ -139,43 +168,45 @@ export function Hospitalization() {
                 </Thead>
 
                 <Tbody>
-                  {/*sectors ? (
-                    sectors.map((sector) => (*/}
-                  <Tr key="0">
-                    <Td borderColor="black">
-                      <Text fontWeight="bold" color="gray.800"></Text>
-                    </Td>
-                    <Td borderColor="black"></Td>
+                  {beds ? (
+                    beds.map((bed: any) => (
+                      <Tr key={bed.id}>
+                        <Td borderColor="black">
+                          <Text fontWeight="bold" color="gray.800">
+                            {bed.name}
+                          </Text>
+                        </Td>
+                        <Td borderColor="black">{bed.totalBeds}</Td>
 
-                    <Td borderColor="black">
-                      <Flex gap="2" ml="40%">
-                        <Button
-                          as="a"
-                          size="md"
-                          fontSize="md"
-                          colorScheme="yellow"
-                          leftIcon={<Icon as={RiPencilLine} />}
-                          onClick={() => openModalTwo()}
-                        >
-                          Editar Leito
-                        </Button>
-                        <Button
-                          as="a"
-                          size="md"
-                          fontSize="md"
-                          colorScheme="red"
-                          leftIcon={<Icon as={RiPencilLine} />}
-                          onClick={() => handleDeleteSector("")}
-                        >
-                          Deletar Leito
-                        </Button>
-                      </Flex>
-                    </Td>
-                  </Tr>
-                  {/*))
-                  )
-                  : (
-                  <LoadingSpinner />)*/}
+                        <Td borderColor="black">
+                          <Flex gap="2" ml="40%">
+                            <Button
+                              as="a"
+                              size="md"
+                              fontSize="md"
+                              colorScheme="yellow"
+                              leftIcon={<Icon as={RiPencilLine} />}
+                              onClick={() => openModalTwo()}
+                            >
+                              Editar Leito
+                            </Button>
+                            <Button
+                              as="a"
+                              size="md"
+                              fontSize="md"
+                              colorScheme="red"
+                              leftIcon={<Icon as={RiPencilLine} />}
+                              onClick={() => handleDeleteSector("")}
+                            >
+                              Deletar Leito
+                            </Button>
+                          </Flex>
+                        </Td>
+                      </Tr>
+                    ))
+                  ) : (
+                    <LoadingSpinner />
+                  )}
                 </Tbody>
               </Table>
               <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
@@ -194,9 +225,10 @@ export function Hospitalization() {
                   />
 
                   <Input
-                    {...register("name")}
-                    name="name"
+                    {...register("totalBeds")}
+                    name="totalBeds"
                     label="Quantidade de Camas"
+                    type="number"
                     mb="4"
                   />
 
@@ -243,8 +275,6 @@ export function Hospitalization() {
                   </Button>
                 </FormControl>
               </GenericModal>
-
-              <Paginaton />
             </Box>
           </Flex>
         </Flex>
