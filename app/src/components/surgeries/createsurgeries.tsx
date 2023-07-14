@@ -5,9 +5,88 @@ import {
   Input,
   Select,
   Button,
+  HStack,
+  TableContainer,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  Checkbox,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { PetDetaisl } from "../../interfaces";
+import { api } from "../../lib/axios";
+
+
+interface SugeriesProps {
+  id: number;
+  name: string;
+  price: number | string;
+}
 
 export function Createsurgeries() {
+  const [petDetails, setPetDetails] = useState({} as PetDetaisl);
+    const [sugeries, setSugeries] = useState<SugeriesProps[]>([])
+    const [sugeriesId, setSugeriesId] = useState(0)
+    const [reloadData, setReloadData] = useState(false);
+    const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
+
+    async function GetData() {
+      try {
+      const pet = await api.get(`/pets/${id}`);
+      const sugeries = await api.get('/surgeries')
+      setPetDetails(pet.data)
+      setSugeries(sugeries.data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    useEffect(() => {},[
+      GetData()
+    ])
+
+    useEffect(() => {
+      if (reloadData === true) {
+        GetData()
+        setReloadData(false); // Reseta o estado para evitar chamadas infinitas
+      }
+    }, [reloadData])
+
+
+    async function setSugeriesInPet ()  {
+      try {
+        await api.post(`surgeries/${sugeriesId}/${petDetails.recordId}`)
+        setReloadData(true);
+        toast.success("Cirurgia adicionada com Sucesso")
+      } catch (error) {
+        toast.error("Falha ao cadastrar Cirurgia!")
+      }
+    }
+  
+    const handleDeleteSugerie = async (did: number) => {
+      try {
+        const confirm = window.confirm("DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?")
+
+        if(confirm === true )
+        {
+          await api.delete(`/surgeries/${did}`).then((res) => {
+            setReloadData(true);
+           toast.warning("EXCLUIDO COM SUCESSO") 
+          })
+        } else { return}
+      } catch (error) {
+       toast.error("FALHA AO PROCESSAR EXCLUSÃO")
+       console.log(error)
+      }
+    }
+
   return (
     <ChakraProvider>
       <Flex>
@@ -31,23 +110,36 @@ export function Createsurgeries() {
             Agendamento de Cirurgias
           </Text>
           <Flex
-            bg="gray.200"
-            border="1px solid black"
-            fontSize="20"
-            w="65vw"
-            h="41vh"
-          >
-            <Text color="black" border="1px solid black" pl="2" w="35vw" h="10">
-              Abiação de canal auditivo unilateral
-            </Text>
-            <Text color="black" border="1px solid black" pl="2" w="20vw" h="10">
-              1.250,00
-            </Text>
-
-            <Text color="black" border="1px solid black" pl="2" w="10vw" h="10">
-              Excluir
-            </Text>
-          </Flex>
+              bg="gray.200"
+              border="1px solid black"
+              fontSize="20"
+              w="65vw"
+              h="41vh"
+            
+            >
+                   <TableContainer width="100%" height="100%" overflowY="auto">
+                <Table>
+                <Thead>
+                  <Tr>
+                      <Th fontWeight="black" color="black"  fontSize="md" >NOME</Th>
+                      <Th fontWeight="black" color="black"  fontSize="md" >VALOR</Th>
+                      <Th fontWeight="black" color="black"  fontSize="md" >EXCLUIR?</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+          {
+            petDetails.surgeries?.map((sugerie) => (
+                    <Tr key={sugerie.id}>
+                      <Td>{sugerie.name}</Td>
+                      <Td>{sugerie.price}</Td>
+                      <Td><Button colorScheme="red" onClick={() => handleDeleteSugerie(sugerie.id)} >EXCLUIR</Button></Td>
+                    </Tr>
+            ) )
+          }
+           </Tbody>
+           </Table>
+              </TableContainer>
+         </Flex>
           <Flex direction="column" h="41vh">
             <Text
               bg="gray.700"
@@ -63,31 +155,52 @@ export function Createsurgeries() {
               Adicione Cirurgias
             </Text>
             <Flex bg="gray.200" py="2" justify="center">
-              <Flex border="1px solid black">
+              <Flex>
                 <Input borderColor="black" rounded="0" w="20vw" bg="white" />
+                <HStack>
                 <Button color="white" rounded="0" colorScheme="twitter">
                   Procurar
                 </Button>
+
+                <Button onClick={setSugeriesInPet} color="white" rounded="0" colorScheme="whatsapp">
+                  ADICIONAR
+                </Button>
+                </HStack>
+           
               </Flex>
             </Flex>
-            <Flex border="1px solid black" fontSize="16">
-              <Text border="1px solid black" pl="2" w="35vw">
-                Cirurgia
-              </Text>
-              <Text border="1px solid black" pl="2" w="10vw">
-                Até 6KG
-              </Text>
-              <Text bg="red.300" border="1px solid black" pl="1" w="10vw">
-                De 7KG á 15KG
-              </Text>
-              <Text border="1px solid black" pl="1" w="10vw">
-                De 16KG á 35KG
-              </Text>
-              <Text border="1px solid black" pl="2" w="10vw">
-                + de 35KG
-              </Text>
+           
+              <TableContainer>
+                <Table>
+                  <Thead>
+                    <Tr>
+                    <Th>Selecione</Th>
+                      <Th>Cirurgia</Th>
+                      <Th>Até 6kg</Th>
+                      <Th>7kg á 15kg</Th>
+                      <Th>16kg á 35kg</Th>
+                      <Th>35kg+</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {
+                      sugeries.map((sugerie) => (
+                        <Tr key={sugerie.id}>
+                        <Td><Checkbox size="lg" borderColor="black" onChange={(ev) => ev.target.checked === true ? setSugeriesId(sugerie.id) : setSugeriesId(0)}  /></Td>
+                        <Td>{sugerie.name}</Td>
+                        <Td>{sugerie.price}</Td>
+                        <Td>{sugerie.price}</Td>
+                        <Td>{sugerie.price}</Td>
+                        <Td>{sugerie.price}</Td>
+                      </Tr>
+                      ))
+                    }
+                 
+                  </Tbody>
+                </Table>
+              </TableContainer>
             </Flex>
-          </Flex>
+   
         </Flex>
 
         <Flex direction="column" w="35vw" border="1px solid black">
