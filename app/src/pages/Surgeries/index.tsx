@@ -171,14 +171,14 @@ export default function Surgeries() {
                   </Td>
 
                   <Td>{pet.name}</Td>
-                  <Td>92487</Td>
-                  <Td>04/04/2023</Td>
+                  <Td>{pet.codPet}</Td>
+                  <Td>{pet.queueEntry}</Td>
 
-                  <Td>25:53</Td>
+                  <Td>{pet.ouor}</Td>
                   <Td>
                     {pet.vetPreference ? pet.vetPreference : "Sem Preferência"}
                   </Td>
-                  <Td>0</Td>
+                  <Td>Não selecionado</Td>
                 </Tr>
               ))}
             </Tbody>
