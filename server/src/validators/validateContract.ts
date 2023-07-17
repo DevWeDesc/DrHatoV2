@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { ExamsType } from "../schemas/schemasValidator";
+import bcrypt from "bcrypt"
 const prisma = new PrismaClient()
 export class ValidationContract {
     private errors: string[];
@@ -15,9 +16,19 @@ export class ValidationContract {
        } 
     }
 
+    public async checkPassword(value: { email: string, password: string}, message: string) {
+      const user = await prisma.user.findUnique({where: {email: value.email }})
+      if(!user) return
+      const isCorrectPassword = await bcrypt.compare(value.password, user.password)
+
+      if(isCorrectPassword === false) {
+          this.errors.push(message)
+      }
+  }
+
     public async userAlreadyExists(value: string, message: string) {
         const userExist = await prisma.user.findFirst({
-          where:{name: value}
+          where:{email: value}
         })
 
         if(userExist) {
@@ -25,8 +36,8 @@ export class ValidationContract {
         }
     }
 
-    public async userHasAllToBeCreated(value: {name: string; username: string; password: string, userType?: string, userIsVet?: boolean, crmv?: number}, message: string) {
-        if(value.name == "" || value.username == "" || value.password == ""){
+    public async userHasAllToBeCreated(value: {email: string; username: string; password: string, userType?: string, userIsVet?: boolean, crmv?: number}, message: string) {
+        if(value.email == "" || value.username == "" || value.password == ""){
           this.errors.push(message)
         }
     }

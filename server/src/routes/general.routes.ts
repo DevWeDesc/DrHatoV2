@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify'
-import { autorizationsRegister} from '../services/autorizationsRegister'
+import { autorizationsRegister} from '../utils/autorizationsRegister'
 
 
 export async function generalRoutes(app: FastifyInstance){

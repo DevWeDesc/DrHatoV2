@@ -14,9 +14,9 @@ datasource db {
 
 model User {
   id        Int        @id @default(autoincrement())
-  name      String     @unique
+  email      String     @unique
   username  String
-  password  String
+  password  String 
   crmv      Int?
   userIsVet Boolean?   @default(false)
   userType  String[]
@@ -36,7 +36,7 @@ model Transaction {
 
 model Customer {
   id            Int           @id @unique @default(autoincrement())
-  name          String        @unique
+  name          String        
   adress        String
   district      String?
   cep           String?
