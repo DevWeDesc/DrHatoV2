@@ -1,7 +1,5 @@
 import {
   Flex,
-  Box,
-  SimpleGrid,
   ChakraProvider,
   Table,
   Thead,
@@ -12,9 +10,7 @@ import {
   Text,
   Button
 } from "@chakra-ui/react";
-import { GenericLink, } from "../../components/Sidebars/GenericLink";
-import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import {BiHome, BiLeftArrowAlt, TbArrowBack } from 'react-icons/all'
+import {BiHome, TbArrowBack } from 'react-icons/all'
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect} from 'react'
 import { api } from "../../lib/axios";
@@ -25,23 +21,6 @@ import { PetDetaisl } from "../../interfaces";
 interface Customer {
   id: string | number;
   name: string
-}
-
-interface PetProps {
-  id: number
-  name: string;
-  especie: string;
-  corPet: string;
-  observations: string;
-  race: string;
-  rga: number;
-  sizePet: string;
-  weigth: string;
-  sexo: string;
-  status: string;
-  bornDate: string;
-  customerName: string;
-  codPet: string;
 }
 
 
@@ -151,10 +130,23 @@ export function MedicineRecords() {
           <Flex w="100%" height="38px" bgColor="gray.100" align="center" justify="center">
           <Text fontWeight="bold" >CIRURGIAS</Text>
           </Flex>
-          <Flex w="100%" height="38px" bgColor="gray.200" gap={2} align="center" justify="space-evenly">
-          <Text fontWeight="bold" >TIPOS</Text>
-          <Text fontWeight="bold" >DATA</Text>
+          <Flex direction="column" height="100%" width="100%" overflowY="auto">
+          {
+                pets.surgeries?.map((surgerie) => (
+
+                  <Flex key={surgerie.id} border="2px" bgColor="cyan.100" align="center" height="38px" width="100%" pl="6" pr="6" justify="space-between">
+                    
+                      <Text fontWeight="bold" fontSize="lg"> {surgerie.name}</Text>
+                      <Text fontWeight="bold" fontSize="lg">{surgerie.completedDate ? surgerie.completedDate.toString() : "NÃO REALIZADO"}</Text>
+                      
+                  </Flex>
+                  
+                  
+                ))
+              }
           </Flex>
+          
+        
          </Flex >
 
      

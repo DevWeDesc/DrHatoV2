@@ -25,7 +25,7 @@ export function CreateProcedureForm({ path, method }: any) {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const [value, setValue] = useState("");
-  const [valueOne, setValueOne] = useState("");
+
 
   const handleCreateProcedure: SubmitHandler<FieldValues> = async (values) => {
     let rangeAges = [values.minAge, values.maxAge];
@@ -37,8 +37,8 @@ export function CreateProcedureForm({ path, method }: any) {
       ageRange: rangeAges,
       applicationGender: values.applicableGender,
       observations: values.observations,
-      group_id: Number(value),
-      sector_id: Number(valueOne),
+      group_id: Number(values.group),
+      sector_id: Number(values.sector),
     };
 
     try {
@@ -167,7 +167,7 @@ export function CreateProcedureForm({ path, method }: any) {
             <Flex gap="2">
               <Checkbox
                 type="radio"
-                {...register("applicableGender")}
+                disabled
                 value={"macho"}
                 colorScheme="green"
                 name="applicableGender"
@@ -178,7 +178,7 @@ export function CreateProcedureForm({ path, method }: any) {
             <Flex gap="2">
               <Checkbox
                 type="radio"
-                {...register("applicableGender")}
+                disabled
                 value={"macho"}
                 colorScheme="green"
                 name="applicableGender"
@@ -213,27 +213,23 @@ export function CreateProcedureForm({ path, method }: any) {
             <label htmlFor="" style={{ fontWeight: "bold", fontSize: "17px" }}>
               PERTENCE A ALGUM GRUPO?
             </label>
-            <Select placeholder="SELECIONE O GRUPO" bgColor="gray.300">
-              {
-                groups.map((group) => (
-                 
-                   <option key={group.id} value={group.id}>{group.name}</option>
-                
-                ))
-              }
+            <Select {...register("group")} placeholder="SELECIONE O GRUPO" bgColor="gray.300">
+              {groups.map((group) => (
+                <option key={group.id} value={group.id}>
+                  {group.name}
+                </option>
+              ))}
             </Select>
 
             <label htmlFor="" style={{ fontWeight: "bold", fontSize: "17px" }}>
               PERTENCE A ALGUM SETOR?
             </label>
-            <Select placeholder="SELECIONE O SETOR" bgColor="gray.300">
-            {
-                sectors.map((sector) => (
-                
-                   <option key={sector.id} value={sector.id}>{sector.name}</option>
-               
-                ))
-              }
+            <Select {...register("sector")} placeholder="SELECIONE O SETOR" bgColor="gray.300">
+              {sectors.map((sector) => (
+                <option key={sector.id} value={sector.id}>
+                  {sector.name}
+                </option>
+              ))}
             </Select>
           </Flex>
         </Flex>
