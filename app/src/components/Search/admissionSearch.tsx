@@ -23,7 +23,7 @@ interface UniversalSearchProps {
 }
 
 export function AdmissionSearch({ path }: UniversalSearchProps) {
-  const { setData, data } = useContext(DbContext);
+  const { setData, data } = useContext<any>(DbContext);
 
   const { register, handleSubmit } = useForm();
 

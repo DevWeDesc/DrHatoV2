@@ -60,7 +60,8 @@ export default function Surgeries() {
     }
     navigate(`/Surgeries/${petValue}`);
   };
-  console.log("PET RESPONSE", dataPet);
+  console.log(inQueue);
+  //console.log("PET RESPONSE", dataPet);
 
   let typeTable: ReactNode;
   switch (true) {
@@ -139,37 +140,41 @@ export default function Surgeries() {
         </Table>
       );
       break;
-    case Object.keys(dataPet).length >= 1:
+    case Object.keys(inQueue).length >= 1:
       typeTable = (
         <>
           <Table colorScheme="blackAlpha">
             <Thead>
               <Tr>
-                <Th>Nome</Th>
-
+                <Th>CPF</Th>
+                <Th>Cliente</Th>
+                <Th>Animal</Th>
                 <Th>Código</Th>
-                <Th>Nascimento</Th>
+                <Th>Data</Th>
+                <Th>Hora</Th>
                 <Th>Preferência</Th>
                 <Th>Especialidade</Th>
               </Tr>
             </Thead>
 
             <Tbody>
-              {dataPet.map((pet: any) => (
-                <Tr key={pet.id}>
+              {inQueue.map((pet: any) => (
+                <Tr
+                  key={pet.id}
+                  cursor="pointer"
+                  onClick={() => navigate(`/Surgeries/${pet.id}`)}
+                >
+                  <Td>{pet.customerCpf}</Td>
+
                   <Td>
-                    <Button
-                      colorScheme="whatsapp"
-                      onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
-                    >
-                      {pet.name}
-                    </Button>
+                    <Text>{pet.customerName}</Text>
                   </Td>
 
-                  <Td>{pet.codPet}</Td>
+                  <Td>{pet.name}</Td>
+                  <Td>92487</Td>
+                  <Td>04/04/2023</Td>
 
-                  <Td>{pet.bornDate}</Td>
-
+                  <Td>25:53</Td>
                   <Td>
                     {pet.vetPreference ? pet.vetPreference : "Sem Preferência"}
                   </Td>
@@ -189,7 +194,7 @@ export default function Surgeries() {
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Painel de Ciururgias" />
+          <Header title="Painel de Cirurgias" />
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <GenericSidebar>
               <GenericLink
