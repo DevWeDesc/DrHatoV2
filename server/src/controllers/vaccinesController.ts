@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { AdmissionSchema, BedSchema, VaccineSchema } from "../schemas/schemasValidator";
 import { ValidationContract } from "../validators/validateContract";
-import { getFormattedDateTime } from "../services/getCurrentDate";
+import { getFormattedDateTime } from "../utils/getCurrentDate";
 const prisma = new PrismaClient();
 
 
