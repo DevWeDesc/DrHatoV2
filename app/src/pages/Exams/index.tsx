@@ -33,10 +33,12 @@ import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 
 export function ExamesList() {
-  const { exams, refresh, setRefresh } = useContext(DbContext);
+  const { refresh, setRefresh } = useContext(DbContext);
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [exams, setExams] = useState([]);
 
   function openModal() {
     setIsModalOpen(true);
@@ -45,12 +47,20 @@ export function ExamesList() {
     setIsModalOpen(false);
   }
 
-  function reloadApi() {
-    if (refresh === true) {
-      navigate(0);
+  const getExamesListData = async () => {
+    const response = await api.get("exams");
+    setExams(response.data);
+  };
+  useEffect(() => {
+    getExamesListData();
+  }, []);
+
+  useEffect(() => {
+    if (loading === true) {
+      getExamesListData();
+      setLoading(false);
     }
-  }
-  reloadApi();
+  }, [loading]);
 
   const handleCreateExam: SubmitHandler<FieldValues> = async (values) => {
     try {
@@ -61,8 +71,8 @@ export function ExamesList() {
         examsType: values.examsType,
       };
       await api.post("exams", data);
+      setLoading(true);
       toast.success("Exame criada com sucesso");
-      navigate(0);
     } catch (error) {
       toast.error("Falha ao criar novo Exame");
     }
@@ -76,7 +86,14 @@ export function ExamesList() {
 
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+            <Box
+              flex="1"
+              borderRadius={8}
+              bg="gray.200"
+              p="8"
+              maxH="44rem"
+              overflow="auto"
+            >
               <Flex direction="column" mb="8" align="left">
                 <Heading fontSize="30" fontWeight="bold" mb="5">
                   Exames
@@ -112,7 +129,7 @@ export function ExamesList() {
 
                 <Tbody>
                   {exams ? (
-                    exams.map((exam) => (
+                    exams.map((exam: any) => (
                       <Tr key={exam.id} fontSize="18">
                         <Td borderColor="black">
                           <Box>
@@ -211,8 +228,6 @@ export function ExamesList() {
                   </Flex>
                 </FormControl>
               </GenericModal>
-
-              <Paginaton />
             </Box>
           </Flex>
         </Flex>

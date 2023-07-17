@@ -28,7 +28,6 @@ import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 
-
 interface VaccinesProps {
   id: number | string;
   name: string;
@@ -39,14 +38,14 @@ interface VaccinesProps {
 export default function AdminVaccines() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { register, handleSubmit } = useForm();
-  const [vaccines, setVaccines] = useState<VaccinesProps[]>([])
+  const [vaccines, setVaccines] = useState<VaccinesProps[]>([]);
   const [reloadData, setReloadData] = useState(false);
   const handleCreateVaccine: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
         name: values.name,
         price: Number(values.price),
-        description: values.description
+        description: values.description,
       };
       await api.post("vaccines", data);
       setReloadData(true);
@@ -55,30 +54,27 @@ export default function AdminVaccines() {
       toast.error("Falha ao criar nova Vacina");
       console.log(error);
     }
-  }; 
+  };
   async function GetVaccine() {
     try {
-     const response = await api.get("/vaccines")
-     
-      setVaccines(response.data)
+      const response = await api.get("/vaccines");
+
+      setVaccines(response.data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
- 
   useEffect(() => {
-    GetVaccine()
-   }, [])
+    GetVaccine();
+  }, []);
 
-
-   useEffect(() => {
+  useEffect(() => {
     if (reloadData === true) {
-      GetVaccine() 
+      GetVaccine();
       setReloadData(false); // Reseta o estado para evitar chamadas infinitas
     }
-  }, [reloadData])
-
+  }, [reloadData]);
 
   function openModal() {
     setIsModalOpen(true);
@@ -112,6 +108,7 @@ export default function AdminVaccines() {
                   fontSize="20"
                   py="8"
                   colorScheme="whatsapp"
+                  cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
                   onClick={() => openModal()}
                 >
@@ -134,10 +131,8 @@ export default function AdminVaccines() {
                 </Thead>
 
                 <Tbody>
-
-                  {
-                    vaccines.map((vaccine) => (
-                      <Tr key={vaccine.id}>
+                  {vaccines.map((vaccine) => (
+                    <Tr key={vaccine.id}>
                       <Td borderColor="black">
                         <Text fontWeight="bold" color="gray.800">
                           {vaccine.name}
@@ -145,11 +140,11 @@ export default function AdminVaccines() {
                       </Td>
                       <Td borderColor="black"></Td>
                       <Td borderColor="black">R${vaccine.price}</Td>
-  
+
                       <Td borderColor="black">
                         <Flex gap="2" ml="50%">
                           <Button
-                           alignItems="center" 
+                            alignItems="center"
                             as="a"
                             size="md"
                             fontSize="md"
@@ -174,35 +169,49 @@ export default function AdminVaccines() {
                         </Flex>
                       </Td>
                     </Tr>
-                    ))
-                  }
-          
+                  ))}
                 </Tbody>
               </Table>
-              <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}
-              >   
-              <FormControl as="form" onSubmit={handleSubmit(handleCreateVaccine)}>
+              <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+                <FormControl
+                  as="form"
+                  onSubmit={handleSubmit(handleCreateVaccine)}
+                >
+                  <Flex
+                    direction="column"
+                    m="4"
+                    gap="4"
+                    align="center"
+                    width="480px"
+                    height="680px"
+                  >
+                    <Input
+                      {...register("name")}
+                      name="name"
+                      label="Nome da Vacina: "
+                    />
+                    <Input
+                      {...register("price")}
+                      name="price"
+                      label="Preço da Vacina: "
+                    />
 
-                <Flex direction="column" m="4" gap="4" align="center" width="480px" height="680px">
-                <Input {...register("name")} name="name" label="Nome da Vacina: " />
-              <Input {...register("price")} name="price" label="Preço da Vacina: " />
+                    <FormLabel htmlFor="description">
+                      Descrição da Vacina:{" "}
+                    </FormLabel>
+                    <Textarea
+                      borderColor="gray.900"
+                      height="500px"
+                      {...register("description")}
+                      name="description"
+                    />
 
-
-                   <FormLabel htmlFor="description">Descrição da Vacina: </FormLabel>
-                  <Textarea borderColor="gray.900" height="500px" {...register("description")} name="description"  />
-
-
-
-                  <Button type="submit" colorScheme="whatsapp">CADASTRAR</Button>
-                </Flex>
-      
-             
-              </FormControl>
-                
-          
+                    <Button type="submit" colorScheme="whatsapp">
+                      CADASTRAR
+                    </Button>
+                  </Flex>
+                </FormControl>
               </GenericModal>
-
-   
 
               <Paginaton />
             </Box>

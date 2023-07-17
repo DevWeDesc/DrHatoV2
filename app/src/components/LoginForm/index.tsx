@@ -11,10 +11,15 @@ import { LoadingSpinner } from "../Loading";
 import { Input } from "../admin/Input";
 
 export function LoginForm() {
-  const { setUserPassword, setUserLogin, validateLogin, userPassword, userLogin } =
-    useContext(AuthContext);
+  const {
+    setUserPassword,
+    setUserLogin,
+    validateLogin,
+    userPassword,
+    userLogin,
+  } = useContext(AuthContext);
   const { dbLoaded } = useContext(DbContext);
-  const [errors, setErrors] = useState<Boolean>(false)
+  const [errors, setErrors] = useState<Boolean>(false);
 
   const navigate = useNavigate();
   const handleLogin = () => {
@@ -29,44 +34,48 @@ export function LoginForm() {
   return (
     <ChakraProvider theme={defaultTheme}>
       <LoginFormContainer>
-        <h1>
+        {/*<h1>
           {" "}
           Bem vindo(a) <span className="waving-hand">&#9995;</span>{" "}
-        </h1>
-        <Flex className="submitLogin">
-          <label htmlFor="login">Seu Login</label>
-          <Input
-            id="UserLogin"
-            name="UserLogin"
-            border="4px"
-            placeholder="seu login"
-            type="text"
-            onChange={(ev) => setUserLogin(ev.target.value)}
-          />
+  </h1>*/}
+        <Flex className="submitLogin" marginTop="2rem">
+          <Flex direction="column">
+            <label htmlFor="login">Insira seu Login</label>
+            <Input
+              id="UserLogin"
+              name="UserLogin"
+              border="4px"
+              placeholder="Insira seu Login"
+              type="text"
+              onChange={(ev) => setUserLogin(ev.target.value)}
+            />
+          </Flex>
+          <Flex direction="column" mt="12" mb="10">
+            <label htmlFor="password">Insira sua senha</label>
+            <Input
+              placeholder="Insira sua senha"
+              type="password"
+              name="UserPassword"
+              id="UserPassword"
+              onChange={(ev) => setUserPassword(ev.target.value)}
+            />
+          </Flex>
 
-          <label htmlFor="password">Sua senha</label>
-          <Input
-
-            placeholder="sua senha"
-            type="password"
-            name="UserPassword"
-            id="UserPassword"
-            onChange={(ev) => setUserPassword(ev.target.value)}
-          />
-          {!!errors &&
-          <Text color="red" fontWeight="bold">Preencha todos os Campos!</Text>
-          }
+          {!!errors && (
+            <Text color="red" fontWeight="bold">
+              Preencha todos os Campos!
+            </Text>
+          )}
           {dbLoaded === true ? (
             <Button
               colorScheme="whatsapp"
               border="8px"
-              onClick={() =>{
+              onClick={() => {
                 if (userPassword != "" && userLogin != "") {
-                  handleLogin()
-                  setErrors(false)
-                }else
-                setErrors(true)
-          }}
+                  handleLogin();
+                  setErrors(false);
+                } else setErrors(true);
+              }}
             >
               Entrar
             </Button>

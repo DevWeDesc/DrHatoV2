@@ -138,9 +138,9 @@ export function InstructionsList() {
         <Flex direction="column" h="100vh">
           <Header title="Instruções" />
 
-          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6" maxH="44rem">
             <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+            <Box flex="1" borderRadius={8} bg="gray.200" overflow="auto" p="8">
               <Flex
                 mb="8"
                 direction="column"
@@ -156,6 +156,7 @@ export function InstructionsList() {
                   mt="5"
                   width="100%"
                   py="8"
+                  cursor="pointer"
                   fontSize="20"
                   colorScheme="whatsapp"
                   leftIcon={<Icon as={RiAddLine} fontSize="20" />}
@@ -315,8 +316,6 @@ export function InstructionsList() {
                   </Button>
                 </FormControl>
               </GenericModal>
-
-              <Paginaton />
             </Box>
           </Flex>
         </Flex>
