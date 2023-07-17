@@ -4,6 +4,7 @@ import { userController } from '../controllers/userController'
 
 export async function userRoutes(app: FastifyInstance){
 app.post('/users',userController.createUser ) 
+app.post('/login', userController.loginUser)
 app.get('/vets', userController.findVetUsers)
 app.get('/users', userController.getUsers)
 app.get('/users/:id', userController.getWithId)

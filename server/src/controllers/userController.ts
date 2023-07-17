@@ -2,17 +2,23 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { ValidationContract } from "../validators/validateContract";
 import {  UserSchema  } from "../schemas/schemasValidator";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import { z } from "zod";
 const prisma = new PrismaClient();
-
+const secret = process.env.JWT_TOKEN
 
 export const userController = {
 createUser: async (request: FastifyRequest, reply: FastifyReply)=> {
-  const { name, username, password, userType, userIsVet, crmv} = UserSchema.parse(request.body)
+  const { email, username, password, userType, userIsVet, crmv} = UserSchema.parse(request.body)
+
+  const hashedPassword = await bcrypt.hash(password, 10)
+
+
   let contract = new ValidationContract();
   
-  await contract.userAlreadyExists(name, 'Usuário já existe!')
-  await contract.userHasAllToBeCreated({name, password, username}, "Usuário não tem todos campos obrigatórios")
+  await contract.userAlreadyExists(email, 'Usuário já existe!')
+  await contract.userHasAllToBeCreated({email, password, username}, "Usuário não tem todos campos obrigatórios")
   if(contract.hadError()){
     reply.status(400).send(contract.showErrors())
     contract.clearErrors()
@@ -20,7 +26,7 @@ createUser: async (request: FastifyRequest, reply: FastifyReply)=> {
   }
 
   await prisma.user.create({
-      data: { name, username, password, userType, userIsVet, crmv}
+      data: { email, username, password: hashedPassword, userType, userIsVet, crmv}
   })
 },
 
@@ -41,6 +47,34 @@ getUsers: async (request: FastifyRequest, reply: FastifyReply)=> {
   });
 
 },
+loginUser: async(request: FastifyRequest, reply: FastifyReply)=> {
+  const loginSchema = z.object({
+    email: z.string().email(),
+    password: z.string(),
+  })
+
+  let contract = new ValidationContract()
+  try {
+    const { email, password} = loginSchema.parse(request.body)
+    const user = await prisma.user.findUnique({where: {email}})
+    // await contract.checkPassword({email, password}, "Senha incorreta")
+    if(contract.hadError()){
+      reply.status(400).send(contract.showErrors())
+      contract.clearErrors()
+      return
+    } 
+    if(!secret) {
+      return
+    } else {
+        const token = jwt.sign({email}, secret, {expiresIn: "02h"})
+        reply.send({user: user, token: token}).status(200)
+    }
+
+  } catch (error) {
+    reply.send({error: error}).status(500)
+    console.log(error)
+  }
+},
 
 getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
   const { id }: any = request.params
@@ -50,12 +84,12 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
 
 editUser: async (request: FastifyRequest, reply: FastifyReply) => {
   const{ id}: any = request.params
-  const {name, username, password,userIsVet } = UserSchema.parse(request.body) 
+  const {email, username, password,userIsVet } = UserSchema.parse(request.body) 
   try {
      await prisma.user.update({
         where: { id: parseInt(id) },
         data: {  
-           name: name,
+           email: email,
            username: username,
            password: password,
            userIsVet: userIsVet

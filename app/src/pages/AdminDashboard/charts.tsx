@@ -17,7 +17,7 @@ interface MarketingChartProps {
   SiteBusca: number | 0;
   FachadaHospital: number | 0;
   Indicação: number | 0;
-  Instragram: number | 0;
+  Instagram: number | 0;
   Petshop: number | 0;
   ClienteHato: number | 0;
   PlacaRua: number | 0;
@@ -29,7 +29,7 @@ export function AdminCharts() {
   const [marketing, setMarketing] = useState({} as MarketingChartProps)
 
   const series = [
-    {name: ['Marketing'], data: [marketing.Petshop, marketing.Facebook, marketing.FachadaHospital, marketing.Indicação, marketing.Instragram, marketing.ClienteHato, marketing.PlacaRua, marketing.SiteBusca, marketing.Twitter, marketing.Outros]}
+    {name: ['Marketing'], data: [marketing.Petshop, marketing.Facebook, marketing.FachadaHospital, marketing.Indicação, marketing.Instagram, marketing.ClienteHato, marketing.PlacaRua, marketing.SiteBusca, marketing.Twitter, marketing.Outros]}
   ]
 
   const options ={
