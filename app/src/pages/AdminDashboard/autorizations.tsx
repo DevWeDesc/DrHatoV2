@@ -92,8 +92,15 @@ export function Autorizations() {
               align="flex-start"
               as={Flex}
             >
-              <Flex direction="column" gap="4">
-                <Box flex="1" borderRadius={8} bg="gray.200" p="8" m="4">
+              <Flex direction="column" gap="4" maxH="44rem">
+                <Box
+                  flex="1"
+                  borderRadius={8}
+                  overflow="auto"
+                  bg="gray.200"
+                  p="8"
+                  m="4"
+                >
                   <Flex
                     w="100%"
                     direction={"column"}

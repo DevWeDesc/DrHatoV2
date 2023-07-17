@@ -33,11 +33,28 @@ import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 
 export function SectorsList() {
-  const { sectors } = useContext(DbContext);
+  // const { sectors } = useContext(DbContext);
+  const [sectors, setSectors] = useState([]);
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const getSectorsListData = async () => {
+    const response = await api.get("sectors");
+    setSectors(response.data);
+  };
+  useEffect(() => {
+    getSectorsListData();
+  }, []);
+
+  useEffect(() => {
+    if (loading === true) {
+      getSectorsListData();
+      setLoading(false);
+    }
+  }, [loading]);
 
   function openModal() {
     setIsModalOpen(true);
@@ -60,7 +77,7 @@ export function SectorsList() {
       };
       await api.post("sectors", data);
       toast.success("Setor criado com sucesso");
-      navigate(0);
+      setLoading(true);
     } catch (error) {
       toast.error("Falha ao criar novo setor");
     }
@@ -74,7 +91,7 @@ export function SectorsList() {
       if (confirm === true) {
         await api.delete(`sectors/${id}`);
         toast.success("Setor deletdo com sucesso");
-        navigate(0);
+        setLoading(true);
       }
     } catch (error) {
       toast.error("Falha ao criar novo setor");
@@ -88,7 +105,7 @@ export function SectorsList() {
       };
       await api.put(`sectors/${values.id}`, data);
       toast.success("Setor editado com sucesso");
-      navigate(0);
+      setLoading(true);
     } catch (error) {
       toast.error("Falha ao editar novo setor");
     }
@@ -102,7 +119,14 @@ export function SectorsList() {
 
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+            <Box
+              flex="1"
+              borderRadius={8}
+              bg="gray.200"
+              p="8"
+              maxH="44rem"
+              overflow="auto"
+            >
               <Flex
                 mb="8"
                 justify="space-between"
@@ -119,6 +143,7 @@ export function SectorsList() {
                   fontSize="20"
                   py="8"
                   colorScheme="whatsapp"
+                  cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
                   onClick={() => openModal()}
                 >
@@ -141,7 +166,7 @@ export function SectorsList() {
 
                 <Tbody>
                   {sectors ? (
-                    sectors.map((sector) => (
+                    sectors.map((sector: any) => (
                       <Tr key={sector.id}>
                         <Td borderColor="black">
                           <Text fontWeight="bold" color="gray.800">
@@ -232,8 +257,6 @@ export function SectorsList() {
                   </Button>
                 </FormControl>
               </GenericModal>
-
-              <Paginaton />
             </Box>
           </Flex>
         </Flex>

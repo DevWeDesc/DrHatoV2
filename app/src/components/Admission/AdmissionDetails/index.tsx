@@ -14,13 +14,25 @@ import { BiHome, MdPets, TbArrowBack } from "react-icons/all";
 import { AdminContainer } from "../../../pages/AdminDashboard/style";
 import { WorkSpaceHeader } from "../../../pages/Vets/styles";
 import { useNavigate, useParams } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "../../../lib/axios";
 
 export default function DetailsAdmissions() {
   const [admissiondiary, setAdmissionDiary] = useState<number | boolean>(false);
   const [confirmation, setConfirmation] = useState<boolean>(false);
   const { id } = useParams();
   const navigate = useNavigate();
+  const [admissionDetails, setAdmissionDetails] = useState([]);
+
+  async function getAdmissionDetails() {
+    const totalAdmission = await api.get("http://localhost:5000/pets/queue");
+    setAdmissionDetails(totalAdmission.data.response);
+  }
+
+  useEffect(() => {
+    getAdmissionDetails();
+  }, []);
+  console.log(admissiondiary);
 
   return (
     <ChakraProvider>
@@ -101,94 +113,111 @@ export default function DetailsAdmissions() {
                 >
                   Internação
                 </Text>
-                <Flex border="1px solid black">
-                  <Text
-                    w="50rem"
-                    pl="2"
-                    bg="gray.200"
-                    fontWeight="bold"
-                    fontSize="20"
-                  >
-                    Cliente
-                  </Text>
-                  <Input borderY="0" borderColor="black" rounded="0" />
-                  <Text
-                    w="50rem"
-                    fontWeight="bold"
-                    pl="2"
-                    bg="gray.200"
-                    fontSize="20"
-                  >
-                    Canil
-                  </Text>
-                  <Input borderColor="black" rounded="0" borderY="0" />
-                </Flex>
-                <Flex border="1px solid black">
-                  <Text
-                    w="50rem"
-                    pl="2"
-                    bg="gray.200"
-                    fontWeight="bold"
-                    fontSize="20"
-                  >
-                    Pet
-                  </Text>
-                  <Input borderY="0" borderColor="black" rounded="0" />
-                  <Text
-                    w="50rem"
-                    fontWeight="bold"
-                    pl="2"
-                    bg="gray.200"
-                    fontSize="20"
-                  >
-                    Data de internação
-                  </Text>
-                  <Input borderColor="black" rounded="0" borderY="0" />
-                </Flex>
-                <Flex border="1px solid black">
-                  <Text
-                    w="50rem"
-                    pl="2"
-                    bg="gray.200"
-                    fontWeight="bold"
-                    fontSize="20"
-                  >
-                    Animal
-                  </Text>
-                  <Input borderY="0" borderColor="black" rounded="0" />
-                  <Text
-                    w="50rem"
-                    fontWeight="bold"
-                    pl="2"
-                    bg="gray.200"
-                    fontSize="20"
-                  >
-                    Veterinario
-                  </Text>
-                  <Input borderColor="black" rounded="0" borderY="0" />
-                </Flex>
-                <Flex border="1px solid black">
-                  <Text
-                    w="50rem"
-                    pl="2"
-                    bg="gray.200"
-                    fontWeight="bold"
-                    fontSize="20"
-                  >
-                    Cliente
-                  </Text>
-                  <Input borderY="0" borderColor="black" rounded="0" />
-                  <Text
-                    w="50rem"
-                    fontWeight="bold"
-                    pl="2"
-                    bg="gray.200"
-                    fontSize="20"
-                  >
-                    Canil
-                  </Text>
-                  <Input borderColor="black" rounded="0" borderY="0" />
-                </Flex>
+                {admissionDetails.map((admission: any) => (
+                  <>
+                    {admission.id == id && (
+                      <>
+                        <Flex border="1px solid black" key={admission.id}>
+                          <Text
+                            w="50rem"
+                            pl="2"
+                            bg="gray.200"
+                            fontWeight="bold"
+                            fontSize="20"
+                          >
+                            Cliente
+                          </Text>
+                          <Input
+                            value={admission.customerName}
+                            borderY="0"
+                            borderColor="black"
+                            rounded="0"
+                          />
+                          <Text
+                            w="50rem"
+                            fontWeight="bold"
+                            pl="2"
+                            bg="gray.200"
+                            fontSize="20"
+                          >
+                            Canil
+                          </Text>
+                          <Input
+                            value="Não Definido"
+                            borderColor="black"
+                            rounded="0"
+                            borderY="0"
+                          />
+                        </Flex>
+                        <Flex border="1px solid black">
+                          <Text
+                            w="50rem"
+                            pl="2"
+                            bg="gray.200"
+                            fontWeight="bold"
+                            fontSize="20"
+                          >
+                            Pet
+                          </Text>
+                          <Input
+                            value={admission.name}
+                            borderY="0"
+                            borderColor="black"
+                            rounded="0"
+                          />
+                          <Text
+                            w="50rem"
+                            fontWeight="bold"
+                            pl="2"
+                            bg="gray.200"
+                            fontSize="20"
+                          >
+                            Data de internação
+                          </Text>
+                          <Input
+                            value={admission.queueEntry}
+                            borderColor="black"
+                            rounded="0"
+                            borderY="0"
+                          />
+                        </Flex>
+                        <Flex border="1px solid black">
+                          <Text
+                            w="50rem"
+                            pl="2"
+                            bg="gray.200"
+                            fontWeight="bold"
+                            fontSize="20"
+                          >
+                            Animal
+                          </Text>
+                          <Input
+                            value={admission.race}
+                            borderY="0"
+                            borderColor="black"
+                            rounded="0"
+                          />
+                          <Text
+                            w="50rem"
+                            fontWeight="bold"
+                            pl="2"
+                            bg="gray.200"
+                            fontSize="20"
+                          >
+                            Veterinario
+                          </Text>
+                          <Input
+                            value={admission.vetPreference}
+                            borderColor="black"
+                            rounded="0"
+                            borderY="0"
+                          />
+                        </Flex>
+                      </>
+                    )}
+                  </>
+                ))}
+
                 <RadioGroup h="40px">
                   <Stack direction="row" borderBottom="1px solid black">
                     <Text

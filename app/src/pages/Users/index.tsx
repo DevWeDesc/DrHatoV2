@@ -14,7 +14,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
@@ -22,11 +22,30 @@ import { Paginaton } from "../../components/admin/Pagination";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { LoadingSpinner } from "../../components/Loading";
 import { DbContext } from "../../contexts/DbContext";
+import { api } from "../../lib/axios";
 
 import { AdminContainer } from "../AdminDashboard/style";
 
 export function UsersList() {
-  const { userDataList } = useContext(DbContext);
+  const { userDataList } = useContext<any>(DbContext);
+  const [user, setUser] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const getUserListData = async () => {
+    const response = await api.get(`users`);
+    setUser(response.data.users);
+  };
+
+  useEffect(() => {
+    getUserListData();
+  }, []);
+
+  useEffect(() => {
+    if (loading === true) {
+      getUserListData();
+      setLoading(false);
+    }
+  }, [loading]);
 
   return (
     <ChakraProvider>
@@ -36,7 +55,14 @@ export function UsersList() {
 
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+            <Box
+              flex="1"
+              borderRadius={8}
+              bg="gray.200"
+              p="8"
+              maxH="44rem"
+              overflow="auto"
+            >
               <Flex
                 mb="8"
                 direction="column"
@@ -47,7 +73,11 @@ export function UsersList() {
                   Usúarios
                 </Heading>
 
-                <Link to="/Users/Create" style={{ width: "100%" }}>
+                <Link
+                  onClick={() => setLoading(true)}
+                  to="/Users/Create"
+                  style={{ width: "100%" }}
+                >
                   <Button
                     as="a"
                     mt="5"
@@ -76,8 +106,8 @@ export function UsersList() {
                 </Thead>
 
                 <Tbody>
-                  {userDataList ? (
-                    userDataList.map((user) => (
+                  {user ? (
+                    user.map((user: any) => (
                       <Tr key={user.id}>
                         <Td borderColor="black">
                           <Box>
@@ -125,8 +155,6 @@ export function UsersList() {
                   )}
                 </Tbody>
               </Table>
-
-              <Paginaton />
             </Box>
           </Flex>
         </Flex>
