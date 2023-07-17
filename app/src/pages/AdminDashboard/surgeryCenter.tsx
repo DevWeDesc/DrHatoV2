@@ -118,6 +118,7 @@ export function SurgeryCenter() {
                   fontSize="20"
                   py="8"
                   colorScheme="whatsapp"
+                  cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
                   onClick={() => openModal()}
                 >

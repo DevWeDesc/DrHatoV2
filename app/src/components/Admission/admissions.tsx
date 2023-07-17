@@ -169,14 +169,16 @@ export function SearchAdmission() {
                             </Tr>
                           ))
                         : inQueue.map((queue: any) => (
-                            <Tr key={queue.id}>
+                            <Tr
+                              key={queue.id}
+                              cursor="pointer"
+                              onClick={() =>
+                                navigate(`/Admissions/${queue.id}`)
+                              }
+                            >
                               {/*<Td>{queue.customerCpf}</Td>*/}
                               <Td>{queue.customerName}</Td>
-                              <Td>
-                                <Link to={`/Admissions/${queue.id}`}>
-                                  {queue.name}
-                                </Link>{" "}
-                              </Td>
+                              <Td>{queue.name} </Td>
                               <Td>Empty</Td>
                               <Td>{queue.race}</Td>
                               <Td>{queue.ouor}</Td>

@@ -120,7 +120,14 @@ export function AdminSurgery() {
 
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+            <Box
+              flex="1"
+              borderRadius={8}
+              bg="gray.200"
+              p="8"
+              maxH="44rem"
+              overflow="auto"
+            >
               <Flex
                 mb="8"
                 justify="space-between"
@@ -137,6 +144,7 @@ export function AdminSurgery() {
                   fontSize="20"
                   py="8"
                   colorScheme="whatsapp"
+                  cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
                   onClick={() => openModal()}
                 >
@@ -267,8 +275,6 @@ export function AdminSurgery() {
                   </Button>
                 </FormControl>
               </GenericModal>
-
-              <Paginaton />
             </Box>
           </Flex>
         </Flex>

@@ -200,6 +200,19 @@ export function CardsMenu() {
             icon={<GiNurseFemale fill="#c9537e" size={36} />}
           />
           <CardNavigation
+            path="/Surgeries"
+            title="Cirurgias"
+            text="Ver Cirurgias"
+            icon={<GiScalpel fill="#46720c" size={36} />}
+          />
+          <CardNavigation
+            path="/Autorizations"
+            title="Autorizações"
+            text="Ver exames"
+            icon={<AiFillCheckCircle fill="#46720c" size={36} />}
+          />
+
+          <CardNavigation
             path="/Schedule/Menu"
             title="Agendas"
             text="Ver exames"
@@ -209,18 +222,6 @@ export function CardsMenu() {
             title="Mensagens"
             text="Ver mensagens"
             icon={<BsBellFill fill="#FF7200" size={36} />}
-          />
-          <CardNavigation
-            path="/Autorizations"
-            title="Autorizações"
-            text="Ver exames"
-            icon={<AiFillCheckCircle fill="#46720c" size={36} />}
-          />
-          <CardNavigation
-            path="/Surgeries"
-            title="Cirurgias"
-            text="Ver Cirurgias"
-            icon={<GiScalpel fill="#46720c" size={36} />}
           />
         </>
       );
