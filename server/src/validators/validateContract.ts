@@ -27,11 +27,11 @@ export class ValidationContract {
   }
 
     public async userAlreadyExists(value: string, message: string) {
-        const userExist = await prisma.user.findFirst({
+        const userExist = await prisma.user.findUnique({
           where:{email: value}
         })
 
-        if(userExist) {
+        if(!userExist) {
           this.errors.push(message)
         }
     }

@@ -18,10 +18,10 @@ import {
 import { Link } from 'react-router-dom'
 
 export function AsideMenu() {
-  const userPermissions = JSON.parse(localStorage.getItem('userSession') as any)
+  const userPermissions = 'admin'
   let asideMenu
   switch (true) {
-    case userPermissions.userType.includes('admin'):
+    case userPermissions.includes('admin'):
       asideMenu = (
         <>
           <Accordion defaultIndex={[0]} allowMultiple>
@@ -108,7 +108,7 @@ export function AsideMenu() {
       )
       break
 
-    case userPermissions.userType.includes('vet'):
+    case userPermissions.includes('vet'):
       asideMenu = (
         <>
           <Accordion defaultIndex={[0]} allowMultiple>
@@ -154,7 +154,7 @@ export function AsideMenu() {
       )
       break
 
-    case userPermissions.userType.includes('reception'):
+    case userPermissions.includes('reception'):
       asideMenu = (
         <>
           <Accordion defaultIndex={[0]} allowMultiple>

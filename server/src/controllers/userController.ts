@@ -52,12 +52,18 @@ loginUser: async(request: FastifyRequest, reply: FastifyReply)=> {
     email: z.string().email(),
     password: z.string(),
   })
-
-  let contract = new ValidationContract()
   try {
+    let contract = new ValidationContract()
     const { email, password} = loginSchema.parse(request.body)
     const user = await prisma.user.findUnique({where: {email}})
-    // await contract.checkPassword({email, password}, "Senha incorreta")
+    const userData = {
+      email: user?.email,
+      username: user?.username
+    }
+    
+  
+     await contract.userAlreadyExists(email, "Usuário não encontrado")
+     await contract.checkPassword({email, password}, "Senha incorreta")
     if(contract.hadError()){
       reply.status(400).send(contract.showErrors())
       contract.clearErrors()
@@ -65,10 +71,12 @@ loginUser: async(request: FastifyRequest, reply: FastifyReply)=> {
     } 
     if(!secret) {
       return
-    } else {
-        const token = jwt.sign({email}, secret, {expiresIn: "02h"})
-        reply.send({user: user, token: token}).status(200)
-    }
+    } 
+
+
+   const token = jwt.sign({userData }, secret, {expiresIn: "01h"})
+   reply.send({token: token, userData}).status(200)
+    
 
   } catch (error) {
     reply.send({error: error}).status(500)

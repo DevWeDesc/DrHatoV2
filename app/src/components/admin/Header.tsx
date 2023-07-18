@@ -1,4 +1,5 @@
 import { Flex, Input, Text, Icon, HStack, Button } from "@chakra-ui/react";
+import { useContext } from "react";
 import {
   RiNotificationLine,
   RiSearchLine,
@@ -6,13 +7,13 @@ import {
 } from "react-icons/ri";
 import { TbArrowBack } from "react-icons/tb";
 import { Link } from "react-router-dom";
+import { DbContext } from "../../contexts/DbContext";
 
 interface HeaderProps {
   title: string;
 }
 export function Header({ title = "Painel Administrativo" }: HeaderProps) {
-  const userStorage = localStorage.getItem("userSession");
-  const userName = JSON.parse(userStorage as any);
+  const {loggedInUser } = useContext(DbContext)
   return (
     <Flex
       as="header"
@@ -68,7 +69,7 @@ export function Header({ title = "Painel Administrativo" }: HeaderProps) {
 
         <Flex align="center" direction="column">
           <Text fontSize="md" fontWeight="bold">
-            {userName.username}
+            {loggedInUser.username}
           </Text>
           <Link to="/Home">
             <Button colorScheme="yellow" leftIcon={<TbArrowBack size={24} />}>

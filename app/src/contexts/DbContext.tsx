@@ -25,6 +25,10 @@ export function DbContextProvider ({children}: DbContextProps) {
   const [instructions, setIntructions] = useState<InstructionsData[]>([])
   const [vets, SetVetsList] = useState<VetData[]>([])
   const [refresh, setRefresh] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState({
+    email: "",
+    username: ""
+  })
 
 
 
@@ -124,7 +128,7 @@ export function DbContextProvider ({children}: DbContextProps) {
         setLabData,
         customer,
         setCustomers,
-        vets
+        vets, loggedInUser, setLoggedInUser
       }}>
           {children}
       </DbContext.Provider>

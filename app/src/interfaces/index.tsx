@@ -1,3 +1,4 @@
+import { SetStateAction } from "react";
 
 export interface UserData {
     name: string;
@@ -78,7 +79,11 @@ export interface ExamsData {
     groups: GroupsData;
     sector: SectorData
   }
-  
+  type LoggedInUserProps = {
+    email: string,
+    username: string
+  }
+
   export interface IDBContext {
     userDataList: UserData[]
     pagination: number
@@ -107,17 +112,9 @@ export interface ExamsData {
     setRefresh:  React.Dispatch<React.SetStateAction<boolean>>
     groups: GroupsData[]
     procedures: ProceduresData[]
+    loggedInUser: LoggedInUserProps
+    setLoggedInUser: React.Dispatch<SetStateAction<{ email: string; username: string; }>>
   }
-
-
-export interface IAuthContext {
-    validateLogin: () => boolean;
-    userLogin?: string;
-    setUserLogin:  React.Dispatch<React.SetStateAction<string>>
-    userPassword?: string;
-    setUserPassword: React.Dispatch<React.SetStateAction<string>>
-    userData: UserData[]
-}
 
 
 export interface CreateUserFormData {
