@@ -1,90 +1,100 @@
 import { useContext, useState } from "react";
 import { LoginFormContainer } from "./styles";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button, ChakraProvider, Flex, Text } from "@chakra-ui/react";
 import { defaultTheme } from "../../styles/themes/default";
-import { DbContext } from "../../contexts/DbContext";
 import { LoadingSpinner } from "../Loading";
 import { Input } from "../admin/Input";
+import * as yup from 'yup'
+import { SubmitHandler, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { api } from "../../lib/axios";
+import Cookies from "js-cookie";
+import { DbContext } from "../../contexts/DbContext";
 
 export function LoginForm() {
-  const {
-    setUserPassword,
-    setUserLogin,
-    validateLogin,
-    userPassword,
-    userLogin,
-  } = useContext(AuthContext);
-  const { dbLoaded } = useContext(DbContext);
-  const [errors, setErrors] = useState<Boolean>(false);
+  const {setLoggedInUser } = useContext(DbContext)
+  const navigate = useNavigate()
+  interface SignInProps {
+    email: string;
+    password: string;
+  }
+  
+  const SignInSchema = yup.object().shape({
+    email: yup.string().required('E-mail Obrigatório').email(),
+    password: yup.string().required('Senha Obrigatória')
+  })
+  
+  const { register, handleSubmit, formState: {errors},} = useForm({
+    resolver: yupResolver(SignInSchema)
+  })
 
-  const navigate = useNavigate();
-  const handleLogin = () => {
-    if (validateLogin() === true) {
-      navigate("/Home");
-      toast.success("Usuario logado com sucesso!");
-    } else {
-      toast.info("✋ login ou senha incorretos!");
+  const handleLogin: SubmitHandler<SignInProps> = async (values: SignInProps) => {
+    const data = {
+      email: values.email,
+      password: values.password
     }
-  };
+    
+    try {
+        await api.post("/login", data).then((res) => {
+          Cookies.set("token", res.data.token, {expires: 2/48})
+          const token = Cookies.get("token")
+          if(!token || token === undefined || token === null) {
+            toast.error("Falha ao realizar login")
+          } else {
+            setLoggedInUser({
+              email: res.data.userData.email,
+              username: res.data.userData.username
+            })
+            navigate("/Home")
+            toast.success("Sucesso ao realizar login")
+          }
+        }).catch((err) => {
+          toast.error("Falha ao realizar login")
+          console.log(err)
+        })
+    } catch (error) {
+      toast.error("Falha ao realizar login")
+      console.log(error)
+    }
+  }
 
   return (
     <ChakraProvider theme={defaultTheme}>
-      <LoginFormContainer>
-        {/*<h1>
-          {" "}
-          Bem vindo(a) <span className="waving-hand">&#9995;</span>{" "}
-  </h1>*/}
+      <LoginFormContainer onSubmit={handleSubmit(handleLogin)}>
         <Flex className="submitLogin" marginTop="2rem">
           <Flex direction="column">
-            <label htmlFor="login">Insira seu Login</label>
+            <label htmlFor="email">Insira seu E-mail</label>
             <Input
-              id="UserLogin"
-              name="UserLogin"
+              id="email"
+              {...register("email")}
+              error={errors.email}
+              name="email"
               border="4px"
-              placeholder="Insira seu Login"
+              placeholder="Insira seu e-mail"
               type="text"
-              onChange={(ev) => setUserLogin(ev.target.value)}
+
             />
           </Flex>
           <Flex direction="column" mt="12" mb="10">
             <label htmlFor="password">Insira sua senha</label>
             <Input
+                  {...register("password")}
               placeholder="Insira sua senha"
               type="password"
-              name="UserPassword"
-              id="UserPassword"
-              onChange={(ev) => setUserPassword(ev.target.value)}
+              name="password"
+              id="password"
+            error={errors.password}
             />
           </Flex>
 
-          {!!errors && (
-            <Text color="red" fontWeight="bold">
-              Preencha todos os Campos!
-            </Text>
-          )}
-          {dbLoaded === true ? (
-            <Button
-              colorScheme="whatsapp"
-              border="8px"
-              onClick={() => {
-                if (userPassword != "" && userLogin != "") {
-                  handleLogin();
-                  setErrors(false);
-                } else setErrors(true);
-              }}
-            >
-              Entrar
-            </Button>
-          ) : (
-            <>
-              Carregando base de Dados
-              <LoadingSpinner />
-            </>
-          )}
+
+        <Button colorScheme="whatsapp" type="submit">
+          ENTRAR
+        </Button>
+        
         </Flex>
       </LoginFormContainer>
     </ChakraProvider>

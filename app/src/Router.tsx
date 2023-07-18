@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, RoutesProps } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
 import { AdminCharts } from "./pages/AdminDashboard/charts";
@@ -67,13 +67,24 @@ import { SurgeryCenter } from "./pages/AdminDashboard/surgeryCenter";
 import { Hospitalization } from "./pages/AdminDashboard/hospitalization";
 import { Reports } from "./pages/Reports/index";
 import { AdminSurgery } from "./pages/AdminDashboard/surgeryes";
+import ProtectedRouteMiddleware from "./middleware/ProtectAuthMiddleware";
+
 
 export function Router() {
   return (
-    <Routes>
+    <ProtectedRouteMiddleware>
+    <Routes
+
+    >
+
+    
+      <Route  path="/Home"  element={<Home />} />
+   
       <Route path="/" element={<Login />} />
       <Route element={<DefaultLayout />}>
-        <Route path="/Home" element={<Home />} />
+
+      
+       
         <Route path="/Reports" element={<Reports />} />
 
         <Route path="/Queue" element={<QueueSistem />} />
@@ -181,5 +192,6 @@ export function Router() {
         <Route path="/Customer/Balance/:id" element={<BalanceHistory />} />
       </Route>
     </Routes>
+    </ProtectedRouteMiddleware>
   );
 }

@@ -1,21 +1,24 @@
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
+import bcrypt from "bcrypt";
+
 
 async function main() {
+  
     const userData = [{
         username: 'Daniel Hato',
         email: 'daniel@gmail.com',
-        password: '123456',
+        password: await bcrypt.hash('123456', 10),
         userType: "['admin']"
     }, {
         username: 'Danilo Scalia',
         email: 'danilo@gmail.com',
-        password: '123456',
+        password: await bcrypt.hash('123456', 10),
         userType: "['admin']"
     }, {
         username: 'Dilan Lopez',
         email: 'dilan@gmail.com',
-        password: '123456',
+        password:await bcrypt.hash('123456', 10),
         userType: "['admin']"
     }]
 
