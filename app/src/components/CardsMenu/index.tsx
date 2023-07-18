@@ -211,7 +211,7 @@ export function CardsMenu() {
           />
 
           <CardNavigation
-            path="/Schedule/Menu"
+            //path="/Schedule/Menu"
             title="Agendas"
             text="Ver exames"
             icon={<AiFillSchedule fill="#6ac574" size={36} />}

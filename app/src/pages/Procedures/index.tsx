@@ -27,6 +27,7 @@ import { AdminContainer } from "../AdminDashboard/style";
 import { CreateProcedureForm } from "../../components/Forms/CreateProcedureForm";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 
 export function ProceduresList() {
   const { procedures, groups } = useContext(DbContext);
@@ -52,118 +53,124 @@ export function ProceduresList() {
   }
 
   return (
-    <ChakraProvider>
-      <AdminContainer>
-        <Flex direction="column" h="100vh">
-          <Header title="Procedimentos" />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <ChakraProvider>
+        <AdminContainer>
+          <Flex direction="column" h="100vh">
+            <Header title="Procedimentos" />
 
-          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-            <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8" w="100%">
-              <Flex
-                mb="8"
-                justify="space-between"
-                direction="column"
-                align="center"
-                w="100%"
-              >
-                <Heading fontSize="30" fontWeight="bold" w="100%" mb="5">
-                  Procedimentos
-                </Heading>
+            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+              <Sidebar />
+              <Box flex="1" borderRadius={8} bg="gray.200" p="8" w="100%">
+                <Flex
+                  mb="8"
+                  justify="space-between"
+                  direction="column"
+                  align="center"
+                  w="100%"
+                >
+                  <Heading fontSize="30" fontWeight="bold" w="100%" mb="5">
+                    Procedimentos
+                  </Heading>
 
-                <Link to="/Admin/Procedures/Create" style={{ width: "100%" }}>
-                  <Button
-                    as="a"
-                    width="100%"
-                    py="8"
-                    fontSize="20"
-                    colorScheme="whatsapp"
-                    leftIcon={<Icon as={RiAddLine} />}
-                  >
-                    Cadastrar novo Procedimento
-                  </Button>
-                </Link>
-              </Flex>
+                  <Link to="/Admin/Procedures/Create" style={{ width: "100%" }}>
+                    <Button
+                      as="a"
+                      width="100%"
+                      py="8"
+                      fontSize="20"
+                      colorScheme="whatsapp"
+                      leftIcon={<Icon as={RiAddLine} />}
+                    >
+                      Cadastrar novo Procedimento
+                    </Button>
+                  </Link>
+                </Flex>
 
-              <Table colorScheme="blackAlpha">
-                <Thead>
-                  <Tr>
-                    <Th fontSize="18" borderColor="black">
-                      Nome
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Id do Procedimento
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Preço
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Setor
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Grupo
-                    </Th>
-                  </Tr>
-                  <Tr></Tr>
-                </Thead>
+                <Table colorScheme="blackAlpha">
+                  <Thead>
+                    <Tr>
+                      <Th fontSize="18" borderColor="black">
+                        Nome
+                      </Th>
+                      <Th fontSize="18" borderColor="black">
+                        Id do Procedimento
+                      </Th>
+                      <Th fontSize="18" borderColor="black">
+                        Preço
+                      </Th>
+                      <Th fontSize="18" borderColor="black">
+                        Setor
+                      </Th>
+                      <Th fontSize="18" borderColor="black">
+                        Grupo
+                      </Th>
+                    </Tr>
+                    <Tr></Tr>
+                  </Thead>
 
-                <Tbody>
-                  {procedures ? (
-                    procedures.map((proceds) => (
-                      <Tr key={proceds.id}>
-                        <Td borderColor="black">
-                          <Text fontWeight="bold" color="gray.800">
-                            {proceds.name}
-                          </Text>
-                        </Td>
-                        <Td borderColor="black">{proceds.id}</Td>
-                        <Td borderColor="black">
-                          {new Intl.NumberFormat("pt-BR", {
-                            currency: "BRL",
-                            style: "currency",
-                          }).format(proceds.price)}
-                        </Td>
-                        <Td borderColor="black">{proceds.sector.name}</Td>
-                        <Td borderColor="black">{proceds.groups.name}</Td>
+                  <Tbody>
+                    {procedures ? (
+                      procedures.map((proceds) => (
+                        <Tr key={proceds.id}>
+                          <Td borderColor="black">
+                            <Text fontWeight="bold" color="gray.800">
+                              {proceds.name}
+                            </Text>
+                          </Td>
+                          <Td borderColor="black">{proceds.id}</Td>
+                          <Td borderColor="black">
+                            {new Intl.NumberFormat("pt-BR", {
+                              currency: "BRL",
+                              style: "currency",
+                            }).format(proceds.price)}
+                          </Td>
+                          <Td borderColor="black">{proceds.sector.name}</Td>
+                          <Td borderColor="black">{proceds.groups.name}</Td>
 
-                        <Td borderColor="black">
-                          <Link to={`/Admin/Procedures/Edit/${proceds.id}`}>
+                          <Td borderColor="black">
+                            <Link to={`/Admin/Procedures/Edit/${proceds.id}`}>
+                              <Button
+                                as="a"
+                                size="sm"
+                                fontSize="sm"
+                                colorScheme="yellow"
+                                leftIcon={<Icon as={RiPencilLine} />}
+                              >
+                                Editar Procedimento
+                              </Button>
+                            </Link>
+                          </Td>
+                          <Td>
                             <Button
                               as="a"
                               size="sm"
                               fontSize="sm"
-                              colorScheme="yellow"
+                              colorScheme="red"
                               leftIcon={<Icon as={RiPencilLine} />}
+                              onClick={() => handleDeleteProcedure(proceds.id)}
                             >
-                              Editar Procedimento
+                              Deletar Procedimento
                             </Button>
-                          </Link>
-                        </Td>
-                        <Td>
-                          <Button
-                            as="a"
-                            size="sm"
-                            fontSize="sm"
-                            colorScheme="red"
-                            leftIcon={<Icon as={RiPencilLine} />}
-                            onClick={() => handleDeleteProcedure(proceds.id)}
-                          >
-                            Deletar Procedimento
-                          </Button>
-                        </Td>
-                      </Tr>
-                    ))
-                  ) : (
-                    <LoadingSpinner />
-                  )}
-                </Tbody>
-              </Table>
+                          </Td>
+                        </Tr>
+                      ))
+                    ) : (
+                      <LoadingSpinner />
+                    )}
+                  </Tbody>
+                </Table>
 
-              <Paginaton />
-            </Box>
+                <Paginaton />
+              </Box>
+            </Flex>
           </Flex>
-        </Flex>
-      </AdminContainer>
-    </ChakraProvider>
+        </AdminContainer>
+      </ChakraProvider>
+    </motion.div>
   );
 }

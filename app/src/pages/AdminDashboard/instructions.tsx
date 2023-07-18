@@ -37,6 +37,7 @@ import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import Surgeries from "../Surgeries";
+import { motion } from "framer-motion";
 //@ts-ignore
 pdfMake.addVirtualFileSystem(pdfFonts);
 // Create styles
@@ -133,193 +134,209 @@ export function InstructionsList() {
   }, [reloadData]);
 
   return (
-    <ChakraProvider>
-      <AdminContainer>
-        <Flex direction="column" h="100vh">
-          <Header title="Instruções" />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <ChakraProvider>
+        <AdminContainer>
+          <Flex direction="column" h="100vh">
+            <Header title="Instruções" />
 
-          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6" maxH="44rem">
-            <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" overflow="auto" p="8">
-              <Flex
-                mb="8"
-                direction="column"
-                justify="space-between"
-                align="center"
+            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6" maxH="44rem">
+              <Sidebar />
+              <Box
+                flex="1"
+                borderRadius={8}
+                bg="gray.200"
+                overflow="auto"
+                p="8"
               >
-                <Heading width="100%" fontSize="30" fontWeight="bold">
-                  Instruções
-                </Heading>
-
-                <Button
-                  as="a"
-                  mt="5"
-                  width="100%"
-                  py="8"
-                  cursor="pointer"
-                  fontSize="20"
-                  colorScheme="whatsapp"
-                  leftIcon={<Icon as={RiAddLine} fontSize="20" />}
-                  onClick={() => openModal()}
+                <Flex
+                  mb="8"
+                  direction="column"
+                  justify="space-between"
+                  align="center"
                 >
-                  Cadastrar nova Instrução
-                </Button>
-              </Flex>
+                  <Heading width="100%" fontSize="30" fontWeight="bold">
+                    Instruções
+                  </Heading>
 
-              <Table colorScheme="blackAlpha">
-                <Thead>
-                  <Tr borderColor="black">
-                    <Th borderColor="black" fontSize="18">
-                      Nome
-                    </Th>
-                    <Th borderColor="black" fontSize="18">
-                      Id do Instrução
-                    </Th>
-                    <Th borderColor="black"></Th>
-                  </Tr>
-                </Thead>
+                  <Button
+                    as="a"
+                    mt="5"
+                    width="100%"
+                    py="8"
+                    cursor="pointer"
+                    fontSize="20"
+                    colorScheme="whatsapp"
+                    leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                    onClick={() => openModal()}
+                  >
+                    Cadastrar nova Instrução
+                  </Button>
+                </Flex>
 
-                <Tbody>
-                  {allInstructions ? (
-                    allInstructions.map((sector: any) => (
-                      <Tr key={sector.id}>
-                        <Td borderColor="black">
-                          <Text
-                            fontWeight="bold"
+                <Table colorScheme="blackAlpha">
+                  <Thead>
+                    <Tr borderColor="black">
+                      <Th borderColor="black" fontSize="18">
+                        Nome
+                      </Th>
+                      <Th borderColor="black" fontSize="18">
+                        Id do Instrução
+                      </Th>
+                      <Th borderColor="black"></Th>
+                    </Tr>
+                  </Thead>
+
+                  <Tbody>
+                    {allInstructions ? (
+                      allInstructions.map((sector: any) => (
+                        <Tr key={sector.id}>
+                          <Td borderColor="black">
+                            <Text
+                              fontWeight="bold"
+                              fontSize="16"
+                              color="gray.800"
+                            >
+                              {sector.name}
+                            </Text>
+                          </Td>
+                          <Td
+                            borderColor="black"
                             fontSize="16"
-                            color="gray.800"
+                            fontWeight="bold"
                           >
-                            {sector.name}
-                          </Text>
-                        </Td>
-                        <Td borderColor="black" fontSize="16" fontWeight="bold">
-                          {sector.id}
-                        </Td>
+                            {sector.id}
+                          </Td>
 
-                        <Td borderColor="black">
-                          <Flex ml="16%">
-                            <Button
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="yellow"
-                              mr="3"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => openModalTwo()}
-                            >
-                              Editar Instrução
-                            </Button>
+                          <Td borderColor="black">
+                            <Flex ml="16%">
+                              <Button
+                                as="a"
+                                size="md"
+                                fontSize="md"
+                                colorScheme="yellow"
+                                mr="3"
+                                leftIcon={<Icon as={RiPencilLine} />}
+                                onClick={() => openModalTwo()}
+                              >
+                                Editar Instrução
+                              </Button>
 
-                            <Button
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="red"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => handleDeleteSector(sector.id)}
-                              mr="3"
-                            >
-                              Deletar Instrução
-                            </Button>
+                              <Button
+                                as="a"
+                                size="md"
+                                fontSize="md"
+                                colorScheme="red"
+                                leftIcon={<Icon as={RiPencilLine} />}
+                                onClick={() => handleDeleteSector(sector.id)}
+                                mr="3"
+                              >
+                                Deletar Instrução
+                              </Button>
 
-                            <Button
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="cyan"
-                              mr="3"
-                              color="white"
-                              leftIcon={<Icon as={AiOutlineDownload} />}
-                              onClick={() =>
-                                handleCreateInstruction(
-                                  sector.name,
-                                  sector.description
-                                )
-                              }
-                            >
-                              Gerar PDF
-                            </Button>
-                          </Flex>
-                        </Td>
-                      </Tr>
-                    ))
-                  ) : (
-                    <LoadingSpinner />
-                  )}
-                </Tbody>
-              </Table>
-              <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-                <FormControl
-                  as="form"
-                  onSubmit={handleSubmit(handleCreateSector)}
-                  display="flex"
-                  flexDir="column"
-                  alignItems="center"
+                              <Button
+                                as="a"
+                                size="md"
+                                fontSize="md"
+                                colorScheme="cyan"
+                                mr="3"
+                                color="white"
+                                leftIcon={<Icon as={AiOutlineDownload} />}
+                                onClick={() =>
+                                  handleCreateInstruction(
+                                    sector.name,
+                                    sector.description
+                                  )
+                                }
+                              >
+                                Gerar PDF
+                              </Button>
+                            </Flex>
+                          </Td>
+                        </Tr>
+                      ))
+                    ) : (
+                      <LoadingSpinner />
+                    )}
+                  </Tbody>
+                </Table>
+                <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+                  <FormControl
+                    as="form"
+                    onSubmit={handleSubmit(handleCreateSector)}
+                    display="flex"
+                    flexDir="column"
+                    alignItems="center"
+                  >
+                    <Input
+                      {...register("name")}
+                      name="name"
+                      label="Nome da Instrução"
+                      mb="4"
+                    />
+                    <label>Descrição da Instrução</label>
+                    <Textarea
+                      {...register("description")}
+                      name="description"
+                      minHeight={300}
+                      minWidth={300}
+                      borderColor="gray.900"
+                    ></Textarea>
+
+                    <Button w="100%" type="submit" colorScheme="green" m="2">
+                      Cadastrar
+                    </Button>
+                  </FormControl>
+                </GenericModal>
+
+                <GenericModal
+                  isOpen={isModalOpenTwo}
+                  onRequestClose={closeModalTwo}
                 >
-                  <Input
-                    {...register("name")}
-                    name="name"
-                    label="Nome da Instrução"
-                    mb="4"
-                  />
-                  <label>Descrição da Instrução</label>
-                  <Textarea
-                    {...register("description")}
-                    name="description"
-                    minHeight={300}
-                    minWidth={300}
-                    borderColor="gray.900"
-                  ></Textarea>
+                  <FormControl
+                    as="form"
+                    onSubmit={handleSubmit(handleEditInstructions)}
+                    display="flex"
+                    flexDir="column"
+                    alignItems="center"
+                  >
+                    <Text>Editar Setor</Text>
+                    <Input
+                      {...register("name")}
+                      name="name"
+                      label="Nome da Instrução"
+                      mb="4"
+                    />
+                    <Input
+                      {...register("id")}
+                      name="id"
+                      label="Id da Instrução"
+                      mb="4"
+                    />
 
-                  <Button w="100%" type="submit" colorScheme="green" m="2">
-                    Cadastrar
-                  </Button>
-                </FormControl>
-              </GenericModal>
+                    <label>Descrição da Instrução</label>
+                    <Textarea
+                      {...register("description")}
+                      name="description"
+                      minHeight={300}
+                      minWidth={300}
+                      borderColor="gray.900"
+                    ></Textarea>
 
-              <GenericModal
-                isOpen={isModalOpenTwo}
-                onRequestClose={closeModalTwo}
-              >
-                <FormControl
-                  as="form"
-                  onSubmit={handleSubmit(handleEditInstructions)}
-                  display="flex"
-                  flexDir="column"
-                  alignItems="center"
-                >
-                  <Text>Editar Setor</Text>
-                  <Input
-                    {...register("name")}
-                    name="name"
-                    label="Nome da Instrução"
-                    mb="4"
-                  />
-                  <Input
-                    {...register("id")}
-                    name="id"
-                    label="Id da Instrução"
-                    mb="4"
-                  />
-
-                  <label>Descrição da Instrução</label>
-                  <Textarea
-                    {...register("description")}
-                    name="description"
-                    minHeight={300}
-                    minWidth={300}
-                    borderColor="gray.900"
-                  ></Textarea>
-
-                  <Button w="100%" type="submit" colorScheme="green" m="2">
-                    Cadastrar
-                  </Button>
-                </FormControl>
-              </GenericModal>
-            </Box>
+                    <Button w="100%" type="submit" colorScheme="green" m="2">
+                      Cadastrar
+                    </Button>
+                  </FormControl>
+                </GenericModal>
+              </Box>
+            </Flex>
           </Flex>
-        </Flex>
-      </AdminContainer>
-    </ChakraProvider>
+        </AdminContainer>
+      </ChakraProvider>
+    </motion.div>
   );
 }

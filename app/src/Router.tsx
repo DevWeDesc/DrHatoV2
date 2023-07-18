@@ -1,3 +1,9 @@
+
+import { useLocation } from "react-router-dom";
+import { AnimatedRoutes } from "./Animated.Routes";
+
+export function Router() {
+  return <AnimatedRoutes />;
 import { Routes, Route, RoutesProps } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";

@@ -36,6 +36,7 @@ import { StyledBox } from "../../components/Header/style";
 import { VetsSearch } from "../../components/Search/vetsSearch";
 import { api } from "../../lib/axios";
 import { MdPets as Burger } from "react-icons/all";
+import { motion } from "framer-motion";
 
 interface QueueProps {
   response: [];
@@ -210,32 +211,38 @@ export function LabExames() {
 
   console.log("DATA RESPONSE", dataCustomer);
   return (
-    <ChakraProvider>
-      <AdminContainer>
-        <Flex direction="column" h="100vh">
-          <Header title="Painel Veterinário" />
-          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-            <GenericSidebar>
-              <GenericLink
-                name="Pesquisar Cliente"
-                icon={AiOutlineSearch}
-                path="/Vets/Menu"
-              />
-            </GenericSidebar>
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
-              <Flex mb="8" gap="8" direction="column" align="center">
-                <VetsSearch path="vetsearch" />
-                <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
-                  <>TOTAL NA FILA: {labs.length}</>
-                </Button>
-                <Flex textAlign="center" justify="center">
-                  {typeTable}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <ChakraProvider>
+        <AdminContainer>
+          <Flex direction="column" h="100vh">
+            <Header title="Painel Veterinário" />
+            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+              <GenericSidebar>
+                <GenericLink
+                  name="Pesquisar Cliente"
+                  icon={AiOutlineSearch}
+                  path="/Vets/Menu"
+                />
+              </GenericSidebar>
+              <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+                <Flex mb="8" gap="8" direction="column" align="center">
+                  <VetsSearch path="vetsearch" />
+                  <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
+                    <>TOTAL NA FILA: {labs.length}</>
+                  </Button>
+                  <Flex textAlign="center" justify="center">
+                    {typeTable}
+                  </Flex>
                 </Flex>
-              </Flex>
-            </Box>
+              </Box>
+            </Flex>
           </Flex>
-        </Flex>
-      </AdminContainer>
-    </ChakraProvider>
+        </AdminContainer>
+      </ChakraProvider>
+    </motion.div>
   );
 }

@@ -31,6 +31,7 @@ import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
+import { motion } from "framer-motion";
 
 export function SurgeryCenter() {
   const { register, handleSubmit } = useForm();
@@ -94,163 +95,169 @@ export function SurgeryCenter() {
   };
 
   return (
-    <ChakraProvider>
-      <AdminContainer>
-        <Flex direction="column" h="100vh">
-          <Header title="Centro Cirúrgico" />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <ChakraProvider>
+        <AdminContainer>
+          <Flex direction="column" h="100vh">
+            <Header title="Centro Cirúrgico" />
 
-          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-            <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
-              <Flex
-                mb="8"
-                justify="space-between"
-                direction="column"
-                align="center"
-              >
-                <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                  Centro Cirurgico
-                </Heading>
-
-                <Button
-                  as="a"
-                  width="100%"
-                  fontSize="20"
-                  py="8"
-                  colorScheme="whatsapp"
-                  cursor="pointer"
-                  leftIcon={<Icon as={RiAddLine} />}
-                  onClick={() => openModal()}
+            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+              <Sidebar />
+              <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+                <Flex
+                  mb="8"
+                  justify="space-between"
+                  direction="column"
+                  align="center"
                 >
-                  Cadastrar novo Centro Cirúrgico
-                </Button>
-              </Flex>
+                  <Heading size="lg" fontWeight="bold" w="100%" mb="5">
+                    Centro Cirurgico
+                  </Heading>
 
-              <Table colorScheme="blackAlpha">
-                <Thead>
-                  <Tr>
-                    <Th fontSize="18" borderColor="black">
-                      Nome
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Slots
-                    </Th>
-                    <Th borderColor="black"></Th>
-                  </Tr>
-                </Thead>
+                  <Button
+                    as="a"
+                    width="100%"
+                    fontSize="20"
+                    py="8"
+                    colorScheme="whatsapp"
+                    cursor="pointer"
+                    leftIcon={<Icon as={RiAddLine} />}
+                    onClick={() => openModal()}
+                  >
+                    Cadastrar novo Centro Cirúrgico
+                  </Button>
+                </Flex>
 
-                <Tbody>
-                  {/*sectors ? (
+                <Table colorScheme="blackAlpha">
+                  <Thead>
+                    <Tr>
+                      <Th fontSize="18" borderColor="black">
+                        Nome
+                      </Th>
+                      <Th fontSize="18" borderColor="black">
+                        Slots
+                      </Th>
+                      <Th borderColor="black"></Th>
+                    </Tr>
+                  </Thead>
+
+                  <Tbody>
+                    {/*sectors ? (
                     sectors.map((sector) => (*/}
 
-                  <Tr key="0">
-                    <Td borderColor="black">
-                      <Text fontWeight="bold" color="gray.800"></Text>
-                    </Td>
-                    <Td borderColor="black"></Td>
+                    <Tr key="0">
+                      <Td borderColor="black">
+                        <Text fontWeight="bold" color="gray.800"></Text>
+                      </Td>
+                      <Td borderColor="black"></Td>
 
-                    <Td borderColor="black">
-                      <Flex gap="2" ml="40%">
-                        <Button
-                          as="a"
-                          size="md"
-                          fontSize="md"
-                          colorScheme="yellow"
-                          leftIcon={<Icon as={RiPencilLine} />}
-                          onClick={() => openModalTwo()}
-                        >
-                          Editar Centro Cirurgico
-                        </Button>
-                        <Button
-                          as="a"
-                          size="md"
-                          fontSize="md"
-                          colorScheme="red"
-                          leftIcon={<Icon as={RiPencilLine} />}
-                          onClick={() => handleDeleteSector("")}
-                        >
-                          Deletar Centro Cirurgico
-                        </Button>
-                      </Flex>
-                    </Td>
-                  </Tr>
-                  {/*))
+                      <Td borderColor="black">
+                        <Flex gap="2" ml="40%">
+                          <Button
+                            as="a"
+                            size="md"
+                            fontSize="md"
+                            colorScheme="yellow"
+                            leftIcon={<Icon as={RiPencilLine} />}
+                            onClick={() => openModalTwo()}
+                          >
+                            Editar Centro Cirurgico
+                          </Button>
+                          <Button
+                            as="a"
+                            size="md"
+                            fontSize="md"
+                            colorScheme="red"
+                            leftIcon={<Icon as={RiPencilLine} />}
+                            onClick={() => handleDeleteSector("")}
+                          >
+                            Deletar Centro Cirurgico
+                          </Button>
+                        </Flex>
+                      </Td>
+                    </Tr>
+                    {/*))
                   )
                   : (
                   <LoadingSpinner />)*/}
-                </Tbody>
-              </Table>
-              <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-                <FormControl
-                  as="form"
-                  onSubmit={handleSubmit(handleCreateSector)}
-                  display="flex"
-                  flexDir="column"
-                  alignItems="center"
+                  </Tbody>
+                </Table>
+                <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+                  <FormControl
+                    as="form"
+                    onSubmit={handleSubmit(handleCreateSector)}
+                    display="flex"
+                    flexDir="column"
+                    alignItems="center"
+                  >
+                    <Input
+                      {...register("name")}
+                      name="name"
+                      label="Nome do Centro cirurgico"
+                      mb="4"
+                    />
+
+                    <Input
+                      {...register("name")}
+                      name="name"
+                      label="Slots"
+                      mb="4"
+                    />
+
+                    <Button w="100%" type="submit" colorScheme="green" m="2">
+                      Cadastrar
+                    </Button>
+                  </FormControl>
+                </GenericModal>
+
+                <GenericModal
+                  isOpen={isModalOpenTwo}
+                  onRequestClose={closeModalTwo}
                 >
-                  <Input
-                    {...register("name")}
-                    name="name"
-                    label="Nome do Centro cirurgico"
-                    mb="4"
-                  />
+                  <FormControl
+                    as="form"
+                    onSubmit={handleSubmit(handleEditSector)}
+                    display="flex"
+                    flexDir="column"
+                    alignItems="center"
+                  >
+                    <Text pb="15">Editar Centro cirurgico</Text>
+                    <Input
+                      {...register("id")}
+                      name="id"
+                      label="Id do Centro cirurgico"
+                      mb="4"
+                    />
+                    <Input
+                      {...register("name")}
+                      name="name"
+                      label="Nome do Centro cirurgico"
+                      mb="4"
+                    />
 
-                  <Input
-                    {...register("name")}
-                    name="name"
-                    label="Slots"
-                    mb="4"
-                  />
+                    <Input
+                      {...register("id")}
+                      name="id"
+                      label="Slots do Centro cirurgico"
+                      mb="4"
+                    />
 
-                  <Button w="100%" type="submit" colorScheme="green" m="2">
-                    Cadastrar
-                  </Button>
-                </FormControl>
-              </GenericModal>
+                    <Button w="100%" type="submit" colorScheme="green" m="2">
+                      Cadastrar
+                    </Button>
+                  </FormControl>
+                </GenericModal>
 
-              <GenericModal
-                isOpen={isModalOpenTwo}
-                onRequestClose={closeModalTwo}
-              >
-                <FormControl
-                  as="form"
-                  onSubmit={handleSubmit(handleEditSector)}
-                  display="flex"
-                  flexDir="column"
-                  alignItems="center"
-                >
-                  <Text pb="15">Editar Centro cirurgico</Text>
-                  <Input
-                    {...register("id")}
-                    name="id"
-                    label="Id do Centro cirurgico"
-                    mb="4"
-                  />
-                  <Input
-                    {...register("name")}
-                    name="name"
-                    label="Nome do Centro cirurgico"
-                    mb="4"
-                  />
-
-                  <Input
-                    {...register("id")}
-                    name="id"
-                    label="Slots do Centro cirurgico"
-                    mb="4"
-                  />
-
-                  <Button w="100%" type="submit" colorScheme="green" m="2">
-                    Cadastrar
-                  </Button>
-                </FormControl>
-              </GenericModal>
-
-              <Paginaton />
-            </Box>
+                <Paginaton />
+              </Box>
+            </Flex>
           </Flex>
-        </Flex>
-      </AdminContainer>
-    </ChakraProvider>
+        </AdminContainer>
+      </ChakraProvider>
+    </motion.div>
   );
 }
