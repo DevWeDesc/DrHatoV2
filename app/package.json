@@ -16,7 +16,7 @@
     "@types/react-modal": "^3.13.1",
     "apexcharts": "^3.37.2",
     "axios": "^1.3.4",
-    "framer-motion": "^10.12.18",
+    "framer-motion": "^10.12.22",
     "install": "^0.13.0",
     "moment": "^2.29.4",
     "pdfmake": "^0.3.0-beta.1",

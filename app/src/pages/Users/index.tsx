@@ -23,6 +23,7 @@ import { Sidebar } from "../../components/admin/Sidebar";
 import { LoadingSpinner } from "../../components/Loading";
 import { DbContext } from "../../contexts/DbContext";
 import { api } from "../../lib/axios";
+import { motion } from "framer-motion";
 
 import { AdminContainer } from "../AdminDashboard/style";
 
@@ -48,117 +49,123 @@ export function UsersList() {
   }, [loading]);
 
   return (
-    <ChakraProvider>
-      <AdminContainer>
-        <Flex direction="column" h="100vh">
-          <Header title="Usuários" />
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <ChakraProvider>
+        <AdminContainer>
+          <Flex direction="column" h="100vh">
+            <Header title="Usuários" />
 
-          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-            <Sidebar />
-            <Box
-              flex="1"
-              borderRadius={8}
-              bg="gray.200"
-              p="8"
-              maxH="44rem"
-              overflow="auto"
-            >
-              <Flex
-                mb="8"
-                direction="column"
-                justify="space-between"
-                align="center"
+            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+              <Sidebar />
+              <Box
+                flex="1"
+                borderRadius={8}
+                bg="gray.200"
+                p="8"
+                maxH="44rem"
+                overflow="auto"
               >
-                <Heading width="100%" fontSize="30" fontWeight="bold">
-                  Usúarios
-                </Heading>
-
-                <Link
-                  onClick={() => setLoading(true)}
-                  to="/Users/Create"
-                  style={{ width: "100%" }}
+                <Flex
+                  mb="8"
+                  direction="column"
+                  justify="space-between"
+                  align="center"
                 >
-                  <Button
-                    as="a"
-                    mt="5"
-                    width="100%"
-                    py="8"
-                    fontSize="20"
-                    colorScheme="whatsapp"
-                    leftIcon={<Icon as={RiAddLine} />}
+                  <Heading width="100%" fontSize="30" fontWeight="bold">
+                    Usúarios
+                  </Heading>
+
+                  <Link
+                    onClick={() => setLoading(true)}
+                    to="/Users/Create"
+                    style={{ width: "100%" }}
                   >
-                    Criar novo
-                  </Button>
-                </Link>
-              </Flex>
+                    <Button
+                      as="a"
+                      mt="5"
+                      width="100%"
+                      py="8"
+                      fontSize="20"
+                      colorScheme="whatsapp"
+                      leftIcon={<Icon as={RiAddLine} />}
+                    >
+                      Criar novo
+                    </Button>
+                  </Link>
+                </Flex>
 
-              <Table colorScheme="blackAlpha">
-                <Thead>
-                  <Tr>
-                    <Th borderColor="black" fontSize="18">
-                      Usuário
-                    </Th>
-                    <Th borderColor="black" fontSize="18">
-                      Tipo de Usuário
-                    </Th>
-                    <Th width="8" borderColor="black" fontSize="18"></Th>
-                  </Tr>
-                </Thead>
+                <Table colorScheme="blackAlpha">
+                  <Thead>
+                    <Tr>
+                      <Th borderColor="black" fontSize="18">
+                        Usuário
+                      </Th>
+                      <Th borderColor="black" fontSize="18">
+                        Tipo de Usuário
+                      </Th>
+                      <Th width="8" borderColor="black" fontSize="18"></Th>
+                    </Tr>
+                  </Thead>
 
-                <Tbody>
-                  {user ? (
-                    user.map((user: any) => (
-                      <Tr key={user.id}>
-                        <Td borderColor="black">
-                          <Box>
-                            <Text
-                              fontWeight="bold"
-                              fontSize="16"
-                              color="gray.800"
-                            >
-                              {user.name}
+                  <Tbody>
+                    {user ? (
+                      user.map((user: any) => (
+                        <Tr key={user.id}>
+                          <Td borderColor="black">
+                            <Box>
+                              <Text
+                                fontWeight="bold"
+                                fontSize="16"
+                                color="gray.800"
+                              >
+                                {user.name}
+                              </Text>
+                              <Text fontSize="15" color="gray.600">
+                                {user.username}
+                              </Text>
+                            </Box>
+                          </Td>
+                          <Td borderColor="black">
+                            <Text fontWeight="bold" color="gray.800">
+                              {user.userType.includes("admin")
+                                ? "ADMINISTRADOR"
+                                : user.userType.includes("vet")
+                                ? "VETERINÁRIO"
+                                : user.userType.includes("reception")
+                                ? "RECEPCIONISTA"
+                                : "USUÁRIO"}
                             </Text>
-                            <Text fontSize="15" color="gray.600">
-                              {user.username}
-                            </Text>
-                          </Box>
-                        </Td>
-                        <Td borderColor="black">
-                          <Text fontWeight="bold" color="gray.800">
-                            {user.userType.includes("admin")
-                              ? "ADMINISTRADOR"
-                              : user.userType.includes("vet")
-                              ? "VETERINÁRIO"
-                              : user.userType.includes("reception")
-                              ? "RECEPCIONISTA"
-                              : "USUÁRIO"}
-                          </Text>
-                        </Td>
+                          </Td>
 
-                        <Td borderColor="black">
-                          <Link to={`/Users/Edit/${user.id}`}>
-                            <Button
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="yellow"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                            >
-                              Editar
-                            </Button>
-                          </Link>
-                        </Td>
-                      </Tr>
-                    ))
-                  ) : (
-                    <LoadingSpinner />
-                  )}
-                </Tbody>
-              </Table>
-            </Box>
+                          <Td borderColor="black">
+                            <Link to={`/Users/Edit/${user.id}`}>
+                              <Button
+                                as="a"
+                                size="md"
+                                fontSize="md"
+                                colorScheme="yellow"
+                                leftIcon={<Icon as={RiPencilLine} />}
+                              >
+                                Editar
+                              </Button>
+                            </Link>
+                          </Td>
+                        </Tr>
+                      ))
+                    ) : (
+                      <LoadingSpinner />
+                    )}
+                  </Tbody>
+                </Table>
+              </Box>
+            </Flex>
           </Flex>
-        </Flex>
-      </AdminContainer>
-    </ChakraProvider>
+        </AdminContainer>
+      </ChakraProvider>
+    </motion.div>
   );
 }
