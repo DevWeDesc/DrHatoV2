@@ -14,13 +14,15 @@ import { LoadingSpinner } from '../Loading'
 import { HeaderContainer } from './style'
 import { StyledBox } from './style'
 import { ArrowDown } from 'phosphor-react'
+import { useContext } from 'react'
+import { DbContext } from '../../contexts/DbContext'
+import Cookies from 'js-cookie'
 
 export function Header() {
   const navigate = useNavigate()
-  const userStorage = localStorage.getItem('userSession')
-  const userName = JSON.parse(userStorage as any)
+  const {loggedInUser } = useContext(DbContext)
   const logOut = () => {
-    localStorage.clear()
+    Cookies.remove('token')
     navigate('/')
   }
   return (
@@ -35,13 +37,7 @@ export function Header() {
         <Flex direction="column">
           <Menu>
             <MenuButton as={Button} rightIcon={<ArrowDown />}>
-              {userName.name ? (
-                <Text fontSize="18px" fontWeight="medium">
-                  {userName.username}
-                </Text>
-              ) : (
-                <LoadingSpinner />
-              )}
+                {loggedInUser.username}
             </MenuButton>
             <MenuList>
               <Flex direction="column" gap="2">

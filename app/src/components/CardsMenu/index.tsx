@@ -13,12 +13,10 @@ import {
   GiScalpel,
 } from "react-icons/all";
 export function CardsMenu() {
-  const userPermissions = JSON.parse(
-    localStorage.getItem("userSession") as any
-  );
+  const userPermissions = 'admin'
   let menu;
   switch (true) {
-    case userPermissions.userType.includes("admin"):
+    case userPermissions.includes("admin"):
       menu = (
         <>
           {" "}
@@ -78,7 +76,7 @@ export function CardsMenu() {
         </>
       );
       break;
-    case userPermissions.userType.includes("vet"):
+    case userPermissions.includes("vet"):
       menu = (
         <>
           <CardNavigation
@@ -125,7 +123,7 @@ export function CardsMenu() {
         </>
       );
       break;
-    case userPermissions.userType.includes("reception"):
+    case userPermissions.includes("reception"):
       menu = (
         <>
           <CardNavigation
