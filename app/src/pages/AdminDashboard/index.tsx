@@ -68,12 +68,12 @@ export function AdminMain() {
                     </Link>
                     <Link to="/Admin/Sectors">
                       <Button colorScheme="whatsapp" w="100%" py="10">
-                        Cadastro de Setores
+                        Cadastro de Setores/Grupos
                       </Button>
                     </Link>
                     <Link to="/Admin/SurgeryCenter">
                       <Button colorScheme="whatsapp" w="100%" py="10">
-                        Cadastro de Centro Cirurgico
+                        Cadastro de Centro Cirúrgico
                       </Button>
                     </Link>
                     <Link to="/Admin/Vaccines">

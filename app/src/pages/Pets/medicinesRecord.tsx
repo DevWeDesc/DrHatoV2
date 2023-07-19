@@ -1,7 +1,5 @@
 import {
   Flex,
-  Box,
-  SimpleGrid,
   ChakraProvider,
   Table,
   Thead,
@@ -12,9 +10,7 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { GenericLink } from "../../components/Sidebars/GenericLink";
-import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import { BiHome, BiLeftArrowAlt, TbArrowBack } from "react-icons/all";
+import {BiHome, TbArrowBack } from 'react-icons/all'
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { api } from "../../lib/axios";
@@ -42,6 +38,7 @@ interface PetProps {
   customerName: string;
   codPet: string;
 }
+
 
 export function MedicineRecords() {
   const { id } = useParams<{ id: string }>();
@@ -225,7 +222,6 @@ export function MedicineRecords() {
               </Flex>
             </Flex>
           </Flex>
-
           <Flex width="40%" direction="column" className="one">
             <Flex
               height="50%"

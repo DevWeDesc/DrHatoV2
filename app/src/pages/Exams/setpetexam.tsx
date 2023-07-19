@@ -128,7 +128,7 @@ export function SetPetExam() {
                               borderRadius={"0"}
                               borderColor={"black"}
                               bgColor="white"
-                              w="71.6rem"
+                              w="100%"
                               value={pet.id}
                             ></Input>
                           </Flex>
@@ -151,7 +151,7 @@ export function SetPetExam() {
                               borderRadius={"0"}
                               borderColor={"black"}
                               value={pet.medicine.pet.name}
-                              w="71.6rem"
+                              w="100%"
                             ></Input>
                           </Flex>
                           <Flex
@@ -161,8 +161,8 @@ export function SetPetExam() {
                             <Text
                               paddingRight={"97px"}
                               paddingLeft={"5px"}
-                              paddingTop={"8px"}
-                              paddingBottom={"8px"}
+                              paddingTop={"7px"}
+                              paddingBottom={"7px"}
                               backgroundColor={"gray.300"}
                             >
                               <strong> Exame</strong>
@@ -173,7 +173,7 @@ export function SetPetExam() {
                               borderRadius={"0"}
                               borderColor={"black"}
                               value={pet.name}
-                              w="46.45rem"
+                              w="50%"
                             ></Input>
                             <Text
                               padding={"7px 51px"}
@@ -188,18 +188,19 @@ export function SetPetExam() {
                               borderRadius={"0"}
                               borderColor={"black"}
                               value="Não definido"
-                              w="13rem"
+                              w="30%"
                             ></Input>
                           </Flex>
                           <Flex
                             alignItems={"center"}
                             borderBottom={"1px solid black"}
+                            h="41px"
                           >
                             <Text
                               paddingRight={"112px"}
                               paddingLeft={"5px"}
-                              paddingTop={"8px"}
-                              paddingBottom={"8px"}
+                              paddingTop={"7px"}
+                              paddingBottom={"7px"}
                               backgroundColor={"gray.300"}
                             >
                               <strong> Data</strong>
@@ -208,7 +209,7 @@ export function SetPetExam() {
                               bgColor="white"
                               borderRadius={"0"}
                               borderColor={"black"}
-                              w="46.45rem"
+                              w="50%"
                               value={pet.requesteData}
                             ></Input>
                             <Text
@@ -223,7 +224,7 @@ export function SetPetExam() {
                               borderRadius={"0"}
                               borderColor={"black"}
                               value="Não definido"
-                              w="13rem"
+                              w="30%"
                             ></Input>
                           </Flex>
                         </>

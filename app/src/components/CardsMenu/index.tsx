@@ -13,12 +13,10 @@ import {
   GiScalpel,
 } from "react-icons/all";
 export function CardsMenu() {
-  const userPermissions = JSON.parse(
-    localStorage.getItem("userSession") as any
-  );
+  const userPermissions = "admin";
   let menu;
   switch (true) {
-    case userPermissions.userType.includes("admin"):
+    case userPermissions.includes("admin"):
       menu = (
         <>
           {" "}
@@ -59,7 +57,7 @@ export function CardsMenu() {
             icon={<GiNurseFemale fill="#c9537e" size={36} />}
           />
           <CardNavigation
-            path="/Schedule/Menu"
+            //path="/Schedule/Menu"
             title="Agendas"
             text="Ver exames"
             icon={<AiFillSchedule fill="#6ac574" size={36} />}
@@ -78,7 +76,7 @@ export function CardsMenu() {
         </>
       );
       break;
-    case userPermissions.userType.includes("vet"):
+    case userPermissions.includes("vet"):
       menu = (
         <>
           <CardNavigation
@@ -106,7 +104,7 @@ export function CardsMenu() {
             icon={<GiNurseFemale fill="#c9537e" size={36} />}
           />
           <CardNavigation
-            path="/Schedule/Menu"
+            //path="/Schedule/Menu"
             title="Agendas"
             text="Ver exames"
             icon={<AiFillSchedule fill="#6ac574" size={36} />}
@@ -125,7 +123,7 @@ export function CardsMenu() {
         </>
       );
       break;
-    case userPermissions.userType.includes("reception"):
+    case userPermissions.includes("reception"):
       menu = (
         <>
           <CardNavigation
@@ -141,13 +139,13 @@ export function CardsMenu() {
             icon={<GiNurseFemale fill="#c9537e" size={36} />}
           />
           <CardNavigation
-            path="/Schedule/Menu"
+            //path="/Schedule/Menu"
             title="Agendas"
             text="Ver exames"
             icon={<AiFillSchedule fill="#6ac574" size={36} />}
           />
           <CardNavigation
-            title="Mensagens"
+            //title="Mensagens"
             text="Ver mensagens"
             icon={<BsBellFill fill="#FF7200" size={36} />}
           />
