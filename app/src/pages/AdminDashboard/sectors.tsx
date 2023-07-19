@@ -256,7 +256,7 @@ export function SectorsList() {
                             Nome
                           </Th>
                           <Th fontSize="18" borderColor="black">
-                            Id do Setor
+                            Id do Grupo
                           </Th>
                           <Th borderColor="black"></Th>
                         </Tr>
@@ -283,7 +283,7 @@ export function SectorsList() {
                                     leftIcon={<Icon as={RiPencilLine} />}
                                     onClick={() => openModalTwo()}
                                   >
-                                    Editar setor
+                                    Editar Grupo
                                   </Button>
                                   <Button
                                     as="a"
@@ -295,7 +295,7 @@ export function SectorsList() {
                                       handleDeleteSector(sector.id)
                                     }
                                   >
-                                    Deletar Setor
+                                    Deletar Grupo
                                   </Button>
                                 </Flex>
                               </Td>
