@@ -69,6 +69,7 @@ import { Reports } from "./pages/Reports/index";
 import { AdminSurgery } from "./pages/AdminDashboard/surgeryes";
 import { UsersList } from "./pages/Users";
 import { AnimatePresence } from "framer-motion";
+import { QueueLabs } from "./queue/Labs";
 
 export function AnimatedRoutes() {
   const location = useLocation();
@@ -81,6 +82,7 @@ export function AnimatedRoutes() {
           <Route path="/Reports" element={<Reports />} />
 
           <Route path="/Queue" element={<QueueSistem />} />
+          <Route path="/Queue/Labs" element={<QueueLabs />} />
 
           <Route path="/Admin" element={<AdminMain />} />
           <Route path="/Admin/Vaccines" element={<AdminVaccines />} />

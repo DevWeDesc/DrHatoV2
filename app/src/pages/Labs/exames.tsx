@@ -47,9 +47,12 @@ export function LabExames() {
   let { dataCustomer, dataPet } = useContext(DbContext);
   const [petValue, setPetValue] = useState("");
   const [labs, setLabs] = useState([]);
+  const [procedure, setProcedure] = useState("");
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [totalInQueue, setTotalInQueue] = useState(0 as any);
   const navigate = useNavigate();
+  const [namePet, setNamePet] = useState("");
+
   useEffect(() => {
     async function getQueue() {
       const response = await api.get("/pets/queue");
@@ -67,14 +70,18 @@ export function LabExames() {
       toast.error("Selecione um PET");
       return;
     }
-    navigate(`/Labs/Set/${petValue}`);
+    navigate(`/Labs/Set/${procedure}`);
   };
   //console.log(labs.medicine.pet.name);
   // console.log("PET RESPONSE", dataPet);
 
-  const petz: any = labs.map((pet: any) => {
+  /*const petz: any = labs.map((pet: any) => {
     return pet.id === 3 ? console.log(pet) : console.log("erro");
-  });
+  });*/
+
+  //const DataCust = dataCustomer;
+
+  //console.log(labs);
 
   let typeTable: ReactNode;
   switch (true) {
@@ -86,6 +93,7 @@ export function LabExames() {
               <Th>CPF</Th>
               <Th>Cliente</Th>
               <Th>Animal</Th>
+              <Th>Procedimentos</Th>
               <Th>Código</Th>
               <Th>Data</Th>
               <Th>Hora</Th>
@@ -124,7 +132,11 @@ export function LabExames() {
                           gap="2"
                           key={pets.id}
                         >
-                          <RadioGroup onChange={setPetValue} value={petValue}>
+                          <RadioGroup
+                            onClick={() => setNamePet(pets.name)}
+                            onChange={setPetValue}
+                            value={petValue}
+                          >
                             <Radio
                               bgColor={petValue == pets.id ? "green" : "red"}
                               value={pets.id as any}
@@ -133,6 +145,45 @@ export function LabExames() {
                             </Radio>
                           </RadioGroup>
                         </Flex>
+                      ))}
+                    </MenuList>
+                  </Menu>
+                </Td>
+                <Td>
+                  {" "}
+                  <Menu>
+                    <MenuButton border="1px" as={Button} rightIcon={<Burger />}>
+                      <StyledBox>
+                        <Text>Procedimentos</Text>
+                      </StyledBox>
+                    </MenuButton>
+                    <MenuList bg="green.100">
+                      {labs.map((pets: any) => (
+                        <>
+                          {namePet === pets.medicine.pet.name && (
+                            <Flex
+                              direction="column"
+                              align="center"
+                              p="2px"
+                              gap="2"
+                              key={pets.id}
+                            >
+                              <RadioGroup
+                                value={procedure}
+                                onChange={setProcedure}
+                              >
+                                <Radio
+                                  bgColor={
+                                    procedure == pets.id ? "green" : "red"
+                                  }
+                                  value={pets.id as any}
+                                >
+                                  {pets.name}
+                                </Radio>
+                              </RadioGroup>
+                            </Flex>
+                          )}
+                        </>
                       ))}
                     </MenuList>
                   </Menu>
@@ -160,7 +211,7 @@ export function LabExames() {
             <Thead>
               <Tr>
                 <Th>Data</Th>
-                <Th>Nome</Th>
+                <Th>Animal</Th>
                 <Th>Exame</Th>
                 <Th>Veterinário</Th>
                 <Th>Status</Th>
@@ -231,7 +282,10 @@ export function LabExames() {
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <Flex mb="8" gap="8" direction="column" align="center">
                   <VetsSearch path="vetsearch" />
-                  <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
+                  <Button
+                    colorScheme="teal"
+                    onClick={() => navigate("/Queue/Labs")}
+                  >
                     <>TOTAL NA FILA: {labs.length}</>
                   </Button>
                   <Flex textAlign="center" justify="center">

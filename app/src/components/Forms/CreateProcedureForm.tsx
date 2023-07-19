@@ -26,7 +26,6 @@ export function CreateProcedureForm({ path, method }: any) {
   const navigate = useNavigate();
   const [value, setValue] = useState("");
 
-
   const handleCreateProcedure: SubmitHandler<FieldValues> = async (values) => {
     let rangeAges = [values.minAge, values.maxAge];
     const data = {
@@ -79,7 +78,7 @@ export function CreateProcedureForm({ path, method }: any) {
             name="applicationInterval"
           />
           <label style={{ fontWeight: "bold", fontSize: "17px" }} htmlFor="">
-            Idade Minima
+            Idade Mínima
           </label>
           <Flex w="100%" mb="1">
             <NumberInput size="xs" name="minAge" maxW={"100%"} w="100%">
@@ -194,7 +193,7 @@ export function CreateProcedureForm({ path, method }: any) {
                 name="available"
                 borderColor="gray.900"
               />
-              <label htmlFor="available">Disponivel</label>
+              <label htmlFor="available">Disponível</label>
             </Flex>
           </Flex>
           <Flex
@@ -213,7 +212,11 @@ export function CreateProcedureForm({ path, method }: any) {
             <label htmlFor="" style={{ fontWeight: "bold", fontSize: "17px" }}>
               PERTENCE A ALGUM GRUPO?
             </label>
-            <Select {...register("group")} placeholder="SELECIONE O GRUPO" bgColor="gray.300">
+            <Select
+              {...register("group")}
+              placeholder="SELECIONE O GRUPO"
+              bgColor="gray.300"
+            >
               {groups.map((group) => (
                 <option key={group.id} value={group.id}>
                   {group.name}
@@ -224,7 +227,11 @@ export function CreateProcedureForm({ path, method }: any) {
             <label htmlFor="" style={{ fontWeight: "bold", fontSize: "17px" }}>
               PERTENCE A ALGUM SETOR?
             </label>
-            <Select {...register("sector")} placeholder="SELECIONE O SETOR" bgColor="gray.300">
+            <Select
+              {...register("sector")}
+              placeholder="SELECIONE O SETOR"
+              bgColor="gray.300"
+            >
               {sectors.map((sector) => (
                 <option key={sector.id} value={sector.id}>
                   {sector.name}

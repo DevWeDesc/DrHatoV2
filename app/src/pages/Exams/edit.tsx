@@ -176,7 +176,7 @@ export function ExamsEdit() {
                           borderColor="gray.800"
                           _checked={{ background: "#FF0000" }}
                         />
-                        <label htmlFor="available">Disponivel</label>
+                        <label htmlFor="available">Disponível</label>
                       </Flex>
 
                       <CheckboxGroup>
@@ -218,7 +218,7 @@ export function ExamsEdit() {
                             borderColor="gray.800"
                             name="applicableGender"
                           />
-                          <label htmlFor="">Femea</label>
+                          <label htmlFor="">Fêmea</label>
                         </Flex>
                         <Flex gap="4">
                           <Checkbox

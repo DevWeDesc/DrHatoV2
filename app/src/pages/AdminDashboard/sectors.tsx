@@ -121,7 +121,7 @@ export function SectorsList() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Exames" />
+            <Header title="Setores e Grupos" />
 
             <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
               <Sidebar />
@@ -131,87 +131,183 @@ export function SectorsList() {
                 bg="gray.200"
                 p="8"
                 maxH="44rem"
-                overflow="auto"
+                overflowY="auto"
+                overflowX="none"
+                w="100%"
               >
-                <Flex
-                  mb="8"
-                  justify="space-between"
-                  direction="column"
-                  align="center"
-                >
-                  <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                    Setores
-                  </Heading>
-
-                  <Button
-                    as="a"
-                    width="100%"
-                    fontSize="20"
-                    py="8"
-                    colorScheme="whatsapp"
-                    cursor="pointer"
-                    leftIcon={<Icon as={RiAddLine} />}
-                    onClick={() => openModal()}
+                <Flex w="100%" alignItems="center" overflowX="none">
+                  <Flex
+                    direction="column"
+                    w="48%"
+                    borderRight="1px solid black"
+                    pr="1"
                   >
-                    Cadastrar novo Setor
-                  </Button>
-                </Flex>
+                    <Flex
+                      mb="8"
+                      justify="space-between"
+                      direction="column"
+                      align="center"
+                    >
+                      <Heading size="lg" fontWeight="bold" w="100%" mb="5">
+                        Setores
+                      </Heading>
 
-                <Table colorScheme="blackAlpha">
-                  <Thead>
-                    <Tr>
-                      <Th fontSize="18" borderColor="black">
-                        Nome
-                      </Th>
-                      <Th fontSize="18" borderColor="black">
-                        Id do Setor
-                      </Th>
-                      <Th borderColor="black"></Th>
-                    </Tr>
-                  </Thead>
+                      <Button
+                        as="a"
+                        width="100%"
+                        fontSize="20"
+                        py="8"
+                        colorScheme="whatsapp"
+                        cursor="pointer"
+                        leftIcon={<Icon as={RiAddLine} />}
+                        onClick={() => openModal()}
+                      >
+                        Cadastrar novo Setor
+                      </Button>
+                    </Flex>
 
-                  <Tbody>
-                    {sectors ? (
-                      sectors.map((sector: any) => (
-                        <Tr key={sector.id}>
-                          <Td borderColor="black">
-                            <Text fontWeight="bold" color="gray.800">
-                              {sector.name}
-                            </Text>
-                          </Td>
-                          <Td borderColor="black">{sector.id}</Td>
-
-                          <Td borderColor="black">
-                            <Flex gap="2" ml="50%">
-                              <Button
-                                as="a"
-                                size="md"
-                                fontSize="md"
-                                colorScheme="yellow"
-                                leftIcon={<Icon as={RiPencilLine} />}
-                                onClick={() => openModalTwo()}
-                              >
-                                Editar setor
-                              </Button>
-                              <Button
-                                as="a"
-                                size="md"
-                                fontSize="md"
-                                colorScheme="red"
-                                leftIcon={<Icon as={RiPencilLine} />}
-                                onClick={() => handleDeleteSector(sector.id)}
-                              >
-                                Deletar Setor
-                              </Button>
-                            </Flex>
-                          </Td>
+                    <Table colorScheme="blackAlpha">
+                      <Thead>
+                        <Tr>
+                          <Th fontSize="18" borderColor="black">
+                            Nome
+                          </Th>
+                          <Th fontSize="18" borderColor="black">
+                            Id do Setor
+                          </Th>
+                          <Th borderColor="black"></Th>
                         </Tr>
-                      ))
-                    ) : (
-                      <LoadingSpinner />
-                    )}
-                  </Tbody>
-                </Table>
+                      </Thead>
+
+                      <Tbody>
+                        {sectors ? (
+                          sectors.map((sector: any) => (
+                            <Tr key={sector.id}>
+                              <Td borderColor="black">
+                                <Text fontWeight="bold" color="gray.800">
+                                  {sector.name}
+                                </Text>
+                              </Td>
+                              <Td borderColor="black">{sector.id}</Td>
+
+                              <Td borderColor="black" pr="1">
+                                <Flex gap="2" ml="5%">
+                                  <Button
+                                    as="a"
+                                    size="sm"
+                                    fontSize="sm"
+                                    colorScheme="yellow"
+                                    leftIcon={<Icon as={RiPencilLine} />}
+                                    onClick={() => openModalTwo()}
+                                  >
+                                    Editar setor
+                                  </Button>
+                                  <Button
+                                    as="a"
+                                    size="sm"
+                                    fontSize="sm"
+                                    colorScheme="red"
+                                    leftIcon={<Icon as={RiPencilLine} />}
+                                    onClick={() =>
+                                      handleDeleteSector(sector.id)
+                                    }
+                                  >
+                                    Deletar Setor
+                                  </Button>
+                                </Flex>
+                              </Td>
+                            </Tr>
+                          ))
+                        ) : (
+                          <LoadingSpinner />
+                        )}
+                      </Tbody>
+                    </Table>
+                  </Flex>
+                  <Flex w="48%" direction="column" pl="1">
+                    <Flex
+                      mb="8"
+                      justify="space-between"
+                      direction="column"
+                      align="center"
+                    >
+                      <Heading size="lg" fontWeight="bold" w="100%" mb="5">
+                        Grupos
+                      </Heading>
+
+                      <Button
+                        as="a"
+                        width="100%"
+                        fontSize="20"
+                        py="8"
+                        colorScheme="whatsapp"
+                        cursor="pointer"
+                        leftIcon={<Icon as={RiAddLine} />}
+                        onClick={() => openModal()}
+                      >
+                        Cadastrar novo Grupo
+                      </Button>
+                    </Flex>
+
+                    <Table colorScheme="blackAlpha">
+                      <Thead>
+                        <Tr>
+                          <Th fontSize="18" borderColor="black">
+                            Nome
+                          </Th>
+                          <Th fontSize="18" borderColor="black">
+                            Id do Grupo
+                          </Th>
+                          <Th borderColor="black"></Th>
+                        </Tr>
+                      </Thead>
+
+                      <Tbody>
+                        {sectors ? (
+                          sectors.map((sector: any) => (
+                            <Tr key={sector.id}>
+                              <Td borderColor="black">
+                                <Text fontWeight="bold" color="gray.800">
+                                  {sector.name}
+                                </Text>
+                              </Td>
+                              <Td borderColor="black">{sector.id}</Td>
+
+                              <Td borderColor="black">
+                                <Flex gap="2" ml="10%">
+                                  <Button
+                                    as="a"
+                                    size="sm"
+                                    fontSize="sm"
+                                    colorScheme="yellow"
+                                    leftIcon={<Icon as={RiPencilLine} />}
+                                    onClick={() => openModalTwo()}
+                                  >
+                                    Editar Grupo
+                                  </Button>
+                                  <Button
+                                    as="a"
+                                    size="sm"
+                                    fontSize="sm"
+                                    colorScheme="red"
+                                    leftIcon={<Icon as={RiPencilLine} />}
+                                    onClick={() =>
+                                      handleDeleteSector(sector.id)
+                                    }
+                                  >
+                                    Deletar Grupo
+                                  </Button>
+                                </Flex>
+                              </Td>
+                            </Tr>
+                          ))
+                        ) : (
+                          <LoadingSpinner />
+                        )}
+                      </Tbody>
+                    </Table>
+                  </Flex>
+                </Flex>
                 <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
                   <FormControl
                     as="form"

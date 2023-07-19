@@ -186,7 +186,7 @@ export function AdminSurgery() {
                           </Td>
 
                           <Td borderColor="black">
-                            <Flex gap="2" ml="40%">
+                            <Flex gap="2" ml="30%">
                               <Button
                                 as="a"
                                 size="md"
