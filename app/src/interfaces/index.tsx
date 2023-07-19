@@ -8,8 +8,9 @@ export interface UserData {
     id?:  number | string;
   }
   export interface VetData {
-    id?: number | string; 
-    name:     String;
+    id?: number | string;
+    email: string; 
+    username:     String;
     crmv:     number;
     speciality: string;
     schedule?: []
@@ -112,8 +113,6 @@ export interface ExamsData {
     setRefresh:  React.Dispatch<React.SetStateAction<boolean>>
     groups: GroupsData[]
     procedures: ProceduresData[]
-    loggedInUser: LoggedInUserProps
-    setLoggedInUser: React.Dispatch<SetStateAction<{ email: string; username: string; }>>
   }
 
 
@@ -182,4 +181,5 @@ export interface PetDetaisl {
   vaccines: VacinnesProps[];
   surgeries:  SugeriesProps[];
   customerPets: customerPetsProps[]
+  isBusy: boolean;
 }

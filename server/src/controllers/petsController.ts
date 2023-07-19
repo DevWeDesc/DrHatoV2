@@ -19,11 +19,12 @@ getAllPets: async (request: FastifyRequest, reply: FastifyReply) => {
 getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
   const { id }: any = request.params
   try {
-    const pet = await prisma.pets.findFirst({ where: { id : parseInt(id)}, 
+    const pet = await prisma.pets.findUnique({ where: { id : parseInt(id)}, 
     include: {customer: 
       {select: { name: true, id: true, balance: true, pets: true}}, 
       medicineRecords: {select: {petExams: true, observations: true, id: true, petVaccines: true, petSurgeries: true }},
-      queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true}}
+      queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true}},
+      bed: {select: {isBusy: true}}
     } })
 
     const petData = { 
@@ -52,6 +53,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
       more: pet?.queue?.moreInfos,
       ouor: pet?.queue?.queueOur,
       recordId: pet?.medicineRecords?.id,
+      isBusy: pet?.bed?.isBusy,
       exams: pet?.medicineRecords?.petExams.map((exams) => {
         let examData = {
           id: exams.id,

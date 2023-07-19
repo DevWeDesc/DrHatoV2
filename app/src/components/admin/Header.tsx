@@ -13,7 +13,9 @@ interface HeaderProps {
   title: string;
 }
 export function Header({ title = "Painel Administrativo" }: HeaderProps) {
-  const {loggedInUser } = useContext(DbContext)
+
+  
+  const user = JSON.parse(localStorage.getItem('user') as string)
   return (
     <Flex
       as="header"
@@ -69,7 +71,7 @@ export function Header({ title = "Painel Administrativo" }: HeaderProps) {
 
         <Flex align="center" direction="column">
           <Text fontSize="md" fontWeight="bold">
-            {loggedInUser.username}
+            {user.username}
           </Text>
           <Link to="/Home">
             <Button colorScheme="yellow" leftIcon={<TbArrowBack size={24} />}>

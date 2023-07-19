@@ -14,7 +14,7 @@ interface UniversalSearchProps {
 
 export function VetsSearch({ path}: UniversalSearchProps) {
 
-const { setDataCustomer, setDataPet } = useContext(DbContext)
+const { setDataCustomer, setDataPet, dataCustomer, dataPet } = useContext(DbContext)
 
 
     const {register, handleSubmit} = useForm()
@@ -48,8 +48,9 @@ const { setDataCustomer, setDataPet } = useContext(DbContext)
             setDataCustomer(response?.data)
           break;
         }
-        
-  };
+
+        console.log("RESPOSTA DATA PET",dataPet)
+  };0
   return (
     <ChakraProvider>
         <Flex direction="row" gap="4">

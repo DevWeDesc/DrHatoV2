@@ -5,7 +5,8 @@ import { TbArrowBack } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
 import { Input } from "../../../components/admin/Input";
 import { api } from "../../../lib/axios";
-import { PetProps } from "../workspace";
+import { PetProps } from "../../Pets/details";
+
 
 export function VetInstructions() {
   const [pet, setPet] = useState({} as PetProps);

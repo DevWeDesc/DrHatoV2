@@ -96,7 +96,7 @@ export function GenerateAutorizations() {
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
-                <VetsSearch path="filtredquery" />
+                <VetsSearch path="/filtredquery" />
 
                 <Accordion defaultIndex={[0]} allowMultiple>
                   <AccordionItem>
@@ -143,47 +143,51 @@ export function GenerateAutorizations() {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      <Tr>
-                        <Td>{dataCustomer.name}</Td>
-                        <Td>{dataCustomer.adress}</Td>
-                        <Td>{dataCustomer.phone}</Td>
-                        <Td>{dataCustomer.cpf}</Td>
-                        <Td>{dataCustomer.email}</Td>
-                        <Td>{dataCustomer.birthday}</Td>
-                        <Td>
-                          <Menu>
-                            <MenuButton
-                              border="1px"
-                              as={Button}
-                              rightIcon={<Burger />}
-                            >
-                              <StyledBox>
-                                <Text>pets</Text>
-                              </StyledBox>
-                            </MenuButton>
-                            <MenuList key={dataCustomer.id} bg="green.100">
-                              {dataCustomer.pets?.map((pets: any) => (
-                                <Flex
-                                  key={pets.id}
-                                  direction="column"
-                                  align="center"
-                                  p="2px"
-                                  gap="2"
-                                >
-                              <RadioGroup onChange={setPetValue} value={petValue}>
-                                <Radio
-                                  bgColor={petValue == pets.id ? "green" : "red"}
-                                  value={pets.id as any}
-                                >
-                                  {pets.name}
-                                </Radio>
-                              </RadioGroup>
-                                </Flex>
-                              ))}
-                            </MenuList>
-                          </Menu>
-                        </Td>
-                      </Tr>
+                          {
+                            dataCustomer.map((customer: any) =>  (
+                              <Tr>
+                              <Td>{dataCustomer.name}</Td>
+                              <Td>{dataCustomer.adress}</Td>
+                              <Td>{dataCustomer.phone}</Td>
+                              <Td>{dataCustomer.cpf}</Td>
+                              <Td>{dataCustomer.email}</Td>
+                              <Td>{dataCustomer.birthday}</Td>
+                              <Td>
+                                <Menu>
+                                  <MenuButton
+                                    border="1px"
+                                    as={Button}
+                                    rightIcon={<Burger />}
+                                  >
+                                    <StyledBox>
+                                      <Text>pets</Text>
+                                    </StyledBox>
+                                  </MenuButton>
+                                  <MenuList key={dataCustomer.id} bg="green.100">
+                                    {dataCustomer.pets?.map((pets: any) => (
+                                      <Flex
+                                        key={pets.id}
+                                        direction="column"
+                                        align="center"
+                                        p="2px"
+                                        gap="2"
+                                      >
+                                    <RadioGroup onChange={setPetValue} value={petValue}>
+                                      <Radio
+                                        bgColor={petValue == pets.id ? "green" : "red"}
+                                        value={pets.id as any}
+                                      >
+                                        {pets.name}
+                                      </Radio>
+                                    </RadioGroup>
+                                      </Flex>
+                                    ))}
+                                  </MenuList>
+                                </Menu>
+                              </Td>
+                            </Tr>
+                            ))
+                          }
                     </Tbody>
                   </Table>
                 </Flex>
