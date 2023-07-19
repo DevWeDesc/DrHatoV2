@@ -32,7 +32,7 @@ export function AdminCharts() {
         marketing.Facebook,
         marketing.FachadaHospital,
         marketing.Indicação,
-        marketing.Instragram,
+        marketing.Instagram,
         marketing.ClienteHato,
         marketing.PlacaRua,
         marketing.SiteBusca,

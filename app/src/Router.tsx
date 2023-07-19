@@ -1,17 +1,11 @@
-
-import { useLocation } from "react-router-dom";
-import { AnimatedRoutes } from "./Animated.Routes";
-
-export function Router() {
-  return <AnimatedRoutes />;
-import { Routes, Route, RoutesProps } from "react-router-dom";
+import React from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
 import { AdminCharts } from "./pages/AdminDashboard/charts";
 import { Autorizations } from "./pages/AdminDashboard/autorizations";
 import { AutorizationsEdit } from "./pages/AdminDashboard/autorizationsEdit";
-import { AdminMain } from "./pages/AdminDashboard/";
-import { UsersList } from "./pages/Users";
+import { AdminMain } from "./pages/AdminDashboard";
 import { VetsList } from "./pages/Vets";
 import { MenuVet } from "./pages/Vets/menu";
 import { Admissions } from "./pages/Admissions";
@@ -73,131 +67,145 @@ import { SurgeryCenter } from "./pages/AdminDashboard/surgeryCenter";
 import { Hospitalization } from "./pages/AdminDashboard/hospitalization";
 import { Reports } from "./pages/Reports/index";
 import { AdminSurgery } from "./pages/AdminDashboard/surgeryes";
-import ProtectedRouteMiddleware from "./middleware/ProtectAuthMiddleware";
-
+import { UsersList } from "./pages/Users";
+import { AnimatePresence } from "framer-motion";
 
 export function Router() {
+  const location = useLocation();
   return (
-    <ProtectedRouteMiddleware>
-    <Routes
+    <AnimatePresence>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Login />} />
+        <Route element={<DefaultLayout />}>
+          <Route path="/Home" element={<Home />} />
+          <Route path="/Reports" element={<Reports />} />
 
-    >
+          <Route path="/Queue" element={<QueueSistem />} />
 
-    
-      <Route  path="/Home"  element={<Home />} />
-   
-      <Route path="/" element={<Login />} />
-      <Route element={<DefaultLayout />}>
+          <Route path="/Admin" element={<AdminMain />} />
+          <Route path="/Admin/Vaccines" element={<AdminVaccines />} />
+          <Route path="/Admin/Surgeryes" element={<AdminSurgery />} />
 
-      
-       
-        <Route path="/Reports" element={<Reports />} />
+          <Route path="/Admin/Charts" element={<AdminCharts />} />
+          <Route path="/Admin/Autorizations" element={<Autorizations />} />
+          <Route
+            path="/Admin/Autorizations/:id"
+            element={<AutorizationsEdit />}
+          />
+          <Route path="/Admin/Exams" element={<ExamesList />} />
+          <Route path="/Admin/Exams/:id" element={<ExamsEdit />} />
+          <Route path="/Admin/Exams/Details/:id" element={<ExamDetail />} />
+          <Route path="/Admin/Sectors" element={<SectorsList />} />
+          <Route path="/Admin/Instructions" element={<InstructionsList />} />
+          <Route path="/Admin/Procedures" element={<ProceduresList />} />
+          <Route
+            path="/Admin/Procedures/Create"
+            element={<ProcedureCreate />}
+          />
+          <Route
+            path="/Admin/Procedures/Edit/:id"
+            element={<ProcedureEdit />}
+          />
+          <Route path="/Admin/SurgeryCenter" element={<SurgeryCenter />} />
+          <Route path="/Admin/Hospitalization" element={<Hospitalization />} />
 
-        <Route path="/Queue" element={<QueueSistem />} />
+          <Route path="/Autorizations" element={<GenerateAutorizations />} />
 
-        <Route path="/Admin" element={<AdminMain />} />
-        <Route path="/Admin/Vaccines" element={<AdminVaccines />} />
-        <Route path="/Admin/Surgeryes" element={<AdminSurgery />} />
+          <Route path="/Users" element={<UsersList />} />
+          <Route path="/Users/Create" element={<CreateUser />} />
+          <Route path="/Users/Edit/:id" element={<EditUser />} />
 
-        <Route path="/Admin/Charts" element={<AdminCharts />} />
-        <Route path="/Admin/Autorizations" element={<Autorizations />} />
-        <Route
-          path="/Admin/Autorizations/:id"
-          element={<AutorizationsEdit />}
-        />
-        <Route path="/Admin/Exams" element={<ExamesList />} />
-        <Route path="/Admin/Exams/:id" element={<ExamsEdit />} />
-        <Route path="/Admin/Exams/Details/:id" element={<ExamDetail />} />
-        <Route path="/Admin/Sectors" element={<SectorsList />} />
-        <Route path="/Admin/Instructions" element={<InstructionsList />} />
-        <Route path="/Admin/Procedures" element={<ProceduresList />} />
-        <Route path="/Admin/Procedures/Create" element={<ProcedureCreate />} />
-        <Route path="/Admin/Procedures/Edit/:id" element={<ProcedureEdit />} />
-        <Route path="/Admin/SurgeryCenter" element={<SurgeryCenter />} />
-        <Route path="/Admin/Hospitalization" element={<Hospitalization />} />
+          <Route path="/Vets" element={<VetsList />} />
+          <Route path="/Vets/Menu" element={<MenuVet />} />
+          <Route path="/Vets/Create" element={<CreateVet />} />
+          <Route path="/Vets/WorkSpace/:id" element={<WorkSpaceVet />} />
 
-        <Route path="/Autorizations" element={<GenerateAutorizations />} />
+          {/* VETS WORKSPACE PATHS */}
+          <Route path="/WorkSpace/Exam/:id" element={<VetExams />} />
+          <Route path="/WorkSpace/Procedures/:id" element={<ProceduresVet />} />
+          <Route path="/WorkSpace/Vaccines/:id" element={<Vaccines />} />
+          <Route path="/WorkSpace/Protocols/:id" element={<Protocols />} />
+          <Route
+            path="/WorkSpace/Instructions/:id"
+            element={<VetInstructions />}
+          />
+          <Route
+            path="/WorkSpace/Admissions/:id"
+            element={<VetsAdmissions />}
+          />
+          <Route path="/WorkSpace/Surgeries/:id" element={<VetsSurgeries />} />
 
-        <Route path="/Users" element={<UsersList />} />
-        <Route path="/Users/Create" element={<CreateUser />} />
-        <Route path="/Users/Edit/:id" element={<EditUser />} />
+          {/* VETS WORKSPACE PATHS END */}
 
-        <Route path="/Vets" element={<VetsList />} />
-        <Route path="/Vets/Menu" element={<MenuVet />} />
-        <Route path="/Vets/Create" element={<CreateVet />} />
-        <Route path="/Vets/WorkSpace/:id" element={<WorkSpaceVet />} />
+          <Route path="/Labs" element={<LabMenu />} />
+          <Route path="/Labs/Exames" element={<LabExames />} />
+          <Route path="/Labs/Exames/:id" element={<DataExames />} />
+          <Route path="/Labs/Imagens" element={<LabImagens />} />
+          <Route path="/Labs/Set/:id" element={<SetPetExam />} />
 
-        {/* VETS WORKSPACE PATHS */}
-        <Route path="/WorkSpace/Exam/:id" element={<VetExams />} />
-        <Route path="/WorkSpace/Procedures/:id" element={<ProceduresVet />} />
-        <Route path="/WorkSpace/Vaccines/:id" element={<Vaccines />} />
-        <Route path="/WorkSpace/Protocols/:id" element={<Protocols />} />
-        <Route
-          path="/WorkSpace/Instructions/:id"
-          element={<VetInstructions />}
-        />
-        <Route path="/WorkSpace/Admissions/:id" element={<VetsAdmissions />} />
-        <Route path="/WorkSpace/Surgeries/:id" element={<VetsSurgeries />} />
+          <Route path="/Schedule" element={<Schedules />} />
+          <Route path="/Schedule/Menu" element={<ScheduleMenu />} />
 
-        {/* VETS WORKSPACE PATHS END */}
+          <Route path="/Admissions" element={<Admissions />} />
+          <Route
+            path="/Admissions/Protocols"
+            element={<AdmissionProtocols />}
+          />
+          <Route path="/Admissions/Protocols/:id" element={<EditProtocols />} />
 
-        <Route path="/Labs" element={<LabMenu />} />
-        <Route path="/Labs/Exames" element={<LabExames />} />
-        <Route path="/Labs/Exames/:id" element={<DataExames />} />
-        <Route path="/Labs/Imagens" element={<LabImagens />} />
-        <Route path="/Labs/Set/:id" element={<SetPetExam />} />
+          <Route path="/Admissions/:id" element={<AdmissionDetails />} />
+          <Route
+            path="/Admissions/Procedures/:id"
+            element={<ProceduresAdmisisonPage />}
+          />
+          <Route
+            path="/Admissions/Vaccines/:id"
+            element={<AdmissionsVaccines />}
+          />
+          <Route path="/Admissions/Exams/:id" element={<AdmissionExams />} />
+          <Route
+            path="/Admissions/Surgeries/:id"
+            element={<SurgeriesAdmission />}
+          />
+          <Route path="/Admissions/Beds" element={<ShowBeds />} />
 
-        <Route path="/Schedule" element={<Schedules />} />
-        <Route path="/Schedule/Menu" element={<ScheduleMenu />} />
+          <Route path="/Medicines" element={<Medicines />} />
+          <Route path="/Medicines/Create" element={<CreateMedicine />} />
 
-        <Route path="/Admissions" element={<Admissions />} />
-        <Route path="/Admissions/Protocols" element={<AdmissionProtocols />} />
-        <Route path="/Admissions/Protocols/:id" element={<EditProtocols />} />
+          <Route path="/Recepcao" element={<Reception />} />
+          <Route path="/Recepcao/Consultas" element={<ReceptionConsults />} />
+          <Route path="/Recepcao/Change" element={<ChangeConsult />} />
+          <Route
+            path="/Recepcao/Consultas/Clientes/:id"
+            element={<Customer />}
+          />
+          <Route path="/Recepcao/Consultas/Clientes/Pets" element={<Pets />} />
+          <Route
+            path="/Recepcao/Consultas/Clientes/Pets/Create/:id"
+            element={<CreatePets />}
+          />
+          <Route
+            path="/Recepcao/Consultas/Clientes/Pets/Details/:id"
+            element={<DetailsPets />}
+          />
+          <Route
+            path="/Pets/MedicineRecord/:id"
+            element={<MedicineRecords />}
+          />
+          <Route path="/Recepcao/Create" element={<CreateCustomer />} />
+          <Route
+            path="/Recepcao/Customer/Edit/:id"
+            element={<EditCustomer />}
+          />
+          <Route path="/Recepcao/Finance" element={<Finance />} />
+          <Route path="/Recepcao/" element={<Reception />} />
 
-        <Route path="/Admissions/:id" element={<AdmissionDetails />} />
-        <Route
-          path="/Admissions/Procedures/:id"
-          element={<ProceduresAdmisisonPage />}
-        />
-        <Route
-          path="/Admissions/Vaccines/:id"
-          element={<AdmissionsVaccines />}
-        />
-        <Route path="/Admissions/Exams/:id" element={<AdmissionExams />} />
-        <Route
-          path="/Admissions/Surgeries/:id"
-          element={<SurgeriesAdmission />}
-        />
-        <Route path="/Admissions/Beds" element={<ShowBeds />} />
+          <Route path="/Surgeries/" element={<Surgeries />} />
+          <Route path="/Surgeries/:id" element={<SurgeriesDetails />} />
 
-        <Route path="/Medicines" element={<Medicines />} />
-        <Route path="/Medicines/Create" element={<CreateMedicine />} />
-
-        <Route path="/Recepcao" element={<Reception />} />
-        <Route path="/Recepcao/Consultas" element={<ReceptionConsults />} />
-        <Route path="/Recepcao/Change" element={<ChangeConsult />} />
-        <Route path="/Recepcao/Consultas/Clientes/:id" element={<Customer />} />
-        <Route path="/Recepcao/Consultas/Clientes/Pets" element={<Pets />} />
-        <Route
-          path="/Recepcao/Consultas/Clientes/Pets/Create/:id"
-          element={<CreatePets />}
-        />
-        <Route
-          path="/Recepcao/Consultas/Clientes/Pets/Details/:id"
-          element={<DetailsPets />}
-        />
-        <Route path="/Pets/MedicineRecord/:id" element={<MedicineRecords />} />
-        <Route path="/Recepcao/Create" element={<CreateCustomer />} />
-        <Route path="/Recepcao/Customer/Edit/:id" element={<EditCustomer />} />
-        <Route path="/Recepcao/Finance" element={<Finance />} />
-        <Route path="/Recepcao/" element={<Reception />} />
-
-        <Route path="/Surgeries/" element={<Surgeries />} />
-        <Route path="/Surgeries/:id" element={<SurgeriesDetails />} />
-
-        <Route path="/Customer/Balance/:id" element={<BalanceHistory />} />
-      </Route>
-    </Routes>
-    </ProtectedRouteMiddleware>
+          <Route path="/Customer/Balance/:id" element={<BalanceHistory />} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
   );
 }

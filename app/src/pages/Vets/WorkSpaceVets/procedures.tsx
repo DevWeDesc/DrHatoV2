@@ -10,6 +10,7 @@ import { api } from "../../../lib/axios";
 
 
 interface ProceduresProps {
+  id: number;
   name: string;
   price: number;
 }
@@ -219,7 +220,7 @@ export function ProceduresVet () {
               <Tbody>
                 {
                   procedures.map((procedure) => (
-                    <Tr >
+                    <Tr key={procedure.id} >
                     <Td border="2px">
                       <Checkbox borderColor="black" size="lg" />
                     </Td>
@@ -234,7 +235,7 @@ export function ProceduresVet () {
                 }
               
               </Tbody>
-  </Table>
+             </Table>
              </TableContainer>
          </Flex>
     </Flex>

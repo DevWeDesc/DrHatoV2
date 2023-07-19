@@ -34,17 +34,16 @@ interface Kennels {
 
 
 export function ShowBeds() {
-  const [kennels, setkennels] = useState<Kennels[]>([])
+  const [beds, setBeds] = useState<Kennels[]>([])
 
+  async function GetAllBeds() {
+    const response = await api.get("/admittedpet")
+    setBeds(response.data)
+  }
   useEffect(() => {
-    async function GetKennels() {
-      const response = await api.get("/admittedpet")
-      setkennels(response.data)
-    }
-    GetKennels()
-  },[])
 
-  console.log("CANILS LOADED",kennels)
+    GetAllBeds()
+  },[])
 
 
   return (
@@ -55,7 +54,7 @@ export function ShowBeds() {
             align="flex-start" as={Flex}
             >
               {
-                kennels ? kennels.map((kennel) => (
+                beds ? beds.map((bed) => (
                   <Flex 
                   p="8"
                   bg="gray.100"
@@ -65,12 +64,12 @@ export function ShowBeds() {
     
                   >
                     <Text fontSize="lg" mb="4">
-                     {kennel.name}
+                     {bed.name}
                     </Text>
                     <Flex justify="center" wrap="wrap" gap={2}>
 
-                      {kennel.beds.map((bed) => (
-                        <Flex direction="column" align="center" p="2">
+                      {bed.beds.map((bed) => (
+                        <Flex  _hover={{bgColor: "cyan.100"}} borderColor="black" border="2px" rounded={8} direction="column" align="center" p="4">
 
                             <Flex direction="column" align="center" gap={4}>
                             <Text>{bed.petName ? bed.petName : "Vazio"}</Text>
@@ -78,7 +77,7 @@ export function ShowBeds() {
                             </Flex>
 
                       
-                    {bed.busy === true ? (  <MdOutlineBedroomChild color='red' size={44}/>) : (  <MdOutlineBedroomChild color='green' size={44}/>)}
+                    {bed.busy === true ? (  <MdOutlineBedroomChild  color='red' size={44}/>) : (  <MdOutlineBedroomChild color='green' size={44}/>)}
                     </Flex>
                       ))}
                             

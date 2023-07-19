@@ -20,9 +20,12 @@ import Cookies from 'js-cookie'
 
 export function Header() {
   const navigate = useNavigate()
-  const {loggedInUser } = useContext(DbContext)
+
+  const user = JSON.parse(localStorage.getItem('user') as string)
+
   const logOut = () => {
     Cookies.remove('token')
+    localStorage.removeItem('user')
     navigate('/')
   }
   return (
@@ -37,7 +40,7 @@ export function Header() {
         <Flex direction="column">
           <Menu>
             <MenuButton as={Button} rightIcon={<ArrowDown />}>
-                {loggedInUser.username}
+                {user.username}
             </MenuButton>
             <MenuList>
               <Flex direction="column" gap="2">

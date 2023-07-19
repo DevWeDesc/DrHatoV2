@@ -3,30 +3,57 @@ import {
   Flex,
   Text,
   Button,
-  Box,
-  Card,
-  CardBody,
   Image,
-  Stack,
-  Heading,
-  Divider,
-  CardFooter,
-  ButtonGroup,
   Checkbox,
   HStack,
+  SimpleGrid,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiHome } from "react-icons/bi";
+import { MdOutlineBedroomChild } from "react-icons/md";
 import { TbArrowBack } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import logo from "../../../assets/logoPadronizada.png";
 import petlove from "../../../assets/petlove.svg";
-import { ShowBeds } from "../../Admissions/beds";
+import { api } from "../../../lib/axios";
+
+
+
+interface KennelsProps {
+  id: number
+  name: string;
+  description: string
+  price: number | string
+}
+
+type beds = {
+  id: number,
+  busy: boolean,
+  fasting: boolean,
+  petName?: string
+ }
+ interface Kennels {
+   name: string
+   beds: beds[]
+   totalOcupedBeds: number
+ }
 
 export function VetsAdmissions() {
   const { id } = useParams<{ id: string }>();
+  const [kennelId, setKennelId] = useState(0)
+  const [bedId, setBedId] = useState(0)
+  const [fasting, setFasting] = useState(false)
   const [steps, setSteps] = useState(1);
+  const [area, setArea] = useState("")
   const navigate = useNavigate();
+  const [kennels, setKennels] = useState<KennelsProps[]>([])
+  const [beds, setBeds] = useState<Kennels[]>([])
+
+  async function GetAllBeds() {
+    const response = await api.get("/admittedpet")
+    setBeds(response.data)
+  }
 
   const nextStep = () => {
     setSteps(steps + 1);
@@ -34,13 +61,59 @@ export function VetsAdmissions() {
       prevStep()
     }
   };
-
   const prevStep = () => {
     setSteps(steps - 1);
     if(steps < 1) {
       nextStep()
     }
   };
+
+  async function getKennesl() {
+    try {
+    const response = await api.get("/admissions")
+    setKennels(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleNextSteps = (kennelId: number, bedId: number, area: string) => {
+    setKennelId(kennelId)
+    setArea(area)
+    setBedId(bedId)
+    nextStep()
+  }
+
+  useEffect(() => {
+    getKennesl()
+  }
+  ,[])
+
+  useEffect(() => {
+
+    GetAllBeds()
+  },[])
+
+
+  const handleAdmittPet = async () => {
+    const data = {
+      petId: Number(id),
+      kennelId,
+      bedId,
+      isBusy: true,
+      mustFasting: fasting
+    }
+    try {
+
+      await api.put("admitpet", data)
+      toast.success("Animal internado!")
+      navigate(`/Vets/Workspace/${id}`)
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+      toast.error("Falha ao internar animal!")
+    }
+  }
 
   let step;
   switch (true) {
@@ -64,46 +137,26 @@ export function VetsAdmissions() {
               <Text fontWeight="bold">SELECIONE UMA ÁREA PARA INTERNAÇÃO</Text>
             </Flex>
             <Flex width="100%" height="100%" justify="center" align="center" gap="8">
-              <Flex justify="center"  align="center" direction="column"   width="400px" height="400px"  boxShadow="rgba(0, 0, 0, 0.35) 0px 5px 15px" > 
         
-              <Image width={220} height={140} src={logo} />
-                <Flex justify="center" width="100%" height="100%">
-                  <Flex direction="column" justify="center" >
-                  <Text fontWeight="bold" fontSize="lg">INTERNAÇÃO 24 HORAS</Text>
-                  <Text>PLANO PADRÃO DA INTERNAÇÃO 24HRS</Text>
-                  <Text fontWeight="bold" fontSize="lg" color="green.400"  >R$ 440</Text>
-                  <Button mt="4" colorScheme="whatsapp" >SELECIONAR</Button>
+            {
+              kennels.map(( kennel) => (
+                <Flex key={kennel.id} justify="center"  align="center" direction="column"   width="400px" height="400px"  boxShadow="rgba(0, 0, 0, 0.35) 0px 5px 15px" > 
+                {
+                  kennel.name.includes("PetLove") ? <Image width={220} height={140} src={petlove} /> : <Image width={220} height={140} src={logo} /> 
+                }
+                
+                  <Flex justify="center" width="100%" height="100%">
+                    <Flex direction="column" justify="center" >
+                    <Text fontWeight="bold" fontSize="lg">{kennel.name.toUpperCase()}</Text>
+                    <Text>{kennel.description}</Text>
+                    <Text fontWeight="bold" fontSize="lg" color="green.400"  >R$ {kennel.price}</Text>
+                    <Button mt="4" colorScheme="whatsapp" onClick={() => handleNextSteps(kennel.id, bedId, kennel.name)} >SELECIONAR</Button>
+                    </Flex>
+                   
                   </Flex>
-                 
                 </Flex>
-              </Flex>
-              <Flex justify="center"  align="center" direction="column"   width="400px" height="400px"  boxShadow="rgba(0, 0, 0, 0.35) 0px 5px 15px" > 
-        
-        <Image width={220} height={140} src={logo} />
-          <Flex justify="center" width="100%" height="100%">
-            <Flex direction="column" justify="center" >
-            <Text fontWeight="bold" fontSize="lg">PLANO CASTRAÇÃO</Text>
-            <Text>PLANO PADRÃO DA CASTRAÇÃO</Text>
-            <Text fontWeight="bold" fontSize="lg" color="green.400"  >R$ 00</Text>
-            <Button mt="4" colorScheme="whatsapp" >SELECIONAR</Button>
-            </Flex>
-           
-          </Flex>
-        </Flex>
-
-        <Flex justify="center"  align="center" direction="column"   width="400px" height="400px"  boxShadow="rgba(0, 0, 0, 0.35) 0px 5px 15px" > 
-        
-        <Image width={220} height={140} src={petlove} />
-          <Flex justify="center" width="100%" height="100%">
-            <Flex direction="column" justify="center" >
-            <Text fontWeight="bold" fontSize="lg">PLANO PETLOVE</Text>
-            <Text>PLANO PADRÃO DA PETLOVE</Text>
-            <Text fontWeight="bold" fontSize="lg" color="green.400"  >R$0</Text>
-            <Button mt="4" colorScheme="whatsapp" >SELECIONAR</Button>
-            </Flex>
-           
-          </Flex>
-        </Flex>
+              ))
+            }
       
             </Flex>
           </Flex>
@@ -129,7 +182,48 @@ export function VetsAdmissions() {
             >
               <Text fontWeight="bold">SELECIONE O LEITO</Text>
             </Flex>
-                  <ShowBeds />
+            <SimpleGrid 
+            flex="1"
+            gap="4"
+            minChildWidth="320px"
+            align="flex-start" as={Flex}
+            >
+              {
+                beds ? beds.map((bed) => (
+                  <Flex 
+                  p="8"
+                  bg="gray.100"
+                  borderRadius={8}
+                 direction="column"
+                 align="center"
+    
+                  >
+                    <Text fontSize="lg" mb="4">
+                     {bed.name}
+                    </Text>
+                    <Flex justify="center" wrap="wrap" gap={2}>
+
+                      {bed.beds.map((bed) => (
+                        
+                        <Flex key={bed.id} as="button" disabled={bed.busy} onClick={() => handleNextSteps(kennelId, bed.id, area)}  _hover={{bgColor: "cyan.100"}} borderColor="black" border="2px" rounded={8} direction="column" align="center" p="4">
+                          
+                        <Flex direction="column" align="center" gap={4}>
+                        <Text>{bed.petName ? bed.petName : "Vazio"}</Text>
+                        <Text>Leito Nº {bed.id}</Text>
+                        </Flex>
+
+                  
+                {bed.busy === true ? (  <MdOutlineBedroomChild  color='red' size={44}/>) : (  <MdOutlineBedroomChild color='green' size={44}/>)}
+                </Flex>
+                      ))}
+                            
+                      
+                      </Flex>
+                  </Flex>
+                )) : ("Sem internações no momento!")
+              }
+              
+            </SimpleGrid>
         </Flex>
 
       )
@@ -141,17 +235,17 @@ export function VetsAdmissions() {
           <Flex rounded={18} direction="column"  width="500px" height="300px" align="center" justify="center" gap={4} bgColor="gray.200" p="4">
             <HStack>
             <Flex gap="4" direction="column" height="100%" justify="center" >
-            <Text fontWeight="bold" >PLANO SELECIONADO:</Text>
+            <Text fontWeight="bold" >ÁREA SELECIONADA:</Text>
             <Text fontWeight="bold" >LEITO SELECIONADO:</Text>
             <Text fontWeight="bold" >PRECISA DE JEJUM?:</Text>
             </Flex>
             <Flex gap="4" direction="column" height="100%" justify="center" >
-              <Text textAlign="center" width="180px" fontWeight="black" bgColor="white" rounded={8}>INTERNAÇÃO 24HRS</Text>
-              <Text textAlign="center" width="180px" fontWeight="black" bgColor="white" rounded={8}>5</Text>
-              <Checkbox size="lg" borderColor="black" />
-            </Flex>
+              <Text textAlign="center" width="180px" fontWeight="black" bgColor="white" rounded={8}>{area}</Text>
+              <Text textAlign="center" width="180px" fontWeight="black" bgColor="white" rounded={8}>{bedId}</Text>
+              <Checkbox onChange={(ev) => ev.target.checked === true ? setFasting(true) : setFasting(false) } size="lg" borderColor="black" />
+            </Flex> 
             </HStack>
-              <Button colorScheme="teal" width="250px" >CONFIRMAR</Button>
+              <Button onClick={handleAdmittPet} colorScheme="teal" width="250px" >CONFIRMAR</Button>
 
         
           </Flex>

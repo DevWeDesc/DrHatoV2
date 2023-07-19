@@ -15,7 +15,7 @@ export function DbContextProvider ({children}: DbContextProps) {
   const [dbLoaded, setDbLoaded] = useState(false)
   const [generateAut, setGenerateAut] = useState<AutPDFProps>({})
   const [dataCustomer, setDataCustomer] = useState({})
-  const [dataPet, setDataPet] = useState({})
+  const [dataPet, setDataPet] = useState([])
   const [customer, setCustomers] = useState([])
   const [labData, setLabData] = useState([])
   const [exams, setExams] = useState<ExamsData[]>([])
@@ -25,14 +25,8 @@ export function DbContextProvider ({children}: DbContextProps) {
   const [instructions, setIntructions] = useState<InstructionsData[]>([])
   const [vets, SetVetsList] = useState<VetData[]>([])
   const [refresh, setRefresh] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState({
-    email: "",
-    username: ""
-  })
 
 
-
-  
   useEffect(() => {
     async function GetAllDataInDB() {
       const getAutorizations = async () => {
@@ -128,7 +122,7 @@ export function DbContextProvider ({children}: DbContextProps) {
         setLabData,
         customer,
         setCustomers,
-        vets, loggedInUser, setLoggedInUser
+        vets
       }}>
           {children}
       </DbContext.Provider>

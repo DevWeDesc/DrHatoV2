@@ -58,8 +58,6 @@ export function MenuVet() {
     getQueue();
   }, [inQueue.length]);
 
-  console.log(petTotal);
-
   //console.log(totalInQueue);
 
   const handleNavigateWorkSpace = () => {
@@ -73,7 +71,7 @@ export function MenuVet() {
 
   let typeTable: ReactNode;
   switch (true) {
-    case Object.keys(dataCustomer).length >= 1:
+    case dataCustomer.length >= 1:
       typeTable = (
         <Table colorScheme="blackAlpha">
           <Thead>
@@ -148,57 +146,97 @@ export function MenuVet() {
         </Table>
       );
       break;
-    case Object.keys(totalInQueue).length >= 1:
+    case dataPet.length >= 1:
       typeTable = (
-        <>
-          <Table colorScheme="blackAlpha">
-            <Thead>
-              <Tr>
-                <Th>CPF</Th>
-                <Th>Cliente</Th>
-                <Th>Animal</Th>
-                <Th>Código</Th>
-                <Th>Data</Th>
-                <Th>Hora</Th>
-                <Th>Preferência</Th>
-                <Th>Especialidade</Th>
-              </Tr>
-            </Thead>
+      <Table colorScheme="blackAlpha">
+      <Thead>
+        <Tr>
+          <Th>Nome</Th>
+    
+          <Th>Código</Th>
+          <Th>Nascimento</Th>
+          <Th>Preferência</Th>
+          <Th>Especialidade</Th>
+        </Tr>
+      </Thead>
 
-            <Tbody>
-              {petTotal.map((pet: any) => (
-                <Tr
-                  key={pet.id}
-                  cursor="pointer"
-                  onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
-                >
+      <Tbody>
+      {
+                dataPet.map((pet: any) => (
+                  <Tr key={pet.id}>
+
+                  
+                  <Td><Button colorScheme="whatsapp" onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}>{pet.name}</Button></Td>
+                  
+                 
                   <Td>
-                    <Text colorScheme="whatsapp">{pet.customerCpf}</Text>
+                    {pet.codPet}
                   </Td>
+                 
+                  <Td>{pet.bornDate}</Td>
+              
+                  <Td>{pet.vetPreference ? pet.vetPreference : "Sem Preferência"}</Td>
+                  <Td>0</Td>
+                </Tr>
+                ))
+                 }
 
-                  <Td>{pet.customerName}</Td>
 
-                  <Td
+      </Tbody>
+    </Table>
+      )        
+        break;
+       default: 
+       typeTable = (
+          <>
+            <Table colorScheme="blackAlpha">
+              <Thead>
+                <Tr>
+                  <Th>CPF</Th>
+                  <Th>Cliente</Th>
+                  <Th>Animal</Th>
+                  <Th>Código</Th>
+                  <Th>Data</Th>
+                  <Th>Hora</Th>
+                  <Th>Preferência</Th>
+                  <Th>Especialidade</Th>
+                </Tr>
+              </Thead>
+  
+              <Tbody>
+                {petTotal.map((pet: any) => (
+                  <Tr
+                    key={pet.id}
                     cursor="pointer"
                     onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
                   >
-                    {pet.name}
-                  </Td>
-                  <Td>{pet.codPet}</Td>
-                  <Td>{pet.queueEntry}</Td>
-                  <Td>{pet.ouor}</Td>
-                  <Td>
-                    {pet.vetPreference ? pet.vetPreference : "Sem Preferência"}
-                  </Td>
-                  <Td>0</Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        </>
-      );
+                    <Td>
+                      <Text colorScheme="whatsapp">{pet.customerCpf}</Text>
+                    </Td>
+  
+                    <Td>{pet.customerName}</Td>
+  
+                    <Td
+                      cursor="pointer"
+                      onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
+                    >
+                      {pet.name}
+                    </Td>
+                    <Td>{pet.codPet}</Td>
+                    <Td>{pet.queueEntry}</Td>
+                    <Td>{pet.ouor}</Td>
+                    <Td>
+                      {pet.vetPreference ? pet.vetPreference : "Sem Preferência"}
+                    </Td>
+                    <Td>0</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </>
+        );
+        break;
 
-      break;
   }
   return (
     <motion.div
@@ -220,7 +258,7 @@ export function MenuVet() {
               </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <Flex mb="8" gap="8" direction="column" align="center">
-                  <VetsSearch path="vetsearch" />
+                  <VetsSearch path="filtredquery" />
                   <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
                     <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
                   </Button>

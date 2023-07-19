@@ -411,9 +411,9 @@ export function Customer() {
                           mb="2"
                           borderColor="teal.800"
                           colorScheme="green"
-                          value={vet.name.toString()}
+                          value={vet.username.toString()}
                         >
-                          {vet.name}
+                          {vet.username}
                         </Radio>
                       </Flex>
                     </RadioGroup>
