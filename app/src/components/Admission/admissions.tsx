@@ -88,7 +88,7 @@ export function SearchAdmission() {
                   <Table colorScheme="blackAlpha">
                     <Thead>
                       <Tr>
-                        <Th>Proprietario</Th>
+                        <Th>Proprietário</Th>
                         <Th>Animal</Th>
                         <Th>Espécie</Th>
                         <Th>Raça</Th>

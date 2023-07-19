@@ -1,11 +1,10 @@
-import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
 import { AdminCharts } from "./pages/AdminDashboard/charts";
 import { Autorizations } from "./pages/AdminDashboard/autorizations";
 import { AutorizationsEdit } from "./pages/AdminDashboard/autorizationsEdit";
-import { AdminMain } from "./pages/AdminDashboard";
+import { AdminMain } from "./pages/AdminDashboard/";
 import { VetsList } from "./pages/Vets";
 import { MenuVet } from "./pages/Vets/menu";
 import { Admissions } from "./pages/Admissions";
@@ -69,8 +68,9 @@ import { Reports } from "./pages/Reports/index";
 import { AdminSurgery } from "./pages/AdminDashboard/surgeryes";
 import { UsersList } from "./pages/Users";
 import { AnimatePresence } from "framer-motion";
+import { QueueLabs } from "./queue/Labs";
 
-export function Router() {
+export function AnimatedRoutes() {
   const location = useLocation();
   return (
     <AnimatePresence>
@@ -81,6 +81,7 @@ export function Router() {
           <Route path="/Reports" element={<Reports />} />
 
           <Route path="/Queue" element={<QueueSistem />} />
+          <Route path="/Queue/Labs" element={<QueueLabs />} />
 
           <Route path="/Admin" element={<AdminMain />} />
           <Route path="/Admin/Vaccines" element={<AdminVaccines />} />

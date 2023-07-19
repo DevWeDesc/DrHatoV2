@@ -7,7 +7,8 @@ import {
   Thead,
   Tbody,
   Tr,
-  Th, Button
+  Th,
+  Button,
 } from "@chakra-ui/react";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -81,10 +82,10 @@ export function ExamDetail() {
                     <Tr>
                       <Th>Nome</Th>
                       <Th>Preço</Th>
-                      <Th>Disponivel?</Th>
+                      <Th>Disponível</Th>
                       <Th>Laboratórios</Th>
                       <Th>Aplicavel á</Th>
-                      <Th>Idade minima e Maxima</Th>
+                      <Th>Idade mínima e Máxima</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -113,7 +114,7 @@ export function ExamDetail() {
                 <Table colorScheme="blackAlpha">
                   <Thead>
                     <Tr>
-                      <Th>Titulo</Th>
+                      <Th>Título</Th>
                       <Th>Valor padrão</Th>
                     </Tr>
                   </Thead>

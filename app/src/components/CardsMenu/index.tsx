@@ -13,7 +13,7 @@ import {
   GiScalpel,
 } from "react-icons/all";
 export function CardsMenu() {
-  const userPermissions = 'admin'
+  const userPermissions = "admin";
   let menu;
   switch (true) {
     case userPermissions.includes("admin"):
@@ -57,7 +57,7 @@ export function CardsMenu() {
             icon={<GiNurseFemale fill="#c9537e" size={36} />}
           />
           <CardNavigation
-            path="/Schedule/Menu"
+            //path="/Schedule/Menu"
             title="Agendas"
             text="Ver exames"
             icon={<AiFillSchedule fill="#6ac574" size={36} />}
@@ -104,7 +104,7 @@ export function CardsMenu() {
             icon={<GiNurseFemale fill="#c9537e" size={36} />}
           />
           <CardNavigation
-            path="/Schedule/Menu"
+            //path="/Schedule/Menu"
             title="Agendas"
             text="Ver exames"
             icon={<AiFillSchedule fill="#6ac574" size={36} />}
@@ -139,13 +139,13 @@ export function CardsMenu() {
             icon={<GiNurseFemale fill="#c9537e" size={36} />}
           />
           <CardNavigation
-            path="/Schedule/Menu"
+            //path="/Schedule/Menu"
             title="Agendas"
             text="Ver exames"
             icon={<AiFillSchedule fill="#6ac574" size={36} />}
           />
           <CardNavigation
-            title="Mensagens"
+            //title="Mensagens"
             text="Ver mensagens"
             icon={<BsBellFill fill="#FF7200" size={36} />}
           />

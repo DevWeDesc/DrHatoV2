@@ -115,7 +115,7 @@ export function SurgeryCenter() {
                   align="center"
                 >
                   <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                    Centro Cirurgico
+                    Centro Cirúrgico
                   </Heading>
 
                   <Button
@@ -165,7 +165,7 @@ export function SurgeryCenter() {
                             leftIcon={<Icon as={RiPencilLine} />}
                             onClick={() => openModalTwo()}
                           >
-                            Editar Centro Cirurgico
+                            Editar Centro Cirúrgico
                           </Button>
                           <Button
                             as="a"
@@ -175,7 +175,7 @@ export function SurgeryCenter() {
                             leftIcon={<Icon as={RiPencilLine} />}
                             onClick={() => handleDeleteSector("")}
                           >
-                            Deletar Centro Cirurgico
+                            Deletar Centro Cirúrgico
                           </Button>
                         </Flex>
                       </Td>
@@ -197,7 +197,7 @@ export function SurgeryCenter() {
                     <Input
                       {...register("name")}
                       name="name"
-                      label="Nome do Centro cirurgico"
+                      label="Nome do Centro cirúrgico"
                       mb="4"
                     />
 
@@ -225,24 +225,24 @@ export function SurgeryCenter() {
                     flexDir="column"
                     alignItems="center"
                   >
-                    <Text pb="15">Editar Centro cirurgico</Text>
+                    <Text pb="15">Editar Centro cirúrgico</Text>
                     <Input
                       {...register("id")}
                       name="id"
-                      label="Id do Centro cirurgico"
+                      label="Id do Centro cirúrgico"
                       mb="4"
                     />
                     <Input
                       {...register("name")}
                       name="name"
-                      label="Nome do Centro cirurgico"
+                      label="Nome do Centro cirúrgico"
                       mb="4"
                     />
 
                     <Input
                       {...register("id")}
                       name="id"
-                      label="Slots do Centro cirurgico"
+                      label="Slots do Centro cirúrgico"
                       mb="4"
                     />
 
@@ -251,8 +251,6 @@ export function SurgeryCenter() {
                     </Button>
                   </FormControl>
                 </GenericModal>
-
-                <Paginaton />
               </Box>
             </Flex>
           </Flex>

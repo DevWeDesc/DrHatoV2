@@ -397,7 +397,7 @@ export function Customer() {
               >
                 <Flex direction="column" overflow="auto" height="100%">
                   <Text mt="4" fontWeight="bold" pb="2">
-                    SELECIONAR VETERINARIO
+                    SELECIONAR VETERINÁRIO
                   </Text>
 
                   {vets.map((vet) => (

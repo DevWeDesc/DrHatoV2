@@ -130,14 +130,13 @@ export function Hospitalization() {
           <Flex direction="column" h="100vh">
             <Header title="Leitos internação" />
 
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6" maxH="85vh">
               <Sidebar />
               <Box
                 flex="1"
                 borderRadius={8}
                 bg="gray.200"
                 p="8"
-                h="85vh"
                 overflow="auto"
               >
                 <Flex

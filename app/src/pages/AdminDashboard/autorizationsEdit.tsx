@@ -96,14 +96,15 @@ export function AutorizationsEdit() {
                           <Text
                             bg="white"
                             pl="1"
-                            pr="20%"
+                            pr="10%"
                             borderRadius="5"
                             textAlign="left"
                             ml="2"
                             border="1px solid black"
-                            height="40px"
+                            minH="40px"
                             display="flex"
                             alignItems="center"
+                            py="2"
                           >
                             {autorizations?.name}
                           </Text>
@@ -118,14 +119,14 @@ export function AutorizationsEdit() {
                           <Text
                             bg="white"
                             pl="1"
-                            pr="50%"
                             borderRadius="5"
                             textAlign="left"
                             ml="2"
                             border="1px solid black"
-                            height="40px"
+                            height="auto"
                             display="flex"
                             alignItems="center"
+                            py="2"
                           >
                             {autorizations?.text}
                           </Text>
