@@ -69,6 +69,15 @@ import { AdminSurgery } from "./pages/AdminDashboard/surgeryes";
 import { UsersList } from "./pages/Users";
 import { AnimatePresence } from "framer-motion";
 import { QueueLabs } from "./queue/Labs";
+import ReportsComission from "./pages/Reports/comissions";
+import ReportsCashFlow from "./pages/Reports/cashflow";
+import { CustomerReports } from "./pages/Reports/customerReports";
+import ReportProductionVet from "./pages/Reports/vetProduction";
+import { SpecialtiesReports } from "./pages/Reports/specialties";
+import ReportsExams from "./pages/Reports/exams";
+import ReportSurgeriesCompleted from "./pages/Reports/surgeriesCompleted";
+import ReportsExamsForVets from "./pages/Reports/examsforVet";
+import { ReportsExamsExtern } from "./pages/Reports/examsExterns";
 
 export function AnimatedRoutes() {
   const location = useLocation();
@@ -79,6 +88,24 @@ export function AnimatedRoutes() {
         <Route element={<DefaultLayout />}>
           <Route path="/Home" element={<Home />} />
           <Route path="/Reports" element={<Reports />} />
+          <Route path="/Reports/Comission" element={<ReportsComission />} />
+          <Route path="/Reports/Cashflow" element={<ReportsCashFlow />} />
+          <Route
+            path="/Reports/CustomerReports"
+            element={<CustomerReports />}
+          />
+          <Route
+            path="/Reports/ProductionVet"
+            element={<ReportProductionVet />}
+          />
+          <Route path="/Reports/Specialties" element={<SpecialtiesReports />} />
+          <Route path="/Reports/Exams" element={<ReportsExams />} />
+          <Route
+            path="/Reports/SurgeriesCompleted"
+            element={<ReportSurgeriesCompleted />}
+          />
+          <Route path="/Reports/ExamsVet" element={<ReportsExamsForVets />} />
+          <Route path="/Reports/ExamsExtern" element={<ReportsExamsExtern />} />
 
           <Route path="/Queue" element={<QueueSistem />} />
           <Route path="/Queue/Labs" element={<QueueLabs />} />

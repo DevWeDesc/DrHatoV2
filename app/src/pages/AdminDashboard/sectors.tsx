@@ -123,7 +123,7 @@ export function SectorsList() {
           <Flex direction="column" h="100vh">
             <Header title="Setores e Grupos" />
 
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+            <Flex w="100%" my="6" maxWidth={1580} mx="auto" px="6">
               <Sidebar />
               <Box
                 flex="1"
@@ -131,16 +131,16 @@ export function SectorsList() {
                 bg="gray.200"
                 p="8"
                 maxH="44rem"
-                overflowY="auto"
-                overflowX="none"
                 w="100%"
               >
-                <Flex w="100%" alignItems="center" overflowX="none">
+                <Flex w="100%" justifyContent="space-between">
                   <Flex
                     direction="column"
                     w="48%"
                     borderRight="1px solid black"
                     pr="1"
+                    maxH="40rem"
+                    overflowY="auto"
                   >
                     <Flex
                       mb="8"
@@ -224,7 +224,13 @@ export function SectorsList() {
                       </Tbody>
                     </Table>
                   </Flex>
-                  <Flex w="48%" direction="column" pl="1">
+                  <Flex
+                    w="52%"
+                    direction="column"
+                    pl="1"
+                    maxH="40rem"
+                    overflowY="auto"
+                  >
                     <Flex
                       mb="8"
                       justify="space-between"

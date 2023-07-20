@@ -109,6 +109,7 @@ export function ProceduresList() {
                       <Th fontSize="18" borderColor="black">
                         Grupo
                       </Th>
+                      <Th borderColor="black"></Th>
                     </Tr>
                     <Tr></Tr>
                   </Thead>
@@ -132,7 +133,7 @@ export function ProceduresList() {
                           <Td borderColor="black">{proceds.sector.name}</Td>
                           <Td borderColor="black">{proceds.groups.name}</Td>
 
-                          <Td borderColor="black">
+                          <Td borderColor="black" display="flex" gap="2" py="5">
                             <Link to={`/Admin/Procedures/Edit/${proceds.id}`}>
                               <Button
                                 as="a"
@@ -144,8 +145,7 @@ export function ProceduresList() {
                                 Editar Procedimento
                               </Button>
                             </Link>
-                          </Td>
-                          <Td>
+
                             <Button
                               as="a"
                               size="sm"
