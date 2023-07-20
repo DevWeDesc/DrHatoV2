@@ -5,7 +5,7 @@ import { TbArrowBack } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Input } from "../../../components/admin/Input";
-import { ExamsData, ExamsProps, PetDetaisl } from "../../../interfaces";
+import { ExamsProps, PetDetaisl } from "../../../interfaces";
 import { api } from "../../../lib/axios";
 
 
@@ -36,7 +36,6 @@ export function VetExams () {
       toast.error("Falha ao cadastrar exame!")
     }
   }
-
 
   async function deleteExam (examId: string | number) {
     try {

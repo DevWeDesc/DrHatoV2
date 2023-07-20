@@ -93,13 +93,14 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
 editUser: async (request: FastifyRequest, reply: FastifyReply) => {
   const{ id}: any = request.params
   const {email, username, password,userIsVet } = UserSchema.parse(request.body) 
+  const hashedPassword = await bcrypt.hash(password, 10)
   try {
      await prisma.user.update({
         where: { id: parseInt(id) },
         data: {  
            email: email,
            username: username,
-           password: password,
+           password: hashedPassword,
            userIsVet: userIsVet
         }
      })

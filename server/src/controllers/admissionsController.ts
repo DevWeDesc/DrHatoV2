@@ -13,7 +13,7 @@ type params = {
 
 export const admissionsController = {
   createKennel: async (request: FastifyRequest, reply: FastifyReply) => {
-    const { name, totalBeds} = AdmissionSchema.parse(request.body) 
+    const { name, totalBeds, price, description} = AdmissionSchema.parse(request.body) 
     try {
       const allBeds = []
        for (let index = 0; index < totalBeds; index++) {
@@ -22,7 +22,7 @@ export const admissionsController = {
         })
       }
       await prisma.kennel.create({
-        data: { name, totalBeds, beds: {
+        data: { name, totalBeds, description, price, beds: {
           createMany: {
             data: allBeds
           }
@@ -77,7 +77,7 @@ export const admissionsController = {
         where: {id: kennelId}, 
         data: {
           beds: {update: {where: {id: bedId}, 
-          data: {isBusy: isBusy, mustFasting: mustFasting, pet: {connect: {id: petId}}}}}}
+          data: {isBusy: isBusy, mustFasting, pet: {connect: {id: petId}}}}}}
       },)
     } catch (error) {
       reply.status(400).send({message: error})

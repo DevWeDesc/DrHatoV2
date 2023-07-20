@@ -148,7 +148,7 @@ const path = useLocation()
                       <RadioGroup key={vet.id} onChange={setVetPreference} value={vetPreference}>
                         <Flex direction="column">
 
-                          <Radio mb="2" borderColor="teal.800" colorScheme="green" value={vet.name.toString()}>{vet.name}</Radio>
+                          <Radio mb="2" borderColor="teal.800" colorScheme="green" value={vet.username.toString()}>{vet.username}</Radio>
 
                         </Flex>
 

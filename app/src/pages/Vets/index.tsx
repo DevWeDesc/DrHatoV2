@@ -94,7 +94,7 @@ export function VetsList() {
                               fontSize="16"
                               color="gray.800"
                             >
-                              {vet.name}
+                              {vet.username}
                             </Text>
                           </Td>
                           <Td borderColor="black">

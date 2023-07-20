@@ -71,6 +71,8 @@ export const VaccineSchema = z.object({
 export const AdmissionSchema = z.object({
   name: z.string(),
   totalBeds: z.number(),
+  price: z.number().optional(),
+  description: z.string().optional()
 })
 
 export const BedSchema = z.object({

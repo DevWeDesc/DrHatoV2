@@ -16,6 +16,8 @@ import {
   HStack,
   CheckboxGroup,
   Checkbox,
+  Textarea,
+  FormLabel,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -39,7 +41,6 @@ export function Hospitalization() {
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
   const [beds, setBeds] = useState<any>([]);
   const [reloadData, setReloadData] = useState<boolean>(false);
-  const navigate = useNavigate();
 
   function openModal() {
     setIsModalOpen(true);
@@ -60,6 +61,8 @@ export function Hospitalization() {
       const data = {
         name: values.name,
         totalBeds: parseInt(values.totalBeds),
+        description: values.description,
+        price: Number(values.price)
       };
       await api.post("/admissions", data);
       setReloadData(true);
@@ -163,11 +166,14 @@ export function Hospitalization() {
                 <Table colorScheme="blackAlpha">
                   <Thead>
                     <Tr>
-                      <Th fontSize="18" borderColor="black">
+                      <Th fontSize="18" borderColor="black" width="20%">
                         Nome
                       </Th>
-                      <Th fontSize="18" borderColor="black">
+                      <Th fontSize="18" borderColor="black" >
                         Quantidade de Camas
+                      </Th>
+                      <Th fontSize="18" borderColor="black" >
+                       Preço diária
                       </Th>
                       <Th borderColor="black"></Th>
                     </Tr>
@@ -183,12 +189,13 @@ export function Hospitalization() {
                             </Text>
                           </Td>
                           <Td borderColor="black">{bed.totalBeds}</Td>
-
+                            <Td borderColor="black" >{bed.price}</Td>
                           <Td borderColor="black">
                             <Flex gap="2" ml="40%">
                               <Button
-                                as="a"
-                                size="md"
+                                  alignItems="center"
+                                  size="md"
+                                  width={220}
                                 fontSize="md"
                                 colorScheme="yellow"
                                 leftIcon={<Icon as={RiPencilLine} />}
@@ -197,8 +204,9 @@ export function Hospitalization() {
                                 Editar Leito
                               </Button>
                               <Button
-                                as="a"
+                                alignItems="center"
                                 size="md"
+                                width={220}
                                 fontSize="md"
                                 colorScheme="red"
                                 leftIcon={<Icon as={RiPencilLine} />}
@@ -229,6 +237,7 @@ export function Hospitalization() {
                       label="Nome do leito"
                       mb="4"
                     />
+                    <Input type="number" {...register("price")} name="price" label="Preço da Diária" />
 
                     <Input
                       {...register("totalBeds")}
@@ -237,8 +246,11 @@ export function Hospitalization() {
                       type="number"
                       mb="4"
                     />
+                    
+                    <FormLabel htmlFor="description">Descrição ou Observação do leito: </FormLabel>
+                    <Textarea {...register("description")} name="description" />
 
-                    <Button w="100%" type="submit" colorScheme="green" m="2">
+                    <Button w="100%" type="submit" colorScheme="green" m="4">
                       Cadastrar
                     </Button>
                   </FormControl>

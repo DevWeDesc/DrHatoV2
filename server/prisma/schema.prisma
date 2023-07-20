@@ -180,7 +180,9 @@ model Queues {
 model Kennel {
   id        Int     @id @default(autoincrement())
   name      String?
-  totalBeds Int
+  totalBeds Int?
+  description String?
+  price Decimal?
   beds      Bed[]
 }
 

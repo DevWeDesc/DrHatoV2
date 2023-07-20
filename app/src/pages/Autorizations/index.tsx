@@ -50,10 +50,12 @@ export function GenerateAutorizations() {
   pdfMake.addVirtualFileSystem(pdfFonts);
 
   const handleCreateAut = async () => {
-
+    
     try {
     const response = await api.get(`/autorizations/${value}`);
-    const petDesc = dataCustomer.pets?.find( (pet: any) => pet.id == petValue)
+    const petDesc = dataCustomer.map((customer: any) => {
+      customer.pets?.find( (pet: any) => pet.id == petValue)
+    })
     const dataAut = response.data;
     const autorization = {
       name: dataCustomer.name,
@@ -77,13 +79,14 @@ export function GenerateAutorizations() {
     };
     pdfMake.createPdf(docDefinition).open();
     } catch (error) {
+      console.log("ERRO AUT",error)
       toast.error('Necessário escolher um tipo de autorização e ao menos um PET.')
     }
 
 
   };
 
-
+  console.log(dataCustomer)
 
   return (
     <ChakraProvider>
@@ -96,7 +99,7 @@ export function GenerateAutorizations() {
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
-                <VetsSearch path="filtredquery" />
+                <VetsSearch path="/customersearch" />
 
                 <Accordion defaultIndex={[0]} allowMultiple>
                   <AccordionItem>
@@ -143,47 +146,51 @@ export function GenerateAutorizations() {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      <Tr>
-                        <Td>{dataCustomer.name}</Td>
-                        <Td>{dataCustomer.adress}</Td>
-                        <Td>{dataCustomer.phone}</Td>
-                        <Td>{dataCustomer.cpf}</Td>
-                        <Td>{dataCustomer.email}</Td>
-                        <Td>{dataCustomer.birthday}</Td>
-                        <Td>
-                          <Menu>
-                            <MenuButton
-                              border="1px"
-                              as={Button}
-                              rightIcon={<Burger />}
-                            >
-                              <StyledBox>
-                                <Text>pets</Text>
-                              </StyledBox>
-                            </MenuButton>
-                            <MenuList key={dataCustomer.id} bg="green.100">
-                              {dataCustomer.pets?.map((pets: any) => (
-                                <Flex
-                                  key={pets.id}
-                                  direction="column"
-                                  align="center"
-                                  p="2px"
-                                  gap="2"
-                                >
-                              <RadioGroup onChange={setPetValue} value={petValue}>
-                                <Radio
-                                  bgColor={petValue == pets.id ? "green" : "red"}
-                                  value={pets.id as any}
-                                >
-                                  {pets.name}
-                                </Radio>
-                              </RadioGroup>
-                                </Flex>
-                              ))}
-                            </MenuList>
-                          </Menu>
-                        </Td>
-                      </Tr>
+                          {
+                            dataCustomer.map((customer: any) =>  (
+                              <Tr>
+                              <Td>{customer.name}</Td>
+                              <Td>{customer.adress}</Td>
+                              <Td>{customer.phone}</Td>
+                              <Td>{customer.cpf}</Td>
+                              <Td>{customer.email}</Td>
+                              <Td>{customer.birthday}</Td>
+                              <Td>
+                                <Menu>
+                                  <MenuButton
+                                    border="1px"
+                                    as={Button}
+                                    rightIcon={<Burger />}
+                                  >
+                                    <StyledBox>
+                                      <Text>pets</Text>
+                                    </StyledBox>
+                                  </MenuButton>
+                                  <MenuList key={customer.id} bg="green.100">
+                                    {customer.pets?.map((pets: any) => (
+                                      <Flex
+                                        key={pets.id}
+                                        direction="column"
+                                        align="center"
+                                        p="2px"
+                                        gap="2"
+                                      >
+                                    <RadioGroup onChange={setPetValue} value={petValue}>
+                                      <Radio
+                                        bgColor={petValue == pets.id ? "green" : "red"}
+                                        value={pets.id as any}
+                                      >
+                                        {pets.name}
+                                      </Radio>
+                                    </RadioGroup>
+                                      </Flex>
+                                    ))}
+                                  </MenuList>
+                                </Menu>
+                              </Td>
+                            </Tr>
+                            ))
+                          }
                     </Tbody>
                   </Table>
                 </Flex>

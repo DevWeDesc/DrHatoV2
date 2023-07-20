@@ -15,7 +15,6 @@ import Cookies from "js-cookie";
 import { DbContext } from "../../contexts/DbContext";
 
 export function LoginForm() {
-  const {setLoggedInUser } = useContext(DbContext)
   const navigate = useNavigate()
   interface SignInProps {
     email: string;
@@ -44,10 +43,7 @@ export function LoginForm() {
           if(!token || token === undefined || token === null) {
             toast.error("Falha ao realizar login")
           } else {
-            setLoggedInUser({
-              email: res.data.userData.email,
-              username: res.data.userData.username
-            })
+            localStorage.setItem("user", JSON.stringify({email:res.data.userData.email, username:res.data.userData.username}))
             navigate("/Home")
             toast.success("Sucesso ao realizar login")
           }

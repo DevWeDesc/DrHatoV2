@@ -11,7 +11,7 @@ import { FormContainer } from './style';
 
 interface UserProps {
   id?: any;
-  name: string;
+  email: string;
   password: string;
   username: string;
   userType: string;
@@ -19,9 +19,9 @@ interface UserProps {
 
 interface EditUserProps {
   id: any
+  email: string;
   password: string;
   username: string;
-  userType: string;
   userIsVet: boolean
 }
 
@@ -29,7 +29,7 @@ export function EditUser() {
   const { id } = useParams<{ id: string }>();
   const { register, handleSubmit} = useForm()
   const [customer, setCustomer] = useState<UserProps>({
-    name: '',
+    email: '',
     username: '',
     password:'',
     userType: '',
@@ -45,8 +45,9 @@ export function EditUser() {
   }, [id]);
 
   const handleEditUser: SubmitHandler<EditUserProps> = async (values) => {
+    console.log(values)
     const data = {
-      name: values.username,
+      email: values.email,
       username: values.username,
       password: values.password,
       userIsVet: values.userIsVet
@@ -89,7 +90,7 @@ export function EditUser() {
             <Table  colorScheme="blackAlpha" >
                     <Thead>
                       <Tr>
-                        <Th>Nome</Th>
+                        <Th>Email</Th>
                         <Th>Nome de Usuário</Th>
                         <Th>Senha</Th>
                         <Th>Tipo de Uusário</Th>
@@ -97,16 +98,16 @@ export function EditUser() {
                     </Thead>
                     <Tbody>
                       <Tr>
-                        <Td>{customer.name}</Td>
+                        <Td>{customer.email}</Td>
                         <Td>{customer.username}</Td>
-                        <Td>{customer.password}</Td>
+                        <Td>**********</Td>
                         <Td>{customer.userType.includes("admin") ? "ADMINISTRADOR" : customer.userType.includes("vet") ? "VETERINÁRIO" : "USUÁRIO" }</Td>
                       </Tr>
                     </Tbody>
                 </Table>
                   <FormControl as="form" alignItems="center">
                     <FormContainer>
-                    <Input {...register('name')} name='name' label='Novo login de usuário' />
+                    <Input {...register('email')} name='email' label='Novo email de usuário' />
                     <Input {...register('username')} name='username' label='Novo nome de usuário' />
                     <Input {...register('password')} name='password' label='Nova senha de usuário' />
     
