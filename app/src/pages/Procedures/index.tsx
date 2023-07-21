@@ -109,6 +109,7 @@ export function ProceduresList() {
                       <Th fontSize="18" borderColor="black">
                         Grupo
                       </Th>
+
                       <Th borderColor="black"></Th>
                     </Tr>
                     <Tr></Tr>
