@@ -36,6 +36,7 @@ import { motion } from "framer-motion";
 export function SectorsList() {
   // const { sectors } = useContext(DbContext);
   const [sectors, setSectors] = useState([]);
+  const [groups, setGroups] = useState([]);
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
@@ -46,13 +47,22 @@ export function SectorsList() {
     const response = await api.get("sectors");
     setSectors(response.data);
   };
+
+  const getGroupsListData = async () => {
+    const response = await api.get("groups");
+    setGroups(response.data);
+  };
+  
+
   useEffect(() => {
     getSectorsListData();
+    getGroupsListData();
   }, []);
 
   useEffect(() => {
     if (loading === true) {
       getSectorsListData();
+      getGroupsListData();
       setLoading(false);
     }
   }, [loading]);
@@ -81,6 +91,20 @@ export function SectorsList() {
       setLoading(true);
     } catch (error) {
       toast.error("Falha ao criar novo setor");
+    }
+  };
+
+
+  const handleCreateGroups: SubmitHandler<FieldValues> = async (values) => {
+    try {
+      const data = {
+        name: values.name,
+      };
+      await api.post("groups", data);
+      toast.success("Grupo criado com sucesso");
+      setLoading(true);
+    } catch (error) {
+      toast.error("Falha ao criar novo grupo");
     }
   };
 
@@ -249,7 +273,7 @@ export function SectorsList() {
                         colorScheme="whatsapp"
                         cursor="pointer"
                         leftIcon={<Icon as={RiAddLine} />}
-                        onClick={() => openModal()}
+                        onClick={() => openModalTwo()}
                       >
                         Cadastrar novo Grupo
                       </Button>
@@ -269,15 +293,15 @@ export function SectorsList() {
                       </Thead>
 
                       <Tbody>
-                        {sectors ? (
-                          sectors.map((sector: any) => (
-                            <Tr key={sector.id}>
+                        {groups ? (
+                          groups.map((group: any) => (
+                            <Tr key={group.id}>
                               <Td borderColor="black">
                                 <Text fontWeight="bold" color="gray.800">
-                                  {sector.name}
+                                  {group.name}
                                 </Text>
                               </Td>
-                              <Td borderColor="black">{sector.id}</Td>
+                              <Td borderColor="black">{group.id}</Td>
 
                               <Td borderColor="black">
                                 <Flex gap="2" ml="10%">
@@ -298,7 +322,7 @@ export function SectorsList() {
                                     colorScheme="red"
                                     leftIcon={<Icon as={RiPencilLine} />}
                                     onClick={() =>
-                                      handleDeleteSector(sector.id)
+                                      handleDeleteSector(group.id)
                                     }
                                   >
                                     Deletar Grupo
@@ -341,7 +365,7 @@ export function SectorsList() {
                 >
                   <FormControl
                     as="form"
-                    onSubmit={handleSubmit(handleEditSector)}
+                    onSubmit={handleSubmit(handleCreateGroups)}
                     display="flex"
                     flexDir="column"
                     alignItems="center"
@@ -351,12 +375,6 @@ export function SectorsList() {
                       {...register("name")}
                       name="name"
                       label="Nome do Setor"
-                      mb="4"
-                    />
-                    <Input
-                      {...register("id")}
-                      name="id"
-                      label="Id do setor"
                       mb="4"
                     />
 
