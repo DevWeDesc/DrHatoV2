@@ -1,7 +1,6 @@
 
 import { useLocation } from "react-router-dom";
 import { AnimatedRoutes } from "./Animated.Routes";
-
 import { Routes, Route, RoutesProps } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
@@ -72,6 +71,7 @@ import { Hospitalization } from "./pages/AdminDashboard/hospitalization";
 import { Reports } from "./pages/Reports/index";
 import { AdminSurgery } from "./pages/AdminDashboard/surgeryes";
 import ProtectedRouteMiddleware from "./middleware/ProtectAuthMiddleware";
+import { ReactPdfComponent } from "./components/ReactPdfComp";
 
 export function Router() {
   return (
@@ -80,22 +80,18 @@ export function Router() {
 
     >
 
-    
+     
       <Route  path="/Home"  element={<Home />} />
    
       <Route path="/" element={<Login />} />
       <Route element={<DefaultLayout />}>
 
       
-       
         <Route path="/Reports" element={<Reports />} />
-
         <Route path="/Queue" element={<QueueSistem />} />
-
         <Route path="/Admin" element={<AdminMain />} />
         <Route path="/Admin/Vaccines" element={<AdminVaccines />} />
         <Route path="/Admin/Surgeryes" element={<AdminSurgery />} />
-
         <Route path="/Admin/Charts" element={<AdminCharts />} />
         <Route path="/Admin/Autorizations" element={<Autorizations />} />
         <Route

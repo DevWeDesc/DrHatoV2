@@ -194,6 +194,11 @@ model Bed {
   pet         Pets?    @relation(fields: [petId], references: [id])
   isBusy      Boolean? @default(false)
   mustFasting Boolean? @default(false)
+  entryOur DateTime?   
+  exitOur DateTime?
+  dailyRate Decimal?
+  hospitalizedDays Int?
+  totalDebt Int? 
 }
 
 model Vaccines {
@@ -230,14 +235,3 @@ model SurgeriesForPet {
   medicine_id   Int
   medicine      MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
-
-// When make admissions logic
-// model Admissions {
-//   id          Int      @id @default(autoincrement())
-//   entryOur DateTime   
-//   exitOur DateTime? 
-//   status Boolean @default(false)
-//   dailyRate Decimal
-//   hospitalizedDays Int
-//   totalDebt Int
-// }

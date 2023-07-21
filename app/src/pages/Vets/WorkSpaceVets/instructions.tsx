@@ -2,8 +2,9 @@ import { ChakraProvider, Flex, Button, Text, Select } from "@chakra-ui/react"
 import { useState, useEffect } from "react";
 import { BiHome } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Input } from "../../../components/admin/Input";
+import { ReactPdfComponent } from "../../../components/ReactPdfComp";
 import { api } from "../../../lib/axios";
 import { PetProps } from "../../Pets/details";
 
@@ -19,6 +20,7 @@ export function VetInstructions() {
     }
     getPetDetails();
   }, []);
+
   return (
     <ChakraProvider>
       <Flex width="100vw" height="100vh" bgColor="white" direction="column">
@@ -78,14 +80,18 @@ export function VetInstructions() {
                 <option value="option4">Recomendações pré operatória</option>
               </Select>
             </Flex>
+            <Link to="/pdf" target="_blank">
             <Button
               mt="5"
               bg="whatsapp.400"
               color="white"
               _hover={{ backgroundColor: "green.400" }}
+           
             >
               Imprimir
             </Button>
+            </Link>
+           
           </Flex>
         </Flex>
       </Flex>

@@ -78,6 +78,7 @@ import ReportsExams from "./pages/Reports/exams";
 import ReportSurgeriesCompleted from "./pages/Reports/surgeriesCompleted";
 import ReportsExamsForVets from "./pages/Reports/examsforVet";
 import { ReportsExamsExtern } from "./pages/Reports/examsExterns";
+import { ReactPdfComponent } from "./components/ReactPdfComp";
 
 export function AnimatedRoutes() {
   const location = useLocation();
@@ -94,6 +95,8 @@ export function AnimatedRoutes() {
             path="/Reports/CustomerReports"
             element={<CustomerReports />}
           />
+          
+        <Route path="/pdf" element={<ReactPdfComponent />}  />
           <Route
             path="/Reports/ProductionVet"
             element={<ReportProductionVet />}
