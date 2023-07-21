@@ -16,6 +16,12 @@ import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import { CPFInput } from "../InputMasks/CPFinput";
+import { RGInput } from "../InputMasks/RGInput";
+import { CEPInput } from "../InputMasks/CEPInput";
+import { CelularInput } from "../InputMasks/CelularInput";
+import { FixedInput } from "../InputMasks/FixedInput";
+
 interface CreateNewClienteProps {
   name: string;
   adress: string;
@@ -35,6 +41,32 @@ export function ReceptionCreateNewConsultForm() {
   const { register, handleSubmit } = useForm();
   const [howKnow, setHowKnow] = useState("");
   const [kindPerson, setKindPerson] = useState("");
+  const [CPFValue, setCPFValue] = useState("");
+  const [RGValue, setRGValue] = useState("");
+  const [CEPValue, setCEPValue] = useState("");
+  const [CelularValue, setCelularValue] = useState("");
+  const [FixedValue, setFixedValue] = useState("");
+  const [logradouro, setLogradouro] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
+  const [tamCep, setTamCep] = useState(0);
+
+  if (tamCep >= 9)
+    fetch(`https://viacep.com.br/ws/${CEPValue}/json/`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.length);
+        setLogradouro(data.logradouro);
+        setBairro(data.bairro);
+        setCidade(data.localidade);
+        setEstado(data.uf);
+        setTamCep(0);
+      })
+      .catch((error) => {
+        //console.error("Erro ao consultar o CEP:", error);
+      });
+
   const handleCreateNewCliente: SubmitHandler<CreateNewClienteProps> = async (
     values
   ) => {
@@ -44,11 +76,11 @@ export function ReceptionCreateNewConsultForm() {
       district: values.district,
       email: values.email,
       birthday: values.birthday.toString(),
-      phone: values.phone,
-      tell: values.tell,
-      cpf: values.cpf,
-      rg: values.rg,
-      cep: values.cep,
+      phone: CelularValue,
+      tell: FixedValue,
+      cpf: CPFValue,
+      rg: RGValue,
+      cep: CEPValue,
       howKnowUs: howKnow,
       kindPerson: kindPerson,
       state: values.state,
@@ -60,6 +92,7 @@ export function ReceptionCreateNewConsultForm() {
       console.log(data);
     } catch (error) {
       toast.error("Falha ao cadastrar novo usuário");
+      console.log(data);
       console.log(error);
     }
   };
@@ -133,11 +166,11 @@ export function ReceptionCreateNewConsultForm() {
                 >
                   * Telefone Celular do Cliente
                 </FormLabel>
-                <Input
-                  placeholder="Número de Celular do Cliente"
-                  {...register("phone")}
+                <CelularInput
                   id="phone"
-                  name="phone"
+                  {...register("phone")}
+                  value={CelularValue}
+                  onChange={(e: any) => setCelularValue(e.target.value)}
                 />
               </Flex>
               <Flex direction="column" w="50%" mt="4">
@@ -163,11 +196,11 @@ export function ReceptionCreateNewConsultForm() {
                 <FormLabel textAlign="left" htmlFor="tell" mb="0" fontSize="17">
                   Telefone Fixo do Cliente
                 </FormLabel>
-                <Input
-                  placeholder="Número de Telefone do Cliente"
-                  {...register("tell")}
+                <FixedInput
                   id="tell"
-                  name="tell"
+                  {...register("tell")}
+                  value={FixedValue}
+                  onChange={(e: any) => setFixedValue(e.target.value)}
                 />
               </Flex>
               <Flex direction="column" w="50%">
@@ -199,22 +232,22 @@ export function ReceptionCreateNewConsultForm() {
                 >
                   * CPF do cliente
                 </FormLabel>
-                <Input
-                  placeholder="CPF Do cliente"
-                  {...register("cpf")}
+                <CPFInput
                   id="cpf"
-                  name="cpf"
+                  {...register("cpf")}
+                  value={CPFValue}
+                  onChange={(e: any) => setCPFValue(e.target.value)}
                 />
               </Flex>
               <Flex direction="column" w="50%" justifyContent="center">
                 <FormLabel textAlign="left" htmlFor="rg" mb="0" fontSize="17">
                   RG do cliente
                 </FormLabel>
-                <Input
-                  placeholder="RG do cliente"
-                  {...register("rg")}
+                <RGInput
                   id="rg"
-                  name="rg"
+                  {...register("rg")}
+                  value={RGValue}
+                  onChange={(e: any) => setRGValue(e.target.value)}
                 />
               </Flex>
             </Flex>
@@ -249,6 +282,7 @@ export function ReceptionCreateNewConsultForm() {
                         borderColor="gray.900"
                         {...register("state")}
                         name="state"
+                        value={estado}
                       >
                         <option value="SP">SP</option>
                         <option value="AC">AC</option>
@@ -291,12 +325,14 @@ export function ReceptionCreateNewConsultForm() {
                       >
                         * CEP do Cliente
                       </FormLabel>
-                      <Input
-                        placeholder="Cep do Cliente"
-                        {...register("cep")}
+                      <CEPInput
                         id="cep"
-                        name="cep"
-                        type="text"
+                        {...register("cep")}
+                        value={CEPValue}
+                        onChange={(e: any) => {
+                          setTamCep(tamCep + 1);
+                          setCEPValue(e.target.value);
+                        }}
                       />
                     </Flex>
                     <Flex direction="column" w="33%">
@@ -313,6 +349,7 @@ export function ReceptionCreateNewConsultForm() {
                         placeholder="Cidade do Cliente"
                         {...register("district")}
                         name="district"
+                        value={cidade}
                       />
                     </Flex>
                   </Flex>
@@ -331,6 +368,7 @@ export function ReceptionCreateNewConsultForm() {
                         {...register("adress")}
                         id="adress"
                         name="adress"
+                        value={logradouro}
                       />
                     </Flex>
                     <Flex direction="column" w="25%">
@@ -347,15 +385,15 @@ export function ReceptionCreateNewConsultForm() {
                         placeholder="Bairro do Cliente"
                         {...register("neighbour")}
                         name="neighbour"
+                        value={bairro}
                       />
                     </Flex>
                     <Flex direction="column" w="20%">
                       <FormLabel htmlFor="complement" mb="0" fontSize="17">
-                        Complemento
+                        Número
                       </FormLabel>
                       <Input
                         placeholder="Complemento"
-                        {...register("complement")}
                         id="complement"
                         name="complement"
                       />
