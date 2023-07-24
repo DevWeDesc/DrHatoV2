@@ -9,4 +9,5 @@ app.get('/admissions', admissionsController.getKennels)
 app.get('/beds', admissionsController.getBeds)
 app.put('/admitpet', admissionsController.admitPet)
 app.get('/admittedpet', admissionsController.getBusyAndAdmittedPets)
+app.get("/admissionstest", admissionsController.testAdmissions)
 }

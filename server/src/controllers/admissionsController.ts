@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { AdmissionSchema, BedSchema } from "../schemas/schemasValidator";
 import { ValidationContract } from "../validators/validateContract";
+
 const prisma = new PrismaClient();
 
 
@@ -108,6 +109,16 @@ export const admissionsController = {
       reply.send(data).status(200)
     } catch (error) {
       reply.status(400).send({message: error})
+    }
+  },
+
+  testAdmissions: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const actualOur = new Date().getTime();
+      const formmatedDate = new Intl.DateTimeFormat('pt-BR', {hour: '2-digit', minute: '2-digit'}).format(actualOur);
+      reply.send(formmatedDate)
+    } catch (error) {
+      console.log(error)
     }
   }
 }

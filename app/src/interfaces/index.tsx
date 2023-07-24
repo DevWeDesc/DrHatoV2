@@ -148,7 +148,7 @@ export interface SugeriesProps {
 			completedDate?: Date
       }
 
-      type QueueProps = {
+  type QueueProps = {
         moreInfos: string;
         queueOur: string;
       };
@@ -156,8 +156,16 @@ export interface SugeriesProps {
   type customerPetsProps = {
     id: number;
     name: string;
-
   }    
+  type ProceduresProps = {
+    id: number;
+    name: string;
+    price: number;
+    available: boolean;
+    requestedDate: Date 
+  }
+
+  
 export interface PetDetaisl {
   id: number | string;
   name: string;
@@ -180,6 +188,7 @@ export interface PetDetaisl {
   exams: ExamsProps[];
   vaccines: VacinnesProps[];
   surgeries:  SugeriesProps[];
-  customerPets: customerPetsProps[]
+  procedures: ProceduresProps[];
+  customerPets: customerPetsProps[];
   isBusy: boolean;
 }

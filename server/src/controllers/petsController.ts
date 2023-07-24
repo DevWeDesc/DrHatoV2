@@ -22,7 +22,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
     const pet = await prisma.pets.findUnique({ where: { id : parseInt(id)}, 
     include: {customer: 
       {select: { name: true, id: true, balance: true, pets: true}}, 
-      medicineRecords: {select: {petExams: true, observations: true, id: true, petVaccines: true, petSurgeries: true }},
+      medicineRecords: {select: {petExams: true, observations: true, id: true, petVaccines: true, petSurgeries: true, petProcedures: true }},
       queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true}},
       bed: {select: {isBusy: true}}
     } })
@@ -83,6 +83,16 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
         return surgeriesData
        })
        ,
+       procedures: pet?.medicineRecords?.petProcedures.map((procedure) => {
+        let procedureData = {
+          id: procedure.id,
+          name: procedure.name,
+          price: procedure.price,
+          available: procedure.available,
+          requested: procedure.requestedDate
+        }
+        return procedureData;
+       })   ,
       queue: pet?.queue
     }
     return reply.send(petData)
