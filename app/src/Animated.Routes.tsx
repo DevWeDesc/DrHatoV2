@@ -79,6 +79,12 @@ import ReportSurgeriesCompleted from "./pages/Reports/surgeriesCompleted";
 import ReportsExamsForVets from "./pages/Reports/examsforVet";
 import { ReportsExamsExtern } from "./pages/Reports/examsExterns";
 import { ReactPdfComponent } from "./components/ReactPdfComp";
+import { BoxReception } from "./pages/Box";
+import { BoxReports } from "./pages/Box/reports";
+import { BoxPayments } from "./pages/Box/payments";
+import { BoxReturns } from "./pages/Box/returns";
+import { BoxReturnsDetails } from "./pages/Box/returnsDetails";
+import { BoxPaymentsDetails } from "./pages/Box/paymentsDetails";
 
 export function AnimatedRoutes() {
   const location = useLocation();
@@ -95,8 +101,8 @@ export function AnimatedRoutes() {
             path="/Reports/CustomerReports"
             element={<CustomerReports />}
           />
-          
-        <Route path="/pdf" element={<ReactPdfComponent />}  />
+
+          <Route path="/pdf" element={<ReactPdfComponent />} />
           <Route
             path="/Reports/ProductionVet"
             element={<ReportProductionVet />}
@@ -219,6 +225,19 @@ export function AnimatedRoutes() {
             path="/Recepcao/Consultas/Clientes/Pets/Details/:id"
             element={<DetailsPets />}
           />
+          <Route path="/Recepcao/Caixa" element={<BoxReception />} />
+          <Route path="/Recepcao/Caixa/Despesas" element={<BoxReports />} />
+          <Route path="/Recepcao/Caixa/Pagamentos" element={<BoxPayments />} />
+          <Route
+            path="/Recepcao/Caixa/Pagamentos/:id"
+            element={<BoxPaymentsDetails />}
+          />
+          <Route path="/Recepcao/Caixa/Returns" element={<BoxReturns />} />
+          <Route
+            path="/Recepcao/Caixa/Returns/:id"
+            element={<BoxReturnsDetails />}
+          />
+
           <Route
             path="/Pets/MedicineRecord/:id"
             element={<MedicineRecords />}

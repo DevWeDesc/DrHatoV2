@@ -6,7 +6,7 @@ import {
   ChakraProvider,
   Button,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import { ReceptionSidebar } from "../../components/Sidebars/ReceptionBar";
 import { GridContainer } from "./styles";
@@ -77,14 +77,24 @@ export function Reception() {
                         </div>
 
                         <div className="buttonsContainer">
-                          <Button minWidth={200} colorScheme="whatsapp">
-                            Caixa
-                          </Button>
+                          <Link to="/Recepcao/Caixa">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Caixa
+                            </Button>
+                          </Link>
                           <Button colorScheme="whatsapp">
                             Reimprimir Caixa
                           </Button>
-                          <Button colorScheme="whatsapp">Pagamentos</Button>
-                          <Button colorScheme="whatsapp">Devoluções</Button>
+                          <Link to="/Recepcao/Caixa/Pagamentos">
+                            <Button colorScheme="whatsapp" minWidth={200}>
+                              Pagamentos
+                            </Button>
+                          </Link>
+                          <Link to="/Recepcao/Caixa/Returns">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Devoluções
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </div>
