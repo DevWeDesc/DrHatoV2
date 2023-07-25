@@ -28,6 +28,7 @@ import { useParams } from "react-router-dom";
 export function BoxPaymentsDetails() {
   const [customers, setCostumers] = useState([]);
   const { id } = useParams<{ id: string }>();
+  const [cash, setCash] = useState<number | string>("");
 
   async function getCustomers() {
     const response = await api.get(`http://localhost:5000/customers/${id}`);
@@ -37,6 +38,20 @@ export function BoxPaymentsDetails() {
   useEffect(() => {
     getCustomers();
   }, []);
+
+  console.log(cash);
+
+  function BgInput(cash: string | number) {
+    if (cash === "") {
+      return "white";
+    } else if (cash >= 0) {
+      return "green.100";
+    } else if (cash < 0) {
+      return "red.100";
+    } else {
+      return "white";
+    }
+  }
 
   return (
     <motion.div
@@ -170,7 +185,19 @@ export function BoxPaymentsDetails() {
                           Saldo Atual
                         </Td>
                         <Td colSpan={5}>
-                          <Input bg="white" borderColor="black"></Input>
+                          <Input
+                            value={cash}
+                            onChange={(e) => setCash(e.target.value)}
+                            bg={BgInput(cash)}
+                            borderColor="black"
+                          ></Input>
+                        </Td>
+                      </Tr>
+                      <Tr>
+                        <Td p="0" py="4" colSpan={8}>
+                          <Button py="8" w="100%" colorScheme="facebook">
+                            Novo Pagamento
+                          </Button>
                         </Td>
                       </Tr>
                     </Tbody>
@@ -196,35 +223,66 @@ export function BoxPaymentsDetails() {
                         <Th bg="blue.100" borderBottom="1px solid black"></Th>
                         <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       </Tr>
-                      <Tr border="1px solid black">
-                        <Th border="1px solid black" fontSize="18">
+                      <Tr border="1px solid black" bg="blue.400">
+                        <Th
+                          border="1px solid black"
+                          fontSize="18"
+                          color="white"
+                        >
                           Data
                         </Th>
-                        <Th border="1px solid black" fontSize="18">
+                        <Th
+                          border="1px solid black"
+                          fontSize="18"
+                          color="white"
+                        >
                           Descrição
                         </Th>
-                        <Th border="1px solid black" fontSize="18" isNumeric>
+                        <Th
+                          border="1px solid black"
+                          fontSize="18"
+                          isNumeric
+                          color="white"
+                        >
                           Débito
                         </Th>
-                        <Th border="1px solid black" fontSize="18" isNumeric>
+                        <Th
+                          border="1px solid black"
+                          fontSize="18"
+                          isNumeric
+                          color="white"
+                        >
                           Crédito
                         </Th>
-                        <Th border="1px solid black" fontSize="18">
+                        <Th
+                          border="1px solid black"
+                          fontSize="18"
+                          color="white"
+                        >
                           Tipo
                         </Th>
-                        <Th border="1px solid black" fontSize="18" isNumeric>
+                        <Th
+                          border="1px solid black"
+                          fontSize="18"
+                          isNumeric
+                          color="white"
+                        >
                           Saldo
                         </Th>
                       </Tr>
                     </Thead>
                     <Tbody>
-                      <Tr>
+                      <Tr bg="white">
                         <Td border="1px solid black">25/05/23</Td>
                         <Td border="1px solid black">
                           {" "}
                           Consulta nº 9921, animal :Mel{" "}
                         </Td>
-                        <Td border="1px solid black" isNumeric>
+                        <Td
+                          border="1px solid black"
+                          isNumeric
+                          fontWeight="bold"
+                        >
                           433,00
                         </Td>
                         <Td border="1px solid black" isNumeric>
