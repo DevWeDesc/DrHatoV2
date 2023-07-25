@@ -23,12 +23,13 @@ import { AdminContainer } from "../AdminDashboard/style";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export function BoxPaymentsDetails() {
   const [customers, setCostumers] = useState([]);
   const { id } = useParams<{ id: string }>();
   const [cash, setCash] = useState<number | string>("");
+  const navigate = useNavigate();
 
   async function getCustomers() {
     const response = await api.get(`http://localhost:5000/customers/${id}`);
@@ -195,7 +196,14 @@ export function BoxPaymentsDetails() {
                       </Tr>
                       <Tr>
                         <Td p="0" py="4" colSpan={8}>
-                          <Button py="8" w="100%" colorScheme="facebook">
+                          <Button
+                            py="8"
+                            w="100%"
+                            colorScheme="facebook"
+                            onClick={() =>
+                              navigate(`/Recepcao/Caixa/NovoPagamento/${id}`)
+                            }
+                          >
                             Novo Pagamento
                           </Button>
                         </Td>
