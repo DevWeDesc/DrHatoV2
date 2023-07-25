@@ -11,7 +11,7 @@ import {
   HStack,
   Select,
 } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { set, SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
 import { toast } from "react-toastify";
@@ -43,13 +43,13 @@ interface CreateNewClienteProps {
 let customerSchema = object({
   name: string().required("Nome é Obrigatório"),
   birthday: string().required("Data de nascimento é Obrigatório"),
-  email: string().email().required("E-mail é Obrigatório"),
+  email: string().email("E-mail Invalido").required("E-mail é Obrigatório"),
   district: string().required("CPF é Obrigatório"),
   state: string().required("Estado é Obrigatório"),
   //cep: string().required("CEP é Obrigatório"),
   adress: string().required("Endereço é Obrigatório"),
   neighbour: string().required("Campo Obrigatório"),
-  //howKnowUs: string().required("Campo Obrigatório"),
+  //howKnowUs: string()),
 });
 export function ReceptionCreateNewConsultForm() {
   const {
@@ -71,6 +71,17 @@ export function ReceptionCreateNewConsultForm() {
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
   const [tamCep, setTamCep] = useState(0);
+  const [errorInput, setErrorInput] = useState(0);
+
+  const Dayes = {
+    phone: CelularValue,
+    tell: FixedValue,
+    cpf: CPFValue,
+    rg: RGValue,
+    cep: CEPValue,
+    howKnowUs: howKnow,
+    kindPerson: kindPerson,
+  };
 
   if (tamCep >= 9)
     fetch(`https://viacep.com.br/ws/${CEPValue}/json/`)
@@ -86,6 +97,12 @@ export function ReceptionCreateNewConsultForm() {
       .catch((error) => {
         //console.error("Erro ao consultar o CEP:", error);
       });
+
+  function setErro() {
+    if (errorInput === 0) {
+      setErrorInput(errorInput + 1);
+    }
+  }
 
   const handleCreateNewCliente: SubmitHandler<CreateNewClienteProps> = async (
     values
@@ -116,6 +133,8 @@ export function ReceptionCreateNewConsultForm() {
       console.log(error);
     }
   };
+  console.log("Erorr input " + errorInput);
+  console.log(CelularValue);
   return (
     <ChakraProvider>
       <Text
@@ -195,8 +214,15 @@ export function ReceptionCreateNewConsultForm() {
                   //{...register("phone")}
                   value={CelularValue}
                   onChange={(e: any) => setCelularValue(e.target.value)}
-                  onBlur=""
+                  onBlur={CelularValue === "(__) _____-____" ? setErro() : null}
                 />
+                {errorInput > 0 && (
+                  <Text textAlign="start" color="red.500" fontWeight="bold">
+                    {CelularValue != ""
+                      ? null
+                      : "O campo Celular é obrigatório"}
+                  </Text>
+                )}
               </Flex>
               <Flex direction="column" w="50%" mt="4">
                 <FormLabel
@@ -275,7 +301,11 @@ export function ReceptionCreateNewConsultForm() {
                   onChange={(e: any) => setCPFValue(e.target.value)}
                   onBlur=""
                 />
-                <Text color="red.500" fontWeight="bold" textAlign="left"></Text>
+                {errorInput > 0 && (
+                  <Text textAlign="start" color="red.500" fontWeight="bold">
+                    {CPFValue != "" ? null : "O campo CPF é obrigatório"}
+                  </Text>
+                )}
               </Flex>
               <Flex direction="column" w="50%" justifyContent="center">
                 <FormLabel textAlign="left" htmlFor="rg" mb="0" fontSize="17">
@@ -289,7 +319,9 @@ export function ReceptionCreateNewConsultForm() {
                   onChange={(e: any) => setRGValue(e.target.value)}
                   onBlur=""
                 />
-                {/* //<Text h={errors?.cpf ? "25px" : "0"}></Text> */}
+                <Text
+                  h={CPFValue === "" && errorInput == 1 ? "25px" : "0"}
+                ></Text>
               </Flex>
             </Flex>
 
@@ -324,6 +356,7 @@ export function ReceptionCreateNewConsultForm() {
                         {...register("state")}
                         name="state"
                         value={estado}
+                        onChange={(e) => setEstado(e.target.value)}
                       >
                         <option value="SP">SP</option>
                         <option value="AC">AC</option>
@@ -354,7 +387,15 @@ export function ReceptionCreateNewConsultForm() {
                         <option value="SE">SE</option>
                         <option value="TO">TO</option>
                       </Select>
-                      <Text>{errors?.state?.message}</Text>
+                      {errorInput > 0 && (
+                        <Text
+                          textAlign="start"
+                          color="red.500"
+                          fontWeight="bold"
+                        >
+                          {estado != "" ? null : "O campo Estado é obrigatório"}
+                        </Text>
+                      )}
                     </Flex>
 
                     <Flex direction="column" w="33%">
@@ -378,6 +419,15 @@ export function ReceptionCreateNewConsultForm() {
                         }}
                         onBlur=""
                       />
+                      {errorInput > 0 && (
+                        <Text
+                          textAlign="start"
+                          color="red.500"
+                          fontWeight="bold"
+                        >
+                          {CEPValue != "" ? null : "O campo CEP é obrigatório"}
+                        </Text>
+                      )}
                     </Flex>
                     <Flex direction="column" w="33%">
                       <FormLabel
@@ -414,7 +464,17 @@ export function ReceptionCreateNewConsultForm() {
                         name="adress"
                         value={logradouro}
                       />
-                      <Text>{errors?.adress?.message}</Text>
+                      {errorInput > 0 && (
+                        <Text
+                          textAlign="start"
+                          color="red.500"
+                          fontWeight="bold"
+                        >
+                          {logradouro != ""
+                            ? null
+                            : "O campo Endereço é obrigatório"}
+                        </Text>
+                      )}
                     </Flex>
                     <Flex direction="column" w="25%">
                       <FormLabel
@@ -432,6 +492,18 @@ export function ReceptionCreateNewConsultForm() {
                         name="neighbour"
                         value={bairro}
                       />
+                      {errorInput > 0 && (
+                        <Text
+                          textAlign="start"
+                          color="red.500"
+                          fontWeight="bold"
+                        >
+                          {" "}
+                          {bairro != ""
+                            ? null
+                            : "O campo Endereço é obrigatório"}
+                        </Text>
+                      )}
                     </Flex>
                     <Flex direction="column" w="20%">
                       <FormLabel htmlFor="complement" mb="0" fontSize="17">
