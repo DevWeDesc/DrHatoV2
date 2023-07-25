@@ -29,7 +29,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
 
-export function BoxPaymentsDetails() {
+export function BoxNewPaymentsClient() {
   const [customers, setCostumers] = useState([]);
   const { id } = useParams<{ id: string }>();
   const [cash, setCash] = useState<number | string>("");
@@ -295,9 +295,7 @@ export function BoxPaymentsDetails() {
                       <Tr
                         bg="white"
                         cursor="pointer"
-                        onClick={() =>
-                          navigate(`/Recepcao/Caixa/PagamentoCliente/${id}`)
-                        }
+                        onClick={() => navigate(``)}
                       >
                         <Td border="1px solid black">25/05/23</Td>
                         <Td border="1px solid black">

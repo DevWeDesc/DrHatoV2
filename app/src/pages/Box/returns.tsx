@@ -27,6 +27,12 @@ import { toast } from "react-toastify";
 import { api } from "../../lib/axios";
 import { motion } from "framer-motion";
 import { ReturnsSearch } from "../../components/Search/returnsSearch";
+import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
+import { GenericLink } from "../../components/Sidebars/GenericLink";
+import { AiOutlineSearch } from "react-icons/ai";
+import { GiCardDiscard } from "react-icons/gi";
+import { BsCashCoin } from "react-icons/bs";
+import { BiHome } from "react-icons/all";
 
 interface QueueProps {
   response: [];
@@ -238,6 +244,14 @@ export function BoxReturns() {
           <Flex direction="column" h="100vh">
             <Header title="Painel de Devoluções" />
             <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+              <GenericSidebar>
+                <GenericLink
+                  name="Painel de Pagamentos"
+                  icon={BsCashCoin}
+                  path="/Recepcao/Caixa/Pagamentos"
+                />
+                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
+              </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <Flex mb="8" gap="8" direction="column" align="center">
                   <ReturnsSearch path="filtredquery" />

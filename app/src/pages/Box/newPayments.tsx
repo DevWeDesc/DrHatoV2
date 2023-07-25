@@ -23,6 +23,11 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { useParams } from "react-router-dom";
+import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
+import { GenericLink } from "../../components/Sidebars/GenericLink";
+import { AiOutlineSearch } from "react-icons/ai";
+import { GiCardDiscard } from "react-icons/gi";
+import { BsCashCoin } from "react-icons/bs";
 
 export function BoxNewPayments() {
   const [customers, setCostumers] = useState([]);
@@ -60,15 +65,33 @@ export function BoxNewPayments() {
     >
       <ChakraProvider>
         <AdminContainer>
-          <Flex direction="column" h="100vh">
+          <Flex direction="column" h="100vh" maxWidth={1680}>
             <Header title=" Conta Corrente - Novo Lançamento" />
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+              <GenericSidebar>
+                <GenericLink
+                  name="Painel de Pagamentos"
+                  icon={BsCashCoin}
+                  path="/Recepcao/Caixa/Pagamentos"
+                />
+                <GenericLink
+                  name="Painel de Devoluções"
+                  icon={GiCardDiscard}
+                  path={`/Recepcao/Caixa/Pagamentos/${id}`}
+                />
+              </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <TableContainer>
                   <Table variant="simple">
                     <Thead>
                       <Tr>
-                        <Th fontSize="18" py="8" color="white" bg="blue.800">
+                        <Th
+                          fontSize="18"
+                          py="8"
+                          color="white"
+                          bg="blue.800"
+                          roundedTopStart="8px"
+                        >
                           Conta Corrente - Novo Lançamento
                         </Th>
                         <Th bg="blue.800"></Th>
@@ -76,7 +99,7 @@ export function BoxNewPayments() {
                         <Th bg="blue.800"></Th>
                         <Th bg="blue.800"></Th>
                         <Th bg="blue.800"></Th>
-                        <Th bg="blue.800"></Th>
+                        <Th bg="blue.800" roundedTopEnd="8px"></Th>
                       </Tr>
                     </Thead>
                     <Tbody>
