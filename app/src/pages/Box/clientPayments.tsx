@@ -75,154 +75,13 @@ export function BoxNewPaymentsClient() {
                   icon={BsCashCoin}
                   path="/Recepcao/Caixa/Pagamentos"
                 />
-                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
+                <GenericLink
+                  name="Pagamentos Consultas"
+                  icon={BsCashCoin}
+                  path={`/Recepcao/Caixa/Pagamentos/${id}`}
+                />
               </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
-                <TableContainer>
-                  <Table variant="simple">
-                    <Thead>
-                      <Tr>
-                        <Th fontSize="18" py="8" color="black" bg="blue.100">
-                          Pesquisa e filtragem
-                        </Th>
-                        <Th bg="blue.100"></Th>
-                        <Th bg="blue.100"></Th>
-                        <Th bg="blue.100"></Th>
-                        <Th bg="blue.100"></Th>
-                        <Th bg="blue.100"></Th>
-                        <Th bg="blue.100"></Th>
-                      </Tr>
-                      <Tr>
-                        <Th fontSize="18" color="black">
-                          Data Inicial
-                        </Th>
-                        <Th>
-                          <Input
-                            w="300px"
-                            bg="white"
-                            borderColor="black"
-                            type="date"
-                          />
-                        </Th>
-                        <Th fontSize="18" color="black">
-                          Data Final
-                        </Th>
-                        <Th colSpan={2}>
-                          <Input
-                            w="300px"
-                            bg="white"
-                            borderColor="black"
-                            type="date"
-                          />
-                        </Th>
-                        <Th>
-                          <Button size="lg" colorScheme="twitter">
-                            Filtrar
-                          </Button>
-                        </Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      <Tr>
-                        <Th fontSize="18" py="8" color="black" bg="blue.100">
-                          Dados do Cliente
-                        </Th>
-                        <Th bg="blue.100"></Th>
-                        <Th bg="blue.100"></Th>
-                        <Th bg="blue.100"></Th>
-                        <Th bg="blue.100"></Th>
-                        <Th bg="blue.100"></Th>
-                        <Th bg="blue.100"></Th>
-                      </Tr>
-                      <Tr>
-                        <Td fontSize="18" fontWeight="bold" w="10">
-                          Cliente
-                        </Td>
-                        <Td colSpan={2}>
-                          <Input bg="white" borderColor="black"></Input>
-                        </Td>
-                        <Td
-                          pl="0"
-                          textAlign="end"
-                          fontSize="18"
-                          fontWeight="bold"
-                          w="10"
-                        >
-                          Endereço
-                        </Td>
-                        <Td colSpan={2}>
-                          <Input bg="white" borderColor="black"></Input>
-                        </Td>
-                        <Td style={{ width: "0" }}></Td>
-                      </Tr>
-                      <Tr>
-                        <Td fontSize="18" fontWeight="bold">
-                          Bairro
-                        </Td>
-                        <Td colSpan={2}>
-                          <Input bg="white" borderColor="black"></Input>
-                        </Td>
-                        <Td
-                          fontSize="18"
-                          fontWeight="bold"
-                          pl="0"
-                          textAlign="end"
-                        >
-                          CEP
-                        </Td>
-                        <Td colSpan={2}>
-                          <Input bg="white" borderColor="black"></Input>
-                        </Td>
-                      </Tr>
-                      <Tr>
-                        <Td fontSize="18" fontWeight="bold">
-                          Estado
-                        </Td>
-                        <Td colSpan={2}>
-                          <Input bg="white" borderColor="black"></Input>
-                        </Td>
-                        <Td
-                          fontSize="18"
-                          fontWeight="bold"
-                          pl="0"
-                          textAlign="end"
-                        >
-                          Telefone
-                        </Td>
-                        <Td colSpan={2}>
-                          <Input bg="white" borderColor="black"></Input>
-                        </Td>
-                      </Tr>
-                      <Tr>
-                        <Td fontSize="18" fontWeight="bold">
-                          Saldo Atual
-                        </Td>
-                        <Td colSpan={5}>
-                          <Input
-                            value={cash}
-                            onChange={(e) => setCash(e.target.value)}
-                            bg={BgInput(cash)}
-                            borderColor="black"
-                          ></Input>
-                        </Td>
-                      </Tr>
-                      <Tr>
-                        <Td p="0" py="4" colSpan={8}>
-                          <Button
-                            py="8"
-                            w="100%"
-                            colorScheme="facebook"
-                            onClick={() =>
-                              navigate(`/Recepcao/Caixa/NovoPagamento/${id}`)
-                            }
-                          >
-                            Novo Pagamento
-                          </Button>
-                        </Td>
-                      </Tr>
-                    </Tbody>
-                  </Table>
-                </TableContainer>
                 <TableContainer>
                   <Table variant="simple">
                     <Thead>
@@ -231,100 +90,184 @@ export function BoxNewPaymentsClient() {
                           fontSize="18"
                           py="8"
                           color="black"
-                          mb="40"
                           bg="blue.100"
-                          borderBottom="1px solid black"
+                          colSpan={5}
                         >
-                          Exibindo todos os lançamentos
+                          Visualização de Consulta
                         </Th>
-                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       </Tr>
-                      <Tr border="1px solid black" bg="blue.400">
-                        <Th
-                          border="1px solid black"
-                          fontSize="18"
-                          color="white"
-                        >
-                          Data
+                      <Tr>
+                        <Th px="0" pl="5" fontSize="18" color="black">
+                          Nome do Cliente
                         </Th>
-                        <Th
-                          border="1px solid black"
-                          fontSize="18"
-                          color="white"
-                        >
-                          Descrição
+                        <Th px="0" colSpan={2}>
+                          <Input bg="white" borderColor="black" />
                         </Th>
-                        <Th
-                          border="1px solid black"
-                          fontSize="18"
-                          isNumeric
-                          color="white"
-                        >
-                          Débito
+                        <Th px="0" pl="5" fontSize="18" color="black">
+                          Nome do Animal
                         </Th>
-                        <Th
-                          border="1px solid black"
-                          fontSize="18"
-                          isNumeric
-                          color="white"
-                        >
-                          Crédito
+                        <Th colSpan={1}>
+                          <Input bg="white" borderColor="black" />
                         </Th>
-                        <Th
-                          border="1px solid black"
-                          fontSize="18"
-                          color="white"
-                        >
-                          Tipo
+                      </Tr>
+                      <Tr>
+                        <Th px="0" pl="5" fontSize="18" color="black">
+                          Data da Consulta
                         </Th>
-                        <Th
-                          border="1px solid black"
-                          fontSize="18"
-                          isNumeric
-                          color="white"
-                        >
-                          Saldo
+                        <Th px="0" colSpan={2}>
+                          <Input
+                            bg="white"
+                            borderColor="black"
+                            type="datetime-local"
+                          />
+                        </Th>
+                        <Th px="0" pl="5" fontSize="18" color="black">
+                          Veterinário
+                        </Th>
+                        <Th colSpan={1}>
+                          <Input bg="white" borderColor="black" />
                         </Th>
                       </Tr>
                     </Thead>
                     <Tbody>
-                      <Tr
-                        bg="white"
-                        cursor="pointer"
-                        onClick={() => navigate(``)}
-                      >
-                        <Td border="1px solid black">25/05/23</Td>
-                        <Td border="1px solid black">
-                          {" "}
-                          Consulta nº 9921, animal :Mel{" "}
-                        </Td>
+                      <Tr>
+                        <Th
+                          fontSize="18"
+                          py="8"
+                          color="black"
+                          bg="blue.100"
+                          colSpan={5}
+                        >
+                          Produtos / Serviços nesta consulta
+                        </Th>
+                      </Tr>
+                    </Tbody>
+                    <Thead>
+                      <Tr bg="blue.400">
+                        <Th
+                          border="1px solid black"
+                          fontSize="18"
+                          color="white"
+                          colSpan={1}
+                        >
+                          Quantidade
+                        </Th>
+                        <Th
+                          colSpan={1}
+                          border="1px solid black"
+                          fontSize="18"
+                          color="white"
+                        >
+                          Produto / Serviço
+                        </Th>
+                        <Th
+                          colSpan={1}
+                          border="1px solid black"
+                          fontSize="18"
+                          isNumeric
+                          color="white"
+                        >
+                          Tabela
+                        </Th>
+                        <Th
+                          colSpan={1}
+                          border="1px solid black"
+                          fontSize="18"
+                          isNumeric
+                          color="white"
+                        >
+                          Desconto
+                        </Th>
+                        <Th
+                          colSpan={1}
+                          border="1px solid black"
+                          fontSize="18"
+                          color="white"
+                        >
+                          Valor Cobrado
+                        </Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      <Tr bg="white" cursor="pointer" fontWeight="bold">
+                        <Td border="1px solid black">1</Td>
+                        <Td border="1px solid black"> Consulta </Td>
                         <Td
                           border="1px solid black"
                           isNumeric
                           fontWeight="bold"
                         >
-                          433,00
+                          130,00
                         </Td>
                         <Td border="1px solid black" isNumeric>
-                          216,50
+                          0%
                         </Td>
                         <Td border="1px solid black" isNumeric>
-                          Master Card 2x
+                          130,00
+                        </Td>
+                      </Tr>
+                      <Tr bg="white" cursor="pointer" fontWeight="bold">
+                        <Td border="1px solid black">1</Td>
+                        <Td border="1px solid black"> Consulta </Td>
+                        <Td
+                          border="1px solid black"
+                          isNumeric
+                          fontWeight="bold"
+                        >
+                          130,00
                         </Td>
                         <Td border="1px solid black" isNumeric>
-                          -216,50
+                          0%
+                        </Td>
+                        <Td border="1px solid black" isNumeric>
+                          130,00
+                        </Td>
+                      </Tr>
+                      <Tr bg="white" cursor="pointer" fontWeight="bold">
+                        <Td border="1px solid black">1</Td>
+                        <Td border="1px solid black"> Consulta </Td>
+                        <Td
+                          border="1px solid black"
+                          isNumeric
+                          fontWeight="bold"
+                        >
+                          130,00
+                        </Td>
+                        <Td border="1px solid black" isNumeric>
+                          0%
+                        </Td>
+                        <Td border="1px solid black" isNumeric>
+                          130,00
+                        </Td>
+                      </Tr>
+                      <Tr bg="white" cursor="pointer" fontWeight="bold">
+                        <Td border="1px solid black">1</Td>
+                        <Td border="1px solid black"> Consulta </Td>
+                        <Td
+                          border="1px solid black"
+                          isNumeric
+                          fontWeight="bold"
+                        >
+                          130,00
+                        </Td>
+                        <Td border="1px solid black" isNumeric>
+                          0%
+                        </Td>
+                        <Td border="1px solid black" isNumeric>
+                          130,00
+                        </Td>
+                      </Tr>
+                      <Tr bg="white" cursor="pointer" fontWeight="bold">
+                        <Td colSpan={4} border="1px solid black" isNumeric>
+                          Total
+                        </Td>
+                        <Td border="1px solid black" isNumeric>
+                          R$ 520,00
                         </Td>
                       </Tr>
                     </Tbody>
                   </Table>
                 </TableContainer>
-                <Button w="100%" py="8" colorScheme="whatsapp">
-                  Gravar
-                </Button>
               </Box>
             </Flex>
           </Flex>
