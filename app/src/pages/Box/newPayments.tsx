@@ -75,7 +75,7 @@ export function BoxNewPayments() {
                   path="/Recepcao/Caixa/Pagamentos"
                 />
                 <GenericLink
-                  name="Painel de Devoluções"
+                  name="Painel de conta Corrente"
                   icon={GiCardDiscard}
                   path={`/Recepcao/Caixa/Pagamentos/${id}`}
                 />

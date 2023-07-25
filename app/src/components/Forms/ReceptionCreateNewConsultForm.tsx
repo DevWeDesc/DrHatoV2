@@ -21,6 +21,8 @@ import { RGInput } from "../InputMasks/RGInput";
 import { CEPInput } from "../InputMasks/CEPInput";
 import { CelularInput } from "../InputMasks/CelularInput";
 import { FixedInput } from "../InputMasks/FixedInput";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { object, string, number, date, InferType } from "yup";
 
 interface CreateNewClienteProps {
   name: string;
@@ -37,8 +39,26 @@ interface CreateNewClienteProps {
   state: string;
   neighbour: string;
 }
+
+let customerSchema = object({
+  name: string().required("Nome é Obrigatório"),
+  birthday: string().required("Data de nascimento é Obrigatório"),
+  email: string().email().required("E-mail é Obrigatório"),
+  district: string().required("CPF é Obrigatório"),
+  state: string().required("Estado é Obrigatório"),
+  //cep: string().required("CEP é Obrigatório"),
+  adress: string().required("Endereço é Obrigatório"),
+  neighbour: string().required("Campo Obrigatório"),
+  //howKnowUs: string().required("Campo Obrigatório"),
+});
 export function ReceptionCreateNewConsultForm() {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(customerSchema),
+  });
   const [howKnow, setHowKnow] = useState("");
   const [kindPerson, setKindPerson] = useState("");
   const [CPFValue, setCPFValue] = useState("");
@@ -143,6 +163,9 @@ export function ReceptionCreateNewConsultForm() {
                   minWidth={320}
                   name="name"
                 />
+                <Text color="red.500" fontWeight="bold" textAlign="left">
+                  {errors?.name?.message}
+                </Text>
               </Flex>
             </Flex>
             <Flex
@@ -168,9 +191,11 @@ export function ReceptionCreateNewConsultForm() {
                 </FormLabel>
                 <CelularInput
                   id="phone"
-                  {...register("phone")}
+                  name="phone"
+                  //{...register("phone")}
                   value={CelularValue}
                   onChange={(e: any) => setCelularValue(e.target.value)}
+                  onBlur=""
                 />
               </Flex>
               <Flex direction="column" w="50%" mt="4">
@@ -189,6 +214,9 @@ export function ReceptionCreateNewConsultForm() {
                   name="birthday"
                   type="date"
                 />
+                <Text color="red.500" fontWeight="bold" textAlign="left">
+                  {errors?.birthday?.message}
+                </Text>
               </Flex>
             </Flex>
             <Flex w="100%" alignItems="center" gap="2" mt="4">
@@ -198,10 +226,14 @@ export function ReceptionCreateNewConsultForm() {
                 </FormLabel>
                 <FixedInput
                   id="tell"
-                  {...register("tell")}
+                  name="tell"
+                  //{...register("tell")}
                   value={FixedValue}
                   onChange={(e: any) => setFixedValue(e.target.value)}
+                  onBlur=""
                 />
+
+                <Text h={errors?.email ? "24px" : "0"}></Text>
               </Flex>
               <Flex direction="column" w="50%">
                 <FormLabel
@@ -219,6 +251,9 @@ export function ReceptionCreateNewConsultForm() {
                   id="email"
                   name="email"
                 />
+                <Text color="red.500" fontWeight="bold" textAlign="left">
+                  {errors?.email?.message}
+                </Text>
               </Flex>
             </Flex>
             <Flex align="center" gap="2" mt="4">
@@ -234,10 +269,13 @@ export function ReceptionCreateNewConsultForm() {
                 </FormLabel>
                 <CPFInput
                   id="cpf"
-                  {...register("cpf")}
+                  name="cpf"
+                  //{...register("cpf")}
                   value={CPFValue}
                   onChange={(e: any) => setCPFValue(e.target.value)}
+                  onBlur=""
                 />
+                <Text color="red.500" fontWeight="bold" textAlign="left"></Text>
               </Flex>
               <Flex direction="column" w="50%" justifyContent="center">
                 <FormLabel textAlign="left" htmlFor="rg" mb="0" fontSize="17">
@@ -245,10 +283,13 @@ export function ReceptionCreateNewConsultForm() {
                 </FormLabel>
                 <RGInput
                   id="rg"
-                  {...register("rg")}
+                  name="rg"
+                  //{...register("rg")}
                   value={RGValue}
                   onChange={(e: any) => setRGValue(e.target.value)}
+                  onBlur=""
                 />
+                {/* //<Text h={errors?.cpf ? "25px" : "0"}></Text> */}
               </Flex>
             </Flex>
 
@@ -313,6 +354,7 @@ export function ReceptionCreateNewConsultForm() {
                         <option value="SE">SE</option>
                         <option value="TO">TO</option>
                       </Select>
+                      <Text>{errors?.state?.message}</Text>
                     </Flex>
 
                     <Flex direction="column" w="33%">
@@ -327,12 +369,14 @@ export function ReceptionCreateNewConsultForm() {
                       </FormLabel>
                       <CEPInput
                         id="cep"
-                        {...register("cep")}
+                        name="cep"
+                        //{...register("cep")}
                         value={CEPValue}
                         onChange={(e: any) => {
                           setTamCep(tamCep + 1);
                           setCEPValue(e.target.value);
                         }}
+                        onBlur=""
                       />
                     </Flex>
                     <Flex direction="column" w="33%">
@@ -370,6 +414,7 @@ export function ReceptionCreateNewConsultForm() {
                         name="adress"
                         value={logradouro}
                       />
+                      <Text>{errors?.adress?.message}</Text>
                     </Flex>
                     <Flex direction="column" w="25%">
                       <FormLabel

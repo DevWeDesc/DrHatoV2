@@ -22,6 +22,11 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { useParams } from "react-router-dom";
+import { GenericLink } from "../../components/Sidebars/GenericLink";
+import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
+import { BiHome } from "react-icons/bi";
+import { BsCashCoin } from "react-icons/bs";
+import { GiCardDiscard } from "react-icons/gi";
 
 export function BoxReturnsDetails() {
   const [customers, setCostumers] = useState([]);
@@ -46,7 +51,20 @@ export function BoxReturnsDetails() {
         <AdminContainer>
           <Flex direction="column" h="100vh">
             <Header title="Painel de Devoluções" />
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+              <GenericSidebar>
+                <GenericLink
+                  name="Painel de Pagamentos"
+                  icon={BsCashCoin}
+                  path="/Recepcao/Caixa/Pagamentos"
+                />
+                <GenericLink
+                  name="Painel de Devoluções"
+                  icon={GiCardDiscard}
+                  path="/Recepcao/Caixa/Returns"
+                />
+                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
+              </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <TableContainer>
                   <Table variant="simple">
