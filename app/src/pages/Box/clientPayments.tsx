@@ -67,7 +67,7 @@ export function BoxNewPaymentsClient() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Devoluções" />
+            <Header title="Painel de Pagamentos por Cliente" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
