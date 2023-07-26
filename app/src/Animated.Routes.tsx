@@ -87,6 +87,11 @@ import { BoxReturnsDetails } from "./pages/Box/returnsDetails";
 import { BoxPaymentsDetails } from "./pages/Box/paymentsDetails";
 import { BoxNewPayments } from "./pages/Box/newPayments";
 import { BoxNewPaymentsClient } from "./pages/Box/clientPayments";
+import { ToolsTable } from "./pages/Reception/Tools/table";
+import { ToolsChangePassword } from "./pages/Reception/Tools/passwordChange";
+import { ToolsAutorizations } from "./pages/Reception/Tools/autorizations";
+import { ToolsAutorizationsDetails } from "./pages/Reception/Tools/autorizationsDetails";
+import { ReceptionVaccines } from "./pages/Reception/Vaccines";
 
 export function AnimatedRoutes() {
   const location = useLocation();
@@ -256,6 +261,23 @@ export function AnimatedRoutes() {
           <Route
             path="/Recepcao/Customer/Edit/:id"
             element={<EditCustomer />}
+          />
+          <Route path="/Recepcao/Ferramentas/Tabela" element={<ToolsTable />} />
+          <Route
+            path="/Recepcao/Ferramentas/TrocaDeSenha/:id"
+            element={<ToolsChangePassword />}
+          />
+          <Route
+            path="/Recepcao/Ferramentas/Autorizacao"
+            element={<ToolsAutorizations />}
+          />
+          <Route
+            path="/Recepcao/Ferramentas/Autorizacao/:id"
+            element={<ToolsAutorizationsDetails />}
+          />
+          <Route
+            path="/Recepcao/Internacoes/Vacinas"
+            element={<ReceptionVaccines />}
           />
           <Route path="/Recepcao/Finance" element={<Finance />} />
           <Route path="/Recepcao/" element={<Reception />} />
