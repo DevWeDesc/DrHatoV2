@@ -34,6 +34,10 @@ import { Queue } from "phosphor-react";
 import { VetsSearch } from "../../components/Search/vetsSearch";
 import { motion } from "framer-motion";
 import { PaymentsSearch } from "../../components/Search/paymentsSearch";
+import { GiCardDiscard } from "react-icons/gi";
+import { BsCashCoin } from "react-icons/bs";
+import { BiHome } from "react-icons/all";
+import { MdOutlinePayments } from "react-icons/all";
 
 interface QueueProps {
   response: [];
@@ -244,7 +248,20 @@ export function BoxPayments() {
         <AdminContainer>
           <Flex direction="column" h="100vh">
             <Header title="Painel de Pagamentos" />
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+              <GenericSidebar>
+                <GenericLink
+                  name="Painel de Pagamentos"
+                  icon={MdOutlinePayments}
+                  path={`/Recepcao/Caixa/Pagamentos`}
+                />{" "}
+                <GenericLink
+                  name="Painel de Devoluções"
+                  icon={GiCardDiscard}
+                  path={`/Recepcao/Caixa/Returns`}
+                />{" "}
+                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
+              </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <Flex mb="8" gap="8" direction="column" align="center">
                   <PaymentsSearch path="filtredquery" />

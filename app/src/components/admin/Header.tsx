@@ -18,7 +18,7 @@ export function Header({ title = "Painel Administrativo" }: HeaderProps) {
     <Flex
       as="header"
       w="100%"
-      maxWidth={1480}
+      maxWidth={1680}
       h="20"
       mx="auto"
       mt="4"

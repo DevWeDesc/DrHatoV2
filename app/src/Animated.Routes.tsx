@@ -85,6 +85,8 @@ import { BoxPayments } from "./pages/Box/payments";
 import { BoxReturns } from "./pages/Box/returns";
 import { BoxReturnsDetails } from "./pages/Box/returnsDetails";
 import { BoxPaymentsDetails } from "./pages/Box/paymentsDetails";
+import { BoxNewPayments } from "./pages/Box/newPayments";
+import { BoxNewPaymentsClient } from "./pages/Box/clientPayments";
 
 export function AnimatedRoutes() {
   const location = useLocation();
@@ -231,6 +233,14 @@ export function AnimatedRoutes() {
           <Route
             path="/Recepcao/Caixa/Pagamentos/:id"
             element={<BoxPaymentsDetails />}
+          />
+          <Route
+            path="/Recepcao/Caixa/PagamentoCliente/:id"
+            element={<BoxNewPaymentsClient />}
+          />
+          <Route
+            path="/Recepcao/Caixa/NovoPagamento/:id"
+            element={<BoxNewPayments />}
           />
           <Route path="/Recepcao/Caixa/Returns" element={<BoxReturns />} />
           <Route
