@@ -14,7 +14,7 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { AdminContainer } from "../AdminDashboard/style";
+import { AdminContainer } from "../../AdminDashboard/style";
 import { motion } from "framer-motion";
 import { Box } from "@chakra-ui/react";
 import { BiHome } from "react-icons/bi";

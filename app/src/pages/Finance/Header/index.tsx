@@ -1,9 +1,9 @@
-import logo from  '../../../assets/logoPadronizada.png'
-import { Container, Content } from './styles'
-import { Link } from 'react-router-dom'
+import logo from "../../../assets/logoPadronizada.png";
+import { Container, Content } from "./styles";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
-  onOpenModal: () => void
+  onOpenModal: () => void;
 }
 export function Header({ onOpenModal }: HeaderProps) {
   return (
@@ -13,16 +13,14 @@ export function Header({ onOpenModal }: HeaderProps) {
           <img src={logo} alt="Dr hato" />
         </div>
 
-      <Link to="/Home/Recepcao">
-      <button type="button">
-          Voltar
-        </button>
-      </Link>
-        
+        <Link to="/Recepcao">
+          <button type="button">Voltar</button>
+        </Link>
+
         <button type="button" onClick={onOpenModal}>
           Nova Transação
         </button>
       </Content>
     </Container>
-  )
+  );
 }

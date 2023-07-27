@@ -79,14 +79,23 @@ import ReportSurgeriesCompleted from "./pages/Reports/surgeriesCompleted";
 import ReportsExamsForVets from "./pages/Reports/examsforVet";
 import { ReportsExamsExtern } from "./pages/Reports/examsExterns";
 import { ReactPdfComponent } from "./components/ReactPdfComp";
-import { BoxReception } from "./pages/Box";
-import { BoxReports } from "./pages/Box/reports";
-import { BoxPayments } from "./pages/Box/payments";
-import { BoxReturns } from "./pages/Box/returns";
-import { BoxReturnsDetails } from "./pages/Box/returnsDetails";
-import { BoxPaymentsDetails } from "./pages/Box/paymentsDetails";
-import { BoxNewPayments } from "./pages/Box/newPayments";
-import { BoxNewPaymentsClient } from "./pages/Box/clientPayments";
+import { BoxReception } from "./pages/Reception/Box";
+import { BoxReports } from "./pages/Reception/Box/reports";
+import { BoxPayments } from "./pages/Reception/Box/payments";
+import { BoxReturns } from "./pages/Reception/Box/returns";
+import { BoxReturnsDetails } from "./pages/Reception/Box/returnsDetails";
+import { BoxPaymentsDetails } from "./pages/Reception/Box/paymentsDetails";
+import { BoxNewPayments } from "./pages/Reception/Box/newPayments";
+import { BoxNewPaymentsClient } from "./pages/Reception/Box/clientPayments";
+import { ToolsTable } from "./pages/Reception/Tools/table";
+import { ToolsChangePassword } from "./pages/Reception/Tools/passwordChange";
+import { ToolsAutorizations } from "./pages/Reception/Tools/autorizations";
+import { ToolsAutorizationsDetails } from "./pages/Reception/Tools/autorizationsDetails";
+import { ReceptionVaccines } from "./pages/Reception/Vaccines";
+import { RegisterClinics } from "./pages/Reception/Administration/registerClinics";
+import { EditClinics } from "./pages/Reception/Administration/editClinics";
+import { UsersClinics } from "./pages/Reception/Administration/usersClinics";
+import { BreedRegistry } from "./pages/Reception/Administration/breedRegistry";
 
 export function AnimatedRoutes() {
   const location = useLocation();
@@ -257,7 +266,38 @@ export function AnimatedRoutes() {
             path="/Recepcao/Customer/Edit/:id"
             element={<EditCustomer />}
           />
+          <Route path="/Recepcao/Ferramentas/Tabela" element={<ToolsTable />} />
+          <Route
+            path="/Recepcao/Ferramentas/TrocaDeSenha/:id"
+            element={<ToolsChangePassword />}
+          />
+          <Route
+            path="/Recepcao/Ferramentas/Autorizacao"
+            element={<ToolsAutorizations />}
+          />
+          <Route
+            path="/Recepcao/Ferramentas/Autorizacao/:id"
+            element={<ToolsAutorizationsDetails />}
+          />
+          <Route
+            path="/Recepcao/Internacoes/Vacinas"
+            element={<ReceptionVaccines />}
+          />
           <Route path="/Recepcao/Finance" element={<Finance />} />
+          <Route
+            path="/Recepcao/RegistroClinicas"
+            element={<RegisterClinics />}
+          />
+          <Route
+            path="/Recepcao/RegistroClinicas/:id"
+            element={<EditClinics />}
+          />
+          <Route
+            path="/Recepcao/RegistroClinicas/Users/:id"
+            element={<UsersClinics />}
+          />
+          <Route path="/Recepcao/CadastroRaças" element={<BreedRegistry />} />
+
           <Route path="/Recepcao/" element={<Reception />} />
 
           <Route path="/Surgeries/" element={<Surgeries />} />

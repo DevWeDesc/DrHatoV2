@@ -17,51 +17,51 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { Header } from "../../components/admin/Header";
-import { GenericLink } from "../../components/Sidebars/GenericLink";
-import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import { AiOutlineSearch } from "react-icons/all";
-import { AdminContainer } from "../AdminDashboard/style";
-import { Link, useNavigate } from "react-router-dom";
-import { UniversalSearch } from "../../components/Search/universalSearch";
-import { DbContext } from "../../contexts/DbContext";
-import { StyledBox } from "../../components/Header/style";
+import { Header } from "../../../components/admin/Header";
+import { AdminContainer } from "../../AdminDashboard/style";
+import { useNavigate } from "react-router-dom";
+import { DbContext } from "../../../contexts/DbContext";
+import { StyledBox } from "../../../components/Header/style";
 import { MdPets as Burger } from "react-icons/all";
 import { toast } from "react-toastify";
-import { LoadingSpinner } from "../../components/Loading";
-import { api } from "../../lib/axios";
-import { Queue } from "phosphor-react";
-import { VetsSearch } from "../../components/Search/vetsSearch";
+import { api } from "../../../lib/axios";
 import { motion } from "framer-motion";
-import { PaymentsSearch } from "../../components/Search/paymentsSearch";
+import { ReturnsSearch } from "../../../components/Search/returnsSearch";
+import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
+import { GenericLink } from "../../../components/Sidebars/GenericLink";
+import { AiOutlineSearch } from "react-icons/ai";
 import { GiCardDiscard } from "react-icons/gi";
 import { BsCashCoin } from "react-icons/bs";
 import { BiHome } from "react-icons/all";
-import { MdOutlinePayments } from "react-icons/all";
 
 interface QueueProps {
   response: [];
   totalInQueue: number;
 }
 
-export function BoxPayments() {
+export function ToolsAutorizations() {
   let { dataCustomer, dataPet } = useContext(DbContext);
   const [petValue, setPetValue] = useState("");
   const [petTotal, setPetTotal] = useState([]);
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [totalInQueue, setTotalInQueue] = useState(0 as any);
+  const [constumers, setCostumers] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
     async function getQueue() {
       const response = await api.get("/pets/queue");
       const total = await api.get("/pets/queue");
       const Pets = await api.get("/pets");
+      const customers = await api.get("/customers");
       setTotalInQueue(total.data);
       setInQueue(response.data.response);
       setPetTotal(total.data.response);
+      setCostumers(customers.data);
     }
     getQueue();
   }, [inQueue.length]);
+
+  console.log(constumers);
 
   //console.log(totalInQueue);
 
@@ -198,38 +198,35 @@ export function BoxPayments() {
             <Thead w="100%">
               <Tr>
                 <Th>Cliente</Th>
-                <Th>Último Animal</Th>
-                <Th>Código</Th>
-                <Th>Data</Th>
-                <Th>Hora</Th>
-                <Th>Saldo</Th>
+                <Th>Telefone</Th>
+                <Th>RG</Th>
+                <Th>CPF/CNPJ</Th>
               </Tr>
             </Thead>
 
             <Tbody w="100%">
-              {petTotal.map((pet: any) => (
+              {constumers.map((person: any) => (
                 <Tr
-                  key={pet.id}
+                  key={person.id}
                   cursor="pointer"
                   onClick={() =>
-                    navigate(`/Recepcao/Caixa/Pagamentos/${pet.id}`)
+                    navigate(
+                      `/Recepcao/Ferramentas/Autorizacao/${parseInt(person.id)}`
+                    )
                   }
                 >
-                  <Td>{pet.customerName}</Td>
+                  <Td>{person.name}</Td>
 
                   <Td
                     cursor="pointer"
                     onClick={() =>
-                      navigate(`/Recepcao/Caixa/Pagamentos/${pet.id}`)
+                      navigate(`/Recepcao/Ferramentas/Autorizacao/${person.id}`)
                     }
                   >
-                    {pet.name}
+                    {person.tell}
                   </Td>
-                  <Td>{pet.codPet}</Td>
-                  <Td>{pet.queueEntry}</Td>
-                  <Td>{pet.ouor}</Td>
-
-                  <Td>0</Td>
+                  <Td>{person.rg}</Td>
+                  <Td>{person.cpf}</Td>
                 </Tr>
               ))}
             </Tbody>
@@ -247,24 +244,19 @@ export function BoxPayments() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Pagamentos" />
+            <Header title="Painel de Devoluções" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
                   name="Painel de Pagamentos"
-                  icon={MdOutlinePayments}
-                  path={`/Recepcao/Caixa/Pagamentos`}
-                />{" "}
-                <GenericLink
-                  name="Painel de Devoluções"
-                  icon={GiCardDiscard}
-                  path={`/Recepcao/Caixa/Returns`}
-                />{" "}
+                  icon={BsCashCoin}
+                  path="/Recepcao/Caixa/Pagamentos"
+                />
                 <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
               </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <Flex mb="8" gap="8" direction="column" align="center">
-                  <PaymentsSearch path="filtredquery" />
+                  <ReturnsSearch path="filtredquery" />
                   <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
                     <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
                   </Button>
