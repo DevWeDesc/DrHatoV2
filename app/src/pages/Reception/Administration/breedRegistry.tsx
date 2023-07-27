@@ -14,37 +14,37 @@ import {
   Menu,
   MenuButton,
   MenuList,
+  Input,
   Button,
 } from "@chakra-ui/react";
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { Header } from "../../components/admin/Header";
-import { GenericLink } from "../../components/Sidebars/GenericLink";
-import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import { AiOutlineSearch } from "react-icons/all";
-import { AdminContainer } from "../AdminDashboard/style";
+import { Header } from "../../../components/admin/Header";
+import { GenericLink } from "../../../components/Sidebars/GenericLink";
+import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
+import { AdminContainer } from "../../AdminDashboard/style";
 import { Link, useNavigate } from "react-router-dom";
-import { UniversalSearch } from "../../components/Search/universalSearch";
-import { DbContext } from "../../contexts/DbContext";
-import { StyledBox } from "../../components/Header/style";
-import { MdPets as Burger } from "react-icons/all";
+import { DbContext } from "../../../contexts/DbContext";
+import { StyledBox } from "../../../components/Header/style";
+import { FaTools, MdPets as Burger } from "react-icons/all";
 import { toast } from "react-toastify";
-import { LoadingSpinner } from "../../components/Loading";
-import { api } from "../../lib/axios";
-import { Queue } from "phosphor-react";
-import { VetsSearch } from "../../components/Search/vetsSearch";
+import { LoadingSpinner } from "../../../components/Loading";
+import { api } from "../../../lib/axios";
 import { motion } from "framer-motion";
-import { PaymentsSearch } from "../../components/Search/paymentsSearch";
+import { PaymentsSearch } from "../../../components/Search/paymentsSearch";
 import { GiCardDiscard } from "react-icons/gi";
-import { BsCashCoin } from "react-icons/bs";
 import { BiHome } from "react-icons/all";
 import { MdOutlinePayments } from "react-icons/all";
+import { SearchRegisterClinics } from "../../../components/Search/registerClinics";
+import { BsFillTrashFill } from "react-icons/all";
+import { FaUserFriends } from "react-icons/all";
+import { SearchBreedsRegister } from "../../../components/Search/breedsRegister";
 
 interface QueueProps {
   response: [];
   totalInQueue: number;
 }
 
-export function BoxPayments() {
+export function BreedRegistry() {
   let { dataCustomer, dataPet } = useContext(DbContext);
   const [petValue, setPetValue] = useState("");
   const [petTotal, setPetTotal] = useState([]);
@@ -73,6 +73,39 @@ export function BoxPayments() {
     navigate(`/Vets/Workspace/${petValue}`);
   };
   //console.log("PET RESPONSE", dataPet);
+
+  const petTot = [
+    {
+      id: 1,
+      breeds: "Afghan Hound",
+      species: "Canina",
+    },
+    {
+      id: 2,
+      breeds: "Agapolis",
+      species: "Ave",
+    },
+    {
+      id: 3,
+      breeds: "Agapones",
+      species: "Ave",
+    },
+    {
+      id: 4,
+      breeds: "Airdale Terrier",
+      species: "Canina",
+    },
+    {
+      id: 5,
+      breeds: "Akita",
+      species: "Canina",
+    },
+    {
+      id: 6,
+      breeds: "American Bully",
+      species: "Canina",
+    },
+  ];
 
   let typeTable: ReactNode;
   switch (true) {
@@ -197,39 +230,35 @@ export function BoxPayments() {
           <Table colorScheme="blackAlpha" w="100%">
             <Thead w="100%">
               <Tr>
-                <Th>Cliente</Th>
-                <Th>Último Animal</Th>
-                <Th>Código</Th>
-                <Th>Data</Th>
-                <Th>Hora</Th>
-                <Th>Saldo</Th>
+                <Th fontSize={15}>Raça</Th>
+                <Th fontSize={15}>Espécie</Th>
+                <Th fontSize={15}>Editar Raça</Th>
+                <Th fontSize={15}>Excluir Raça</Th>
               </Tr>
             </Thead>
 
             <Tbody w="100%">
-              {petTotal.map((pet: any) => (
-                <Tr
-                  key={pet.id}
-                  cursor="pointer"
-                  onClick={() =>
-                    navigate(`/Recepcao/Caixa/Pagamentos/${pet.id}`)
-                  }
-                >
-                  <Td>{pet.customerName}</Td>
-
-                  <Td
-                    cursor="pointer"
-                    onClick={() =>
-                      navigate(`/Recepcao/Caixa/Pagamentos/${pet.id}`)
-                    }
-                  >
-                    {pet.name}
+              {petTot.map((pet: any) => (
+                <Tr key={pet.procedures} cursor="pointer" fontWeight="bold">
+                  <Td>{pet.breeds}</Td>
+                  <Td cursor="pointer">{pet.species}</Td>
+                  <Td cursor="pointer">
+                    {" "}
+                    <Button colorScheme="yellow">
+                      <Flex align="center" gap="2">
+                        <FaTools />
+                        Editar Raça
+                      </Flex>
+                    </Button>
                   </Td>
-                  <Td>{pet.codPet}</Td>
-                  <Td>{pet.queueEntry}</Td>
-                  <Td>{pet.ouor}</Td>
-
-                  <Td>0</Td>
+                  <Td>
+                    <Button colorScheme="red">
+                      <Flex align="center" gap="2">
+                        <BsFillTrashFill />
+                        Excluir Raça
+                      </Flex>
+                    </Button>
+                  </Td>
                 </Tr>
               ))}
             </Tbody>
@@ -247,28 +276,62 @@ export function BoxPayments() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Pagamentos" />
+            <Header title="Cadastro de Raças" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
-                  name="Painel de Pagamentos"
-                  icon={MdOutlinePayments}
-                  path={`/Recepcao/Caixa/Pagamentos`}
-                />{" "}
-                <GenericLink
-                  name="Painel de Devoluções"
+                  name="Recepção"
                   icon={GiCardDiscard}
-                  path={`/Recepcao/Caixa/Returns`}
+                  path={`/Recepcao`}
                 />{" "}
                 <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
               </GenericSidebar>
-              <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+              <Box
+                flex="1"
+                borderRadius={8}
+                bg="gray.200"
+                p="8"
+                maxH="44rem"
+                overflow="auto"
+              >
                 <Flex mb="8" gap="8" direction="column" align="center">
-                  <PaymentsSearch path="filtredquery" />
-                  <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
-                    <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
-                  </Button>
-                  <Flex textAlign="center" justify="center" w="80%">
+                  <Text
+                    w="100%"
+                    textAlign="center"
+                    py="6"
+                    fontSize="20"
+                    bg="blue.100"
+                    fontWeight="bold"
+                  >
+                    Raças Cadastradas no Sistema
+                  </Text>
+                  <Flex w="55%" align="end">
+                    <Flex direction="column" w="90%" pl="1">
+                      <Text mb="2" fontWeight="bold">
+                        Adicionar Nova Raça
+                      </Text>
+                      <Flex gap="2">
+                        <Flex direction="column">
+                          <Text mb="2">Espécie</Text>
+                          <Input w="100%" bg="white" borderColor="black" />
+                        </Flex>
+                        <Flex direction="column">
+                          <Text mb="2">Raça</Text>
+                          <Input w="100%" bg="white" borderColor="black" />
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                    <Button ml="2" px="94px" colorScheme="twitter">
+                      Gravar
+                    </Button>
+                  </Flex>
+                  <SearchBreedsRegister path="filtredquery" />
+                  <Flex
+                    textAlign="center"
+                    direction="column"
+                    justify="center"
+                    w="80%"
+                  >
                     {typeTable}
                   </Flex>
                 </Flex>

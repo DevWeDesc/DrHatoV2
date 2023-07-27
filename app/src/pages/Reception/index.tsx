@@ -168,12 +168,16 @@ export function Reception() {
                               Financeiro
                             </Button>
                           </Link>
-                          <Button colorScheme="whatsapp">
-                            Cadastro de Clinicas
-                          </Button>
-                          <Button colorScheme="whatsapp">
-                            Cadastro de Raças
-                          </Button>
+                          <Link to="/Recepcao/RegistroClinicas">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Cadastro de Clinicas
+                            </Button>
+                          </Link>
+                          <Link to="/Recepcao/CadastroRaças">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Cadastro de Raças
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </div>

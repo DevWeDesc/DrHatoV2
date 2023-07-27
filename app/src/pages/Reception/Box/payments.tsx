@@ -17,51 +17,51 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { Header } from "../../components/admin/Header";
-import { AdminContainer } from "../AdminDashboard/style";
-import { useNavigate } from "react-router-dom";
-import { DbContext } from "../../contexts/DbContext";
-import { StyledBox } from "../../components/Header/style";
+import { Header } from "../../../components/admin/Header";
+import { GenericLink } from "../../../components/Sidebars/GenericLink";
+import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
+import { AiOutlineSearch } from "react-icons/all";
+import { AdminContainer } from "../../AdminDashboard/style";
+import { Link, useNavigate } from "react-router-dom";
+import { UniversalSearch } from "../../../components/Search/universalSearch";
+import { DbContext } from "../../../contexts/DbContext";
+import { StyledBox } from "../../../components/Header/style";
 import { MdPets as Burger } from "react-icons/all";
 import { toast } from "react-toastify";
-import { api } from "../../lib/axios";
+import { LoadingSpinner } from "../../../components/Loading";
+import { api } from "../../../lib/axios";
+import { Queue } from "phosphor-react";
+import { VetsSearch } from "../../../components/Search/vetsSearch";
 import { motion } from "framer-motion";
-import { ReturnsSearch } from "../../components/Search/returnsSearch";
-import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import { GenericLink } from "../../components/Sidebars/GenericLink";
-import { AiOutlineSearch } from "react-icons/ai";
+import { PaymentsSearch } from "../../../components/Search/paymentsSearch";
 import { GiCardDiscard } from "react-icons/gi";
 import { BsCashCoin } from "react-icons/bs";
 import { BiHome } from "react-icons/all";
+import { MdOutlinePayments } from "react-icons/all";
 
 interface QueueProps {
   response: [];
   totalInQueue: number;
 }
 
-export function BoxReturns() {
+export function BoxPayments() {
   let { dataCustomer, dataPet } = useContext(DbContext);
   const [petValue, setPetValue] = useState("");
   const [petTotal, setPetTotal] = useState([]);
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [totalInQueue, setTotalInQueue] = useState(0 as any);
-  const [constumers, setCostumers] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
     async function getQueue() {
       const response = await api.get("/pets/queue");
       const total = await api.get("/pets/queue");
       const Pets = await api.get("/pets");
-      const customers = await api.get("/customers");
       setTotalInQueue(total.data);
       setInQueue(response.data.response);
       setPetTotal(total.data.response);
-      setCostumers(customers.data);
     }
     getQueue();
   }, [inQueue.length]);
-
-  console.log(constumers);
 
   //console.log(totalInQueue);
 
@@ -73,6 +73,19 @@ export function BoxReturns() {
     navigate(`/Vets/Workspace/${petValue}`);
   };
   //console.log("PET RESPONSE", dataPet);
+
+  const clientes = [
+    {
+      id: 1,
+      name: "Junior Ferreira Campos",
+      animal: "Mel",
+      date: "24/07/23",
+      our: "10:04",
+      balance: "-90,00",
+      adrees: "Avenida Maria Clara Machado, 10 - - Campinas - CEP : 13051-207",
+      phone: "(11) 98379-0437",
+    },
+  ];
 
   let typeTable: ReactNode;
   switch (true) {
@@ -198,33 +211,35 @@ export function BoxReturns() {
             <Thead w="100%">
               <Tr>
                 <Th>Cliente</Th>
-                <Th>Telefone</Th>
-                <Th>RG</Th>
-                <Th>CPF/CNPJ</Th>
+                <Th>Último Animal</Th>
+                <Th>Data</Th>
+                <Th>Hora</Th>
+                <Th>Saldo</Th>
               </Tr>
             </Thead>
 
             <Tbody w="100%">
-              {constumers.map((person: any) => (
+              {clientes.map((user: any) => (
                 <Tr
-                  key={person.id}
+                  key={user.id}
                   cursor="pointer"
                   onClick={() =>
-                    navigate(`/Recepcao/Caixa/Returns/${parseInt(person.id)}`)
+                    navigate(`/Recepcao/Caixa/Pagamentos/${user.id}`)
                   }
                 >
-                  <Td>{person.name}</Td>
+                  <Td>{user.name}</Td>
 
                   <Td
                     cursor="pointer"
                     onClick={() =>
-                      navigate(`/Recepcao/Caixa/Returns/${person.id}`)
+                      navigate(`/Recepcao/Caixa/Pagamentos/${user.id}`)
                     }
                   >
-                    {person.tell}
+                    {user.animal}
                   </Td>
-                  <Td>{person.rg}</Td>
-                  <Td>{person.cpf}</Td>
+                  <Td>{user.date}</Td>
+                  <Td>{user.our}</Td>
+                  <Td>R${user.balance}</Td>
                 </Tr>
               ))}
             </Tbody>
@@ -242,19 +257,24 @@ export function BoxReturns() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Devoluções" />
+            <Header title="Painel de Pagamentos" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
                   name="Painel de Pagamentos"
-                  icon={BsCashCoin}
-                  path="/Recepcao/Caixa/Pagamentos"
-                />
+                  icon={MdOutlinePayments}
+                  path={`/Recepcao/Caixa/Pagamentos`}
+                />{" "}
+                <GenericLink
+                  name="Painel de Devoluções"
+                  icon={GiCardDiscard}
+                  path={`/Recepcao/Caixa/Returns`}
+                />{" "}
                 <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
               </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <Flex mb="8" gap="8" direction="column" align="center">
-                  <ReturnsSearch path="filtredquery" />
+                  <PaymentsSearch path="filtredquery" />
                   <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
                     <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
                   </Button>
