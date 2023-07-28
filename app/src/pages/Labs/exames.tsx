@@ -281,7 +281,14 @@ export function LabExames() {
                 />
                 <GenericLink name="Recepção" icon={BiHome} path="/Recepcao" />
               </GenericSidebar>
-              <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+              <Box
+                flex="1"
+                borderRadius={8}
+                bg="gray.200"
+                p="8"
+                maxH="44rem"
+                overflow="auto"
+              >
                 <Flex mb="8" gap="8" direction="column" align="center">
                   <VetsSearch path="vetsearch" />
                   <Button

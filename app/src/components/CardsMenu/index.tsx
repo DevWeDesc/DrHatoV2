@@ -73,6 +73,12 @@ export function CardsMenu() {
             text="Ver exames"
             icon={<AiFillCheckCircle fill="#46720c" size={36} />}
           />
+          <CardNavigation
+            path="/Surgeries"
+            title="Cirurgias"
+            text="Ver Cirurgias"
+            icon={<GiScalpel fill="#46720c" size={36} />}
+          />
         </>
       );
       break;
@@ -120,6 +126,12 @@ export function CardsMenu() {
             text="Ver exames"
             icon={<AiFillCheckCircle fill="#46720c" size={36} />}
           />
+          <CardNavigation
+            path="/Surgeries"
+            title="Cirurgias"
+            text="Ver Cirurgias"
+            icon={<GiScalpel fill="#46720c" size={36} />}
+          />
         </>
       );
       break;
@@ -154,6 +166,12 @@ export function CardsMenu() {
             title="Autorizações"
             text="Ver exames"
             icon={<AiFillCheckCircle fill="#46720c" size={36} />}
+          />
+          <CardNavigation
+            path="/Surgeries"
+            title="Cirurgias"
+            text="Ver Cirurgias"
+            icon={<GiScalpel fill="#46720c" size={36} />}
           />
         </>
       );

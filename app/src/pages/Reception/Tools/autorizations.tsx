@@ -244,7 +244,7 @@ export function ToolsAutorizations() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Devoluções" />
+            <Header title="Painel de Autorizações" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
@@ -254,7 +254,14 @@ export function ToolsAutorizations() {
                 />
                 <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
               </GenericSidebar>
-              <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+              <Box
+                flex="1"
+                borderRadius={8}
+                bg="gray.200"
+                p="8"
+                maxH="44rem"
+                overflow="auto"
+              >
                 <Flex mb="8" gap="8" direction="column" align="center">
                   <ReturnsSearch path="filtredquery" />
                   <Button colorScheme="teal" onClick={() => navigate("/Queue")}>

@@ -689,37 +689,87 @@ export function HemoTable({ Option, CloseOption }: Props): any {
                       <Td borderColor="black" color="white" bg="blue.500">
                         Bioquímica sérica
                       </Td>
-                      <Td borderColor="black">Resultados</Td>
-                      <Td borderColor="black">Unidades</Td>
-                      <Td borderColor="black">@Val. Ref. - Canina</Td>
-                      <Td borderColor="black">@Val. Ref. - Felina</Td>
+                      <Td
+                        borderColor="black"
+                        border="1px solid black"
+                        textAlign="center"
+                      >
+                        Resultados
+                      </Td>
+                      <Td
+                        borderColor="black"
+                        border="1px solid black"
+                        textAlign="center"
+                      >
+                        Unidades
+                      </Td>
+                      <Td
+                        borderColor="black"
+                        border="1px solid black"
+                        textAlign="center"
+                      >
+                        @Val. Ref. - Canina
+                      </Td>
+                      <Td
+                        borderColor="black"
+                        border="1px solid black"
+                        textAlign="center"
+                      >
+                        @Val. Ref. - Felina
+                      </Td>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    <Td>
-                      <Flex
-                        direction="column"
-                        fontWeight="bold"
-                        justifyContent="center"
-                        gap="10"
-                      >
-                        <Text>Caracteristicas</Text>
-                        <Text>Glicemia</Text>
-                        <Text>Horário de realizção</Text>
-                      </Flex>
-                    </Td>
+                    <Tr>
+                      <Td border="1px solid black" py="0">
+                        <Flex
+                          direction="column"
+                          fontWeight="bold"
+                          justifyContent="center"
+                          gap="10"
+                        >
+                          Caracteristicas
+                        </Flex>
+                      </Td>
+                      <Td py="0" px="0" display="flex" alignItems="center">
+                        <Td
+                          borderRight="1px solid black"
+                          textAlign="center"
+                          py="0"
+                          h="40px"
+                          w="50%"
+                        >
+                          Absoluto
+                        </Td>
+                        <Td py="0" px="0" textAlign="center" w="40%">
+                          Relativo
+                        </Td>
+                      </Td>
+                      <Td border="1px solid black" py="0">
+                        <Td py="0">Un.Abs</Td>
+                        <Td py="0">Un. Rel.</Td>
+                      </Td>
+                      <Td border="1px solid black" py="1">
+                        <Td py="0">Absoluto</Td>
+                        <Td py="0">Relativo</Td>
+                      </Td>
+                      <Td border="1px solid black" py="1">
+                        <Td py="0">Absoluto</Td>
+                        <Td py="0">Relativo</Td>
+                      </Td>
+                    </Tr>
 
-                    <Td>
+                    <Td border="1px solid black">
                       <Flex>
                         <Flex direction="column" gap="5">
-                          <Text fontWeight="bold" mt="3">
+                          <Text fontWeight="bold" mt="3" textAlign="center">
                             Absoluto
                           </Text>
                           <Input maxWidth="120px" name="ex" mt="4" />
                           <Input maxWidth="120px" name="ex" />
                         </Flex>
                         <Flex direction="column" gap="5">
-                          <Text fontWeight="bold" mt="3">
+                          <Text fontWeight="bold" mt="3" textAlign="center">
                             Relativo
                           </Text>
                           <Td></Td>
@@ -727,17 +777,17 @@ export function HemoTable({ Option, CloseOption }: Props): any {
                         </Flex>
                       </Flex>
                     </Td>
-                    <Td>
+                    <Td border="1px solid black">
                       <Flex direction="row">
                         <Flex direction="column" fontWeight="bold" gap="5">
-                          <Text w="116px" mt="3">
+                          <Text w="116px" mt="3" textAlign="center">
                             Un. Abs
                           </Text>
                           <Input maxWidth="120px" name="ex" mt="4" />
                           <Input maxWidth="120px" name="ex" />
                         </Flex>
                         <Flex direction="column" gap="10" pl="2">
-                          <Text mt="3" fontWeight="bold">
+                          <Text mt="3" fontWeight="bold" textAlign="center">
                             Un. Relativa
                           </Text>
                           <Text>milhões/mm3</Text>
@@ -745,17 +795,17 @@ export function HemoTable({ Option, CloseOption }: Props): any {
                         </Flex>
                       </Flex>
                     </Td>
-                    <Td>
+                    <Td border="1px solid black">
                       <Flex direction="row">
                         <Flex direction="column" gap="5">
-                          <Text fontWeight="bold" mt="3">
+                          <Text fontWeight="bold" mt="3" textAlign="center">
                             Absoluto
                           </Text>
                           <Input maxWidth="120px" name="ex" mt="4" />
                           <Input maxWidth="120px" name="ex" />
                         </Flex>
                         <Flex direction="column" ml="5">
-                          <Text fontWeight="bold" mt="3">
+                          <Text fontWeight="bold" mt="3" textAlign="center">
                             Relativo
                           </Text>
                           <Td></Td>
@@ -763,17 +813,17 @@ export function HemoTable({ Option, CloseOption }: Props): any {
                         </Flex>
                       </Flex>
                     </Td>
-                    <Td>
+                    <Td border="1px solid black">
                       <Flex direction="row">
                         <Flex direction="column" gap="5">
-                          <Text fontWeight="bold" mt="2">
+                          <Text fontWeight="bold" mt="2" textAlign="center">
                             Absoluto
                           </Text>
                           <Input maxWidth="120px" name="ex" mt="2" />
                           <Input maxWidth="120px" name="ex" />
                         </Flex>
                         <Flex direction="column" gap="5" ml="4">
-                          <Text fontWeight="bold" mt="2">
+                          <Text fontWeight="bold" mt="2" textAlign="center">
                             Relativo
                           </Text>
                           <Td></Td>
@@ -784,10 +834,163 @@ export function HemoTable({ Option, CloseOption }: Props): any {
                   </Tbody>
                 </Table>
                 <Flex>
-                  <Text pl="6" fontWeight="bold" w="22%">
+                  <Text pl="6" fontWeight="bold" w="19.4%" textAlign="center">
                     Observações
                   </Text>
                   <Textarea
+                    rounded="0"
+                    bg="white"
+                    ml="4"
+                    border="1px solid black"
+                  ></Textarea>
+                </Flex>
+                <Button
+                  mt="5"
+                  py="8"
+                  fontSize="18"
+                  fontWeight="bold"
+                  w="100%"
+                  colorScheme="green"
+                  //onClick={() => CloseOption()}
+                >
+                  Gravar
+                </Button>
+              </>
+            )}
+          </>
+          <>
+            {option.name === "Bioquímica sérica" && (
+              <>
+                <Table colorScheme="blackAlpha" w="100%">
+                  <Thead>
+                    <Tr fontWeight="bold" fontSize="19">
+                      <Td borderColor="black" color="white" bg="blue.500">
+                        Bioquímica sérica
+                      </Td>
+                      <Td
+                        borderColor="black"
+                        border="1px solid black"
+                        textAlign="center"
+                      >
+                        Resultados
+                      </Td>
+                      <Td
+                        borderColor="black"
+                        border="1px solid black"
+                        textAlign="center"
+                      >
+                        Unidades
+                      </Td>
+                      <Td
+                        borderColor="black"
+                        border="1px solid black"
+                        textAlign="center"
+                      >
+                        @Val. Ref. - Canina
+                      </Td>
+                      <Td
+                        borderColor="black"
+                        border="1px solid black"
+                        textAlign="center"
+                      >
+                        @Val. Ref. - Felina
+                      </Td>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    <Td border="1px solid black">
+                      <Flex
+                        direction="column"
+                        fontWeight="bold"
+                        justifyContent="center"
+                        gap="10"
+                      >
+                        <Text textAlign="center">Caracteristicas</Text>
+                        <Text textAlign="center">Glicemia</Text>
+                        <Text textAlign="center">Horário de realizção</Text>
+                      </Flex>
+                    </Td>
+
+                    <Td border="1px solid black">
+                      <Flex>
+                        <Flex direction="column" gap="5">
+                          <Text fontWeight="bold" mt="3" textAlign="center">
+                            Absoluto
+                          </Text>
+                          <Input maxWidth="120px" name="ex" mt="4" />
+                          <Input maxWidth="120px" name="ex" />
+                        </Flex>
+                        <Flex direction="column" gap="5">
+                          <Text fontWeight="bold" mt="3" textAlign="center">
+                            Relativo
+                          </Text>
+                          <Td></Td>
+                          <Td></Td>
+                        </Flex>
+                      </Flex>
+                    </Td>
+                    <Td border="1px solid black">
+                      <Flex direction="row">
+                        <Flex direction="column" fontWeight="bold" gap="5">
+                          <Text w="116px" mt="3" textAlign="center">
+                            Un. Abs
+                          </Text>
+                          <Input maxWidth="120px" name="ex" mt="4" />
+                          <Input maxWidth="120px" name="ex" />
+                        </Flex>
+                        <Flex direction="column" gap="10" pl="2">
+                          <Text mt="3" fontWeight="bold" textAlign="center">
+                            Un. Relativa
+                          </Text>
+                          <Text>milhões/mm3</Text>
+                          <Text>g/dl</Text>
+                        </Flex>
+                      </Flex>
+                    </Td>
+                    <Td border="1px solid black">
+                      <Flex direction="row">
+                        <Flex direction="column" gap="5">
+                          <Text fontWeight="bold" mt="3" textAlign="center">
+                            Absoluto
+                          </Text>
+                          <Input maxWidth="120px" name="ex" mt="4" />
+                          <Input maxWidth="120px" name="ex" />
+                        </Flex>
+                        <Flex direction="column" ml="5">
+                          <Text fontWeight="bold" mt="3" textAlign="center">
+                            Relativo
+                          </Text>
+                          <Td></Td>
+                          <Td></Td>
+                        </Flex>
+                      </Flex>
+                    </Td>
+                    <Td border="1px solid black">
+                      <Flex direction="row">
+                        <Flex direction="column" gap="5">
+                          <Text fontWeight="bold" mt="2" textAlign="center">
+                            Absoluto
+                          </Text>
+                          <Input maxWidth="120px" name="ex" mt="2" />
+                          <Input maxWidth="120px" name="ex" />
+                        </Flex>
+                        <Flex direction="column" gap="5" ml="4">
+                          <Text fontWeight="bold" mt="2" textAlign="center">
+                            Relativo
+                          </Text>
+                          <Td></Td>
+                          <Td></Td>
+                        </Flex>
+                      </Flex>
+                    </Td>
+                  </Tbody>
+                </Table>
+                <Flex>
+                  <Text pl="6" fontWeight="bold" w="19.4%" textAlign="center">
+                    Observações
+                  </Text>
+                  <Textarea
+                    rounded="0"
                     bg="white"
                     ml="4"
                     border="1px solid black"
