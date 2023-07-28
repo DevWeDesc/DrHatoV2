@@ -85,6 +85,19 @@ export function BoxPayments() {
       adrees: "Avenida Maria Clara Machado, 10 - - Campinas - CEP : 13051-207",
       phone: "(11) 98379-0437",
     },
+    {
+      id: 2,
+      name: "Junior Ferreira Campos Teste 2",
+      animal: "Mel",
+      date: "24/07/23",
+      our: "10:04",
+      balance: "90,00",
+      state: "Campinas",
+      cep: "13051-207",
+      bairro: "Jardim Santa Cruz",
+      adress: "Avenida Maria Clara Machado",
+      phone: "(11) 98379-0437",
+    },
   ];
 
   let typeTable: ReactNode;

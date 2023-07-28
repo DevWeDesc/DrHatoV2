@@ -96,6 +96,7 @@ import { RegisterClinics } from "./pages/Reception/Administration/registerClinic
 import { EditClinics } from "./pages/Reception/Administration/editClinics";
 import { UsersClinics } from "./pages/Reception/Administration/usersClinics";
 import { BreedRegistry } from "./pages/Reception/Administration/breedRegistry";
+import { OptionSistem } from "./pages/AdminDashboard/optionSistem";
 
 export function AnimatedRoutes() {
   const location = useLocation();
@@ -156,6 +157,7 @@ export function AnimatedRoutes() {
           />
           <Route path="/Admin/SurgeryCenter" element={<SurgeryCenter />} />
           <Route path="/Admin/Hospitalization" element={<Hospitalization />} />
+          <Route path="/Admin/OptionSistem" element={<OptionSistem />} />
 
           <Route path="/Autorizations" element={<GenerateAutorizations />} />
 
