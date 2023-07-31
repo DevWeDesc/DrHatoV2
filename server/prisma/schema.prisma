@@ -71,6 +71,7 @@ model Pets {
   customer_id     Int
   codPet          String          @unique @default(uuid())
   isCastred       Boolean?
+  debits          Decimal?    
   medicineRecords MedicineRecord?
   customer        Customer        @relation(fields: [customer_id], references: [id])
   queue           Queues?
@@ -213,9 +214,9 @@ model Bed {
   mustFasting Boolean? @default(false)
   entryOur DateTime?   
   exitOur DateTime?
-  dailyRate Decimal?
+  dailyRate Int?
   hospitalizedDays Int?
-  totalDebt Int? 
+  totalDebt Decimal? 
 }
 
 model Vaccines {

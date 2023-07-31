@@ -2,7 +2,8 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { AdmissionSchema, BedSchema } from "../schemas/schemasValidator";
 import { ValidationContract } from "../validators/validateContract";
-
+import { z } from "zod";
+const {getDiferrenceBetweenOurs} = require('../utils/countOurs')
 const prisma = new PrismaClient();
 
 
@@ -37,7 +38,7 @@ export const admissionsController = {
   },
   getKennels: async (request: FastifyRequest, reply: FastifyReply) => {
     const kennels = await prisma.kennel.findMany({
-      include: {beds: {select: {id: true, isBusy: true, mustFasting: true}}}
+      include: {beds: {select: {id: true, isBusy: true, mustFasting: true,  pet: {select: {name: true}}}}}
     })
     try {
       reply.send(kennels).status(200)
@@ -54,6 +55,7 @@ export const admissionsController = {
           id: bed.id,
           isBusy: bed.isBusy,
           mustFasting: bed.mustFasting,
+
         }
         return data
       })
@@ -64,9 +66,9 @@ export const admissionsController = {
   },
 
   admitPet: async (request: FastifyRequest, reply: FastifyReply) => {
-    const { petId, isBusy, mustFasting, kennelId, bedId} = BedSchema.parse(request.body) 
+    const { petId, isBusy, dailyRate, mustFasting, kennelId, bedId} = BedSchema.parse(request.body) 
     const contract = new ValidationContract() ;
-
+    const actualDate = new Date()
     try {
       await contract.validateBedIsBusy(bedId, 'Leito já ocupado')
       if(contract.hadError()){
@@ -78,12 +80,57 @@ export const admissionsController = {
         where: {id: kennelId}, 
         data: {
           beds: {update: {where: {id: bedId}, 
-          data: {isBusy: isBusy, mustFasting, pet: {connect: {id: petId}}}}}}
+          data: {isBusy: isBusy, mustFasting, dailyRate,  entryOur: actualDate ,pet: {connect: {id: petId}}}}}}
       },)
     } catch (error) {
-      reply.status(400).send({message: error})
+      reply.status(400).send(error)
+      console.log(error)
     }
   },
+
+  finishPetAdmission: async (request: FastifyRequest, reply: FastifyReply) => {
+    const FinishAdmissionSchema = z.object({
+      petId: z.number().optional(),
+      bedId: z.number().optional(),
+    })
+    const { petId, bedId} = FinishAdmissionSchema.parse(request.body) 
+    const actualDate = new Date()
+
+    const bedDetails = await prisma.bed.findUnique({
+      where: {id: bedId}
+    })
+    if(!bedDetails) {
+      return
+    } 
+
+    const totalToPay = await getDiferrenceBetweenOurs(bedDetails.entryOur,actualDate, bedDetails.dailyRate)
+
+    try {
+      await prisma.bed.update({
+        where: {id: bedId}, 
+        data: {exitOur: actualDate, totalDebt: Number(totalToPay), isBusy: false}
+      })
+
+     await prisma.pets.update({
+      where: {id: petId}, data : {
+            debits: bedDetails.totalDebt
+      }
+     }) 
+
+
+     await prisma.bed.update({
+      where: {id: bedId}, 
+      data: {petId: null, dailyRate: null, entryOur: null, exitOur: null, totalDebt: null, hospitalizedDays: null}
+     })
+    
+
+      reply.send("Internação Encerrada com sucesso").status(202)
+    } catch (error) {
+      console.log(error)
+      reply.send(error)
+    }
+  },
+
 
   getBusyAndAdmittedPets: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
@@ -112,13 +159,4 @@ export const admissionsController = {
     }
   },
 
-  testAdmissions: async (request: FastifyRequest, reply: FastifyReply) => {
-    try {
-      const actualOur = new Date().getTime();
-      const formmatedDate = new Intl.DateTimeFormat('pt-BR', {hour: '2-digit', minute: '2-digit'}).format(actualOur);
-      reply.send(formmatedDate)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 }
