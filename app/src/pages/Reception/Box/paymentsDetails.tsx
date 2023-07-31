@@ -24,6 +24,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export function BoxPaymentsDetails() {
   const [client, setClient] = useState([]);
+  const [launchClient, setLaunchClient] = useState([]);
   const { id } = useParams<{ id: string }>();
   const [cash, setCash] = useState<number | string>("");
   const navigate = useNavigate();
@@ -45,6 +46,32 @@ export function BoxPaymentsDetails() {
       bairro: "Jardim Santa Cruz",
       adress: "Avenida Maria Clara Machado",
       phone: "(11) 98379-0437",
+      launch: [
+        {
+          date: "25/05/23",
+          description: "Consulta nº 9921, animal :Mel",
+          debt: "433,00",
+          credit: "",
+          type: "-",
+          balance: "-433,00",
+        },
+        {
+          date: "25/05/23",
+          description: "Pagamento recebido. Caixa :803",
+          debt: "",
+          credit: "216,50",
+          type: "Master Card 2x",
+          balance: "-216,50",
+        },
+        {
+          date: "25/05/23",
+          description: "Pagamento recebido. Caixa :803",
+          debt: "",
+          credit: "216,50",
+          type: "Master Card 2x",
+          balance: "0,00",
+        },
+      ],
     },
     {
       id: 2,
@@ -52,12 +79,46 @@ export function BoxPaymentsDetails() {
       animal: "Mel",
       date: "24/07/23",
       our: "10:04",
-      balance: "-90,00",
+      balance: "90,00",
       state: "Campinas",
       cep: "13051-207",
       bairro: "Jardim Santa Cruz",
       adress: "Avenida Maria Clara Machado",
       phone: "(11) 98379-0437",
+      launch: [
+        {
+          date: "25/05/23",
+          description: "Consulta nº 9921, animal :Mel",
+          debt: "433.00",
+          credit: "",
+          type: "-",
+          balance: "-433.00",
+        },
+        {
+          date: "25/05/23",
+          description: "Consulta nº 9921, animal :Mel",
+          debt: "-433.00",
+          credit: "",
+          type: "-",
+          balance: "0.00",
+        },
+        {
+          date: "25/05/23",
+          description: "Pagamento recebido. Caixa :803",
+          debt: "432,00",
+          credit: "216.50",
+          type: "Master Card 2x",
+          balance: "-216.50",
+        },
+        {
+          date: "25/05/23",
+          description: "Pagamento recebido. Caixa :803",
+          debt: "",
+          credit: "216.50",
+          type: "Master Card 2x",
+          balance: "0.00",
+        },
+      ],
     },
   ];
 
@@ -90,6 +151,8 @@ export function BoxPaymentsDetails() {
 
   useEffect(() => {
     const clientesFilter: any = clientes.filter((user: any) => user.id == id);
+    // const launch: any =
+    setLaunchClient(clientesFilter[0].launch);
     setClient(clientesFilter);
   }, []);
 
@@ -382,6 +445,7 @@ export function BoxPaymentsDetails() {
                         <Th bg="blue.100" borderBottom="1px solid black"></Th>
                         <Th bg="blue.100" borderBottom="1px solid black"></Th>
                         <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       </Tr>
                       <Tr border="1px solid black" bg="blue.400">
                         <Th
@@ -390,6 +454,13 @@ export function BoxPaymentsDetails() {
                           color="white"
                         >
                           Data
+                        </Th>
+                        <Th
+                          border="1px solid black"
+                          fontSize="18"
+                          color="white"
+                        >
+                          Caixa
                         </Th>
                         <Th
                           border="1px solid black"
@@ -432,7 +503,7 @@ export function BoxPaymentsDetails() {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {launch.map((lanc: any) => (
+                      {launchClient.map((lanc: any) => (
                         <Tr
                           bg="white"
                           cursor="pointer"
@@ -441,6 +512,13 @@ export function BoxPaymentsDetails() {
                           }
                         >
                           <Td border="1px solid black">{lanc.date}</Td>
+                          <Td
+                            border="1px solid black"
+                            isNumeric
+                            fontWeight="bold"
+                          >
+                            Indefinido
+                          </Td>
                           <Td border="1px solid black">{lanc.description}</Td>
                           <Td
                             border="1px solid black"
@@ -448,20 +526,28 @@ export function BoxPaymentsDetails() {
                             fontWeight="bold"
                             bg={lanc.debt <= 0 ? "green.100" : "red.100"}
                           >
-                            {lanc.debt}
+                            {lanc.debt === "" ? "0.00" : lanc.debt}
                           </Td>
                           <Td
                             border="1px solid black"
-                            bg={BgInput(parseInt(lanc.credit))}
+                            bg={BgInput(
+                              parseInt(
+                                lanc.credit === "" ? "0.00" : lanc.credit
+                              )
+                            )}
                           >
-                            {lanc.credit}
+                            {lanc.credit === "" ? "0.00" : lanc.credit}
                           </Td>
                           <Td border="1px solid black">{lanc.type}</Td>
                           <Td
                             border="1px solid black"
-                            bg={BgInput(parseInt(lanc.balance))}
+                            bg={BgInput(
+                              parseInt(lanc.debt === "" ? 0 : lanc.debt) -
+                                parseInt(lanc.credit === "" ? 0 : lanc.credit)
+                            )}
                           >
-                            {lanc.balance}
+                            {parseInt(lanc.debt === "" ? 0 : lanc.debt) -
+                              parseInt(lanc.credit === "" ? 0 : lanc.credit)}
                           </Td>
                         </Tr>
                       ))}

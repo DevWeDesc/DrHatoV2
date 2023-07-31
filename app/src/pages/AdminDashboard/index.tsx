@@ -61,6 +61,11 @@ export function AdminMain() {
                   </Flex>
 
                   <Flex direction="column" w="50%" gap="2">
+                    <Link to="/Admin/OptionSistem">
+                      <Button colorScheme="whatsapp" w="100%" py="10">
+                        Opções do Sistema
+                      </Button>
+                    </Link>
                     <Link to="/Admin/Hospitalization">
                       <Button colorScheme="whatsapp" w="100%" py="10">
                         Cadastro de Leitos para Internação

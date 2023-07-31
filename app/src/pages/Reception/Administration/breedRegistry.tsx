@@ -336,6 +336,34 @@ export function BreedRegistry() {
                   </Flex>
                 </Flex>
               </Box>
+              {/* <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+                  <FormControl
+                    as="form"
+                    onSubmit={handleSubmit(handleCreateSector)}
+                    display="flex"
+                    flexDir="column"
+                    alignItems="center"
+                  >
+                    <Input
+                      {...register("name")}
+                      name="name"
+                      label="Nome da Instrução"
+                      mb="4"
+                    />
+                    <label>Descrição da Instrução</label>
+                    <Textarea
+                      {...register("description")}
+                      name="description"
+                      minHeight={300}
+                      minWidth={300}
+                      borderColor="gray.900"
+                    ></Textarea>
+
+                    <Button w="100%" type="submit" colorScheme="green" m="2">
+                      Cadastrar
+                    </Button>
+                  </FormControl>
+                </GenericModal> */}
             </Flex>
           </Flex>
         </AdminContainer>
