@@ -8,5 +8,6 @@ app.post('/admissions', admissionsController.createKennel)
 app.get('/admissions', admissionsController.getKennels)
 app.get('/beds', admissionsController.getBeds)
 app.put('/admitpet', admissionsController.admitPet)
+app.put('/endadmission', admissionsController.finishPetAdmission)
 app.get('/admittedpet', admissionsController.getBusyAndAdmittedPets)
 }

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Pets" ALTER COLUMN "debits" SET DATA TYPE DECIMAL(65,30);

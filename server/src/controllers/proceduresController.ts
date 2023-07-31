@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { ProcedureSchema } from "../schemas/schemasValidator";
 import { ValidationContract } from "../validators/validateContract";
+import { getFormattedDateTime } from "../utils/getCurrentDate";
 const prisma = new PrismaClient();
 
 type params = {
@@ -130,6 +131,48 @@ export const proceduresController = {
     } catch (error) {
       reply.status(400).send("Falha ao deletar procedimento!")
       console.log(error)
+    }
+  },
+
+  setProcedureInPet: async(request: FastifyRequest<{Params: {recordId: string, procedureId: string}}>, reply: FastifyReply) => {
+    const actualDate = getFormattedDateTime()
+    const {recordId, procedureId} = request.params
+    try {
+     
+      const procedure = await prisma.procedures.findUnique({where: {id: parseInt(procedureId)}})
+      if(!procedure) return
+      
+      await prisma.proceduresForPet.create({
+        data: {
+          name: procedure.name,
+          available: procedure.available,
+          observations: procedure.observations,
+          price: procedure.price,
+          ageRange: procedure.ageRange,
+          applicableGender: procedure.applicableGender,
+          applicationInterval: procedure.applicationInterval,
+          requestedDate: actualDate,
+          medicine: {connect: {id: parseInt(recordId)}}
+        }
+      })
+    
+      reply.status(200).send("Procedimento adicionado com sucesso!")
+    } catch (error) {
+      reply.status(400).send({message: error})
+      console.log(error)
+    }
+  },
+
+  deleteProcedureOfPet: async (request: FastifyRequest<{Params: { id: string}}>, reply: FastifyReply) => {
+    try {
+      const { id} = request.params
+      await prisma.proceduresForPet.delete({
+        where: {id: parseInt(id)}
+      })
+      reply.send("Procedimento deletado com sucesso!").status(203)
+    } catch (error) {
+        console.log(error)
+        reply.send({message: error})
     }
   }
 };

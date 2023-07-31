@@ -5,10 +5,14 @@ import {
   Text,
   Input,
   Button,
-  Radio,
-  RadioGroup,
   Stack,
-  background,
+  TableContainer,
+  Table,
+  Thead,
+  Tbody,
+  Tr, 
+  Td,
+  Th
 } from "@chakra-ui/react";
 import { BiHome, MdPets, TbArrowBack } from "react-icons/all";
 import { AdminContainer } from "../../../pages/AdminDashboard/style";
@@ -16,23 +20,43 @@ import { WorkSpaceHeader } from "../../../pages/Vets/styles";
 import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { api } from "../../../lib/axios";
-
+import { PetDetaisl } from "../../../interfaces";
+import moment from "moment";
 export default function DetailsAdmissions() {
   const [admissiondiary, setAdmissionDiary] = useState<number | boolean>(false);
   const [confirmation, setConfirmation] = useState<boolean>(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const [admissionDetails, setAdmissionDetails] = useState([]);
+  const [petDetails, setPetDetails] = useState({} as PetDetaisl);
+  const entryDate = petDetails.bedInfos?.entry
 
+
+  const totalDaily = moment(new Date()).diff(entryDate, 'minutes')
+
+  let dailyValue;
+  switch(true) {
+    case totalDaily < 720:
+      dailyValue = `${totalDaily} Minutos`
+      break;
+      case totalDaily >= 720:
+        dailyValue = `${totalDaily / 720} Diárias`
+        break;
+      default: 
+      dailyValue = `${totalDaily}`
+      break;
+  } 
+
+  const formattedDate = moment(entryDate).format('DD/MM/YYYY')
   async function getAdmissionDetails() {
-    const totalAdmission = await api.get("http://localhost:5000/pets/queue");
-    setAdmissionDetails(totalAdmission.data.response);
+    const response = await api.get(`pets/${id}`);
+    setPetDetails(response.data);
   }
 
   useEffect(() => {
     getAdmissionDetails();
   }, []);
-  console.log(admissiondiary);
+
+    console.log(petDetails)
 
   return (
     <ChakraProvider>
@@ -113,128 +137,65 @@ export default function DetailsAdmissions() {
                 >
                   Internação
                 </Text>
-                {admissionDetails.map((admission: any) => (
-                  <>
-                    {admission.id == id && (
-                      <>
-                        <Flex border="1px solid black" key={admission.id}>
-                          <Text
-                            w="50rem"
-                            pl="2"
-                            bg="gray.200"
-                            fontWeight="bold"
-                            fontSize="20"
-                          >
-                            Cliente
-                          </Text>
-                          <Input
-                            value={admission.customerName}
-                            borderY="0"
-                            borderColor="black"
-                            rounded="0"
-                          />
-                          <Text
-                            w="50rem"
-                            fontWeight="bold"
-                            pl="2"
-                            bg="gray.200"
-                            fontSize="20"
-                          >
-                            Canil
-                          </Text>
-                          <Input
-                            value="Não Definido"
-                            borderColor="black"
-                            rounded="0"
-                            borderY="0"
-                          />
-                        </Flex>
-                        <Flex border="1px solid black">
-                          <Text
-                            w="50rem"
-                            pl="2"
-                            bg="gray.200"
-                            fontWeight="bold"
-                            fontSize="20"
-                          >
-                            Pet
-                          </Text>
-                          <Input
-                            value={admission.name}
-                            borderY="0"
-                            borderColor="black"
-                            rounded="0"
-                          />
-                          <Text
-                            w="50rem"
-                            fontWeight="bold"
-                            pl="2"
-                            bg="gray.200"
-                            fontSize="20"
-                          >
-                            Data de internação
-                          </Text>
-                          <Input
-                            value={admission.queueEntry}
-                            borderColor="black"
-                            rounded="0"
-                            borderY="0"
-                          />
-                        </Flex>
-                        <Flex border="1px solid black">
-                          <Text
-                            w="50rem"
-                            pl="2"
-                            bg="gray.200"
-                            fontWeight="bold"
-                            fontSize="20"
-                          >
-                            Animal
-                          </Text>
-                          <Input
-                            value={admission.race}
-                            borderY="0"
-                            borderColor="black"
-                            rounded="0"
-                          />
-                          <Text
-                            w="50rem"
-                            fontWeight="bold"
-                            pl="2"
-                            bg="gray.200"
-                            fontSize="20"
-                          >
-                            Veterinario
-                          </Text>
-                          <Input
-                            value={admission.vetPreference}
-                            borderColor="black"
-                            rounded="0"
-                            borderY="0"
-                          />
-                        </Flex>
-                      </>
-                    )}
-                  </>
-                ))}
+               
 
-                <RadioGroup h="40px">
-                  <Stack direction="row" borderBottom="1px solid black">
-                    <Text
-                      w="16.2rem"
-                      fontWeight="bold"
-                      pl="2"
-                      bg="gray.200"
-                      fontSize="20"
-                      height="40px"
-                      border="1px solid black"
-                    >
-                      Jejum
-                    </Text>
-                    <Radio value="Sim">Sim</Radio>
-                    <Radio value="Não">Não</Radio>
-                  </Stack>
-                </RadioGroup>
+                <TableContainer>
+                    <Table>
+                      <Thead>
+                      <Tr>
+                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
+                          Cliente
+                        </Th>
+                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
+                          Detalhes Pet
+                        </Th>
+                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
+                          Jejum
+                        </Th>
+                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
+                          Canil
+                        </Th>
+                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
+                         Data Internação
+                        </Th>
+                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
+                          Preferência Veterinário
+                        </Th>
+                     
+                      </Tr>
+
+                      </Thead>
+                      <Tbody>
+                          <Tr>
+                            <Td borderRight="2px">
+                              {petDetails.customerName}
+                            </Td>
+                            <Td w={300} borderRight="2px" >
+                              <Flex direction="column" gap="2">
+                            <Text> {petDetails.name},{petDetails.especie},{petDetails.race}</Text> 
+                            <Text> {petDetails.sexo}, {petDetails.bornDate}</Text> 
+                            {petDetails.codPet}
+                              </Flex>
+                             
+                            </Td>
+                            <Td borderRight="2px" >
+                              {petDetails.bedInfos?.fasting === true ? "ANIMAL PRECISA DE JEJUM" : "ANIMAL NÃO PRECISA DE JEJUM"} 
+                            </Td>
+                            <Td borderRight="2px" >
+                              {petDetails.bedInfos?.kennelName.name}
+                            </Td >
+                            <Td borderRight="2px" >
+                              {formattedDate}
+                            </Td>
+                            <Td>
+                              {petDetails.queue?.vetPreference}
+                            </Td>
+                          </Tr>
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
+          
+          
                 <Button
                   bg="blue.400"
                   color="white"
@@ -477,6 +438,7 @@ export default function DetailsAdmissions() {
                           Diaria(S) até o momento
                         </Text>
                         <Input
+                        value={dailyValue}
                           borderY={0}
                           w="15vw"
                           borderColor="black"
@@ -495,6 +457,34 @@ export default function DetailsAdmissions() {
                           rounded={0}
                         ></Input>
                       </Flex>
+                    {
+                      (totalDaily - 60) >= 60 ? (
+                        <Text
+                        fontSize="20"
+                        bg="yellow.300"
+                        w="100%"
+                        textAlign="center"
+                        py={2}
+                        fontWeight="bold"
+                        color="red"
+                      >
+                        Tempo de Tolerância Restante: {(60 - totalDaily) < 60 ?  "Esgotado" : "Em Tolerancia"} Minutos
+                      </Text>
+                      ) : (
+                        <Text
+                        color="green"
+                        fontSize="20"
+                        bg="yellow.300"
+                        w="100%"
+                        textAlign="center"
+                        py={2}
+                        fontWeight="bold"
+                      >
+                        Tempo de Tolerância Restante: {(60 - totalDaily) < 60 ?  "Esgotado" : "Em Tolerancia"} Minutos
+                      </Text>
+                      )
+                      
+                    }
                       <Text
                         fontSize="20"
                         bg="yellow.300"
@@ -503,8 +493,7 @@ export default function DetailsAdmissions() {
                         py={2}
                         fontWeight="bold"
                       >
-                        Tempo Restante até o final da meia diaría: 8 Horas e 49
-                        minutos
+                        Tempo Restante até o final da meia diaría: {Math.round((720 - totalDaily) / 60)} Horas
                       </Text>
                       <Text
                         fontSize="20"
@@ -514,8 +503,7 @@ export default function DetailsAdmissions() {
                         py={2}
                         fontWeight="bold"
                       >
-                        Tempo Restante até o final da diaría : 20 Horas e 49
-                        minutos
+                        Tempo Restante até o final da diaría : {Math.round((1440 - totalDaily) / 60)} Horas
                       </Text>
                       <Button
                         py="8"

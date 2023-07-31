@@ -81,6 +81,8 @@ export const BedSchema = z.object({
   mustFasting: z.boolean().optional(),
   kennelId: z.number(),
   bedId: z.number(),
+  entryOur: z.date().optional(),
+  dailyRate: z.number().optional(),
 })
 
 export const QueueSchema = z.object({
