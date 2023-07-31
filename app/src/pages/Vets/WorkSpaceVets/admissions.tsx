@@ -44,6 +44,7 @@ export function VetsAdmissions() {
   const [kennelId, setKennelId] = useState(0)
   const [bedId, setBedId] = useState(0)
   const [fasting, setFasting] = useState(false)
+  const [dailyRateState, setDailyRateState] = useState(0)
   const [steps, setSteps] = useState(1);
   const [area, setArea] = useState("")
   const navigate = useNavigate();
@@ -101,14 +102,15 @@ export function VetsAdmissions() {
       kennelId,
       bedId,
       isBusy: true,
-      mustFasting: fasting
+      mustFasting: fasting,
+      dailyRate: dailyRateState
     }
     try {
 
       await api.put("admitpet", data)
       toast.success("Animal internado!")
       navigate(`/Vets/Workspace/${id}`)
-      console.log(data)
+
     } catch (error) {
       console.log(error)
       toast.error("Falha ao internar animal!")
@@ -150,7 +152,7 @@ export function VetsAdmissions() {
                     <Text fontWeight="bold" fontSize="lg">{kennel.name.toUpperCase()}</Text>
                     <Text>{kennel.description}</Text>
                     <Text fontWeight="bold" fontSize="lg" color="green.400"  >R$ {kennel.price}</Text>
-                    <Button mt="4" colorScheme="whatsapp" onClick={() => handleNextSteps(kennel.id, bedId, kennel.name)} >SELECIONAR</Button>
+                    <Button mt="4" colorScheme="whatsapp" onClick={() => {handleNextSteps(kennel.id, bedId, kennel.name); setDailyRateState(Number(kennel.price))}} >SELECIONAR</Button>
                     </Flex>
                    
                   </Flex>
