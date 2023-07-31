@@ -29,7 +29,7 @@ function getDiferrenceBetweenOurs(entryOur, exitOur, dailyRate) {
   
 }
 
-console.log(getDiferrenceBetweenOurs('2023-07-31 15:08:55.626','2023-08-01 16:17:08.393', 200))
+
 
 module.exports = {
   getDiferrenceBetweenOurs
