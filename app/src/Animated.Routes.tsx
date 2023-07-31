@@ -79,6 +79,24 @@ import ReportSurgeriesCompleted from "./pages/Reports/surgeriesCompleted";
 import ReportsExamsForVets from "./pages/Reports/examsforVet";
 import { ReportsExamsExtern } from "./pages/Reports/examsExterns";
 import { ReactPdfComponent } from "./components/ReactPdfComp";
+import { BoxReception } from "./pages/Reception/Box";
+import { BoxReports } from "./pages/Reception/Box/reports";
+import { BoxPayments } from "./pages/Reception/Box/payments";
+import { BoxReturns } from "./pages/Reception/Box/returns";
+import { BoxReturnsDetails } from "./pages/Reception/Box/returnsDetails";
+import { BoxPaymentsDetails } from "./pages/Reception/Box/paymentsDetails";
+import { BoxNewPayments } from "./pages/Reception/Box/newPayments";
+import { BoxNewPaymentsClient } from "./pages/Reception/Box/clientPayments";
+import { ToolsTable } from "./pages/Reception/Tools/table";
+import { ToolsChangePassword } from "./pages/Reception/Tools/passwordChange";
+import { ToolsAutorizations } from "./pages/Reception/Tools/autorizations";
+import { ToolsAutorizationsDetails } from "./pages/Reception/Tools/autorizationsDetails";
+import { ReceptionVaccines } from "./pages/Reception/Vaccines";
+import { RegisterClinics } from "./pages/Reception/Administration/registerClinics";
+import { EditClinics } from "./pages/Reception/Administration/editClinics";
+import { UsersClinics } from "./pages/Reception/Administration/usersClinics";
+import { BreedRegistry } from "./pages/Reception/Administration/breedRegistry";
+import { OptionSistem } from "./pages/AdminDashboard/optionSistem";
 
 export function AnimatedRoutes() {
   const location = useLocation();
@@ -95,8 +113,8 @@ export function AnimatedRoutes() {
             path="/Reports/CustomerReports"
             element={<CustomerReports />}
           />
-          
-        <Route path="/pdf" element={<ReactPdfComponent />}  />
+
+          <Route path="/pdf" element={<ReactPdfComponent />} />
           <Route
             path="/Reports/ProductionVet"
             element={<ReportProductionVet />}
@@ -139,6 +157,7 @@ export function AnimatedRoutes() {
           />
           <Route path="/Admin/SurgeryCenter" element={<SurgeryCenter />} />
           <Route path="/Admin/Hospitalization" element={<Hospitalization />} />
+          <Route path="/Admin/OptionSistem" element={<OptionSistem />} />
 
           <Route path="/Autorizations" element={<GenerateAutorizations />} />
 
@@ -219,6 +238,27 @@ export function AnimatedRoutes() {
             path="/Recepcao/Consultas/Clientes/Pets/Details/:id"
             element={<DetailsPets />}
           />
+          <Route path="/Recepcao/Caixa" element={<BoxReception />} />
+          <Route path="/Recepcao/Caixa/Despesas" element={<BoxReports />} />
+          <Route path="/Recepcao/Caixa/Pagamentos" element={<BoxPayments />} />
+          <Route
+            path="/Recepcao/Caixa/Pagamentos/:id"
+            element={<BoxPaymentsDetails />}
+          />
+          <Route
+            path="/Recepcao/Caixa/PagamentoCliente/:id"
+            element={<BoxNewPaymentsClient />}
+          />
+          <Route
+            path="/Recepcao/Caixa/NovoPagamento/:id"
+            element={<BoxNewPayments />}
+          />
+          <Route path="/Recepcao/Caixa/Returns" element={<BoxReturns />} />
+          <Route
+            path="/Recepcao/Caixa/Returns/:id"
+            element={<BoxReturnsDetails />}
+          />
+
           <Route
             path="/Pets/MedicineRecord/:id"
             element={<MedicineRecords />}
@@ -228,7 +268,38 @@ export function AnimatedRoutes() {
             path="/Recepcao/Customer/Edit/:id"
             element={<EditCustomer />}
           />
+          <Route path="/Recepcao/Ferramentas/Tabela" element={<ToolsTable />} />
+          <Route
+            path="/Recepcao/Ferramentas/TrocaDeSenha/:id"
+            element={<ToolsChangePassword />}
+          />
+          <Route
+            path="/Recepcao/Ferramentas/Autorizacao"
+            element={<ToolsAutorizations />}
+          />
+          <Route
+            path="/Recepcao/Ferramentas/Autorizacao/:id"
+            element={<ToolsAutorizationsDetails />}
+          />
+          <Route
+            path="/Recepcao/Internacoes/Vacinas"
+            element={<ReceptionVaccines />}
+          />
           <Route path="/Recepcao/Finance" element={<Finance />} />
+          <Route
+            path="/Recepcao/RegistroClinicas"
+            element={<RegisterClinics />}
+          />
+          <Route
+            path="/Recepcao/RegistroClinicas/:id"
+            element={<EditClinics />}
+          />
+          <Route
+            path="/Recepcao/RegistroClinicas/Users/:id"
+            element={<UsersClinics />}
+          />
+          <Route path="/Recepcao/CadastroRaças" element={<BreedRegistry />} />
+
           <Route path="/Recepcao/" element={<Reception />} />
 
           <Route path="/Surgeries/" element={<Surgeries />} />

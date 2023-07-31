@@ -37,6 +37,7 @@ import { VetsSearch } from "../../components/Search/vetsSearch";
 import { api } from "../../lib/axios";
 import { MdPets as Burger } from "react-icons/all";
 import { motion } from "framer-motion";
+import { BiHome } from "react-icons/all";
 
 interface QueueProps {
   response: [];
@@ -271,15 +272,23 @@ export function LabExames() {
         <AdminContainer>
           <Flex direction="column" h="100vh">
             <Header title="Painel Veterinário" />
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
                   name="Pesquisar Cliente"
                   icon={AiOutlineSearch}
                   path="/Vets/Menu"
                 />
+                <GenericLink name="Recepção" icon={BiHome} path="/Recepcao" />
               </GenericSidebar>
-              <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+              <Box
+                flex="1"
+                borderRadius={8}
+                bg="gray.200"
+                p="8"
+                maxH="44rem"
+                overflow="auto"
+              >
                 <Flex mb="8" gap="8" direction="column" align="center">
                   <VetsSearch path="vetsearch" />
                   <Button

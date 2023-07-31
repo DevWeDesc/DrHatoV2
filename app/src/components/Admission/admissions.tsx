@@ -30,6 +30,7 @@ import { toast } from "react-toastify";
 import { api } from "../../lib/axios";
 import { AdmissionSearch } from "../Search/admissionSearch";
 import { SiProtocolsdotio } from "react-icons/all";
+import { BiHome } from "react-icons/all";
 
 interface QueueProps {
   response: [];
@@ -79,6 +80,7 @@ export function SearchAdmission() {
                 icon={SiProtocolsdotio}
                 path="/Admissions/Protocols"
               />
+              <GenericLink name="Recepção" icon={BiHome} path="/Recepcao" />
             </GenericSidebar>
             <Box w="100%" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">

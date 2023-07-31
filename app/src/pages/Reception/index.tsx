@@ -6,7 +6,7 @@ import {
   ChakraProvider,
   Button,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import { ReceptionSidebar } from "../../components/Sidebars/ReceptionBar";
 import { GridContainer } from "./styles";
@@ -77,14 +77,24 @@ export function Reception() {
                         </div>
 
                         <div className="buttonsContainer">
-                          <Button minWidth={200} colorScheme="whatsapp">
-                            Caixa
-                          </Button>
+                          <Link to="/Recepcao/Caixa">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Caixa
+                            </Button>
+                          </Link>
                           <Button colorScheme="whatsapp">
                             Reimprimir Caixa
                           </Button>
-                          <Button colorScheme="whatsapp">Pagamentos</Button>
-                          <Button colorScheme="whatsapp">Devoluções</Button>
+                          <Link to="/Recepcao/Caixa/Pagamentos">
+                            <Button colorScheme="whatsapp" minWidth={200}>
+                              Pagamentos
+                            </Button>
+                          </Link>
+                          <Link to="/Recepcao/Caixa/Returns">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Devoluções
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -96,12 +106,26 @@ export function Reception() {
                         </div>
 
                         <div className="buttonsContainer">
-                          <Button minWidth={200} colorScheme="whatsapp">
-                            Tabela de Preços
-                          </Button>
-                          <Button colorScheme="whatsapp">Trocar Senha</Button>
-                          <Button colorScheme="whatsapp">Autorizações</Button>
-                          <Button colorScheme="whatsapp">Medicamentos</Button>
+                          <Link to="/Recepcao/Ferramentas/Tabela">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Tabela de Preços
+                            </Button>
+                          </Link>
+                          <Link to={`/Recepcao/Ferramentas/TrocaDeSenha/${1}`}>
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Trocar Senha
+                            </Button>
+                          </Link>
+                          <Link to="/Recepcao/Ferramentas/Autorizacao">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Autorizações
+                            </Button>
+                          </Link>
+                          <Link to="/Medicines">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Medicamentos
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -113,11 +137,21 @@ export function Reception() {
                         </div>
 
                         <div className="buttonsContainer">
-                          <Button minWidth={200} colorScheme="whatsapp">
-                            Internações
-                          </Button>
-                          <Button colorScheme="whatsapp">Exames</Button>
-                          <Button colorScheme="whatsapp">Vacinas</Button>
+                          <Link to="/Admissions">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Internações
+                            </Button>
+                          </Link>
+                          <Link to="/Labs/Exames">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Exames
+                            </Button>
+                          </Link>
+                          <Link to="/Recepcao/Internacoes/Vacinas">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Vacinas
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -129,17 +163,21 @@ export function Reception() {
                         </div>
 
                         <div className="buttonsContainer">
-                          <Link to="/Recepcao/Financeiro">
+                          <Link to="/Recepcao/Finance">
                             <Button minWidth={200} colorScheme="whatsapp">
                               Financeiro
                             </Button>
                           </Link>
-                          <Button colorScheme="whatsapp">
-                            Cadastro de Clinicas
-                          </Button>
-                          <Button colorScheme="whatsapp">
-                            Cadastro de Raças
-                          </Button>
+                          <Link to="/Recepcao/RegistroClinicas">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Cadastro de Clinicas
+                            </Button>
+                          </Link>
+                          <Link to="/Recepcao/CadastroRaças">
+                            <Button minWidth={200} colorScheme="whatsapp">
+                              Cadastro de Raças
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </div>

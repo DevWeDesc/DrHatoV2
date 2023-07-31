@@ -17,29 +17,34 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { ReactNode, useContext, useEffect, useState } from "react";
-import { Header } from "../../components/admin/Header";
-import { GenericLink } from "../../components/Sidebars/GenericLink";
-import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
+import { Header } from "../../../components/admin/Header";
+import { GenericLink } from "../../../components/Sidebars/GenericLink";
+import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
 import { AiOutlineSearch } from "react-icons/all";
-import { AdminContainer } from "../AdminDashboard/style";
+import { AdminContainer } from "../../AdminDashboard/style";
 import { Link, useNavigate } from "react-router-dom";
-import { UniversalSearch } from "../../components/Search/universalSearch";
-import { DbContext } from "../../contexts/DbContext";
-import { StyledBox } from "../../components/Header/style";
+import { UniversalSearch } from "../../../components/Search/universalSearch";
+import { DbContext } from "../../../contexts/DbContext";
+import { StyledBox } from "../../../components/Header/style";
 import { MdPets as Burger } from "react-icons/all";
 import { toast } from "react-toastify";
-import { LoadingSpinner } from "../../components/Loading";
-import { api } from "../../lib/axios";
+import { LoadingSpinner } from "../../../components/Loading";
+import { api } from "../../../lib/axios";
 import { Queue } from "phosphor-react";
-import { VetsSearch } from "../../components/Search/vetsSearch";
+import { VetsSearch } from "../../../components/Search/vetsSearch";
 import { motion } from "framer-motion";
+import { PaymentsSearch } from "../../../components/Search/paymentsSearch";
+import { GiCardDiscard } from "react-icons/gi";
+import { BsCashCoin } from "react-icons/bs";
+import { BiHome } from "react-icons/all";
+import { MdOutlinePayments } from "react-icons/all";
 
 interface QueueProps {
   response: [];
   totalInQueue: number;
 }
 
-export function MenuVet() {
+export function ToolsTable() {
   let { dataCustomer, dataPet } = useContext(DbContext);
   const [petValue, setPetValue] = useState("");
   const [petTotal, setPetTotal] = useState([]);
@@ -68,6 +73,25 @@ export function MenuVet() {
     navigate(`/Vets/Workspace/${petValue}`);
   };
   //console.log("PET RESPONSE", dataPet);
+
+  const petTot = [
+    {
+      procedures: "10 - Feira de Adoção",
+      sector: "Ambulatório",
+      sixKg: "0,00",
+      sevenForFiveTeen: "0,00",
+      sixteenForTwortFive: "0,00",
+      maxTwortFive: "0,00",
+    },
+    {
+      procedures: "3ª Pálp. Eversão da Cartilagem Bi",
+      sector: "Oftalmologia",
+      sixKg: "1.300,00",
+      sevenForFiveTeen: "1.300,00",
+      sixteenForTwortFive: "1.300,00",
+      maxTwortFive: "1.300,00",
+    },
+  ];
 
   let typeTable: ReactNode;
   switch (true) {
@@ -189,46 +213,25 @@ export function MenuVet() {
     default:
       typeTable = (
         <>
-          <Table colorScheme="blackAlpha">
-            <Thead>
+          <Table colorScheme="blackAlpha" w="100%">
+            <Thead w="100%">
               <Tr>
-                <Th>CPF</Th>
-                <Th>Cliente</Th>
-                <Th>Animal</Th>
-                <Th>Código</Th>
-                <Th>Data</Th>
-                <Th>Hora</Th>
-                <Th>Preferência</Th>
-                <Th>Especialidade</Th>
+                <Th fontSize={15}>Procedimentos</Th>
+                <Th fontSize={15}>Setor</Th>
+                <Th fontSize={15}>Até 6Kg</Th>
+                <Th fontSize={15}>De 7 a 15 Kg</Th>
+                <Th fontSize={15}> {"> 35Kg"}</Th>
               </Tr>
             </Thead>
 
-            <Tbody>
-              {petTotal.map((pet: any) => (
-                <Tr
-                  key={pet.id}
-                  cursor="pointer"
-                  onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
-                >
-                  <Td>
-                    <Text colorScheme="whatsapp">{pet.customerCpf}</Text>
-                  </Td>
-
-                  <Td>{pet.customerName}</Td>
-
-                  <Td
-                    cursor="pointer"
-                    onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
-                  >
-                    {pet.name}
-                  </Td>
-                  <Td>{pet.codPet}</Td>
-                  <Td>{pet.queueEntry}</Td>
-                  <Td>{pet.ouor}</Td>
-                  <Td>
-                    {pet.vetPreference ? pet.vetPreference : "Sem Preferência"}
-                  </Td>
-                  <Td>0</Td>
+            <Tbody w="100%">
+              {petTot.map((pet: any) => (
+                <Tr key={pet.procedures} cursor="pointer" fontWeight="bold">
+                  <Td>{pet.procedures}</Td>
+                  <Td cursor="pointer">{pet.sector}</Td>
+                  <Td>{pet.sixKg}</Td>
+                  <Td>{pet.sevenForFiveTeen}</Td>
+                  <Td>{pet.maxTwortFive}</Td>
                 </Tr>
               ))}
             </Tbody>
@@ -246,22 +249,34 @@ export function MenuVet() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel Veterinário" />
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+            <Header title="Tabela" />
+            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
-                  name="Pesquisar Cliente"
-                  icon={AiOutlineSearch}
-                  path="/Vets/Menu"
-                />
+                  name="Painel de Pagamentos"
+                  icon={MdOutlinePayments}
+                  path={`/Recepcao/Caixa/Pagamentos`}
+                />{" "}
+                <GenericLink
+                  name="Painel de Devoluções"
+                  icon={GiCardDiscard}
+                  path={`/Recepcao/Caixa/Returns`}
+                />{" "}
+                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
               </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <Flex mb="8" gap="8" direction="column" align="center">
-                  <VetsSearch path="filtredquery" />
-                  <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
-                    <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
-                  </Button>
-                  <Flex textAlign="center" justify="center">
+                  <PaymentsSearch path="filtredquery" />
+                  <Flex gap="3" justify="center">
+                    <Button colorScheme="teal">BAIXAR PARA EXCEL</Button>
+                    <Button
+                      colorScheme="teal"
+                      onClick={() => navigate("/Queue")}
+                    >
+                      <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
+                    </Button>
+                  </Flex>
+                  <Flex textAlign="center" justify="center" w="80%">
                     {typeTable}
                   </Flex>
                 </Flex>

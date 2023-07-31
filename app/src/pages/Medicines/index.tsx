@@ -25,6 +25,11 @@ export function Medicines() {
                 path="/Medicines"
               />
               <GenericLink
+                name="Recepção"
+                icon={MdOutlineListAlt}
+                path="/Recepcao"
+              />
+              <GenericLink
                 name="Incluir Medicamento"
                 icon={GiHealthIncrease}
                 path="/Medicines/Create"
