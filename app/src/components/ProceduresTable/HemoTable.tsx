@@ -42,7 +42,7 @@ export function HemoTable({ Option, CloseOption }: Props): any {
             )}
           </>
           <>
-            {option.name === "Hemo + Eritograma" && (
+            {option.name === "Hemograma Canino Adulto" && (
               <TableHemogramaCaninoAdulto />
             )}
           </>

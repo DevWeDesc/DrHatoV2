@@ -354,26 +354,26 @@ Discreta hemólise no plasma."
             <Tr fontWeight="bold">
               <Td border="1px solid black">Eosinófilos</Td>
               <Td border="1px solid black" bg="white">
-                172
+              0
               </Td>
               <Td border="1px solid black" bg="white">
-                2
+              0
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
                 %
               </Td>
               <Td border="1px solid black" bg="white">
-                60 a 1.700
+              120 a 1.700 
               </Td>
               <Td border="1px solid black" bg="white">
-                1 a 10
+              2 a 10
               </Td>
               <Td border="1px solid black" bg="white">
-                110 a 2.340
+              60 a 1.440
               </Td>
               <Td border="1px solid black" bg="white">
-                2 a 12
+              1 a 9
               </Td>
             </Tr>
             <Tr fontWeight="bold">
@@ -389,41 +389,41 @@ Discreta hemólise no plasma."
                 %
               </Td>
               <Td border="1px solid black" bg="white">
-                0 a 170
+                0 
               </Td>
               <Td border="1px solid black" bg="white">
-                0 a 1
+                0 
               </Td>
               <Td border="1px solid black" bg="white">
-                0 a 195
+                0
               </Td>
               <Td border="1px solid black" bg="white">
-                0 a 1
+                0
               </Td>
             </Tr>
             <Tr fontWeight="bold">
               <Td border="1px solid black">Linfócitos Tipicos</Td>
               <Td border="1px solid black" bg="white">
-                516
+              400
               </Td>
               <Td border="1px solid black" bg="white">
-                6
+                2
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
                 %
               </Td>
               <Td border="1px solid black" bg="white">
-                1.200 a 8.500{" "}
+              720 a 5.100
               </Td>
               <Td border="1px solid black" bg="white">
-                20 a 50{" "}
+              12 a 30
               </Td>
               <Td border="1px solid black" bg="white">
-                1.100 a 10.725
+              780 a 6.400
               </Td>
               <Td border="1px solid black" bg="white">
-                20 a 55
+              13 a 40
               </Td>
             </Tr>
             <Tr fontWeight="bold">
@@ -454,26 +454,26 @@ Discreta hemólise no plasma."
             <Tr fontWeight="bold">
               <Td border="1px solid black">Monócitos</Td>
               <Td border="1px solid black" bg="white">
-                258
+              1200
               </Td>
               <Td border="1px solid black" bg="white">
-                3
+                6
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
                 %
               </Td>
               <Td border="1px solid black" bg="white">
-                60 a 680
+              180 a 1.700
               </Td>
               <Td border="1px solid black" bg="white">
-                1 a 4
+              3 a 10
               </Td>
               <Td border="1px solid black" bg="white">
-                55 a 780
+              60 a 960
               </Td>
               <Td border="1px solid black" bg="white">
-                1 a 4
+              1 a 6
               </Td>
             </Tr>
             <Tr fontWeight="bold">
@@ -487,9 +487,9 @@ Discreta hemólise no plasma."
                   borderColor="black"
                   h="7rem"
                   value="Diversos neutrófilos tóxicos. Presença de corpúsculo de Döhle.
-Plaquetas: 665.000 (300.000 a 800.000/mm³). Presença de agregação plaquetária.
+Plaquetas: 235.000 (200.000 a 500.000/mm³). Presença de agregação plaquetária.
 Pesquisa de hemoparasita: Negativa.
-Nota: Amostra recebida 4/4 de sangue total."
+Pesquisa de corpúsculo de Lentz: Negativa. Nota: Amostra recebida 4/4 de sangue total."
                 />
               </Td>
             </Tr>
