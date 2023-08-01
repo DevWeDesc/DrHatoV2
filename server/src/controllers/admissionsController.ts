@@ -113,7 +113,7 @@ export const admissionsController = {
 
      await prisma.pets.update({
       where: {id: petId}, data : {
-            debits: bedDetails.totalDebt
+            debits: Number(totalToPay)
       }
      }) 
 
