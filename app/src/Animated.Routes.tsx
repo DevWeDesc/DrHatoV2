@@ -97,6 +97,7 @@ import { EditClinics } from "./pages/Reception/Administration/editClinics";
 import { UsersClinics } from "./pages/Reception/Administration/usersClinics";
 import { BreedRegistry } from "./pages/Reception/Administration/breedRegistry";
 import { OptionSistem } from "./pages/AdminDashboard/optionSistem";
+import { EditPets } from "./pages/Pets/edit";
 
 export function AnimatedRoutes() {
   const location = useLocation();
@@ -233,6 +234,10 @@ export function AnimatedRoutes() {
           <Route
             path="/Recepcao/Consultas/Clientes/Pets/Create/:id"
             element={<CreatePets />}
+          />
+          <Route
+            path="/Recepcao/Consultas/Clientes/Pets/Edit/:id"
+            element={<EditPets />}
           />
           <Route
             path="/Recepcao/Consultas/Clientes/Pets/Details/:id"
