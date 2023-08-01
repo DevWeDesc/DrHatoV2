@@ -235,7 +235,6 @@ export function WorkSpaceVet() {
                   PROTOCOLOS
                 </Button>
                 <Button
-           
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Exam/${id}`)}
@@ -243,7 +242,6 @@ export function WorkSpaceVet() {
                   EXAMES
                 </Button>
                 <Button
-               
                   onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}
                   height={8}
                   colorScheme="whatsapp"
@@ -251,7 +249,6 @@ export function WorkSpaceVet() {
                   PROCEDIMENTOS
                 </Button>
                 <Button
-          
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)}
@@ -259,7 +256,6 @@ export function WorkSpaceVet() {
                   VACINAS
                 </Button>
                 <Button
-              
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Surgeries/${id}`)}
@@ -267,7 +263,6 @@ export function WorkSpaceVet() {
                   CIRURGIAS
                 </Button>
                 <Button
-            
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Admissions/${id}`)}
@@ -370,6 +365,10 @@ export function WorkSpaceVet() {
                     fontWeight="bold"
                     textAlign="center"
                     bgColor="gray.100"
+                    cursor="pointer"
+                    onClick={() =>
+                      navigate(`/Recepcao/Consultas/Clientes/Pets/Edit/${id}`)
+                    }
                   >
                     {`${pet.name}, ${pet.race}`}
                   </Text>
@@ -384,29 +383,29 @@ export function WorkSpaceVet() {
                   >
                     {`${pet.sexo}, ${pet.weigth}`}
                   </Text>
-                    {
-                      pet.isBusy === true ? (   <Text
-                        width="100%"
-                        border="1px"
-                        rounded="4px"
-                        fontWeight="bold"
-                        textAlign="center"
-                        bgColor="red.200"
-                      >
-                       ANIMAL ESTÁ INTERNADO 
-                      </Text>) : (
-                           <Text
-                           width="100%"
-                           border="1px"
-                           rounded="4px"
-                           fontWeight="bold"
-                           textAlign="center"
-                           bgColor="green.100"
-                         >
-                           ANIMAL NÃO SE ENCONTRA INTERNADO
-                         </Text>
-                      )
-                    }
+                  {pet.isBusy === true ? (
+                    <Text
+                      width="100%"
+                      border="1px"
+                      rounded="4px"
+                      fontWeight="bold"
+                      textAlign="center"
+                      bgColor="red.200"
+                    >
+                      ANIMAL ESTÁ INTERNADO
+                    </Text>
+                  ) : (
+                    <Text
+                      width="100%"
+                      border="1px"
+                      rounded="4px"
+                      fontWeight="bold"
+                      textAlign="center"
+                      bgColor="green.100"
+                    >
+                      ANIMAL NÃO SE ENCONTRA INTERNADO
+                    </Text>
+                  )}
                   <Select
                     border="1px"
                     height="26px"
