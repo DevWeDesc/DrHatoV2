@@ -27,7 +27,7 @@ export default function DetailsAdmissions() {
   const [confirmation, setConfirmation] = useState<boolean>(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const [petDetails, setPetDetails] = useState({} as PetDetaisl);
+  const [petDetails, setPetDetails] = useState<any>({} as PetDetaisl);
   const entryDate = petDetails.bedInfos?.entry;
 
   const totalDaily = moment(new Date()).diff(entryDate, "minutes");
@@ -225,7 +225,11 @@ export default function DetailsAdmissions() {
                             : "ANIMAL NÃO PRECISA DE JEJUM"}
                         </Td>
                         <Td borderRight="2px">
-                          {petDetails.bedInfos === {}
+                          {petDetails &&
+                          petDetails.bedInfos &&
+                          Object.keys(petDetails.bedInfos).length === 0 &&
+                          petDetails.bedInfos.kennelName &&
+                          petDetails.bedInfos.kennelName.name
                             ? petDetails.bedInfos.kennelName.name
                             : "Sem Canil"}
                         </Td>
