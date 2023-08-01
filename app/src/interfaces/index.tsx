@@ -166,11 +166,14 @@ export interface SugeriesProps {
 
   type KennelProps = {
     name: string;
+    price: number;
   }
   type BedInfosProps = {
+    id: number;
     entry: Date | number;
     kennelName: KennelProps;
     fasting: boolean;
+
   }
   
 export interface PetDetaisl {

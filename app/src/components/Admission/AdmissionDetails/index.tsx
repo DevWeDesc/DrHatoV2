@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../../lib/axios";
 import { PetDetaisl } from "../../../interfaces";
 import moment from "moment";
+import { toast } from "react-toastify";
 export default function DetailsAdmissions() {
   const [admissiondiary, setAdmissionDiary] = useState<number | boolean>(false);
   const [confirmation, setConfirmation] = useState<boolean>(false);
@@ -32,6 +33,22 @@ export default function DetailsAdmissions() {
 
 
   const totalDaily = moment(new Date()).diff(entryDate, 'minutes')
+
+  function handleWithPriceChanges() {
+    const differenceBetweenDates = moment(new Date()).diff(entryDate, 'minutes')
+    let totalToPay = 0;
+    let price = Number(petDetails?.bedInfos?.kennelName?.price);
+    if(differenceBetweenDates > 60) {
+      totalToPay+= (price / 2)
+      if(differenceBetweenDates >= 720) {
+        let diffToPay = Math.ceil((differenceBetweenDates / 720))
+        totalToPay+= diffToPay * (price / 2) - 150
+      } 
+    }
+    return totalToPay
+  }
+
+  const totalToPayInTimeAdmmited = handleWithPriceChanges()
 
   let dailyValue;
   switch(true) {
@@ -56,7 +73,29 @@ export default function DetailsAdmissions() {
     getAdmissionDetails();
   }, []);
 
-    console.log(petDetails)
+    const handleEndAdmission = async () => {
+      try {
+        const confirmation = window.confirm("VOCÊ ESTÁ ENCERRANDO UMA INTERNAÇÃO TEM CERTEZA QUE DESEJA CONTINUAR?")
+
+        if(confirmation === true) {
+          const data = {
+            petId: Number(id),
+            bedId: petDetails?.bedInfos?.id
+       
+          }
+          await api.put("endadmission", data)
+          toast.success("Internação finalizada com Sucesso!")
+          navigate("/Admissions")
+        } else {
+          toast.warning("Confirmação recusada, ANIMAL CONTINUA INTERNADO!")
+          return
+        }
+       
+      } catch (error) {
+        console.error(error)
+        toast.error("Falha ao finalizar Internação!")
+      }
+    }
 
   return (
     <ChakraProvider>
@@ -168,7 +207,7 @@ export default function DetailsAdmissions() {
                       <Tbody>
                           <Tr>
                             <Td borderRight="2px">
-                              {petDetails.customerName}
+                              {petDetails?.customerName}
                             </Td>
                             <Td w={300} borderRight="2px" >
                               <Flex direction="column" gap="2">
@@ -182,7 +221,7 @@ export default function DetailsAdmissions() {
                               {petDetails.bedInfos?.fasting === true ? "ANIMAL PRECISA DE JEJUM" : "ANIMAL NÃO PRECISA DE JEJUM"} 
                             </Td>
                             <Td borderRight="2px" >
-                              {petDetails.bedInfos?.kennelName.name}
+                              {petDetails.bedInfos?.kennelName?.name}
                             </Td >
                             <Td borderRight="2px" >
                               {formattedDate}
@@ -258,6 +297,7 @@ export default function DetailsAdmissions() {
                           _active={{
                             boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.2)",
                           }}
+                          onClick={handleEndAdmission}
                         >
                           Encerrar Diárias
                         </Button>
@@ -445,20 +485,19 @@ export default function DetailsAdmissions() {
                           rounded={0}
                         ></Input>
                       </Flex>
-                      <Flex align="center" borderY="1px solid black">
-                        <Text w="82vw"></Text>
-                        <Text w="3vw" fontWeight="bold">
-                          Total
+               
+                        <Flex align="center"  border="2px" w="100vw" height="38px" justify="flex-end"  textAlign="center">
+                        <Text textAlign="center" justifyContent="center" align='center' w="3vw" fontWeight="bold" >
+                          Total: 
                         </Text>
-                        <Input
-                          borderY={0}
-                          w="15vw"
-                          borderColor="black"
-                          rounded={0}
-                        ></Input>
-                      </Flex>
+                        <Text border="2px" w="15vw" >
+                              { new Intl.NumberFormat('pt-BR', {currency: 'BRL', style: 'currency'}).format(totalToPayInTimeAdmmited) }
+                        </Text>
+                        </Flex>
+                  
+              
                     {
-                      (totalDaily - 60) >= 60 ? (
+                      totalDaily >= 60 ? (
                         <Text
                         fontSize="20"
                         bg="yellow.300"
@@ -468,7 +507,7 @@ export default function DetailsAdmissions() {
                         fontWeight="bold"
                         color="red"
                       >
-                        Tempo de Tolerância Restante: {(60 - totalDaily) < 60 ?  "Esgotado" : "Em Tolerancia"} Minutos
+                        Tempo de Tolerância Restante: {totalDaily >= 60 ?  "Esgotado" : "Em Tolerancia"} 
                       </Text>
                       ) : (
                         <Text
@@ -480,7 +519,7 @@ export default function DetailsAdmissions() {
                         py={2}
                         fontWeight="bold"
                       >
-                        Tempo de Tolerância Restante: {(60 - totalDaily) < 60 ?  "Esgotado" : "Em Tolerancia"} Minutos
+                        Tempo de Tolerância Restante: {totalDaily  >= 60 ?  "Esgotado" : "Em Tolerancia"} 
                       </Text>
                       )
                       
