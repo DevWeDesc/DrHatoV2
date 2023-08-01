@@ -267,7 +267,7 @@ export function WorkSpaceVet() {
                   CIRURGIAS
                 </Button>
                 <Button
-            isDisabled={pet.isBusy}
+               isDisabled={pet.isBusy}
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Admissions/${id}`)}
