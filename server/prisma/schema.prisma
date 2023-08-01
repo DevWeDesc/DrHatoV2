@@ -71,6 +71,7 @@ model Pets {
   customer_id     Int
   codPet          String          @unique @default(uuid())
   isCastred       Boolean?
+  debits          Decimal?    
   medicineRecords MedicineRecord?
   customer        Customer        @relation(fields: [customer_id], references: [id])
   queue           Queues?
@@ -99,6 +100,7 @@ model MedicineRecord {
   petExams     ExamsForPet[]
   petVaccines  VaccinesForPet[]
   petSurgeries SurgeriesForPet[]
+  petProcedures ProceduresForPet[]
 }
 
 model Exams {
@@ -159,6 +161,22 @@ model Procedures {
   sector              Sectors?  @relation(fields: [sector_id], references: [id])
 }
 
+model ProceduresForPet {
+  id                  Int      @id @default(autoincrement())
+  name                String   
+  price               Int
+  applicationInterval String?
+  applicableGender    String[]
+  ageRange            String[]
+  available           Boolean
+  observations        String
+  group_id            Int?
+  sector_id           Int?
+  requestedDate     DateTime?
+  medicine_id     Int
+  medicine        MedicineRecord @relation(fields: [medicine_id], references: [id])
+}
+
 model Groups {
   id      Int          @id @default(autoincrement())
   name    String
@@ -196,9 +214,9 @@ model Bed {
   mustFasting Boolean? @default(false)
   entryOur DateTime?   
   exitOur DateTime?
-  dailyRate Decimal?
+  dailyRate Int?
   hospitalizedDays Int?
-  totalDebt Int? 
+  totalDebt Decimal? 
 }
 
 model Vaccines {

@@ -68,7 +68,7 @@ export function WorkSpaceVet() {
     const response = await api.get(`/pets/${id}`);
     setPet(response.data);
   }
-
+  console.log(pet);
   useEffect(() => {
     getPetDetails();
   }, []);
@@ -406,7 +406,17 @@ export function WorkSpaceVet() {
                       ANIMAL NÃO SE ENCONTRA INTERNADO
                     </Text>
                   )}
-                  <Select
+                  <Text
+                    width="100%"
+                    border="1px"
+                    rounded="4px"
+                    fontWeight="bold"
+                    textAlign="center"
+                    bgColor="gray.100"
+                  >
+                    {pet.more != "" ? "PetLove" : "Sem plano de Saúde"}
+                  </Text>
+                  {/* <Select
                     border="1px"
                     height="26px"
                     width="100%"
@@ -415,10 +425,11 @@ export function WorkSpaceVet() {
                     textAlign="center"
                     bgColor="gray.100"
                     placeholder="Selecione uma Opção"
+                    value={pet.more != "" ? "PetLove" : "Sem plano de Saúde"}
                   >
                     <option value="option1">Não tenho plano de saúde</option>
                     <option value="option2">Pet Love</option>
-                  </Select>
+                  </Select> */}
                 </VStack>
               </Flex>
               <Flex direction="column" mx="4">

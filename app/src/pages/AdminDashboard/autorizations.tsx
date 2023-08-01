@@ -22,13 +22,14 @@ import { DbContext } from "../../contexts/DbContext";
 import { Link } from "react-router-dom";
 import { LoadingSpinner } from "../../components/Loading";
 import { Input } from "../../components/admin/Input";
-import { AutorizationData } from "../../interfaces";
 import { toast } from "react-toastify";
 import { api } from "../../lib/axios";
 import { Icon } from "@chakra-ui/react";
 import { RiAddLine } from "react-icons/ri";
 import { Heading } from "@chakra-ui/react";
 import { motion } from "framer-motion";
+import Cookies from 'js-cookie'
+
 
 export function Autorizations() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,14 +38,14 @@ export function Autorizations() {
   const [reloadData, setReloadData] = useState<boolean>(false);
   const [allAutorization, setAllAutorization] = useState([]);
   const autorizations = autorization ? autorization : null;
-
+  const token = Cookies.get("token") ? Cookies.get("token") : ""
   const handleAutorization: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
         name: values.name,
         text: values.text,
       };
-      await api.post("autorizations", data);
+      await api.post("autorizations", data, {headers: {'token': `${token}`} });
       setReloadData(true);
       toast.success("Autorização criada com sucesso");
     } catch (error) {
