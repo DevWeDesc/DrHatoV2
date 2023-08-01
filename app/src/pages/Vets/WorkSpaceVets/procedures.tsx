@@ -1,12 +1,13 @@
 import {ChakraProvider, Flex, Table, Tr, Td, Th, Thead, Tbody, TableContainer, Button, Checkbox, HStack, Text, Select } from "@chakra-ui/react";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { BiHome } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Input } from "../../../components/admin/Input";
+import { PetDetaisl } from "../../../interfaces";
 import { api } from "../../../lib/axios";
-
-
 
 
 interface ProceduresProps {
@@ -18,96 +19,66 @@ interface ProceduresProps {
 export function ProceduresVet () {
   const { id } = useParams<{ id: string }>();
   const [procedures, setProcedures] = useState<ProceduresProps[]>([])
+  const [petDetails, setPetDetails] = useState({} as PetDetaisl)
+  const [reloadData, setReloadData] = useState(false);
+  const [procedureId, setProcedureId] = useState(0)
   const navigate = useNavigate();
-  
-
+  async function GetPet() {
+    const pet = await api.get(`/pets/${id}`)
+    setPetDetails(pet.data)
+  }
   async function GetData() {
     const procedures = await api.get("/procedures")
     setProcedures(procedures.data)
+  }
 
+  const setProcedureInPet = async () => {
+    try {
+      const now = new Date();
+      const actualDate = moment(now).format("DD/MM/YYYY")
+      console.log("DATA ATUAL", actualDate)
+      
+     await api.post(`/procedures/${petDetails.recordId}/${procedureId}`)
+      setReloadData(true)
+      toast.success("Procedimento incluido com sucesso!!")
+    } catch (error) {
+      console.log(error)
+      toast.error("Falha ao acrescentar novo procedimento!!")
+    }
+  }
+
+  const excludeProcedureInPet = async (id: number) => {
+    try {
+      const confirm = window.confirm("EXCLUIR E UMA OPERAÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?")
+      if (confirm === true) {
+        await api.delete(`/proceduresfp/${id}`)
+        setReloadData(true)
+        toast.success("Procedimento excluido com sucesso!!")
+      } else {
+        return
+      }
+     
+    } catch (error) {
+      console.log(error)
+      toast.error("Falha ao excluir procedimento!!")
+    }
   }
 
   useEffect(() => {
     GetData()
+    GetPet()
   },[])
 
 
-  /*const [covenant, setCovenant] = useState("");
-    let table;
-    switch(true) {
-      case covenant === "Particular":
-      table = (
-        
-      );
-      break;
-      case covenant === "Petlove": 
-      table = (
-        <Table>
-          <Thead>
-            <Tr >
-            <Th color="black" fontSize="1xl" border="2px" w="100px">
-                SELECIONADO
-              </Th>
-              <Th color="black" bgColor="yellow.100" fontSize="1xl" border="2px">
-                NOME - PETLOVE
-              </Th>
-              <Th   color="black" fontSize="1xl"  border="2px" w="200px">
-                VALOR POR PESO
-              </Th>
-              </Tr>
-              </Thead>
-              <Tbody>
-                <Tr >
-                  <Td border="2px">
-                    <Checkbox borderColor="black" size="lg" />
-                  </Td>
-                  <Td  border="2px">
-                    Petlove 1
-                  </Td>
-                  <Td  border="2px">
-                   R$ 299,99
-                  </Td>
-                </Tr>
-              </Tbody>
-  </Table>
-      )
-      break;
-      default: 
-      table === (
-        <Table>
-        <Thead>
-          <Tr >
-          <Th color="black" fontSize="1xl" border="2px" w="100px">
-              SELECIONADO
-            </Th>
-            <Th color="black" bgColor="whatsapp.100" fontSize="1xl" border="2px">
-              NOME - PARTICULAR
-            </Th>
-            <Th   color="black" fontSize="1xl"  border="2px" w="200px">
-              VALOR POR PESO
-            </Th>
-            </Tr>
-            </Thead>
-            <Tbody>
-              <Tr >
-                <Td border="2px">
-                  <Checkbox borderColor="black" size="lg" />
-                </Td>
-                <Td  border="2px">
-                  Exemplo 1
-                </Td>
-                <Td  border="2px">
-                 R$ 299,99
-                </Td>
-              </Tr>
-            </Tbody>
-     </Table>
-     
-      )
-      break;
+  useEffect(() => {
+    if (reloadData === true) {
+      GetPet()
+      setReloadData(false); // Reseta o estado para evitar chamadas infinitas
     }
- 
-    */
+  }, [reloadData])
+
+
+
   return (
     <ChakraProvider>
       <Flex width="100vw" height="100vh" bgColor="white" direction="column">
@@ -157,30 +128,37 @@ export function ProceduresVet () {
 
 
           <Tbody>
-            <Tr>
-            <Td border="2px"  fontSize="1xl" fontWeight="bold" color="green.700">
-               1
-              </Td>
-              <Td border="2px"  fontSize="1xl" fontWeight="bold">
-              HEMOGRAMA COMPLETO
-              </Td>
-              <Td border="2px"  fontSize="1xl" fontWeight="bold">
-                R$ 130,00
-              </Td>
-              <Td border="2px"  fontSize="1xl" fontWeight="bold">
-              R$ 130,00
-              </Td>
+              {
+                petDetails.procedures?.map((procedure) => (
+                  <Tr key={procedure.id}>
+                  <Td border="2px"  fontSize="1xl" fontWeight="bold" color="green.700">
+                      1
+                    </Td>
+                    <Td border="2px"  fontSize="1xl" fontWeight="bold">
+                    {procedure.name}
+                    </Td>
+                    <Td border="2px"  fontSize="1xl" fontWeight="bold">
+                      R$ {procedure.price}
+                    </Td>
+                    <Td border="2px"  fontSize="1xl" fontWeight="bold">
+                    R$  {procedure.price}
+                    </Td>
+      
+                    <Td border="2px"  fontSize="1xl" fontWeight="bold">
+                     { new Intl.DateTimeFormat().format(procedure.requestedDate) }
+                    </Td>
+                    <Td border="2px"  fontSize="1xl" fontWeight="bold">
+                      --
+                    </Td>
+                      <Td border="2px"  fontSize="1xl" fontWeight="bold">
 
-              <Td border="2px"  fontSize="1xl" fontWeight="bold">
-                27/06/2023
-              </Td>
-              <Td border="2px"  fontSize="1xl" fontWeight="bold">
-                --
-              </Td>
-                <Td border="2px"  fontSize="1xl" fontWeight="bold">
-                --
-              </Td>
-            </Tr>
+
+                      <Button onClick={() => excludeProcedureInPet(procedure.id)} colorScheme="red">EXCLUIR</Button>
+                     
+                    </Td>
+                  </Tr>
+                ))
+              }
           </Tbody>
          </Table>
         </TableContainer>
@@ -200,7 +178,8 @@ export function ProceduresVet () {
              
             </HStack>
              */}
-             <HStack>  <Button colorScheme="teal" w="300px">FILTRAR POR NOME</Button> <Input h="38px" name="filter" /></HStack> <Button colorScheme="whatsapp">INCLUIR NOVO PROCEDIMENTO</Button>
+             <HStack>  <Button colorScheme="teal" w="300px">FILTRAR POR NOME</Button> <Input h="38px" name="filter" /></HStack> 
+             <Button colorScheme="whatsapp" onClick={setProcedureInPet}>INCLUIR NOVO PROCEDIMENTO</Button>
           </Flex>
             <TableContainer w="100%" height="100%">
             <Table>
@@ -222,7 +201,7 @@ export function ProceduresVet () {
                   procedures.map((procedure) => (
                     <Tr key={procedure.id} >
                     <Td border="2px">
-                      <Checkbox borderColor="black" size="lg" />
+                    <Checkbox onChange={(ev) => ev.target.checked === true ? setProcedureId(procedure.id) : setProcedureId(0)}  value={procedure.id}   borderColor="black" size="lg" />
                     </Td>
                     <Td  border="2px">
                       {procedure.name}
