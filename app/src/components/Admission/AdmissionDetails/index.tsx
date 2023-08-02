@@ -12,7 +12,8 @@ import {
   Tbody,
   Tr, 
   Td,
-  Th
+  Th,
+  Textarea
 } from "@chakra-ui/react";
 import { BiHome, MdPets, TbArrowBack } from "react-icons/all";
 import { AdminContainer } from "../../../pages/AdminDashboard/style";
@@ -50,13 +51,25 @@ export default function DetailsAdmissions() {
 
   const totalToPayInTimeAdmmited = handleWithPriceChanges()
 
+  
+  function getNextPaymentHour (hourParam: number) {
+    const IntervalsMinutes = (totalDaily / hourParam);
+    const nextPayment = Math.round(IntervalsMinutes + hourParam);
+    const restTime = (nextPayment - (totalDaily % hourParam)) / 60;
+    return restTime.toFixed(1)
+  }
+
+
+
+  
+
   let dailyValue;
   switch(true) {
     case totalDaily < 720:
       dailyValue = `${totalDaily} Minutos`
       break;
       case totalDaily >= 720:
-        dailyValue = `${totalDaily / 720} Diárias`
+        dailyValue = `${(totalDaily / 720).toFixed(2)} Diárias`
         break;
       default: 
       dailyValue = `${totalDaily}`
@@ -309,7 +322,7 @@ export default function DetailsAdmissions() {
                     <Flex direction="column">
                       <Flex>
                         <Text
-                          w="12vw"
+                          w="20vw"
                           fontWeight="bold"
                           pl="2"
                           bg="blue.100"
@@ -317,19 +330,9 @@ export default function DetailsAdmissions() {
                           height="40px"
                           border="1px solid black"
                         >
-                          Data
+                          Diario Internação
                         </Text>
-                        <Text
-                          w="8vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="blue.100"
-                          fontSize="20"
-                          height="40px"
-                          border="1px solid black"
-                        >
-                          Hora
-                        </Text>
+                      
                         <Text
                           w="25vw"
                           fontWeight="bold"
@@ -339,7 +342,7 @@ export default function DetailsAdmissions() {
                           height="40px"
                           border="1px solid black"
                         >
-                          Usuário
+                        
                         </Text>
                         <Text
                           w="9vw"
@@ -350,7 +353,7 @@ export default function DetailsAdmissions() {
                           height="40px"
                           border="1px solid black"
                         >
-                          Quantidade
+                        
                         </Text>
                         <Text
                           w="19vw"
@@ -383,13 +386,12 @@ export default function DetailsAdmissions() {
                           height="40px"
                           border="1px solid black"
                         >
-                          Total
+                          Total 
                         </Text>
                       </Flex>
                       <Flex>
-                        <Input
-                          type="date"
-                          w="12vw"
+                        <Textarea
+                          w="20vw"
                           fontWeight="bold"
                           pl="2"
                           bg="white"
@@ -398,27 +400,17 @@ export default function DetailsAdmissions() {
                           border="1px solid black"
                           rounded="0"
                         />
-                        <Input
-                          type="time"
-                          w="8vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="white"
-                          fontSize="19"
-                          height="40px"
-                          border="1px solid black"
-                          rounded="0"
-                        />
-                        <Input
+                        
+                        <Button
+                          colorScheme="whatsapp"
                           w="25vw"
                           fontWeight="bold"
                           pl="2"
-                          bg="white"
                           fontSize="19"
                           height="40px"
                           border="1px solid black"
                           rounded="0"
-                        />
+                        >GRAVAR NO DIÁRIO</Button>
                         <Input
                           w="9vw"
                           fontWeight="bold"
@@ -487,12 +479,14 @@ export default function DetailsAdmissions() {
                       </Flex>
                
                         <Flex align="center"  border="2px" w="100vw" height="38px" justify="flex-end"  textAlign="center">
-                        <Text textAlign="center" justifyContent="center" align='center' w="3vw" fontWeight="bold" >
-                          Total: 
-                        </Text>
-                        <Text border="2px" w="15vw" >
+                          <Text fontWeight="bold">
+                            TOTAL :
+                          </Text>
+                        <Flex w="15vw" bgColor="green.200" ml="1">
+                        <Text  w="15vw" fontWeight="bold" >
                               { new Intl.NumberFormat('pt-BR', {currency: 'BRL', style: 'currency'}).format(totalToPayInTimeAdmmited) }
                         </Text>
+                        </Flex>
                         </Flex>
                   
               
@@ -532,7 +526,7 @@ export default function DetailsAdmissions() {
                         py={2}
                         fontWeight="bold"
                       >
-                        Tempo Restante até o final da meia diaría: {Math.round((720 - totalDaily) / 60)} Horas
+                        Tempo Restante até o final da meia diaría: {getNextPaymentHour(720)}  Horas
                       </Text>
                       <Text
                         fontSize="20"
@@ -542,7 +536,7 @@ export default function DetailsAdmissions() {
                         py={2}
                         fontWeight="bold"
                       >
-                        Tempo Restante até o final da diaría : {Math.round((1440 - totalDaily) / 60)} Horas
+                        Tempo Restante até o final da diaría : {getNextPaymentHour(1440)} Horas
                       </Text>
                       <Button
                         py="8"

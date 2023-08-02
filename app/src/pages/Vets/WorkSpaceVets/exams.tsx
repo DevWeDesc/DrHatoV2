@@ -41,7 +41,7 @@ export function VetExams() {
 
   async function setExamInPet() {
     try {
-      await api.post(`/setexam/${examId}/${petDetails.recordId}`);
+      await api.post(`/setexam/${examId}/${petDetails.recordId}/${petDetails.totalAcc.id}`);
       setReloadData(true);
       toast.success("Exame criado com Sucesso");
     } catch (error) {

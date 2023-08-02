@@ -24,7 +24,8 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
       {select: { name: true, id: true, balance: true, pets: true}}, 
       medicineRecords: {select: {petExams: true, observations: true, id: true, petVaccines: true, petSurgeries: true, petProcedures: true }},
       queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true}},
-      bed: {select: {isBusy: true, entryOur: true, id: true, kennel: {select: {name: true, price: true}}, dailyRate: true, mustFasting: true}}
+      bed: {select: {isBusy: true, entryOur: true, id: true, kennel: {select: {name: true, price: true}}, dailyRate: true, mustFasting: true}},
+      priceAccumulator: {select: {id: true, accumulator: true}}
     } })
 
     const petData = { 
@@ -100,7 +101,13 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
         }
         return procedureData;
        })   ,
-      queue: pet?.queue
+      queue: pet?.queue,
+      totalAcc: {
+        id: pet?.priceAccumulator?.id,
+        price: pet?.priceAccumulator?.accumulator
+       
+      }
+      
     }
     return reply.send(petData)
   } catch (error) {
@@ -159,6 +166,11 @@ createPet: async (request: FastifyRequest, reply: FastifyReply) =>{
         medicineRecords: {
           create: {
             observations: [""],
+          }
+        },
+        priceAccumulator: {
+          create: {
+            accumulator: 0
           }
         }
       }

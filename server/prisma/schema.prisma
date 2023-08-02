@@ -73,11 +73,18 @@ model Pets {
   isCastred       Boolean?
   debits          Decimal?    
   medicineRecords MedicineRecord?
+  priceAccumulator PricesAccumulator?
   customer        Customer        @relation(fields: [customer_id], references: [id])
   queue           Queues?
   bed             Bed?
 }
 
+model PricesAccumulator {
+  id              Int             @id @default(autoincrement())
+  petId Int @unique
+  pets Pets @relation(fields: [petId], references: [id]) 
+  accumulator Decimal?
+}
 model Schedule {
   id        Int      @id @default(autoincrement())
   plants    String[]

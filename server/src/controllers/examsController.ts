@@ -2,12 +2,14 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { ValidationContract } from "../validators/validateContract";
 import {  ExamSchema  } from "../schemas/schemasValidator";
+import { accumulatorService } from "../services/accumulatorService";
 const prisma = new PrismaClient();
 
 
 type params = {
     id: string;
     recordId: string;
+    accId: string;
   }
 
 export const examsController = {
@@ -89,7 +91,7 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
  },
 
  setExamInPet: async (request: FastifyRequest<{Params: params, Body: { requestedFor: string} }>, reply: FastifyReply) => {
-    const { id, recordId} = request.params
+    const { id, recordId, accId} = request.params
     const  requestedFor = null
     const getExame = await prisma.exams.findUnique({where: {id: parseInt(id)}})
     const formattedData = new Date()
@@ -107,6 +109,10 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
         requestedFor: requestedFor,
         examsType: getExame.examsType,
         medicine: {connect: {id: parseInt(recordId)}} }})
+
+        await accumulatorService.addPriceToAccum(getExame.price, accId)
+
+        reply.status(201)
     } catch (error) {
         reply.status(400).send({message: error})
         console.log(error)

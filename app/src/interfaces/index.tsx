@@ -152,6 +152,11 @@ export interface SugeriesProps {
         vetPreference: string;
       };
 
+
+  type totalAccProps = {
+    id: number;
+    price: number | string;
+     } 
   type customerPetsProps = {
     id: number;
     name: string;
@@ -203,4 +208,5 @@ export interface PetDetaisl {
   customerPets: customerPetsProps[];
   bedInfos: BedInfosProps;
   isBusy: boolean;
+  totalAcc: totalAccProps;
 }
