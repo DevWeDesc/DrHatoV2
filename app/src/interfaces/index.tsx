@@ -138,13 +138,8 @@ export interface VacinnesProps {
 }
 
 export interface SugeriesProps {
-  id: number;
-  name: string;
-  price: number;
-  scheduledDate?: Date;
-  completedDate?: Date;
-}
 
+<<<<<<< HEAD
 type QueueProps = {
   moreInfos: string;
   queueOur: string;
@@ -172,6 +167,45 @@ type BedInfosProps = {
   fasting: boolean;
 };
 
+=======
+      id: number;
+			name: string;
+      price: number;
+		  scheduledDate?: Date
+			completedDate?: Date
+      }
+
+  type QueueProps = {
+        moreInfos: string;
+        queueOur: string;
+        vetPreference: string;
+      };
+
+  type customerPetsProps = {
+    id: number;
+    name: string;
+  }    
+  type ProceduresProps = {
+    id: number;
+    name: string;
+    price: number;
+    available: boolean;
+    requestedDate: Date 
+  }
+
+  type KennelProps = {
+    name: string;
+    price: number;
+  }
+  type BedInfosProps = {
+    id: number;
+    entry: Date | number;
+    kennelName: KennelProps;
+    fasting: boolean;
+
+  }
+  
+>>>>>>> fff9c677e78d38d8b9f77142d80f9d7f91915f8e
 export interface PetDetaisl {
   id: number | string;
   more: string;
@@ -194,7 +228,11 @@ export interface PetDetaisl {
   queue: QueueProps;
   exams: ExamsProps[];
   vaccines: VacinnesProps[];
+<<<<<<< HEAD
   surgeries: SugeriesProps[];
+=======
+  surgeries:  SugeriesProps[];
+>>>>>>> fff9c677e78d38d8b9f77142d80f9d7f91915f8e
   procedures: ProceduresProps[];
   customerPets: customerPetsProps[];
   bedInfos: BedInfosProps;

@@ -24,7 +24,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
       {select: { name: true, id: true, balance: true, pets: true}}, 
       medicineRecords: {select: {petExams: true, observations: true, id: true, petVaccines: true, petSurgeries: true, petProcedures: true }},
       queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true}},
-      bed: {select: {isBusy: true, entryOur: true, kennel: {select: {name: true}}, dailyRate: true, mustFasting: true}}
+      bed: {select: {isBusy: true, entryOur: true, id: true, kennel: {select: {name: true, price: true}}, dailyRate: true, mustFasting: true}}
     } })
 
     const petData = { 
@@ -55,9 +55,11 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
       recordId: pet?.medicineRecords?.id,
       isBusy: pet?.bed?.isBusy,
       bedInfos: {
+        id: pet?.bed?.id,
         entry: pet?.bed?.entryOur,
         kennelName: pet?.bed?.kennel,
-        fasting: pet?.bed?.mustFasting
+        fasting: pet?.bed?.mustFasting,
+        price: pet?.bed?.kennel?.price
       },
       exams: pet?.medicineRecords?.petExams.map((exams) => {
         let examData = {

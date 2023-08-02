@@ -235,6 +235,7 @@ export function WorkSpaceVet() {
                   PROTOCOLOS
                 </Button>
                 <Button
+                 isDisabled={pet.isBusy}
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Exam/${id}`)}
@@ -242,6 +243,9 @@ export function WorkSpaceVet() {
                   EXAMES
                 </Button>
                 <Button
+
+               isDisabled={pet.isBusy}
+
                   onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}
                   height={8}
                   colorScheme="whatsapp"
@@ -249,6 +253,9 @@ export function WorkSpaceVet() {
                   PROCEDIMENTOS
                 </Button>
                 <Button
+
+                 isDisabled={pet.isBusy}
+
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)}
@@ -256,6 +263,8 @@ export function WorkSpaceVet() {
                   VACINAS
                 </Button>
                 <Button
+              isDisabled={pet.isBusy}
+
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Surgeries/${id}`)}
@@ -263,6 +272,9 @@ export function WorkSpaceVet() {
                   CIRURGIAS
                 </Button>
                 <Button
+
+            isDisabled={pet.isBusy}
+
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Admissions/${id}`)}
