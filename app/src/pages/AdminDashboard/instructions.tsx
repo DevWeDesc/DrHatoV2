@@ -13,21 +13,16 @@ import {
   Thead,
   Tr,
   FormControl,
-  HStack,
-  CheckboxGroup,
-  Checkbox,
   Textarea,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { AiOutlineDownload } from "react-icons/all";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
-import { Paginaton } from "../../components/admin/Pagination";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { LoadingSpinner } from "../../components/Loading";
-import { DbContext } from "../../contexts/DbContext";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
@@ -36,7 +31,6 @@ import { Input } from "../../components/admin/Input";
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
-import Surgeries from "../Surgeries";
 import { motion } from "framer-motion";
 //@ts-ignore
 pdfMake.addVirtualFileSystem(pdfFonts);
@@ -142,9 +136,9 @@ export function InstructionsList() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Instruções" />
+            <Header title="Instruções" url="/Admin/" />
 
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6" maxH="44rem">
+            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6" maxH="44rem">
               <Sidebar />
               <Box
                 flex="1"

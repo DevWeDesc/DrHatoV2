@@ -62,7 +62,7 @@ export function Hospitalization() {
         name: values.name,
         totalBeds: parseInt(values.totalBeds),
         description: values.description,
-        price: Number(values.price)
+        price: Number(values.price),
       };
       await api.post("/admissions", data);
       setReloadData(true);
@@ -128,9 +128,9 @@ export function Hospitalization() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Leitos internação" />
+            <Header title="Leitos internação" url="/Admin/" />
 
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6" maxH="85vh">
+            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6" maxH="85vh">
               <Sidebar />
               <Box
                 flex="1"
@@ -169,11 +169,11 @@ export function Hospitalization() {
                       <Th fontSize="18" borderColor="black" width="20%">
                         Nome
                       </Th>
-                      <Th fontSize="18" borderColor="black" >
+                      <Th fontSize="18" borderColor="black">
                         Quantidade de Camas
                       </Th>
-                      <Th fontSize="18" borderColor="black" >
-                       Preço diária
+                      <Th fontSize="18" borderColor="black">
+                        Preço diária
                       </Th>
                       <Th borderColor="black"></Th>
                     </Tr>
@@ -189,13 +189,13 @@ export function Hospitalization() {
                             </Text>
                           </Td>
                           <Td borderColor="black">{bed.totalBeds}</Td>
-                            <Td borderColor="black" >{bed.price}</Td>
+                          <Td borderColor="black">{bed.price}</Td>
                           <Td borderColor="black">
                             <Flex gap="2" ml="40%">
                               <Button
-                                  alignItems="center"
-                                  size="md"
-                                  width={220}
+                                alignItems="center"
+                                size="md"
+                                width={220}
                                 fontSize="md"
                                 colorScheme="yellow"
                                 leftIcon={<Icon as={RiPencilLine} />}
@@ -237,7 +237,12 @@ export function Hospitalization() {
                       label="Nome do leito"
                       mb="4"
                     />
-                    <Input type="number" {...register("price")} name="price" label="Preço da Diária" />
+                    <Input
+                      type="number"
+                      {...register("price")}
+                      name="price"
+                      label="Preço da Diária"
+                    />
 
                     <Input
                       {...register("totalBeds")}
@@ -246,8 +251,10 @@ export function Hospitalization() {
                       type="number"
                       mb="4"
                     />
-                    
-                    <FormLabel htmlFor="description">Descrição ou Observação do leito: </FormLabel>
+
+                    <FormLabel htmlFor="description">
+                      Descrição ou Observação do leito:{" "}
+                    </FormLabel>
                     <Textarea {...register("description")} name="description" />
 
                     <Button w="100%" type="submit" colorScheme="green" m="4">

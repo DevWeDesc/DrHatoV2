@@ -18,6 +18,14 @@ import { motion } from "framer-motion";
 import { Box } from "@chakra-ui/react";
 import { BiHome } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
+import { Header } from "../../../components/admin/Header";
+import { GenericLink } from "../../../components/Sidebars/GenericLink";
+import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
+import { AiFillEdit } from "react-icons/ai";
+import { BiCalendarPlus } from "react-icons/bi";
+import { RiSafeFill } from "react-icons/ri";
+import { AiFillPrinter } from "react-icons/ai";
+import { TbCashBanknoteOff } from "react-icons/tb";
 
 export function BoxReports() {
   const navigate = useNavigate();
@@ -30,37 +38,39 @@ export function BoxReports() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column">
-            <Flex
-              align="center"
-              gap="2"
-              px="5%"
-              h="12vh"
-              justifyContent="space-between"
-            >
-              <Flex align="center">
-                <Text m="2" fontSize="2xl" fontWeight="bold">
-                  Despesas
-                </Text>
-                <Flex gap="2">
-                  <Button
-                    colorScheme="teal"
-                    leftIcon={<BiHome size={24} />}
-                    onClick={() => navigate("/Home")}
-                  >
-                    Home
-                  </Button>
-                  <Button
-                    colorScheme="yellow"
-                    leftIcon={<TbArrowBack size={24} />}
-                    onClick={() => navigate("/Recepcao/Caixa")}
-                  >
-                    Voltar
-                  </Button>
-                </Flex>
-              </Flex>
-            </Flex>
+            <Header title="Despesas do Caixa" url="/Recepcao/Caixa" />
 
-            <Flex w="100%" maxWidth={1580} mx="auto" px="6">
+            <Flex w="100%" maxWidth={1680} mx="auto" px="6">
+              <GenericSidebar>
+                <GenericLink
+                  name="Cadastro de Consulta"
+                  icon={BiCalendarPlus}
+                  path={`/Recepcao/Consultas`}
+                />
+                <GenericLink
+                  name="Alterar Consulta"
+                  icon={AiFillEdit}
+                  path={`/Recepcao/Change`}
+                />
+                <Text fontWeight="bold" fontSize="2xxl" mt="6">
+                  OPÇÕES DO CAIXA
+                </Text>
+                <GenericLink
+                  name="Fechar Caixa"
+                  icon={RiSafeFill}
+                  // path={`/Recepcao/Change`}
+                />
+                <GenericLink
+                  name="Caixa"
+                  icon={TbCashBanknoteOff}
+                  path={`/Recepcao/Caixa`}
+                />
+                <GenericLink
+                  name="Imprimir"
+                  icon={AiFillPrinter}
+                  //path={`/Recepcao/Change`}
+                />
+              </GenericSidebar>
               {/* <Sidebar /> */}
               <Box flex="1" borderRadius={8} bg="gray.200" w="100%">
                 <Flex direction="column">

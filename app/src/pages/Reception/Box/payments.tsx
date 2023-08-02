@@ -20,7 +20,14 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import { Header } from "../../../components/admin/Header";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
-import { AiOutlineSearch } from "react-icons/all";
+import {
+  RiSafeFill,
+  AiOutlineSearch,
+  BiCalendarPlus,
+  TbCashBanknoteOff,
+  AiFillEdit,
+  AiFillPrinter,
+} from "react-icons/all";
 import { AdminContainer } from "../../AdminDashboard/style";
 import { Link, useNavigate } from "react-router-dom";
 import { UniversalSearch } from "../../../components/Search/universalSearch";
@@ -38,6 +45,7 @@ import { GiCardDiscard } from "react-icons/gi";
 import { BsCashCoin } from "react-icons/bs";
 import { BiHome } from "react-icons/all";
 import { MdOutlinePayments } from "react-icons/all";
+import { BsReception4 } from "react-icons/bs";
 
 interface QueueProps {
   response: [];
@@ -270,20 +278,24 @@ export function BoxPayments() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Pagamentos" />
+            <Header title="Painel de Pagamentos" url="/Recepcao" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
-                  name="Painel de Pagamentos"
-                  icon={MdOutlinePayments}
-                  path={`/Recepcao/Caixa/Pagamentos`}
-                />{" "}
+                  name="Recepção"
+                  icon={BsReception4}
+                  path={`/Recepcao/`}
+                />
                 <GenericLink
-                  name="Painel de Devoluções"
-                  icon={GiCardDiscard}
+                  name="Caixa"
+                  icon={BiCalendarPlus}
+                  path={`/Recepcao/Caixa`}
+                />
+                <GenericLink
+                  name="Devoluções"
+                  icon={AiFillEdit}
                   path={`/Recepcao/Caixa/Returns`}
-                />{" "}
-                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
+                />
               </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <Flex mb="8" gap="8" direction="column" align="center">

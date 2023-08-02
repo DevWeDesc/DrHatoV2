@@ -16,6 +16,7 @@ import Pagaments from "../../assets/Pagaments.jpg";
 import Exams from "../../assets/Exams.jpg";
 import Administration from "../../assets/Administration.jpg";
 import { motion } from "framer-motion";
+import { Header } from "../../components/admin/Header";
 
 export function Reception() {
   return (
@@ -26,7 +27,8 @@ export function Reception() {
     >
       <ChakraProvider>
         <Flex direction="column" h="100vh">
-          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+          <Header title="Menu Recepção" url="/Home/" />
+          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
             <ReceptionSidebar />
             <SimpleGrid
               flex="1"
@@ -35,7 +37,14 @@ export function Reception() {
               align="flex-start"
               as={Flex}
             >
-              <Box textAlign="center" p="8" bg="gray.100" borderRadius={8}>
+              <Box
+                textAlign="center"
+                p="8"
+                bg="gray.100"
+                maxH="44rem"
+                overflow="auto"
+                borderRadius={8}
+              >
                 <Text fontSize={32} fontWeight="bold" fontStyle="oblique">
                   RECEPÇÃO GERAL
                 </Text>
@@ -62,7 +71,7 @@ export function Reception() {
                           </Link>
 
                           <Link to="/Recepcao/Create">
-                            <Button colorScheme="whatsapp">
+                            <Button minWidth={200} colorScheme="whatsapp">
                               Cadastro de Clientes
                             </Button>
                           </Link>
@@ -121,7 +130,15 @@ export function Reception() {
                               Autorizações
                             </Button>
                           </Link>
-                          <Link to="/Medicines">
+                          <Link
+                            to="/Medicines"
+                            onClick={() => {
+                              localStorage.setItem(
+                                "origem",
+                                window.location.pathname
+                              );
+                            }}
+                          >
                             <Button minWidth={200} colorScheme="whatsapp">
                               Medicamentos
                             </Button>
