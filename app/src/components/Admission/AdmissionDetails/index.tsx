@@ -49,13 +49,22 @@ export default function DetailsAdmissions() {
 
   const totalToPayInTimeAdmmited = handleWithPriceChanges()
 
+  function getNextPaymentHour (hourParam: number) {
+    const IntervalsMinutes = (totalDaily / hourParam);
+    const nextPayment = Math.round(IntervalsMinutes + hourParam);
+    const restTime = (nextPayment - (totalDaily % hourParam)) / 60;
+    return restTime.toFixed(1)
+  }
+
   let dailyValue;
   switch (true) {
     case totalDaily < 720:
       dailyValue = `${totalDaily} Minutos`;
       break;
     case totalDaily >= 720:
-      dailyValue = `${totalDaily / 720} Diárias`;
+    
+    dailyValue = `${(totalDaily / 720).toFixed(2)} Diárias`
+      
       break;
     default:
       dailyValue = `${totalDaily}`;
@@ -72,9 +81,8 @@ export default function DetailsAdmissions() {
     getAdmissionDetails();
   }, []);
 
-<<<<<<< HEAD
-  console.log(petDetails);
-=======
+  
+
     const handleEndAdmission = async () => {
       try {
         const confirmation = window.confirm("VOCÊ ESTÁ ENCERRANDO UMA INTERNAÇÃO TEM CERTEZA QUE DESEJA CONTINUAR?")
@@ -82,7 +90,8 @@ export default function DetailsAdmissions() {
         if(confirmation === true) {
           const data = {
             petId: Number(id),
-            bedId: petDetails?.bedInfos?.id
+            bedId: petDetails?.bedInfos?.id,
+            admissionId: petDetails?.admissions[0].id
        
           }
           await api.put("endadmission", data)
@@ -98,7 +107,6 @@ export default function DetailsAdmissions() {
         toast.error("Falha ao finalizar Internação!")
       }
     }
->>>>>>> fff9c677e78d38d8b9f77142d80f9d7f91915f8e
 
   return (
     <ChakraProvider>
@@ -239,56 +247,6 @@ export default function DetailsAdmissions() {
                           Preferência Veterinário
                         </Th>
                       </Tr>
-<<<<<<< HEAD
-                    </Thead>
-                    <Tbody>
-                      <Tr>
-                        <Td borderRight="2px">{petDetails.customerName}</Td>
-                        <Td w={300} borderRight="2px">
-                          <Flex direction="column" gap="2">
-                            <Text>
-                              {" "}
-                              {petDetails.name},{" " + petDetails.especie},
-                              {" " + petDetails.race},
-                            </Text>
-                            <Text>
-                              {" "}
-                              {petDetails.sexo}, {" " + petDetails.bornDate}
-                            </Text>
-                            {petDetails.codPet}
-                            <Text fontWeight="bold">
-                              {petDetails.more !== ""
-                                ? "PetLove"
-                                : "Não possui Plano de Saúde"}
-                            </Text>
-                          </Flex>
-                        </Td>
-                        <Td borderRight="2px">
-                          {petDetails.bedInfos?.fasting === true
-                            ? "ANIMAL PRECISA DE JEJUM"
-                            : "ANIMAL NÃO PRECISA DE JEJUM"}
-                        </Td>
-                        <Td borderRight="2px">
-                          {petDetails &&
-                          petDetails.bedInfos &&
-                          Object.keys(petDetails.bedInfos).length === 0 &&
-                          petDetails.bedInfos.kennelName &&
-                          petDetails.bedInfos.kennelName.name
-                            ? petDetails.bedInfos.kennelName.name
-                            : "Sem Canil"}
-                        </Td>
-                        <Td borderRight="2px">{formattedDate}</Td>
-                        <Td>
-                          {petDetails.queue?.vetPreference != ""
-                            ? petDetails.queue?.vetPreference
-                            : "Sem Preferência"}
-                        </Td>
-                      </Tr>
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-
-=======
 
                       </Thead>
                       <Tbody>
@@ -322,7 +280,6 @@ export default function DetailsAdmissions() {
                   </TableContainer>
           
           
->>>>>>> fff9c677e78d38d8b9f77142d80f9d7f91915f8e
                 <Button
                   bg="blue.400"
                   color="white"
@@ -368,13 +325,13 @@ export default function DetailsAdmissions() {
                           py={2}
                           fontWeight="bold"
                         >
-                          Tempo Restante até o final da diaría : 20 Horas e 49
-                          minutos
+                          Tempo Restante até o final da diaría: {getNextPaymentHour(1440)}
                         </Text>
                         <Button
                           py="8"
                           bg="whatsapp.500"
                           fontSize="20"
+
                           fontWeight="bold"
                           color="white"
                           boxShadow="0px 4px 5px rgba(0, 0, 0, 0.6)"
@@ -578,44 +535,6 @@ export default function DetailsAdmissions() {
                         <Text textAlign="center" justifyContent="center" align='center' w="3vw" fontWeight="bold" >
                           Total: 
                         </Text>
-<<<<<<< HEAD
-                        <Input
-                          borderY={0}
-                          w="15vw"
-                          borderColor="black"
-                          rounded={0}
-                        ></Input>
-                      </Flex>
-                      {totalDaily - 60 >= 60 ? (
-                        <Text
-                          fontSize="20"
-                          bg="yellow.300"
-                          w="100%"
-                          textAlign="center"
-                          py={2}
-                          fontWeight="bold"
-                          color="red"
-                        >
-                          Tempo de Tolerância Restante:{" "}
-                          {60 - totalDaily < 60 ? "Esgotado" : "Em Tolerancia"}{" "}
-                          Minutos
-                        </Text>
-                      ) : (
-                        <Text
-                          color="green"
-                          fontSize="20"
-                          bg="yellow.300"
-                          w="100%"
-                          textAlign="center"
-                          py={2}
-                          fontWeight="bold"
-                        >
-                          Tempo de Tolerância Restante:{" "}
-                          {60 - totalDaily < 60 ? "Esgotado" : "Em Tolerancia"}{" "}
-                          Minutos
-                        </Text>
-                      )}
-=======
                         <Text border="2px" w="15vw" >
                               { new Intl.NumberFormat('pt-BR', {currency: 'BRL', style: 'currency'}).format(totalToPayInTimeAdmmited) }
                         </Text>
@@ -650,7 +569,6 @@ export default function DetailsAdmissions() {
                       )
                       
                     }
->>>>>>> fff9c677e78d38d8b9f77142d80f9d7f91915f8e
                       <Text
                         fontSize="20"
                         bg="yellow.300"
@@ -660,7 +578,7 @@ export default function DetailsAdmissions() {
                         fontWeight="bold"
                       >
                         Tempo Restante até o final da meia diaría:{" "}
-                        {Math.round((720 - totalDaily) / 60)} Horas
+                        {getNextPaymentHour(720)}
                       </Text>
                       <Text
                         fontSize="20"
@@ -671,7 +589,7 @@ export default function DetailsAdmissions() {
                         fontWeight="bold"
                       >
                         Tempo Restante até o final da diaría :{" "}
-                        {Math.round((1440 - totalDaily) / 60)} Horas
+                        {getNextPaymentHour(1440)}
                       </Text>
                       <Button
                         py="8"
