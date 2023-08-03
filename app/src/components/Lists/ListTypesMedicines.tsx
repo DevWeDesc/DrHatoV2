@@ -6,6 +6,16 @@ import {
   Divider,
   Center,
   Text,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+  Box,
 } from "@chakra-ui/react";
 
 import { MdCheckCircle, FcCancel } from "react-icons/all";
@@ -38,82 +48,92 @@ const ArrayListMedicines = [
   },
 ];
 
+const ArrayMedicinesperType = [
+  {
+    name: "Medicamento antibioticos",
+    type: "Antibióticos",
+  },
+  {
+    name: "Medicamento Analgésicos",
+    type: "Analgésicos",
+  },
+  {
+    name: "Medicamento Antimicóticos",
+    type: "Antimicóticos",
+  },
+  {
+    name: "Medicamento Comportamental",
+    type: "Comportamental",
+  },
+  {
+    name: "Medicamento Desinfetantes",
+    type: "Desinfetantes",
+  },
+  {
+    name: "Medicamento Insulina",
+    type: "Insulina",
+  },
+  {
+    name: "Medicamento antibioticos",
+    type: "Antibióticos",
+  },
+  {
+    name: "Medicamento antibioticos",
+    type: "Antibióticos",
+  },
+];
+
 export default function ListMedicines() {
   const [typeMedicines, setTypeMedicines] = useState<String | null>(null);
 
   return (
-    <Flex flex="1" borderRadius={8} justify="center" bg="gray.200" p="8">
-      <Flex w="100%" justify="center">
-        <Flex
-          m={4}
-          align="center"
-          gap="4"
-          minWidth={400}
-          direction="column"
-          overflowY={"scroll"}
-        >
-          <Text fontSize={22} fontWeight="bold">
-            Tipos
-          </Text>
-          <List spacing={0} maxHeight={"600px"}>
-            {ArrayListMedicines.map((list) => {
-              return (
-                <ListItem
-                  display={"flex"}
-                  alignItems={"center"}
-                  transition={"0.3s"}
-                  _hover={{ backgroundColor: "gray.300" }}
-                  cursor={"pointer"}
-                  borderBottom={"0.5px solid black"}
-                  padding={"10px 0"}
-                  onClick={() => {
-                    setTypeMedicines(list.name);
-                  }}
-                >
-                  <ListIcon as={MdCheckCircle} color="green.500" />
-                  {list.name}
-                </ListItem>
-              );
-            })}
-          </List>
-        </Flex>
-        <Center bgColor="green" height="100%">
-          <Divider orientation="vertical" />
-        </Center>
-        <Flex m={4} align="center" gap="4" minWidth={400} direction="column">
-          <Text fontSize={22} fontWeight="bold">
-            Medicamentos
-          </Text>
-          <List spacing={3} maxHeight={"600px"}>
-            {typeMedicines == "Antibióticos" && (
-              <ListItem display={"flex"} alignItems={"center"}>
-                <ListIcon as={MdCheckCircle} color="green.500" />
-                Listagem Antibióticos
-              </ListItem>
-            )}
-            {typeMedicines == "Analgésicos" && (
-              <ListItem display={"flex"} alignItems={"center"}>
-                <ListIcon as={MdCheckCircle} color="green.500" />
-                Listagem Analgésicos
-              </ListItem>
-            )}
-            {typeMedicines == "Antimicóticos" && (
-              <ListItem display={"flex"} alignItems={"center"}>
-                <ListIcon as={MdCheckCircle} color="green.500" />
-                Listagem Antimicóticos
-              </ListItem>
-            )}
-            {typeMedicines == null && (
-              <>
-                <ListItem display={"flex"} alignItems={"center"}>
-                  <ListIcon as={FcCancel} color="green.500" />
-                  Listagem Sem Filtros
-                </ListItem>
-              </>
-            )}
-          </List>
-        </Flex>
-      </Flex>
-    </Flex>
+    <Box w="90%" bg="gray.200" p="8" rounded="lg">
+      <TableContainer w="100%" display="flex">
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th fontSize="20">Tipos de Medicamentos</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {ArrayListMedicines.map((medicine) => (
+              <Tr
+                cursor="pointer"
+                transition="0.5s"
+                _hover={{ backgroundColor: "gray.50" }}
+                onClick={() => setTypeMedicines(medicine.name)}
+              >
+                <Td>{medicine.name}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+        {!!typeMedicines && (
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th fontSize="20">Medicamentos</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {!!typeMedicines &&
+                ArrayMedicinesperType.map((medicine) => (
+                  <>
+                    {medicine.type === typeMedicines && (
+                      <Tr
+                        cursor="pointer"
+                        transition="0.5s"
+                        _hover={{ backgroundColor: "gray.50" }}
+                      >
+                        <Td>{medicine.name}</Td>
+                      </Tr>
+                    )}
+                  </>
+                ))}
+            </Tbody>
+          </Table>
+        )}
+      </TableContainer>
+    </Box>
   );
 }

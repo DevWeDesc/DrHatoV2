@@ -32,7 +32,6 @@ import { LoadingSpinner } from "../../../components/Loading";
 import { api } from "../../../lib/axios";
 import { Queue } from "phosphor-react";
 import { VetsSearch } from "../../../components/Search/vetsSearch";
-import { motion } from "framer-motion";
 import { PaymentsSearch } from "../../../components/Search/paymentsSearch";
 import { GiCardDiscard } from "react-icons/gi";
 import { BsCashCoin, BsReception4 } from "react-icons/bs";
@@ -243,59 +242,50 @@ export function ToolsTable() {
       break;
   }
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <ChakraProvider>
-        <AdminContainer>
-          <Flex direction="column" h="100vh">
-            <Header title="Tabela" url="/Recepcao" />
-            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
-              <GenericSidebar>
-                <GenericLink
-                  name="Recepção"
-                  icon={BsReception4}
-                  path={`/Recepcao/`}
-                />
-                <GenericLink
-                  name="Trocar Senha"
-                  icon={RiLockPasswordFill}
-                  path={`/Recepcao/Ferramentas/TrocaDeSenha/${1}`}
-                />{" "}
-                <GenericLink
-                  name="Autorizações"
-                  icon={GiCardDiscard}
-                  path={`/Recepcao/Ferramentas/Autorizacao`}
-                />{" "}
-                <GenericLink
-                  name="Medicamentos"
-                  icon={GiMedicines}
-                  path={`/Medicines`}
-                />{" "}
-              </GenericSidebar>
-              <Box flex="1" borderRadius={8} bg="gray.200" p="8">
-                <Flex mb="8" gap="8" direction="column" align="center">
-                  <PaymentsSearch path="filtredquery" />
-                  <Flex gap="3" justify="center">
-                    <Button colorScheme="teal">BAIXAR PARA EXCEL</Button>
-                    <Button
-                      colorScheme="teal"
-                      onClick={() => navigate("/Queue")}
-                    >
-                      <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
-                    </Button>
-                  </Flex>
-                  <Flex textAlign="center" justify="center" w="80%">
-                    {typeTable}
-                  </Flex>
+    <ChakraProvider>
+      <AdminContainer>
+        <Flex direction="column" h="100vh">
+          <Header title="Tabela" url="/Recepcao" />
+          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+            <GenericSidebar>
+              <GenericLink
+                name="Recepção"
+                icon={BsReception4}
+                path={`/Recepcao/`}
+              />
+              <GenericLink
+                name="Trocar Senha"
+                icon={RiLockPasswordFill}
+                path={`/Recepcao/Ferramentas/TrocaDeSenha/${1}`}
+              />{" "}
+              <GenericLink
+                name="Autorizações"
+                icon={GiCardDiscard}
+                path={`/Recepcao/Ferramentas/Autorizacao`}
+              />{" "}
+              <GenericLink
+                name="Medicamentos"
+                icon={GiMedicines}
+                path={`/Medicines`}
+              />{" "}
+            </GenericSidebar>
+            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+              <Flex mb="8" gap="8" direction="column" align="center">
+                <PaymentsSearch path="filtredquery" />
+                <Flex gap="3" justify="center">
+                  <Button colorScheme="teal">BAIXAR PARA EXCEL</Button>
+                  <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
+                    <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
+                  </Button>
                 </Flex>
-              </Box>
-            </Flex>
+                <Flex textAlign="center" justify="center" w="80%">
+                  {typeTable}
+                </Flex>
+              </Flex>
+            </Box>
           </Flex>
-        </AdminContainer>
-      </ChakraProvider>
-    </motion.div>
+        </Flex>
+      </AdminContainer>
+    </ChakraProvider>
   );
 }

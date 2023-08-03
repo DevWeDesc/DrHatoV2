@@ -34,20 +34,23 @@ export default function DetailsAdmissions() {
   const totalDaily = moment(new Date()).diff(entryDate, "minutes");
 
   function handleWithPriceChanges() {
-    const differenceBetweenDates = moment(new Date()).diff(entryDate, 'minutes')
+    const differenceBetweenDates = moment(new Date()).diff(
+      entryDate,
+      "minutes"
+    );
     let totalToPay = 0;
     let price = Number(petDetails?.bedInfos?.kennelName?.price);
-    if(differenceBetweenDates > 60) {
-      totalToPay+= (price / 2)
-      if(differenceBetweenDates >= 720) {
-        let diffToPay = Math.ceil((differenceBetweenDates / 720))
-        totalToPay+= diffToPay * (price / 2) - 150
-      } 
+    if (differenceBetweenDates > 60) {
+      totalToPay += price / 2;
+      if (differenceBetweenDates >= 720) {
+        let diffToPay = Math.ceil(differenceBetweenDates / 720);
+        totalToPay += diffToPay * (price / 2) - 150;
+      }
     }
-    return totalToPay
+    return totalToPay;
   }
 
-  const totalToPayInTimeAdmmited = handleWithPriceChanges()
+  const totalToPayInTimeAdmmited = handleWithPriceChanges();
 
   let dailyValue;
   switch (true) {
@@ -72,33 +75,29 @@ export default function DetailsAdmissions() {
     getAdmissionDetails();
   }, []);
 
-<<<<<<< HEAD
-  console.log(petDetails);
-=======
-    const handleEndAdmission = async () => {
-      try {
-        const confirmation = window.confirm("VOCÊ ESTÁ ENCERRANDO UMA INTERNAÇÃO TEM CERTEZA QUE DESEJA CONTINUAR?")
+  const handleEndAdmission = async () => {
+    try {
+      const confirmation = window.confirm(
+        "VOCÊ ESTÁ ENCERRANDO UMA INTERNAÇÃO TEM CERTEZA QUE DESEJA CONTINUAR?"
+      );
 
-        if(confirmation === true) {
-          const data = {
-            petId: Number(id),
-            bedId: petDetails?.bedInfos?.id
-       
-          }
-          await api.put("endadmission", data)
-          toast.success("Internação finalizada com Sucesso!")
-          navigate("/Admissions")
-        } else {
-          toast.warning("Confirmação recusada, ANIMAL CONTINUA INTERNADO!")
-          return
-        }
-       
-      } catch (error) {
-        console.error(error)
-        toast.error("Falha ao finalizar Internação!")
+      if (confirmation === true) {
+        const data = {
+          petId: Number(id),
+          bedId: petDetails?.bedInfos?.id,
+        };
+        await api.put("endadmission", data);
+        toast.success("Internação finalizada com Sucesso!");
+        navigate("/Admissions");
+      } else {
+        toast.warning("Confirmação recusada, ANIMAL CONTINUA INTERNADO!");
+        return;
       }
+    } catch (error) {
+      console.error(error);
+      toast.error("Falha ao finalizar Internação!");
     }
->>>>>>> fff9c677e78d38d8b9f77142d80f9d7f91915f8e
+  };
 
   return (
     <ChakraProvider>
@@ -239,28 +238,22 @@ export default function DetailsAdmissions() {
                           Preferência Veterinário
                         </Th>
                       </Tr>
-<<<<<<< HEAD
                     </Thead>
                     <Tbody>
                       <Tr>
-                        <Td borderRight="2px">{petDetails.customerName}</Td>
+                        <Td borderRight="2px">{petDetails?.customerName}</Td>
                         <Td w={300} borderRight="2px">
                           <Flex direction="column" gap="2">
                             <Text>
                               {" "}
-                              {petDetails.name},{" " + petDetails.especie},
-                              {" " + petDetails.race},
+                              {petDetails.name},{petDetails.especie},
+                              {petDetails.race}
                             </Text>
                             <Text>
                               {" "}
-                              {petDetails.sexo}, {" " + petDetails.bornDate}
+                              {petDetails.sexo}, {petDetails.bornDate}
                             </Text>
                             {petDetails.codPet}
-                            <Text fontWeight="bold">
-                              {petDetails.more !== ""
-                                ? "PetLove"
-                                : "Não possui Plano de Saúde"}
-                            </Text>
                           </Flex>
                         </Td>
                         <Td borderRight="2px">
@@ -269,60 +262,15 @@ export default function DetailsAdmissions() {
                             : "ANIMAL NÃO PRECISA DE JEJUM"}
                         </Td>
                         <Td borderRight="2px">
-                          {petDetails &&
-                          petDetails.bedInfos &&
-                          Object.keys(petDetails.bedInfos).length === 0 &&
-                          petDetails.bedInfos.kennelName &&
-                          petDetails.bedInfos.kennelName.name
-                            ? petDetails.bedInfos.kennelName.name
-                            : "Sem Canil"}
+                          {petDetails.bedInfos?.kennelName?.name}
                         </Td>
                         <Td borderRight="2px">{formattedDate}</Td>
-                        <Td>
-                          {petDetails.queue?.vetPreference != ""
-                            ? petDetails.queue?.vetPreference
-                            : "Sem Preferência"}
-                        </Td>
+                        <Td>{petDetails.queue?.vetPreference}</Td>
                       </Tr>
                     </Tbody>
                   </Table>
                 </TableContainer>
 
-=======
-
-                      </Thead>
-                      <Tbody>
-                          <Tr>
-                            <Td borderRight="2px">
-                              {petDetails?.customerName}
-                            </Td>
-                            <Td w={300} borderRight="2px" >
-                              <Flex direction="column" gap="2">
-                            <Text> {petDetails.name},{petDetails.especie},{petDetails.race}</Text> 
-                            <Text> {petDetails.sexo}, {petDetails.bornDate}</Text> 
-                            {petDetails.codPet}
-                              </Flex>
-                             
-                            </Td>
-                            <Td borderRight="2px" >
-                              {petDetails.bedInfos?.fasting === true ? "ANIMAL PRECISA DE JEJUM" : "ANIMAL NÃO PRECISA DE JEJUM"} 
-                            </Td>
-                            <Td borderRight="2px" >
-                              {petDetails.bedInfos?.kennelName?.name}
-                            </Td >
-                            <Td borderRight="2px" >
-                              {formattedDate}
-                            </Td>
-                            <Td>
-                              {petDetails.queue?.vetPreference}
-                            </Td>
-                          </Tr>
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-          
-          
->>>>>>> fff9c677e78d38d8b9f77142d80f9d7f91915f8e
                 <Button
                   bg="blue.400"
                   color="white"
@@ -573,12 +521,24 @@ export default function DetailsAdmissions() {
                           rounded={0}
                         ></Input>
                       </Flex>
-               
-                        <Flex align="center"  border="2px" w="100vw" height="38px" justify="flex-end"  textAlign="center">
-                        <Text textAlign="center" justifyContent="center" align='center' w="3vw" fontWeight="bold" >
-                          Total: 
+
+                      <Flex
+                        align="center"
+                        border="2px"
+                        w="100vw"
+                        height="38px"
+                        justify="flex-end"
+                        textAlign="center"
+                      >
+                        <Text
+                          textAlign="center"
+                          justifyContent="center"
+                          align="center"
+                          w="3vw"
+                          fontWeight="bold"
+                        >
+                          Total:
                         </Text>
-<<<<<<< HEAD
                         <Input
                           borderY={0}
                           w="15vw"
@@ -615,42 +575,6 @@ export default function DetailsAdmissions() {
                           Minutos
                         </Text>
                       )}
-=======
-                        <Text border="2px" w="15vw" >
-                              { new Intl.NumberFormat('pt-BR', {currency: 'BRL', style: 'currency'}).format(totalToPayInTimeAdmmited) }
-                        </Text>
-                        </Flex>
-                  
-              
-                    {
-                      totalDaily >= 60 ? (
-                        <Text
-                        fontSize="20"
-                        bg="yellow.300"
-                        w="100%"
-                        textAlign="center"
-                        py={2}
-                        fontWeight="bold"
-                        color="red"
-                      >
-                        Tempo de Tolerância Restante: {totalDaily >= 60 ?  "Esgotado" : "Em Tolerancia"} 
-                      </Text>
-                      ) : (
-                        <Text
-                        color="green"
-                        fontSize="20"
-                        bg="yellow.300"
-                        w="100%"
-                        textAlign="center"
-                        py={2}
-                        fontWeight="bold"
-                      >
-                        Tempo de Tolerância Restante: {totalDaily  >= 60 ?  "Esgotado" : "Em Tolerancia"} 
-                      </Text>
-                      )
-                      
-                    }
->>>>>>> fff9c677e78d38d8b9f77142d80f9d7f91915f8e
                       <Text
                         fontSize="20"
                         bg="yellow.300"

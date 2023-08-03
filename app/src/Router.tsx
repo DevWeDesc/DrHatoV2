@@ -1,13 +1,10 @@
-import { useLocation } from "react-router-dom";
-import { AnimatedRoutes } from "./Animated.Routes";
-import { Routes, Route, RoutesProps } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
 import { AdminCharts } from "./pages/AdminDashboard/charts";
 import { Autorizations } from "./pages/AdminDashboard/autorizations";
 import { AutorizationsEdit } from "./pages/AdminDashboard/autorizationsEdit";
 import { AdminMain } from "./pages/AdminDashboard/";
-import { UsersList } from "./pages/Users";
 import { VetsList } from "./pages/Vets";
 import { MenuVet } from "./pages/Vets/menu";
 import { Admissions } from "./pages/Admissions";
@@ -69,22 +66,76 @@ import { SurgeryCenter } from "./pages/AdminDashboard/surgeryCenter";
 import { Hospitalization } from "./pages/AdminDashboard/hospitalization";
 import { Reports } from "./pages/Reports/index";
 import { AdminSurgery } from "./pages/AdminDashboard/surgeryes";
-import ProtectedRouteMiddleware from "./middleware/ProtectAuthMiddleware";
+import { UsersList } from "./pages/Users";
+import { AnimatePresence } from "framer-motion";
+import { QueueLabs } from "./queue/Labs";
+import ReportsComission from "./pages/Reports/comissions";
+import ReportsCashFlow from "./pages/Reports/cashflow";
+import { CustomerReports } from "./pages/Reports/customerReports";
+import ReportProductionVet from "./pages/Reports/vetProduction";
+import { SpecialtiesReports } from "./pages/Reports/specialties";
+import ReportsExams from "./pages/Reports/exams";
+import ReportSurgeriesCompleted from "./pages/Reports/surgeriesCompleted";
+import ReportsExamsForVets from "./pages/Reports/examsforVet";
+import { ReportsExamsExtern } from "./pages/Reports/examsExterns";
 import { ReactPdfComponent } from "./components/ReactPdfComp";
+import { BoxReception } from "./pages/Reception/Box";
+import { BoxReports } from "./pages/Reception/Box/reports";
+import { BoxPayments } from "./pages/Reception/Box/payments";
+import { BoxReturns } from "./pages/Reception/Box/returns";
+import { BoxReturnsDetails } from "./pages/Reception/Box/returnsDetails";
+import { BoxPaymentsDetails } from "./pages/Reception/Box/paymentsDetails";
+import { BoxNewPayments } from "./pages/Reception/Box/newPayments";
+import { BoxNewPaymentsClient } from "./pages/Reception/Box/clientPayments";
+import { ToolsTable } from "./pages/Reception/Tools/table";
+import { ToolsChangePassword } from "./pages/Reception/Tools/passwordChange";
+import { ToolsAutorizations } from "./pages/Reception/Tools/autorizations";
+import { ToolsAutorizationsDetails } from "./pages/Reception/Tools/autorizationsDetails";
+import { ReceptionVaccines } from "./pages/Reception/Vaccines";
+import { RegisterClinics } from "./pages/Reception/Administration/registerClinics";
+import { EditClinics } from "./pages/Reception/Administration/editClinics";
+import { UsersClinics } from "./pages/Reception/Administration/usersClinics";
+import { BreedRegistry } from "./pages/Reception/Administration/breedRegistry";
+import { OptionSistem } from "./pages/AdminDashboard/optionSistem";
+import { EditPets } from "./pages/Pets/edit";
+import ProtectedRouteMiddleware from "./middleware/ProtectAuthMiddleware";
 
 export function Router() {
   return (
     <ProtectedRouteMiddleware>
-      <Routes>
-        <Route path="/Home" element={<Home />} />
-
+      <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Login />} />
         <Route element={<DefaultLayout />}>
+          <Route path="/Home" element={<Home />} />
           <Route path="/Reports" element={<Reports />} />
+          <Route path="/Reports/Comission" element={<ReportsComission />} />
+          <Route path="/Reports/Cashflow" element={<ReportsCashFlow />} />
+          <Route
+            path="/Reports/CustomerReports"
+            element={<CustomerReports />}
+          />
+
+          <Route path="/pdf" element={<ReactPdfComponent />} />
+          <Route
+            path="/Reports/ProductionVet"
+            element={<ReportProductionVet />}
+          />
+          <Route path="/Reports/Specialties" element={<SpecialtiesReports />} />
+          <Route path="/Reports/Exams" element={<ReportsExams />} />
+          <Route
+            path="/Reports/SurgeriesCompleted"
+            element={<ReportSurgeriesCompleted />}
+          />
+          <Route path="/Reports/ExamsVet" element={<ReportsExamsForVets />} />
+          <Route path="/Reports/ExamsExtern" element={<ReportsExamsExtern />} />
+
           <Route path="/Queue" element={<QueueSistem />} />
+          <Route path="/Queue/Labs" element={<QueueLabs />} />
+
           <Route path="/Admin" element={<AdminMain />} />
           <Route path="/Admin/Vaccines" element={<AdminVaccines />} />
           <Route path="/Admin/Surgeryes" element={<AdminSurgery />} />
+
           <Route path="/Admin/Charts" element={<AdminCharts />} />
           <Route path="/Admin/Autorizations" element={<Autorizations />} />
           <Route
@@ -107,6 +158,7 @@ export function Router() {
           />
           <Route path="/Admin/SurgeryCenter" element={<SurgeryCenter />} />
           <Route path="/Admin/Hospitalization" element={<Hospitalization />} />
+          <Route path="/Admin/OptionSistem" element={<OptionSistem />} />
 
           <Route path="/Autorizations" element={<GenerateAutorizations />} />
 
@@ -184,9 +236,34 @@ export function Router() {
             element={<CreatePets />}
           />
           <Route
+            path="/Recepcao/Consultas/Clientes/Pets/Edit/:id"
+            element={<EditPets />}
+          />
+          <Route
             path="/Recepcao/Consultas/Clientes/Pets/Details/:id"
             element={<DetailsPets />}
           />
+          <Route path="/Recepcao/Caixa" element={<BoxReception />} />
+          <Route path="/Recepcao/Caixa/Despesas" element={<BoxReports />} />
+          <Route path="/Recepcao/Caixa/Pagamentos" element={<BoxPayments />} />
+          <Route
+            path="/Recepcao/Caixa/Pagamentos/:id"
+            element={<BoxPaymentsDetails />}
+          />
+          <Route
+            path="/Recepcao/Caixa/PagamentoCliente/:id"
+            element={<BoxNewPaymentsClient />}
+          />
+          <Route
+            path="/Recepcao/Caixa/NovoPagamento/:id"
+            element={<BoxNewPayments />}
+          />
+          <Route path="/Recepcao/Caixa/Returns" element={<BoxReturns />} />
+          <Route
+            path="/Recepcao/Caixa/Returns/:id"
+            element={<BoxReturnsDetails />}
+          />
+
           <Route
             path="/Pets/MedicineRecord/:id"
             element={<MedicineRecords />}
@@ -196,7 +273,38 @@ export function Router() {
             path="/Recepcao/Customer/Edit/:id"
             element={<EditCustomer />}
           />
+          <Route path="/Recepcao/Ferramentas/Tabela" element={<ToolsTable />} />
+          <Route
+            path="/Recepcao/Ferramentas/TrocaDeSenha/:id"
+            element={<ToolsChangePassword />}
+          />
+          <Route
+            path="/Recepcao/Ferramentas/Autorizacao"
+            element={<ToolsAutorizations />}
+          />
+          <Route
+            path="/Recepcao/Ferramentas/Autorizacao/:id"
+            element={<ToolsAutorizationsDetails />}
+          />
+          <Route
+            path="/Recepcao/Internacoes/Vacinas"
+            element={<ReceptionVaccines />}
+          />
           <Route path="/Recepcao/Finance" element={<Finance />} />
+          <Route
+            path="/Recepcao/RegistroClinicas"
+            element={<RegisterClinics />}
+          />
+          <Route
+            path="/Recepcao/RegistroClinicas/:id"
+            element={<EditClinics />}
+          />
+          <Route
+            path="/Recepcao/RegistroClinicas/Users/:id"
+            element={<UsersClinics />}
+          />
+          <Route path="/Recepcao/CadastroRaças" element={<BreedRegistry />} />
+
           <Route path="/Recepcao/" element={<Reception />} />
 
           <Route path="/Surgeries/" element={<Surgeries />} />

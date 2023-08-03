@@ -20,170 +20,163 @@ import {
 } from "react-icons/all";
 import { AdminContainer } from "../AdminDashboard/style";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 
 export function DataExames() {
   const { labData } = useContext(DbContext);
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <ChakraProvider>
-        <AdminContainer>
-          <Flex direction="column" h="100vh">
-            <Header title="Dados Do Exame" />
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-              <GenericSidebar>
-                <GenericLink icon={BsArrowLeft} name="Voltar" path="/Home" />
-                <GenericLink icon={AiOutlineMenu} name="Menu" path="/Labs" />
-                <GenericLink
-                  icon={IoIosFlask}
-                  name="Laboratório"
-                  path="/Labs/Exames"
-                />
-                <GenericLink
-                  icon={BsImages}
-                  name="Laboratório Imagens"
-                  path="/Labs/Imagens"
-                />
-              </GenericSidebar>
-              <Box
-                flex="1"
-                display={"flex"}
-                flexDirection={"column"}
-                alignItems={"end"}
-                borderRadius={8}
-                bg="gray.200"
-                p="8"
+    <ChakraProvider>
+      <AdminContainer>
+        <Flex direction="column" h="100vh">
+          <Header title="Dados Do Exame" url="/Home" />
+          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+            <GenericSidebar>
+              <GenericLink icon={BsArrowLeft} name="Voltar" path="/Home" />
+              <GenericLink icon={AiOutlineMenu} name="Menu" path="/Labs" />
+              <GenericLink
+                icon={IoIosFlask}
+                name="Laboratório"
+                path="/Labs/Exames"
+              />
+              <GenericLink
+                icon={BsImages}
+                name="Laboratório Imagens"
+                path="/Labs/Imagens"
+              />
+            </GenericSidebar>
+            <Box
+              flex="1"
+              display={"flex"}
+              flexDirection={"column"}
+              alignItems={"end"}
+              borderRadius={8}
+              bg="gray.200"
+              p="8"
+            >
+              <Flex
+                w={"96.5%"}
+                alignItems={"center"}
+                justifyContent={"space-between"}
+                marginBottom={"10px"}
               >
-                <Flex
-                  w={"96.5%"}
-                  alignItems={"center"}
-                  justifyContent={"space-between"}
-                  marginBottom={"10px"}
+                <Box>
+                  <Text fontSize="3xl">
+                    <strong>Dados do Exame</strong>
+                  </Text>
+                </Box>
+                <Button
+                  colorScheme="twitter"
+                  padding={"20px 0px"}
+                  width={"30%"}
                 >
-                  <Box>
-                    <Text fontSize="3xl">
-                      <strong>Dados do Exame</strong>
-                    </Text>
-                  </Box>
-                  <Button
-                    colorScheme="twitter"
-                    padding={"20px 0px"}
-                    width={"30%"}
-                  >
-                    Laudar com PDF
-                  </Button>
-                </Flex>
-                <Flex direction={"column"} border={"1px solid black"}>
-                  <Flex alignItems={"center"} borderBottom={"1px solid black"}>
-                    <Text
-                      paddingRight={"93.5px"}
-                      paddingLeft={"5px"}
-                      paddingTop={"8px"}
-                      paddingBottom={"8px"}
-                      backgroundColor={"gray.300"}
-                    >
-                      <strong> Cliente</strong>
-                    </Text>
-                    <Input
-                      borderRadius={"0"}
-                      borderColor={"black"}
-                      bgColor="white"
-                      w="55.15rem"
-                    ></Input>
-                  </Flex>
-                  <Flex alignItems={"center"} borderBottom={"1px solid black"}>
-                    <Text
-                      paddingRight={"93px"}
-                      paddingLeft={"5px"}
-                      paddingTop={"8px"}
-                      paddingBottom={"8px"}
-                      backgroundColor={"gray.300"}
-                    >
-                      <strong> Animal</strong>
-                    </Text>
-                    <Input
-                      bgColor="white"
-                      borderBottom={"0"}
-                      borderRadius={"0"}
-                      borderColor={"black"}
-                      w="55.16rem"
-                    ></Input>
-                  </Flex>
-                  <Flex alignItems={"center"} borderBottom={"1px solid black"}>
-                    <Text
-                      paddingRight={"97px"}
-                      paddingLeft={"5px"}
-                      paddingTop={"8px"}
-                      paddingBottom={"8px"}
-                      backgroundColor={"gray.300"}
-                    >
-                      <strong> Exame</strong>
-                    </Text>
-                    <Input
-                      bgColor="white"
-                      borderBottom={"0"}
-                      borderRadius={"0"}
-                      borderColor={"black"}
-                      w="30rem"
-                    ></Input>
-                    <Text
-                      padding={"7px 51px"}
-                      border={"1px solid black"}
-                      backgroundColor={"red.200"}
-                    >
-                      <strong> Veterinario</strong>
-                    </Text>
-                    <Input
-                      bgColor="white"
-                      borderBottom={"0"}
-                      borderRadius={"0"}
-                      borderColor={"black"}
-                      w="13rem"
-                    ></Input>
-                  </Flex>
-                  <Flex alignItems={"center"} borderBottom={"1px solid black"}>
-                    <Text
-                      paddingRight={"112px"}
-                      paddingLeft={"5px"}
-                      paddingTop={"8px"}
-                      paddingBottom={"8px"}
-                      backgroundColor={"gray.300"}
-                    >
-                      <strong> Data</strong>
-                    </Text>
-                    <Input
-                      bgColor="white"
-                      borderRadius={"0"}
-                      borderColor={"black"}
-                      w="30rem"
-                    ></Input>
-                    <Text
-                      border={"1px solid black"}
-                      padding={"7px 73px"}
-                      backgroundColor={"gray.300"}
-                    >
-                      <strong> CRMV</strong>
-                    </Text>
-                    <Input
-                      bgColor="white"
-                      borderRadius={"0"}
-                      borderColor={"black"}
-                      w="13rem"
-                    ></Input>
-                  </Flex>
-                </Flex>
-                <Button marginTop={"20px"} width={"28%"} colorScheme="whatsapp">
-                  Gravar
+                  Laudar com PDF
                 </Button>
-              </Box>
-            </Flex>
+              </Flex>
+              <Flex direction={"column"} border={"1px solid black"}>
+                <Flex alignItems={"center"} borderBottom={"1px solid black"}>
+                  <Text
+                    paddingRight={"93.5px"}
+                    paddingLeft={"5px"}
+                    paddingTop={"8px"}
+                    paddingBottom={"8px"}
+                    backgroundColor={"gray.300"}
+                  >
+                    <strong> Cliente</strong>
+                  </Text>
+                  <Input
+                    borderRadius={"0"}
+                    borderColor={"black"}
+                    bgColor="white"
+                    w="55.15rem"
+                  ></Input>
+                </Flex>
+                <Flex alignItems={"center"} borderBottom={"1px solid black"}>
+                  <Text
+                    paddingRight={"93px"}
+                    paddingLeft={"5px"}
+                    paddingTop={"8px"}
+                    paddingBottom={"8px"}
+                    backgroundColor={"gray.300"}
+                  >
+                    <strong> Animal</strong>
+                  </Text>
+                  <Input
+                    bgColor="white"
+                    borderBottom={"0"}
+                    borderRadius={"0"}
+                    borderColor={"black"}
+                    w="55.16rem"
+                  ></Input>
+                </Flex>
+                <Flex alignItems={"center"} borderBottom={"1px solid black"}>
+                  <Text
+                    paddingRight={"97px"}
+                    paddingLeft={"5px"}
+                    paddingTop={"8px"}
+                    paddingBottom={"8px"}
+                    backgroundColor={"gray.300"}
+                  >
+                    <strong> Exame</strong>
+                  </Text>
+                  <Input
+                    bgColor="white"
+                    borderBottom={"0"}
+                    borderRadius={"0"}
+                    borderColor={"black"}
+                    w="30rem"
+                  ></Input>
+                  <Text
+                    padding={"7px 51px"}
+                    border={"1px solid black"}
+                    backgroundColor={"red.200"}
+                  >
+                    <strong> Veterinario</strong>
+                  </Text>
+                  <Input
+                    bgColor="white"
+                    borderBottom={"0"}
+                    borderRadius={"0"}
+                    borderColor={"black"}
+                    w="13rem"
+                  ></Input>
+                </Flex>
+                <Flex alignItems={"center"} borderBottom={"1px solid black"}>
+                  <Text
+                    paddingRight={"112px"}
+                    paddingLeft={"5px"}
+                    paddingTop={"8px"}
+                    paddingBottom={"8px"}
+                    backgroundColor={"gray.300"}
+                  >
+                    <strong> Data</strong>
+                  </Text>
+                  <Input
+                    bgColor="white"
+                    borderRadius={"0"}
+                    borderColor={"black"}
+                    w="30rem"
+                  ></Input>
+                  <Text
+                    border={"1px solid black"}
+                    padding={"7px 73px"}
+                    backgroundColor={"gray.300"}
+                  >
+                    <strong> CRMV</strong>
+                  </Text>
+                  <Input
+                    bgColor="white"
+                    borderRadius={"0"}
+                    borderColor={"black"}
+                    w="13rem"
+                  ></Input>
+                </Flex>
+              </Flex>
+              <Button marginTop={"20px"} width={"28%"} colorScheme="whatsapp">
+                Gravar
+              </Button>
+            </Box>
           </Flex>
-        </AdminContainer>
-      </ChakraProvider>
-    </motion.div>
+        </Flex>
+      </AdminContainer>
+    </ChakraProvider>
   );
 }
