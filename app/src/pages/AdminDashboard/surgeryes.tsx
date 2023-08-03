@@ -122,9 +122,9 @@ export function AdminSurgery() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Cirurgia" />
+            <Header title="Painel de Cirurgia" url="/Admin/" />
 
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <Sidebar />
               <Box
                 flex="1"

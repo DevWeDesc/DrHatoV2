@@ -22,7 +22,7 @@ import { AdminContainer } from "../../AdminDashboard/style";
 import { useNavigate } from "react-router-dom";
 import { DbContext } from "../../../contexts/DbContext";
 import { StyledBox } from "../../../components/Header/style";
-import { MdPets as Burger } from "react-icons/all";
+import { BiCalendarPlus, MdPets as Burger } from "react-icons/all";
 import { toast } from "react-toastify";
 import { api } from "../../../lib/axios";
 import { motion } from "framer-motion";
@@ -31,7 +31,7 @@ import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { AiOutlineSearch } from "react-icons/ai";
 import { GiCardDiscard } from "react-icons/gi";
-import { BsCashCoin } from "react-icons/bs";
+import { BsCashCoin, BsReception4 } from "react-icons/bs";
 import { BiHome } from "react-icons/all";
 
 interface QueueProps {
@@ -242,15 +242,24 @@ export function BoxReturns() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Devoluções" />
+            <Header title="Painel de Devoluções" url="/Recepcao" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
+                <GenericLink
+                  name="Caixa"
+                  icon={BiCalendarPlus}
+                  path={`/Recepcao/Caixa`}
+                />
+                <GenericLink
+                  name="Recepção"
+                  icon={BsReception4}
+                  path={`/Recepcao/`}
+                />
                 <GenericLink
                   name="Painel de Pagamentos"
                   icon={BsCashCoin}
                   path="/Recepcao/Caixa/Pagamentos"
                 />
-                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
               </GenericSidebar>
               <Box
                 flex="1"

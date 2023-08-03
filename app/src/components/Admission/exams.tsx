@@ -6,10 +6,11 @@ import {
   Button,
   Input,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiHome } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router";
+import { api } from "../../lib/axios";
 import { AdminContainer } from "../../pages/AdminDashboard/style";
 import { WorkSpaceHeader } from "../../pages/Vets/styles";
 import ProceduresAdmissions from "./procedures";
@@ -26,6 +27,17 @@ export default function ExamsAdmisison() {
 
   const navigate = useNavigate();
   const { id } = useParams();
+
+  const [petDetails, setPetDetails] = useState<any>({});
+
+  async function getAdmissionDetails() {
+    const response = await api.get(`pets/${id}`);
+    setPetDetails(response.data);
+  }
+
+  useEffect(() => {
+    getAdmissionDetails();
+  }, []);
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -101,6 +113,15 @@ export default function ExamsAdmisison() {
 
                   <Flex bg="gray.200" py="2" justify="center">
                     <Flex border="1px solid black">
+                      {petDetails.more != "" ? (
+                        <>
+                          <Button colorScheme="facebook" rounded="0">
+                            PetLove
+                          </Button>
+                        </>
+                      ) : (
+                        <></>
+                      )}
                       <Input
                         borderColor="black"
                         rounded="0"

@@ -204,6 +204,9 @@ export function CardsMenu() {
             icon={<IoFlask fill="#217c97" size={36} />}
           />
           <CardNavigation
+            onClick={() => {
+              localStorage.setItem("origem", window.location.pathname);
+            }}
             path="/Medicines"
             title="Medicamentos"
             text="Ver medicamentos"

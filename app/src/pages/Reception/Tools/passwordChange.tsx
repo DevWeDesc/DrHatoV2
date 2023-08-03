@@ -18,10 +18,11 @@ import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
 import { AdminContainer } from "../../AdminDashboard/style";
 import { motion } from "framer-motion";
-import { GiCardDiscard } from "react-icons/gi";
-import { BiHome } from "react-icons/all";
+import { GiCardDiscard, GiMedicines } from "react-icons/gi";
+import { BiHome, BsReception4, RiLockPasswordFill } from "react-icons/all";
 import { MdOutlinePayments } from "react-icons/all";
 import { Box } from "@chakra-ui/react";
+import { BsTable } from "react-icons/all";
 
 export function ToolsChangePassword() {
   return (
@@ -33,25 +34,29 @@ export function ToolsChangePassword() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Troca de Senha" />
+            <Header title="Troca de Senha" url="/Recepcao" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
-                  name="Painel de Pagamentos"
-                  icon={MdOutlinePayments}
-                  path={`/Recepcao/Caixa/Pagamentos`}
+                  name="Recepção"
+                  icon={BsReception4}
+                  path={`/Recepcao/`}
+                />
+                <GenericLink
+                  name="Tabela de Preços"
+                  icon={BsTable}
+                  path={`/Recepcao/Ferramentas/Tabela`}
                 />{" "}
                 <GenericLink
-                  name="Painel de Devoluções"
+                  name="Autorizações"
                   icon={GiCardDiscard}
                   path={`/Recepcao/Caixa/Returns`}
                 />{" "}
                 <GenericLink
-                  name="Recepção"
-                  icon={BiHome}
-                  path={`/Recepcao/`}
-                />
-                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
+                  name="Medicamentos"
+                  icon={GiMedicines}
+                  path={`/Medicines`}
+                />{" "}
               </GenericSidebar>
               <Flex justify="center" w="100%">
                 <Box flex="1" borderRadius={8} bg="gray.200" p="8" maxW="950px">

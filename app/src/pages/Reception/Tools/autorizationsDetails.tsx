@@ -51,7 +51,10 @@ export function ToolsAutorizationsDetails() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Emissão de Autorizações" />
+            <Header
+              title="Emissão de Autorizações"
+              url="/Recepcao/Ferramentas/Autorizacao/"
+            />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink

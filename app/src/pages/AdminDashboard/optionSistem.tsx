@@ -1,24 +1,16 @@
 import { Box, ChakraProvider, Flex, Input, Text } from "@chakra-ui/react";
 import { Header } from "../../components/admin/Header";
-import { GenericLink } from "../../components/Sidebars/GenericLink";
-import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import { AdminContainer } from "../AdminDashboard/style";
 import { motion } from "framer-motion";
-import { GiCardDiscard } from "react-icons/gi";
-import { BiHome } from "react-icons/all";
-import { MdOutlinePayments } from "react-icons/all";
 import {
   Table,
-  Thead,
   Tbody,
-  Tfoot,
   Tr,
-  Th,
   Td,
-  TableCaption,
   TableContainer,
   Checkbox,
 } from "@chakra-ui/react";
+import { Sidebar } from "../../components/admin/Sidebar";
 
 export function OptionSistem() {
   return (
@@ -30,21 +22,9 @@ export function OptionSistem() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Opções Gerais do Sistema" />
+            <Header title="Opções Gerais do Sistema" url="/Admin/" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
-              <GenericSidebar>
-                <GenericLink
-                  name="Painel de Pagamentos"
-                  icon={MdOutlinePayments}
-                  path={`/Recepcao/Caixa/Pagamentos`}
-                />{" "}
-                <GenericLink
-                  name="Painel de Devoluções"
-                  icon={GiCardDiscard}
-                  path={`/Recepcao/Caixa/Returns`}
-                />{" "}
-                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
-              </GenericSidebar>
+              <Sidebar />
               <Box
                 flex="1"
                 borderRadius={8}

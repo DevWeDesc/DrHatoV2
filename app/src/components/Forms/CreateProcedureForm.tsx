@@ -195,6 +195,17 @@ export function CreateProcedureForm({ path, method }: any) {
               />
               <label htmlFor="available">Disponível</label>
             </Flex>
+            <Flex gap="2">
+              <Checkbox
+                type="radio"
+                {...register("applicableGender")}
+                value={"macho"}
+                colorScheme="green"
+                name="applicableGender"
+                borderColor="gray.800"
+              />
+              <label htmlFor="">Plano de Saúde PetLove</label>
+            </Flex>
           </Flex>
           <Flex
             shadow="0px 0px 10px rgba(0, 0, 0, 0.5)"
