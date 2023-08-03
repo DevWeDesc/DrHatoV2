@@ -10,9 +10,9 @@ import {
   Table,
   Thead,
   Tbody,
-  Tr, 
+  Tr,
   Td,
-  Th
+  Th,
 } from "@chakra-ui/react";
 import { BiHome, MdPets, TbArrowBack } from "react-icons/all";
 import { AdminContainer } from "../../../pages/AdminDashboard/style";
@@ -28,11 +28,10 @@ export default function DetailsAdmissions() {
   const [confirmation, setConfirmation] = useState<boolean>(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const [petDetails, setPetDetails] = useState({} as PetDetaisl);
-  const entryDate = petDetails.bedInfos?.entry
+  const [petDetails, setPetDetails] = useState<any>({} as PetDetaisl);
+  const entryDate = petDetails.bedInfos?.entry;
 
-
-  const totalDaily = moment(new Date()).diff(entryDate, 'minutes')
+  const totalDaily = moment(new Date()).diff(entryDate, "minutes");
 
   function handleWithPriceChanges() {
     const differenceBetweenDates = moment(new Date()).diff(entryDate, 'minutes')
@@ -51,19 +50,19 @@ export default function DetailsAdmissions() {
   const totalToPayInTimeAdmmited = handleWithPriceChanges()
 
   let dailyValue;
-  switch(true) {
+  switch (true) {
     case totalDaily < 720:
-      dailyValue = `${totalDaily} Minutos`
+      dailyValue = `${totalDaily} Minutos`;
       break;
-      case totalDaily >= 720:
-        dailyValue = `${totalDaily / 720} Diárias`
-        break;
-      default: 
-      dailyValue = `${totalDaily}`
+    case totalDaily >= 720:
+      dailyValue = `${totalDaily / 720} Diárias`;
       break;
-  } 
+    default:
+      dailyValue = `${totalDaily}`;
+      break;
+  }
 
-  const formattedDate = moment(entryDate).format('DD/MM/YYYY')
+  const formattedDate = moment(entryDate).format("DD/MM/YYYY");
   async function getAdmissionDetails() {
     const response = await api.get(`pets/${id}`);
     setPetDetails(response.data);
@@ -73,6 +72,9 @@ export default function DetailsAdmissions() {
     getAdmissionDetails();
   }, []);
 
+<<<<<<< HEAD
+  console.log(petDetails);
+=======
     const handleEndAdmission = async () => {
       try {
         const confirmation = window.confirm("VOCÊ ESTÁ ENCERRANDO UMA INTERNAÇÃO TEM CERTEZA QUE DESEJA CONTINUAR?")
@@ -96,6 +98,7 @@ export default function DetailsAdmissions() {
         toast.error("Falha ao finalizar Internação!")
       }
     }
+>>>>>>> fff9c677e78d38d8b9f77142d80f9d7f91915f8e
 
   return (
     <ChakraProvider>
@@ -176,32 +179,116 @@ export default function DetailsAdmissions() {
                 >
                   Internação
                 </Text>
-               
 
                 <TableContainer>
-                    <Table>
-                      <Thead>
+                  <Table>
+                    <Thead>
                       <Tr>
-                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
+                        <Th
+                          borderRight="2px"
+                          borderBottom="2px"
+                          bgColor="gray.300"
+                          color="black"
+                          fontWeight="extrabold"
+                        >
                           Cliente
                         </Th>
-                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
+                        <Th
+                          borderRight="2px"
+                          borderBottom="2px"
+                          bgColor="gray.300"
+                          color="black"
+                          fontWeight="extrabold"
+                        >
                           Detalhes Pet
                         </Th>
-                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
+                        <Th
+                          borderRight="2px"
+                          borderBottom="2px"
+                          bgColor="gray.300"
+                          color="black"
+                          fontWeight="extrabold"
+                        >
                           Jejum
                         </Th>
-                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
+                        <Th
+                          borderRight="2px"
+                          borderBottom="2px"
+                          bgColor="gray.300"
+                          color="black"
+                          fontWeight="extrabold"
+                        >
                           Canil
                         </Th>
-                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
-                         Data Internação
+                        <Th
+                          borderRight="2px"
+                          borderBottom="2px"
+                          bgColor="gray.300"
+                          color="black"
+                          fontWeight="extrabold"
+                        >
+                          Data Internação
                         </Th>
-                        <Th borderRight="2px" borderBottom="2px" bgColor="gray.300" color="black" fontWeight="extrabold">
+                        <Th
+                          borderRight="2px"
+                          borderBottom="2px"
+                          bgColor="gray.300"
+                          color="black"
+                          fontWeight="extrabold"
+                        >
                           Preferência Veterinário
                         </Th>
-                     
                       </Tr>
+<<<<<<< HEAD
+                    </Thead>
+                    <Tbody>
+                      <Tr>
+                        <Td borderRight="2px">{petDetails.customerName}</Td>
+                        <Td w={300} borderRight="2px">
+                          <Flex direction="column" gap="2">
+                            <Text>
+                              {" "}
+                              {petDetails.name},{" " + petDetails.especie},
+                              {" " + petDetails.race},
+                            </Text>
+                            <Text>
+                              {" "}
+                              {petDetails.sexo}, {" " + petDetails.bornDate}
+                            </Text>
+                            {petDetails.codPet}
+                            <Text fontWeight="bold">
+                              {petDetails.more !== ""
+                                ? "PetLove"
+                                : "Não possui Plano de Saúde"}
+                            </Text>
+                          </Flex>
+                        </Td>
+                        <Td borderRight="2px">
+                          {petDetails.bedInfos?.fasting === true
+                            ? "ANIMAL PRECISA DE JEJUM"
+                            : "ANIMAL NÃO PRECISA DE JEJUM"}
+                        </Td>
+                        <Td borderRight="2px">
+                          {petDetails &&
+                          petDetails.bedInfos &&
+                          Object.keys(petDetails.bedInfos).length === 0 &&
+                          petDetails.bedInfos.kennelName &&
+                          petDetails.bedInfos.kennelName.name
+                            ? petDetails.bedInfos.kennelName.name
+                            : "Sem Canil"}
+                        </Td>
+                        <Td borderRight="2px">{formattedDate}</Td>
+                        <Td>
+                          {petDetails.queue?.vetPreference != ""
+                            ? petDetails.queue?.vetPreference
+                            : "Sem Preferência"}
+                        </Td>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+
+=======
 
                       </Thead>
                       <Tbody>
@@ -235,6 +322,7 @@ export default function DetailsAdmissions() {
                   </TableContainer>
           
           
+>>>>>>> fff9c677e78d38d8b9f77142d80f9d7f91915f8e
                 <Button
                   bg="blue.400"
                   color="white"
@@ -478,7 +566,7 @@ export default function DetailsAdmissions() {
                           Diaria(S) até o momento
                         </Text>
                         <Input
-                        value={dailyValue}
+                          value={dailyValue}
                           borderY={0}
                           w="15vw"
                           borderColor="black"
@@ -490,6 +578,44 @@ export default function DetailsAdmissions() {
                         <Text textAlign="center" justifyContent="center" align='center' w="3vw" fontWeight="bold" >
                           Total: 
                         </Text>
+<<<<<<< HEAD
+                        <Input
+                          borderY={0}
+                          w="15vw"
+                          borderColor="black"
+                          rounded={0}
+                        ></Input>
+                      </Flex>
+                      {totalDaily - 60 >= 60 ? (
+                        <Text
+                          fontSize="20"
+                          bg="yellow.300"
+                          w="100%"
+                          textAlign="center"
+                          py={2}
+                          fontWeight="bold"
+                          color="red"
+                        >
+                          Tempo de Tolerância Restante:{" "}
+                          {60 - totalDaily < 60 ? "Esgotado" : "Em Tolerancia"}{" "}
+                          Minutos
+                        </Text>
+                      ) : (
+                        <Text
+                          color="green"
+                          fontSize="20"
+                          bg="yellow.300"
+                          w="100%"
+                          textAlign="center"
+                          py={2}
+                          fontWeight="bold"
+                        >
+                          Tempo de Tolerância Restante:{" "}
+                          {60 - totalDaily < 60 ? "Esgotado" : "Em Tolerancia"}{" "}
+                          Minutos
+                        </Text>
+                      )}
+=======
                         <Text border="2px" w="15vw" >
                               { new Intl.NumberFormat('pt-BR', {currency: 'BRL', style: 'currency'}).format(totalToPayInTimeAdmmited) }
                         </Text>
@@ -524,6 +650,7 @@ export default function DetailsAdmissions() {
                       )
                       
                     }
+>>>>>>> fff9c677e78d38d8b9f77142d80f9d7f91915f8e
                       <Text
                         fontSize="20"
                         bg="yellow.300"
@@ -532,7 +659,8 @@ export default function DetailsAdmissions() {
                         py={2}
                         fontWeight="bold"
                       >
-                        Tempo Restante até o final da meia diaría: {Math.round((720 - totalDaily) / 60)} Horas
+                        Tempo Restante até o final da meia diaría:{" "}
+                        {Math.round((720 - totalDaily) / 60)} Horas
                       </Text>
                       <Text
                         fontSize="20"
@@ -542,7 +670,8 @@ export default function DetailsAdmissions() {
                         py={2}
                         fontWeight="bold"
                       >
-                        Tempo Restante até o final da diaría : {Math.round((1440 - totalDaily) / 60)} Horas
+                        Tempo Restante até o final da diaría :{" "}
+                        {Math.round((1440 - totalDaily) / 60)} Horas
                       </Text>
                       <Button
                         py="8"

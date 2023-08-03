@@ -50,7 +50,7 @@ export function SetPetExam() {
   return (
     <ChakraProvider>
       <Flex direction="column" h="100vh">
-        <Header title="Tabela de Laboratórios" />
+        <Header title="Tabela de Laboratórios" url="/Labs/Exames" />
         <Flex w="100%" my="6" mx="auto" px="6">
           <GenericSidebar>
             <GenericLink icon={BsArrowLeft} name="Voltar" path="/Labs/Exames" />

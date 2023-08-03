@@ -123,7 +123,10 @@ export function BoxNewPaymentsClient() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Pagamentos por Cliente" />
+            <Header
+              title="Painel de Pagamentos por Cliente"
+              url={`/Recepcao/Caixa/Pagamentos/${id}`}
+            />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink

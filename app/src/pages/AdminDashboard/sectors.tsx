@@ -52,7 +52,6 @@ export function SectorsList() {
     const response = await api.get("groups");
     setGroups(response.data);
   };
-  
 
   useEffect(() => {
     getSectorsListData();
@@ -93,7 +92,6 @@ export function SectorsList() {
       toast.error("Falha ao criar novo setor");
     }
   };
-
 
   const handleCreateGroups: SubmitHandler<FieldValues> = async (values) => {
     try {
@@ -145,9 +143,9 @@ export function SectorsList() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Setores e Grupos" />
+            <Header title="Setores e Grupos" url="/Admin/" />
 
-            <Flex w="100%" my="6" maxWidth={1580} mx="auto" px="6">
+            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <Sidebar />
               <Box
                 flex="1"
@@ -321,9 +319,7 @@ export function SectorsList() {
                                     fontSize="sm"
                                     colorScheme="red"
                                     leftIcon={<Icon as={RiPencilLine} />}
-                                    onClick={() =>
-                                      handleDeleteSector(group.id)
-                                    }
+                                    onClick={() => handleDeleteSector(group.id)}
                                   >
                                     Deletar Grupo
                                   </Button>

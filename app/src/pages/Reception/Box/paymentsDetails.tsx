@@ -21,6 +21,8 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { api } from "../../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { BsReception4 } from "react-icons/bs";
+import { BiCalendarPlus, AiFillEdit } from "react-icons/all";
 
 export function BoxPaymentsDetails() {
   const [client, setClient] = useState([]);
@@ -177,15 +179,32 @@ export function BoxPaymentsDetails() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Conta Corrente" />
+            <Header
+              title="Painel de Conta Corrente"
+              url="/Recepcao/Caixa/Pagamentos/"
+            />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
+                  name="Recepção"
+                  icon={BsReception4}
+                  path={`/Recepcao/`}
+                />
+                <GenericLink
                   name="Painel de Pagamentos"
                   icon={BsCashCoin}
-                  path="/Recepcao/Caixa/Pagamentos"
+                  path={`/Recepcao/Caixa/Pagamentos`}
                 />
-                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
+                <GenericLink
+                  name="Caixa"
+                  icon={BiCalendarPlus}
+                  path={`/Recepcao/Caixa`}
+                />
+                <GenericLink
+                  name="Devoluções"
+                  icon={AiFillEdit}
+                  path={`/Recepcao/Caixa/Returns`}
+                />
               </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <TableContainer>
