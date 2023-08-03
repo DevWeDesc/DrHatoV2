@@ -66,7 +66,7 @@ export const admissionsController = {
   },
 
   admitPet: async (request: FastifyRequest, reply: FastifyReply) => {
-    const { petId, isBusy, dailyRate, mustFasting, kennelId, bedId} = BedSchema.parse(request.body) 
+    const { petId, isBusy, dailyRate, mustFasting, kennelId, bedId, recordId} = BedSchema.parse(request.body) 
     const contract = new ValidationContract() ;
     const actualDate = new Date()
     try {
@@ -80,8 +80,15 @@ export const admissionsController = {
         where: {id: kennelId}, 
         data: {
           beds: {update: {where: {id: bedId}, 
-          data: {isBusy: isBusy, mustFasting, dailyRate,  entryOur: actualDate ,pet: {connect: {id: petId}}}}}}
-      },)
+          data: {isBusy: isBusy, mustFasting, dailyRate ,  entryOur: actualDate ,pet: {connect: {id: petId}}}}}},
+          
+      })
+
+      await prisma.bedsForPet.create({
+        data: {entryOur: actualDate, mustFasting, isCompleted: false ,medicine: {connect:{id: recordId}}}
+      })
+
+      reply.send("Animal internado com sucesso")
     } catch (error) {
       reply.status(400).send(error)
       console.log(error)
@@ -92,8 +99,9 @@ export const admissionsController = {
     const FinishAdmissionSchema = z.object({
       petId: z.number().optional(),
       bedId: z.number().optional(),
+      admissionId: z.number().optional(),
     })
-    const { petId, bedId} = FinishAdmissionSchema.parse(request.body) 
+    const { petId, bedId, admissionId} = FinishAdmissionSchema.parse(request.body) 
     const actualDate = new Date()
 
     const bedDetails = await prisma.bed.findUnique({
@@ -102,6 +110,8 @@ export const admissionsController = {
     if(!bedDetails) {
       return
     } 
+
+  
 
     const totalToPay = await getDiferrenceBetweenOurs(bedDetails.entryOur,actualDate, bedDetails.dailyRate)
 
@@ -117,6 +127,9 @@ export const admissionsController = {
       }
      }) 
 
+     await prisma.bedsForPet.update({
+      where: {id: admissionId}, data: {exitOur: actualDate, totalDebt: Number(totalToPay), isCompleted: true}
+     })
 
      await prisma.bed.update({
       where: {id: bedId}, 

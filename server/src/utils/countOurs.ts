@@ -11,15 +11,17 @@ function getDiferrenceBetweenOurs(entryOur, exitOur, dailyRate) {
   const finalDate = dayjs(new Date(exitOur))
   try {
     const differenceBetweenDates = finalDate.diff(fullDate, 'minute')
+
     let totalToPay = dailyRate;
-    let price = 300
+    
     if(differenceBetweenDates > 60) {
-      totalToPay+= (price / 2)
+      totalToPay+= (dailyRate / 2)
       if(differenceBetweenDates >= 720) {
         let diffToPay = Math.ceil((differenceBetweenDates / 720))
-        totalToPay+= diffToPay * (price / 2) - 150
+        totalToPay+= diffToPay * (dailyRate / 2) - 150
       } 
-    
+    } else {
+      totalToPay = 0;
     }
 
     return totalToPay;

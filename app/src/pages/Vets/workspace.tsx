@@ -27,14 +27,14 @@ import {
   MdPets,
   TbArrowBack,
   TbMedicalCrossFilled,
+  CiStethoscope,
+  MdAttachMoney
+ 
 } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
-import { LoadingSpinner } from "../../components/Loading";
-import { SetExamForm } from "../../components/workspaceVet/SetExamForm";
 import { GenericModal } from "../../components/Modal/GenericModal";
-import { VetInstructions } from "./WorkSpaceVets/instructions";
 import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
 import { PetDetaisl } from "../../interfaces";
 import { motion } from "framer-motion";
@@ -283,6 +283,24 @@ export function WorkSpaceVet() {
                 >
                   PRONTUÁRIO DO PET
                 </Button>
+                <Button
+                  height={8}
+                  onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}
+                  leftIcon={<CiStethoscope fill="white" size={24} />}
+                  colorScheme="red"
+                >
+                   Concluir Consulta
+                </Button>
+
+                <Button
+                  height={8}
+                  onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}
+                  leftIcon={<MdAttachMoney fill="white" size={24} />}
+                  colorScheme="whatsapp"
+                >
+                   Total nessa consulta: {pet.totalAcc?.price}
+                </Button>
+               
               </Flex>
             </Flex>
           </WorkSpaceHeader>
