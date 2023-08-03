@@ -27,7 +27,6 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
-import { motion } from "framer-motion";
 
 interface VaccinesProps {
   id: number | string;
@@ -85,151 +84,145 @@ export default function AdminVaccines() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <ChakraProvider>
-        <AdminContainer>
-          <Flex direction="column" h="100vh">
-            <Header title="Vacinas" url="/Admin/" />
+    <ChakraProvider>
+      <AdminContainer>
+        <Flex direction="column" h="100vh">
+          <Header title="Vacinas" url="/Admin/" />
 
-            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
-              <Sidebar />
-              <Box
-                flex="1"
-                borderRadius={8}
-                bg="gray.200"
-                p="8"
-                maxH="44rem"
-                overflow="auto"
+          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+            <Sidebar />
+            <Box
+              flex="1"
+              borderRadius={8}
+              bg="gray.200"
+              p="8"
+              maxH="44rem"
+              overflow="auto"
+            >
+              <Flex
+                mb="8"
+                justify="space-between"
+                direction="column"
+                align="center"
               >
-                <Flex
-                  mb="8"
-                  justify="space-between"
-                  direction="column"
-                  align="center"
+                <Heading size="lg" fontWeight="bold" w="100%" mb="5">
+                  Vacinas
+                </Heading>
+
+                <Button
+                  as="a"
+                  width="100%"
+                  fontSize="20"
+                  py="8"
+                  colorScheme="whatsapp"
+                  cursor="pointer"
+                  leftIcon={<Icon as={RiAddLine} />}
+                  onClick={() => openModal()}
                 >
-                  <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                    Vacinas
-                  </Heading>
+                  Cadastrar nova Vacina
+                </Button>
+              </Flex>
 
-                  <Button
-                    as="a"
-                    width="100%"
-                    fontSize="20"
-                    py="8"
-                    colorScheme="whatsapp"
-                    cursor="pointer"
-                    leftIcon={<Icon as={RiAddLine} />}
-                    onClick={() => openModal()}
-                  >
-                    Cadastrar nova Vacina
-                  </Button>
-                </Flex>
+              <Table colorScheme="blackAlpha">
+                <Thead>
+                  <Tr>
+                    <Th fontSize="18" borderColor="black">
+                      Vacina
+                    </Th>
+                    <Th borderColor="black"></Th>
+                    <Th fontSize="18" borderColor="black">
+                      Valor
+                    </Th>
+                    <Th borderColor="black"></Th>
+                  </Tr>
+                </Thead>
 
-                <Table colorScheme="blackAlpha">
-                  <Thead>
-                    <Tr>
-                      <Th fontSize="18" borderColor="black">
-                        Vacina
-                      </Th>
-                      <Th borderColor="black"></Th>
-                      <Th fontSize="18" borderColor="black">
-                        Valor
-                      </Th>
-                      <Th borderColor="black"></Th>
+                <Tbody>
+                  {vaccines.map((vaccine) => (
+                    <Tr key={vaccine.id}>
+                      <Td borderColor="black">
+                        <Text fontWeight="bold" color="gray.800">
+                          {vaccine.name}
+                        </Text>
+                      </Td>
+                      <Td borderColor="black"></Td>
+                      <Td borderColor="black">R${vaccine.price}</Td>
+
+                      <Td borderColor="black">
+                        <Flex gap="2" ml="50%">
+                          <Button
+                            alignItems="center"
+                            as="a"
+                            size="md"
+                            fontSize="md"
+                            colorScheme="yellow"
+                            width={220}
+                            leftIcon={<Icon size={28} as={RiPencilLine} />}
+                            onClick={() => openModal()}
+                          >
+                            Editar Vacina
+                          </Button>
+                          <Button
+                            width={220}
+                            as="a"
+                            size="md"
+                            fontSize="md"
+                            colorScheme="red"
+                            leftIcon={<Icon as={RiPencilLine} />}
+                            //onClick={() => handleDeleteSector(sector.id)}
+                          >
+                            Deletar Vacina
+                          </Button>
+                        </Flex>
+                      </Td>
                     </Tr>
-                  </Thead>
-
-                  <Tbody>
-                    {vaccines.map((vaccine) => (
-                      <Tr key={vaccine.id}>
-                        <Td borderColor="black">
-                          <Text fontWeight="bold" color="gray.800">
-                            {vaccine.name}
-                          </Text>
-                        </Td>
-                        <Td borderColor="black"></Td>
-                        <Td borderColor="black">R${vaccine.price}</Td>
-
-                        <Td borderColor="black">
-                          <Flex gap="2" ml="50%">
-                            <Button
-                              alignItems="center"
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="yellow"
-                              width={220}
-                              leftIcon={<Icon size={28} as={RiPencilLine} />}
-                              onClick={() => openModal()}
-                            >
-                              Editar Vacina
-                            </Button>
-                            <Button
-                              width={220}
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="red"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                              //onClick={() => handleDeleteSector(sector.id)}
-                            >
-                              Deletar Vacina
-                            </Button>
-                          </Flex>
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-                <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-                  <FormControl
-                    as="form"
-                    onSubmit={handleSubmit(handleCreateVaccine)}
+                  ))}
+                </Tbody>
+              </Table>
+              <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+                <FormControl
+                  as="form"
+                  onSubmit={handleSubmit(handleCreateVaccine)}
+                >
+                  <Flex
+                    direction="column"
+                    m="4"
+                    gap="4"
+                    align="center"
+                    width="480px"
+                    height="680px"
                   >
-                    <Flex
-                      direction="column"
-                      m="4"
-                      gap="4"
-                      align="center"
-                      width="480px"
-                      height="680px"
-                    >
-                      <Input
-                        {...register("name")}
-                        name="name"
-                        label="Nome da Vacina: "
-                      />
-                      <Input
-                        {...register("price")}
-                        name="price"
-                        label="Preço da Vacina: "
-                      />
+                    <Input
+                      {...register("name")}
+                      name="name"
+                      label="Nome da Vacina: "
+                    />
+                    <Input
+                      {...register("price")}
+                      name="price"
+                      label="Preço da Vacina: "
+                    />
 
-                      <FormLabel htmlFor="description">
-                        Descrição da Vacina:{" "}
-                      </FormLabel>
-                      <Textarea
-                        borderColor="gray.900"
-                        height="500px"
-                        {...register("description")}
-                        name="description"
-                      />
+                    <FormLabel htmlFor="description">
+                      Descrição da Vacina:{" "}
+                    </FormLabel>
+                    <Textarea
+                      borderColor="gray.900"
+                      height="500px"
+                      {...register("description")}
+                      name="description"
+                    />
 
-                      <Button type="submit" colorScheme="whatsapp">
-                        CADASTRAR
-                      </Button>
-                    </Flex>
-                  </FormControl>
-                </GenericModal>
-              </Box>
-            </Flex>
+                    <Button type="submit" colorScheme="whatsapp">
+                      CADASTRAR
+                    </Button>
+                  </Flex>
+                </FormControl>
+              </GenericModal>
+            </Box>
           </Flex>
-        </AdminContainer>
-      </ChakraProvider>
-    </motion.div>
+        </Flex>
+      </AdminContainer>
+    </ChakraProvider>
   );
 }

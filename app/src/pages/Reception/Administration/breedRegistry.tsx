@@ -279,12 +279,17 @@ export function BreedRegistry() {
             <Header title="Cadastro de Raças" url="/Recepcao" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
+                <GenericLink name="Recepção" icon={BiHome} path={`/Recepcao`} />{" "}
                 <GenericLink
-                  name="Recepção"
+                  name="Financeiro"
                   icon={GiCardDiscard}
-                  path={`/Recepcao`}
+                  path={`/Recepcao/Finance`}
                 />{" "}
-                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
+                <GenericLink
+                  name="Registro de Clinicas"
+                  icon={BiHome}
+                  path={`/Recepcao/RegistroClinicas`}
+                />
               </GenericSidebar>
               <Box
                 flex="1"

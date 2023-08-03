@@ -34,20 +34,23 @@ export default function DetailsAdmissions() {
   const totalDaily = moment(new Date()).diff(entryDate, "minutes");
 
   function handleWithPriceChanges() {
-    const differenceBetweenDates = moment(new Date()).diff(entryDate, 'minutes')
+    const differenceBetweenDates = moment(new Date()).diff(
+      entryDate,
+      "minutes"
+    );
     let totalToPay = 0;
     let price = Number(petDetails?.bedInfos?.kennelName?.price);
-    if(differenceBetweenDates > 60) {
-      totalToPay+= (price / 2)
-      if(differenceBetweenDates >= 720) {
-        let diffToPay = Math.ceil((differenceBetweenDates / 720))
-        totalToPay+= diffToPay * (price / 2) - 150
-      } 
+    if (differenceBetweenDates > 60) {
+      totalToPay += price / 2;
+      if (differenceBetweenDates >= 720) {
+        let diffToPay = Math.ceil(differenceBetweenDates / 720);
+        totalToPay += diffToPay * (price / 2) - 150;
+      }
     }
-    return totalToPay
+    return totalToPay;
   }
 
-  const totalToPayInTimeAdmmited = handleWithPriceChanges()
+  const totalToPayInTimeAdmmited = handleWithPriceChanges();
 
   function getNextPaymentHour (hourParam: number) {
     const IntervalsMinutes = (totalDaily / hourParam);
@@ -106,7 +109,7 @@ export default function DetailsAdmissions() {
         console.error(error)
         toast.error("Falha ao finalizar Internação!")
       }
-    }
+    } 
 
   return (
     <ChakraProvider>
@@ -530,10 +533,23 @@ export default function DetailsAdmissions() {
                           rounded={0}
                         ></Input>
                       </Flex>
-               
-                        <Flex align="center"  border="2px" w="100vw" height="38px" justify="flex-end"  textAlign="center">
-                        <Text textAlign="center" justifyContent="center" align='center' w="3vw" fontWeight="bold" >
-                          Total: 
+
+                      <Flex
+                        align="center"
+                        border="2px"
+                        w="100vw"
+                        height="38px"
+                        justify="flex-end"
+                        textAlign="center"
+                      >
+                        <Text
+                          textAlign="center"
+                          justifyContent="center"
+                          align="center"
+                          w="3vw"
+                          fontWeight="bold"
+                        >
+                          Total:
                         </Text>
                         <Text border="2px" w="15vw" >
                               { new Intl.NumberFormat('pt-BR', {currency: 'BRL', style: 'currency'}).format(totalToPayInTimeAdmmited) }

@@ -17,9 +17,10 @@ import {
   VStack,
   Text,
   RadioGroup,
-  Radio, Menu,
+  Radio,
+  Menu,
   MenuButton,
-  MenuList
+  MenuList,
 } from "@chakra-ui/react";
 import { Header } from "../../components/admin/Header";
 import { SearchComponent } from "../../components/Search";
@@ -45,54 +46,51 @@ export function GenerateAutorizations() {
   const autorizations = autorization ? autorization : null;
   const [createAut, setCreateAut] = useState({});
 
-  
   //@ts-ignore
   pdfMake.addVirtualFileSystem(pdfFonts);
 
   const handleCreateAut = async () => {
-    
     try {
-    const response = await api.get(`/autorizations/${value}`);
-    const petDesc = dataCustomer.map((customer: any) => {
-      customer.pets?.find( (pet: any) => pet.id == petValue)
-    })
-    const dataAut = response.data;
-    const autorization = {
-      name: dataCustomer.name,
-      adress: dataCustomer.adress,
-      cpf: dataCustomer.cpf,
-      autName: dataAut.name,
-      autText: dataAut.text,
-      petName: petDesc.name,
-      petEsp: petDesc.especie,
-      petCod: petDesc.codPet
-    };
+      const response = await api.get(`/autorizations/${value}`);
+      const petDesc = dataCustomer.map((customer: any) => {
+        customer.pets?.find((pet: any) => pet.id == petValue);
+      });
+      const dataAut = response.data;
+      const autorization = {
+        name: dataCustomer.name,
+        adress: dataCustomer.adress,
+        cpf: dataCustomer.cpf,
+        autName: dataAut.name,
+        autText: dataAut.text,
+        petName: petDesc.name,
+        petEsp: petDesc.especie,
+        petCod: petDesc.codPet,
+      };
 
-
-    setCreateAut(autorization);
-    const docDefinition: TDocumentDefinitions = {
-      content: [
-        `Nome: ${autorization.name}\n Endereço: ${autorization.adress}\n CPF: ${autorization.cpf}\n Nome do pet: ${autorization.petName}\n Especie: ${autorization.petEsp}\n Código Pet: ${autorization.petCod}\n \n  ${autorization.autName}\n ${autorization.autText}\n\n CPF:\n Nome:\n Endereço Completo:\n Data:___________,______de_________de________.\n\n Assinatura do responsável pelo paciente:\n   ______________________________________________________________`,
-      ],
-      pageMargins: [50, 50],
-      pageSize: "A4",
-    };
-    pdfMake.createPdf(docDefinition).open();
+      setCreateAut(autorization);
+      const docDefinition: TDocumentDefinitions = {
+        content: [
+          `Nome: ${autorization.name}\n Endereço: ${autorization.adress}\n CPF: ${autorization.cpf}\n Nome do pet: ${autorization.petName}\n Especie: ${autorization.petEsp}\n Código Pet: ${autorization.petCod}\n \n  ${autorization.autName}\n ${autorization.autText}\n\n CPF:\n Nome:\n Endereço Completo:\n Data:___________,______de_________de________.\n\n Assinatura do responsável pelo paciente:\n   ______________________________________________________________`,
+        ],
+        pageMargins: [50, 50],
+        pageSize: "A4",
+      };
+      pdfMake.createPdf(docDefinition).open();
     } catch (error) {
-      console.log("ERRO AUT",error)
-      toast.error('Necessário escolher um tipo de autorização e ao menos um PET.')
+      console.log("ERRO AUT", error);
+      toast.error(
+        "Necessário escolher um tipo de autorização e ao menos um PET."
+      );
     }
-
-
   };
 
-  console.log(dataCustomer)
+  console.log(dataCustomer);
 
   return (
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Gerar autorizações" />
+          <Header title="Gerar autorizações" url="/Home" />
           <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
             <GenericSidebar>
               <GenericLink icon={BsArrowLeft} name="Voltar" path="/Home" />
@@ -146,51 +144,54 @@ export function GenerateAutorizations() {
                       </Tr>
                     </Thead>
                     <Tbody>
-                          {
-                            dataCustomer.map((customer: any) =>  (
-                              <Tr>
-                              <Td>{customer.name}</Td>
-                              <Td>{customer.adress}</Td>
-                              <Td>{customer.phone}</Td>
-                              <Td>{customer.cpf}</Td>
-                              <Td>{customer.email}</Td>
-                              <Td>{customer.birthday}</Td>
-                              <Td>
-                                <Menu>
-                                  <MenuButton
-                                    border="1px"
-                                    as={Button}
-                                    rightIcon={<Burger />}
+                      {dataCustomer.map((customer: any) => (
+                        <Tr>
+                          <Td>{customer.name}</Td>
+                          <Td>{customer.adress}</Td>
+                          <Td>{customer.phone}</Td>
+                          <Td>{customer.cpf}</Td>
+                          <Td>{customer.email}</Td>
+                          <Td>{customer.birthday}</Td>
+                          <Td>
+                            <Menu>
+                              <MenuButton
+                                border="1px"
+                                as={Button}
+                                rightIcon={<Burger />}
+                              >
+                                <StyledBox>
+                                  <Text>pets</Text>
+                                </StyledBox>
+                              </MenuButton>
+                              <MenuList key={customer.id} bg="green.100">
+                                {customer.pets?.map((pets: any) => (
+                                  <Flex
+                                    key={pets.id}
+                                    direction="column"
+                                    align="center"
+                                    p="2px"
+                                    gap="2"
                                   >
-                                    <StyledBox>
-                                      <Text>pets</Text>
-                                    </StyledBox>
-                                  </MenuButton>
-                                  <MenuList key={customer.id} bg="green.100">
-                                    {customer.pets?.map((pets: any) => (
-                                      <Flex
-                                        key={pets.id}
-                                        direction="column"
-                                        align="center"
-                                        p="2px"
-                                        gap="2"
-                                      >
-                                    <RadioGroup onChange={setPetValue} value={petValue}>
+                                    <RadioGroup
+                                      onChange={setPetValue}
+                                      value={petValue}
+                                    >
                                       <Radio
-                                        bgColor={petValue == pets.id ? "green" : "red"}
+                                        bgColor={
+                                          petValue == pets.id ? "green" : "red"
+                                        }
                                         value={pets.id as any}
                                       >
                                         {pets.name}
                                       </Radio>
                                     </RadioGroup>
-                                      </Flex>
-                                    ))}
-                                  </MenuList>
-                                </Menu>
-                              </Td>
-                            </Tr>
-                            ))
-                          }
+                                  </Flex>
+                                ))}
+                              </MenuList>
+                            </Menu>
+                          </Td>
+                        </Tr>
+                      ))}
                     </Tbody>
                   </Table>
                 </Flex>
