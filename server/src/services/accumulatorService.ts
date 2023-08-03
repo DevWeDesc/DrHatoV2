@@ -13,7 +13,6 @@ export const accumulatorService = {
                 if(!actualValue) return 
 
                 const total = Number(actualValue.accumulator) + Number(values)
-
                 await prisma.pricesAccumulator.update({
                     where: {id :  parseInt(id)},
                     data: {accumulator: total }
