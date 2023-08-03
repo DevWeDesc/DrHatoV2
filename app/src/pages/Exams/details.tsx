@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { DbContext } from "../../contexts/DbContext";
 import { api } from "../../lib/axios";
+import { Header } from "../../components/admin/Header";
 
 interface ExamProps {
   name: string;
@@ -66,7 +67,8 @@ export function ExamDetail() {
   return (
     <ChakraProvider>
       <Flex direction="column" h="100vh">
-        <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+        <Header title="Detalhes do Exame" url="/Admin/Exams" />
+        <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
           <Sidebar />
           <SimpleGrid
             flex="1"

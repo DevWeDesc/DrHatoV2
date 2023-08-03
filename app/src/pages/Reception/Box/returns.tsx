@@ -25,7 +25,7 @@ import { StyledBox } from "../../../components/Header/style";
 import { BiCalendarPlus, MdPets as Burger } from "react-icons/all";
 import { toast } from "react-toastify";
 import { api } from "../../../lib/axios";
-import { motion } from "framer-motion";
+
 import { ReturnsSearch } from "../../../components/Search/returnsSearch";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
@@ -234,55 +234,49 @@ export function BoxReturns() {
       break;
   }
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <ChakraProvider>
-        <AdminContainer>
-          <Flex direction="column" h="100vh">
-            <Header title="Painel de Devoluções" url="/Recepcao" />
-            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
-              <GenericSidebar>
-                <GenericLink
-                  name="Caixa"
-                  icon={BiCalendarPlus}
-                  path={`/Recepcao/Caixa`}
-                />
-                <GenericLink
-                  name="Recepção"
-                  icon={BsReception4}
-                  path={`/Recepcao/`}
-                />
-                <GenericLink
-                  name="Painel de Pagamentos"
-                  icon={BsCashCoin}
-                  path="/Recepcao/Caixa/Pagamentos"
-                />
-              </GenericSidebar>
-              <Box
-                flex="1"
-                borderRadius={8}
-                bg="gray.200"
-                p="8"
-                maxH="44rem"
-                overflow="auto"
-              >
-                <Flex mb="8" gap="8" direction="column" align="center">
-                  <ReturnsSearch path="filtredquery" />
-                  <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
-                    <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
-                  </Button>
-                  <Flex textAlign="center" justify="center" w="80%">
-                    {typeTable}
-                  </Flex>
+    <ChakraProvider>
+      <AdminContainer>
+        <Flex direction="column" h="100vh">
+          <Header title="Painel de Devoluções" url="/Recepcao" />
+          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+            <GenericSidebar>
+              <GenericLink
+                name="Caixa"
+                icon={BiCalendarPlus}
+                path={`/Recepcao/Caixa`}
+              />
+              <GenericLink
+                name="Recepção"
+                icon={BsReception4}
+                path={`/Recepcao/`}
+              />
+              <GenericLink
+                name="Painel de Pagamentos"
+                icon={BsCashCoin}
+                path="/Recepcao/Caixa/Pagamentos"
+              />
+            </GenericSidebar>
+            <Box
+              flex="1"
+              borderRadius={8}
+              bg="gray.200"
+              p="8"
+              maxH="44rem"
+              overflow="auto"
+            >
+              <Flex mb="8" gap="8" direction="column" align="center">
+                <ReturnsSearch path="filtredquery" />
+                <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
+                  <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
+                </Button>
+                <Flex textAlign="center" justify="center" w="80%">
+                  {typeTable}
                 </Flex>
-              </Box>
-            </Flex>
+              </Flex>
+            </Box>
           </Flex>
-        </AdminContainer>
-      </ChakraProvider>
-    </motion.div>
+        </Flex>
+      </AdminContainer>
+    </ChakraProvider>
   );
 }

@@ -14,7 +14,6 @@ import { RecepetionSearch } from "../../components/Search/receptionSearch";
 import { DbContext } from "../../contexts/DbContext";
 import { api } from "../../lib/axios";
 import { Header } from "../../components/admin/Header";
-import { motion } from "framer-motion";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import { AiFillEdit } from "react-icons/ai";
@@ -33,64 +32,87 @@ export function ReceptionConsults() {
   }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <ChakraProvider>
-        <Flex direction="column" h="100vh">
-          <Header title="Menu Recepção" url="/Recepcao" />
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
-            <GenericSidebar>
-              <GenericLink
-                name="Alterar Consulta"
-                icon={AiFillEdit}
-                path={`/Recepcao/Change`}
-              />
-              <GenericLink
-                name="Cadastro de Clientes"
-                icon={FaUserPlus}
-                path={`/Recepcao/Create`}
-              />{" "}
-            </GenericSidebar>
+    <ChakraProvider>
+      <Flex direction="column" h="100vh">
+        <Header title="Menu Recepção" url="/Recepcao" />
+        <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <GenericSidebar>
+            <GenericLink
+              name="Alterar Consulta"
+              icon={AiFillEdit}
+              path={`/Recepcao/Change`}
+            />
+            <GenericLink
+              name="Cadastro de Clientes"
+              icon={FaUserPlus}
+              path={`/Recepcao/Create`}
+            />{" "}
+          </GenericSidebar>
 
+          <Flex
+            flex="1"
+            direction="column"
+            borderRadius={8}
+            bg="gray.200"
+            p="8"
+            maxH="44rem"
+            overflow="auto"
+          >
+            <RecepetionSearch path="/customersearch" />
             <Flex
-              flex="1"
+              mb="8"
+              gap="8"
               direction="column"
-              borderRadius={8}
-              bg="gray.200"
-              p="8"
-              maxH="44rem"
+              align="center"
               overflow="auto"
+              maxHeight="44rem"
+              overflowY="auto"
             >
-              <RecepetionSearch path="/customersearch" />
               <Flex
-                mb="8"
-                gap="8"
-                direction="column"
-                align="center"
-                overflow="auto"
-                maxHeight="44rem"
-                overflowY="auto"
+                textAlign="center"
+                justify="center"
+                w="100%"
+                fontWeight="bold"
               >
-                <Flex
-                  textAlign="center"
-                  justify="center"
-                  w="100%"
-                  fontWeight="bold"
-                >
-                  <Table mt="4" w="100%" colorScheme="blackAlpha">
-                    <Thead>
+                <Table mt="4" w="100%" colorScheme="blackAlpha">
+                  <Thead>
+                    <Tr>
+                      <Th>Nome</Th>
+                      <Th>Telefone</Th>
+                      <Th>R.G</Th>
+                      <Th>CPF/CNPJ</Th>
+                    </Tr>
+                  </Thead>
+                  {customer ? (
+                    customer.map((client: any) => (
+                      <Tbody key={client.id}>
+                        <Tr>
+                          <Td>
+                            <Link
+                              to={`/Recepcao/Consultas/Clientes/${client.id}`}
+                            >
+                              {client.name}
+                            </Link>
+                          </Td>
+                          <Td>{client.phone}</Td>
+                          <Td>{client.rg}</Td>
+                          <Td>{client.cpf}</Td>
+                        </Tr>
+                      </Tbody>
+                    ))
+                  ) : (
+                    <Tbody>
                       <Tr>
-                        <Th>Nome</Th>
-                        <Th>Telefone</Th>
-                        <Th>R.G</Th>
-                        <Th>CPF/CNPJ</Th>
+                        <Td>Empty</Td>
+                        <Td>Empty</Td>
+                        <Td>Empty</Td>
+                        <Td>Empty</Td>
                       </Tr>
-                    </Thead>
-                    {customer ? (
-                      customer.map((client: any) => (
+                    </Tbody>
+                  )}
+                  {customer <= 0 && (
+                    <>
+                      {dataCostumer.map((client: any) => (
                         <Tbody key={client.id}>
                           <Tr>
                             <Td>
@@ -105,44 +127,15 @@ export function ReceptionConsults() {
                             <Td>{client.cpf}</Td>
                           </Tr>
                         </Tbody>
-                      ))
-                    ) : (
-                      <Tbody>
-                        <Tr>
-                          <Td>Empty</Td>
-                          <Td>Empty</Td>
-                          <Td>Empty</Td>
-                          <Td>Empty</Td>
-                        </Tr>
-                      </Tbody>
-                    )}
-                    {customer <= 0 && (
-                      <>
-                        {dataCostumer.map((client: any) => (
-                          <Tbody key={client.id}>
-                            <Tr>
-                              <Td>
-                                <Link
-                                  to={`/Recepcao/Consultas/Clientes/${client.id}`}
-                                >
-                                  {client.name}
-                                </Link>
-                              </Td>
-                              <Td>{client.phone}</Td>
-                              <Td>{client.rg}</Td>
-                              <Td>{client.cpf}</Td>
-                            </Tr>
-                          </Tbody>
-                        ))}
-                      </>
-                    )}
-                  </Table>
-                </Flex>
+                      ))}
+                    </>
+                  )}
+                </Table>
               </Flex>
             </Flex>
           </Flex>
         </Flex>
-      </ChakraProvider>
-    </motion.div>
+      </Flex>
+    </ChakraProvider>
   );
 }
