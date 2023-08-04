@@ -1,26 +1,29 @@
-import {
-  Flex,
-  Box,
-  SimpleGrid,
-  ChakraProvider,
-} from "@chakra-ui/react";
+import { Flex, Box, SimpleGrid, ChakraProvider } from "@chakra-ui/react";
 
-import { BiLeftArrowAlt  } from 'react-icons/all'
+import { BiLeftArrowAlt } from "react-icons/all";
 import { useParams } from "react-router-dom";
+import { Header } from "../../components/admin/Header";
 import { CreatePetsForm } from "../../components/Forms/CreatePetsForm";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 
 export function CreatePets() {
-
-  const { id} = useParams()
+  const { id } = useParams<{ id: string }>();
   return (
     <ChakraProvider>
       <Flex direction="column" h="100vh">
-        <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-         <GenericSidebar>
-          <GenericLink name="Voltar" path={`/Recepcao/Consultas/Clientes/${id}`} icon={BiLeftArrowAlt} />
-         </GenericSidebar>
+        <Header
+          title="Cadastro de Pets"
+          url={`/Recepcao/Consultas/Clientes/${id}`}
+        />
+        <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <GenericSidebar>
+            <GenericLink
+              name="Voltar"
+              path={`/Recepcao/Consultas/Clientes/${id}`}
+              icon={BiLeftArrowAlt}
+            />
+          </GenericSidebar>
           <SimpleGrid
             flex="1"
             gap="4"

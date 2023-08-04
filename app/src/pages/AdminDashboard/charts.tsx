@@ -3,7 +3,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Flex } from "@chakra-ui/react";
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
-import Charts from "../../components/Charts";
+import Charts from "../../components/administration/Charts";
 
 export function AdminCharts() {
   return (

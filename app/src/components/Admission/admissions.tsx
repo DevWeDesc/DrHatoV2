@@ -67,7 +67,7 @@ export function SearchAdmission() {
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Painel de Internações" url="/Recepcao" />
+          <Header title="Painel de Internações" url="/Home" />
           <Flex w="100%" my="6" mx="auto" px="6">
             <GenericSidebar>
               <GenericLink

@@ -9,10 +9,10 @@ import {
 import { Flex } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { api } from "../../lib/axios";
+import { api } from "../../../lib/axios";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { AutorizationData } from "../../interfaces";
-import { Input } from "../../components/admin/Input";
+import { AutorizationData } from "../../../interfaces";
+import { Input } from "../../admin/Input";
 import { toast } from "react-toastify";
 
 export default function EditAutorizations() {

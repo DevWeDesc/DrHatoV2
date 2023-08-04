@@ -2,7 +2,7 @@ import { Box, SimpleGrid, Text, theme } from "@chakra-ui/react";
 import { Flex } from "@chakra-ui/react";
 import Chart from "react-apexcharts";
 import { useEffect, useState } from "react";
-import { api } from "../../lib/axios";
+import { api } from "../../../lib/axios";
 
 interface MarketingChartProps {
   Facebook: number | 0;
