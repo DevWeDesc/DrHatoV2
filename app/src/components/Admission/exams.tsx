@@ -1,10 +1,10 @@
 import {
-  Box,
   ChakraProvider,
   Flex,
   Text,
   Button,
   Input,
+  Box,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { BiHome } from "react-icons/bi";
@@ -13,6 +13,7 @@ import { useNavigate, useParams } from "react-router";
 import { api } from "../../lib/axios";
 import { AdminContainer } from "../../pages/AdminDashboard/style";
 import { WorkSpaceHeader } from "../../pages/Vets/styles";
+import { ExamsVet } from "../Exams";
 import ProceduresAdmissions from "./procedures";
 
 export default function ExamsAdmisison() {
@@ -77,7 +78,8 @@ export default function ExamsAdmisison() {
           </WorkSpaceHeader>
           <Flex w="100%" mx="auto">
             <Box w="100%" borderRadius={8}>
-              <Flex direction="column">
+              <ExamsVet />
+              {/* <Flex direction="column">
                 {listExam === true && (
                   <Text
                     w="100%"
@@ -193,7 +195,7 @@ export default function ExamsAdmisison() {
                       fontSize="20"
                     >
                       + de 35KG
-                  </Text>*/}
+                  </Text>
                   </Flex>
                   <Flex>
                     <Input
@@ -286,7 +288,7 @@ export default function ExamsAdmisison() {
                     />
                   </Flex>
                 </Flex>
-              </Flex>
+              </Flex> */}
             </Box>
           </Flex>
         </Flex>

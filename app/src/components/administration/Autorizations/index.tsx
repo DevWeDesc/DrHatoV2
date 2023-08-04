@@ -14,13 +14,13 @@ import { Flex } from "@chakra-ui/react";
 import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
 
 import { useContext, useEffect, useState } from "react";
-import { GenericModal } from "../../components/Modal/GenericModal";
-import { DbContext } from "../../contexts/DbContext";
+import { GenericModal } from "../../Modal/GenericModal";
+import { DbContext } from "../../../contexts/DbContext";
 import { Link } from "react-router-dom";
-import { LoadingSpinner } from "../../components/Loading";
-import { Input } from "../../components/admin/Input";
+import { LoadingSpinner } from "../../Loading";
+import { Input } from "../../admin/Input";
 import { toast } from "react-toastify";
-import { api } from "../../lib/axios";
+import { api } from "../../../lib/axios";
 import { Icon } from "@chakra-ui/react";
 import { RiAddLine } from "react-icons/ri";
 import { Heading } from "@chakra-ui/react";
