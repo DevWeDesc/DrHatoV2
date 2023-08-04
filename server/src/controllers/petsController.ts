@@ -23,7 +23,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
     include: {customer: 
       {select: { name: true, id: true, balance: true, pets: true}}, 
       medicineRecords: {select: {petExams: true, observations: true, id: true, petVaccines: true, petSurgeries: true, petProcedures: true, petBeds: {where: {isCompleted: false}} }},
-      queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true}},
+      queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true, queueEntry: true}},
       bed: {select: {isBusy: true, entryOur: true, id: true, kennel: {select: {name: true, price: true}}, dailyRate: true, mustFasting: true}},
       priceAccumulator: {select: {id: true, accumulator: true}}
     } })
@@ -197,7 +197,7 @@ petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
   try {
     const pets = await prisma.pets.findMany({ where: {
       queue: {petIsInQueue: true}
-    },include: {queue: {select: {vetPreference: true, queryType: true, queueEntry: true, petIsInQueue: true, queueOur: true, moreInfos: true }}, customer: {select: {name: true, vetPreference: true, cpf: true}}}})
+    },include: {queue: {select: {vetPreference: true, queryType: true, queueEntry: true, petIsInQueue: true, queueExit: true, queueOur: true, moreInfos: true }}, customer: {select: {name: true, vetPreference: true, cpf: true}}}})
 
     const totalInQueue = await prisma.queues.count({
       where: {petIsInQueue: true}

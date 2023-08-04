@@ -118,8 +118,9 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
 
 
     } catch (error) {
-        reply.status(400).send({message: error})
         console.log(error)
+        reply.status(400).send({message: error})
+       
     }
  },
 

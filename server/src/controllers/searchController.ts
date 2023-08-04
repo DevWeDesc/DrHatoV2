@@ -31,7 +31,7 @@ export const searchController = {
       console.log(error)
     }
   },
-  vetsBigSearchs: async(request: FastifyRequest<{Querystring: {initialData?: string, finalData?: string,
+  vetsBigSearchs: async(request: FastifyRequest<{Querystring: {initialData?: Date, finalData?: Date,
     codPet?: string, isHospitalized?: string, name?: string, petName?: string}}>,  reply: FastifyReply) => {
       try {
         const initialData = request.query.initialData ? request.query.initialData : "";
@@ -69,12 +69,12 @@ export const searchController = {
           break;
           case !!initialData: 
           response = await prisma.customer.findMany({
-           where: {pets: {some: {queue: {queueEntry : { startsWith: initialData }}}}},include: {pets: {select: {name: true, queue: {select: {queueEntry: true}} }}} 
+           where: {pets: {some: {queue: {queueEntry : { gte: initialData }}}}},include: {pets: {select: {name: true, queue: {select: {queueEntry: true}} }}} 
           })
           break;
           case !!finalData: 
           response = await prisma.customer.findMany({
-           where: {pets: {some: {queue: {queueEntry: { startsWith: finalData}}}}},include: {pets: {select: {name: true, queue: {select: {queueEntry: true}}  }}}
+           where: {pets: {some: {queue: {queueEntry: { lte: finalData}}}}},include: {pets: {select: {name: true, queue: {select: {queueEntry: true}}  }}}
           })
           break;
       

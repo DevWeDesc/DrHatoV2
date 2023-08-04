@@ -37,7 +37,10 @@ import { api } from "../../lib/axios";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
 import { PetDetaisl } from "../../interfaces";
-import { motion } from "framer-motion";
+import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
+import { toast } from "react-toastify";
+
+
 
 export function WorkSpaceVet() {
   const { id } = useParams<{ id: string }>();
@@ -68,7 +71,6 @@ export function WorkSpaceVet() {
     const response = await api.get(`/pets/${id}`);
     setPet(response.data);
   }
-  console.log(pet);
   useEffect(() => {
     getPetDetails();
   }, []);
@@ -79,6 +81,27 @@ export function WorkSpaceVet() {
       setReloadData(false); // Reseta o estado para evitar chamadas infinitas
     }
   }, [reloadData]);
+
+  const handleCloseQuery = async () => {
+    try {
+      const data = {
+        queryType: pet.queue.queryType,
+        queueEntry: pet.queue.queueEntry,
+        queueExit: new Date(),
+        debitOnThisQuery: Number(pet.totalAcc.price),
+        responsibleVeterinarian: "Daniel Hato",
+      }
+
+      await api.put(`/endqueue/${id}/${pet.recordId}/${pet.queue.id}`, data) 
+
+      toast.success("Consulta finalizada com sucesso!!")
+      navigate("/Vets/Menu")
+      
+    } catch (error) {
+      toast.error("Falha ao encerrar consulta!!")
+      console.log(error)
+    }
+  }
 
   let viewComponent;
   switch (true) {
@@ -170,11 +193,6 @@ export function WorkSpaceVet() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
       <ChakraProvider>
         <WorkSpaceContainer>
           <WorkSpaceHeader>
@@ -283,14 +301,18 @@ export function WorkSpaceVet() {
                 >
                   PRONTUÁRIO DO PET
                 </Button>
-                <Button
-                  height={8}
-                  onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}
-                  leftIcon={<CiStethoscope fill="white" size={24} />}
-                  colorScheme="red"
-                >
-                   Concluir Consulta
-                </Button>
+             
+              
+ 
+                <ConfirmationDialog 
+                icon={<CiStethoscope fill="white" size={24}  />} 
+                buttonTitle="Concluir Consulta"
+                whatIsConfirmerd="Tem certeza que deseja encerrar consulta ?"
+                describreConfirm="Encerrar a consulta registra todos débitos desta consulta no pet, e é uma ação irreversivel !!"
+                callbackFn={handleCloseQuery}
+                
+
+                />
 
                 <Button
                   height={8}
@@ -638,6 +660,5 @@ export function WorkSpaceVet() {
           </Flex>
         </GenericModal>
       </ChakraProvider>
-    </motion.div>
   );
 }
