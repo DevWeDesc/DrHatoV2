@@ -14,9 +14,9 @@ datasource db {
 
 model User {
   id        Int        @id @default(autoincrement())
-  email      String     @unique
+  email     String     @unique
   username  String
-  password  String 
+  password  String
   crmv      Int?
   userIsVet Boolean?   @default(false)
   userType  String[]
@@ -36,7 +36,7 @@ model Transaction {
 
 model Customer {
   id            Int           @id @unique @default(autoincrement())
-  name          String        
+  name          String
   adress        String
   district      String?
   cep           String?
@@ -57,34 +57,35 @@ model Customer {
 }
 
 model Pets {
-  id              Int             @id @default(autoincrement())
-  name            String
-  especie         String
-  sexo            String
-  race            String
-  weigth          String?
-  haveChip        Boolean?
-  corPet          String?
-  sizePet         String?         @default("")
-  bornDate        String
-  observations    String?
-  customer_id     Int
-  codPet          String          @unique @default(uuid())
-  isCastred       Boolean?
-  debits          Decimal?    
-  medicineRecords MedicineRecord?
+  id               Int                @id @default(autoincrement())
+  name             String
+  especie          String
+  sexo             String
+  race             String
+  weigth           String?
+  haveChip         Boolean?
+  corPet           String?
+  sizePet          String?            @default("")
+  bornDate         String
+  observations     String?
+  customer_id      Int
+  codPet           String             @unique @default(uuid())
+  isCastred        Boolean?
+  debits           Decimal?
   priceAccumulator PricesAccumulator?
-  customer        Customer        @relation(fields: [customer_id], references: [id])
-  queue           Queues?
-  bed             Bed?
+  medicineRecords  MedicineRecord?
+  customer         Customer           @relation(fields: [customer_id], references: [id])
+  queue            Queues?
+  bed              Bed?
 }
 
 model PricesAccumulator {
-  id              Int             @id @default(autoincrement())
-  petId Int @unique
-  pets Pets @relation(fields: [petId], references: [id]) 
+  id          Int      @id @default(autoincrement())
+  petId       Int      @unique
+  pets        Pets     @relation(fields: [petId], references: [id])
   accumulator Decimal?
 }
+
 model Schedule {
   id        Int      @id @default(autoincrement())
   plants    String[]
@@ -100,14 +101,15 @@ model Autorizations {
 }
 
 model MedicineRecord {
-  id           Int               @id @default(autoincrement())
-  observations String[]          @default([""])
-  petId        Int               @unique
-  pet          Pets              @relation(fields: [petId], references: [id])
-  petExams     ExamsForPet[]
-  petVaccines  VaccinesForPet[]
-  petSurgeries SurgeriesForPet[]
+  id            Int                @id @default(autoincrement())
+  observations  String[]           @default([""])
+  petId         Int                @unique
+  pet           Pets               @relation(fields: [petId], references: [id])
+  petExams      ExamsForPet[]
+  petVaccines   VaccinesForPet[]
+  petSurgeries  SurgeriesForPet[]
   petProcedures ProceduresForPet[]
+  petBeds       BedsForPet[]
 }
 
 model Exams {
@@ -164,13 +166,13 @@ model Procedures {
   observations        String
   group_id            Int?
   sector_id           Int?
-  groups              Groups?   @relation(fields: [group_id], references: [id])
-  sector              Sectors?  @relation(fields: [sector_id], references: [id])
+  groups              Groups?  @relation(fields: [group_id], references: [id])
+  sector              Sectors? @relation(fields: [sector_id], references: [id])
 }
 
 model ProceduresForPet {
-  id                  Int      @id @default(autoincrement())
-  name                String   
+  id                  Int            @id @default(autoincrement())
+  name                String
   price               Int
   applicationInterval String?
   applicableGender    String[]
@@ -179,9 +181,9 @@ model ProceduresForPet {
   observations        String
   group_id            Int?
   sector_id           Int?
-  requestedDate     DateTime?
-  medicine_id     Int
-  medicine        MedicineRecord @relation(fields: [medicine_id], references: [id])
+  requestedDate       DateTime?
+  medicine_id         Int
+  medicine            MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
 
 model Groups {
@@ -203,27 +205,39 @@ model Queues {
 }
 
 model Kennel {
-  id        Int     @id @default(autoincrement())
-  name      String?
-  totalBeds Int?
+  id          Int      @id @default(autoincrement())
+  name        String?
+  totalBeds   Int?
   description String?
-  price Decimal?
-  beds      Bed[]
+  price       Decimal?
+  beds        Bed[]
 }
 
 model Bed {
-  id          Int      @id @default(autoincrement())
-  kennelId    Int
-  kennel      Kennel?  @relation(fields: [kennelId], references: [id])
-  petId       Int?     @unique
-  pet         Pets?    @relation(fields: [petId], references: [id])
-  isBusy      Boolean? @default(false)
-  mustFasting Boolean? @default(false)
-  entryOur DateTime?   
-  exitOur DateTime?
-  dailyRate Int?
+  id               Int       @id @default(autoincrement())
+  kennelId         Int
+  kennel           Kennel?   @relation(fields: [kennelId], references: [id])
+  petId            Int?      @unique
+  pet              Pets?     @relation(fields: [petId], references: [id])
+  isBusy           Boolean?  @default(false)
+  mustFasting      Boolean?  @default(false)
+  entryOur         DateTime?
+  exitOur          DateTime?
+  dailyRate        Int?
   hospitalizedDays Int?
-  totalDebt Decimal? 
+  totalDebt        Decimal?
+}
+
+model BedsForPet {
+  id                     Int            @id @default(autoincrement())
+  entryOur               DateTime?
+  exitOur                DateTime?
+  mustFasting            Boolean?       @default(false)
+  totalDebt              Decimal?
+  isCompleted            Boolean?       @default(false)
+  admissionsObservations Json?
+  medicine_id            Int
+  medicine               MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
 
 model Vaccines {

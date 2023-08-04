@@ -8,6 +8,6 @@ export async function examsRoutes(app: FastifyInstance) {
     app.get('/exams/:id', examsController.getById)
     app.put('/exams/:id', examsController.editExams)
     app.delete('/exams/:id', examsController.deleteExam)
-    app.delete('/petexam/:id', examsController.removePetExam)
+    app.delete('/petexam/:id/:accId/:examPrice', examsController.removePetExam)
 }
 

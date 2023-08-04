@@ -5,7 +5,7 @@ import { GlobalStyle } from "./styles/global";
 import { DbContextProvider } from "./contexts/DbContext";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ToastContainer } from "react-toastify";
-import { AnimatedRoutes } from "./Animated.Routes";
+import { Router } from "./Router";
 
 function App() {
   return (
@@ -14,11 +14,10 @@ function App() {
         <ThemeProvider theme={defaultTheme}>
           <GlobalStyle />
 
-            <BrowserRouter>
-              <AnimatedRoutes />
-            </BrowserRouter>
-            <ToastContainer autoClose={3000} />
-   
+          <BrowserRouter>
+            <Router />
+          </BrowserRouter>
+          <ToastContainer autoClose={3000} />
         </ThemeProvider>
       </DbContextProvider>
     </ChakraProvider>

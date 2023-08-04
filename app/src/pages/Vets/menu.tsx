@@ -32,7 +32,6 @@ import { LoadingSpinner } from "../../components/Loading";
 import { api } from "../../lib/axios";
 import { Queue } from "phosphor-react";
 import { VetsSearch } from "../../components/Search/vetsSearch";
-import { motion } from "framer-motion";
 
 interface QueueProps {
   response: [];
@@ -238,38 +237,32 @@ export function MenuVet() {
       break;
   }
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <ChakraProvider>
-        <AdminContainer>
-          <Flex direction="column" h="100vh">
-            <Header title="Painel Veterinário" />
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
-              <GenericSidebar>
-                <GenericLink
-                  name="Pesquisar Cliente"
-                  icon={AiOutlineSearch}
-                  path="/Vets/Menu"
-                />
-              </GenericSidebar>
-              <Box flex="1" borderRadius={8} bg="gray.200" p="8">
-                <Flex mb="8" gap="8" direction="column" align="center">
-                  <VetsSearch path="filtredquery" />
-                  <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
-                    <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
-                  </Button>
-                  <Flex textAlign="center" justify="center">
-                    {typeTable}
-                  </Flex>
+    <ChakraProvider>
+      <AdminContainer>
+        <Flex direction="column" h="100vh">
+          <Header title="Painel Veterinário" url="/Home" />
+          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+            <GenericSidebar>
+              <GenericLink
+                name="Pesquisar Cliente"
+                icon={AiOutlineSearch}
+                path="/Vets/Menu"
+              />
+            </GenericSidebar>
+            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+              <Flex mb="8" gap="8" direction="column" align="center">
+                <VetsSearch path="filtredquery" />
+                <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
+                  <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
+                </Button>
+                <Flex textAlign="center" justify="center">
+                  {typeTable}
                 </Flex>
-              </Box>
-            </Flex>
+              </Flex>
+            </Box>
           </Flex>
-        </AdminContainer>
-      </ChakraProvider>
-    </motion.div>
+        </Flex>
+      </AdminContainer>
+    </ChakraProvider>
   );
 }

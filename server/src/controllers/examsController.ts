@@ -110,21 +110,33 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
         examsType: getExame.examsType,
         medicine: {connect: {id: parseInt(recordId)}} }})
 
+
         await accumulatorService.addPriceToAccum(getExame.price, accId)
 
         reply.status(201)
+
+
+
     } catch (error) {
         reply.status(400).send({message: error})
         console.log(error)
     }
  },
 
- removePetExam: async (request: FastifyRequest<{ Params: { id: string;}}>, reply: FastifyReply) => {
-    const {id} = request.params
+ removePetExam: async (request: FastifyRequest<{ Params: { id: string; accId: string; examPrice: string;}}>, reply: FastifyReply) => {
+    const {id, accId, examPrice} = request.params
     try {
+
+        await accumulatorService.removePriceToAccum(Number(examPrice), accId)
+
         await prisma.examsForPet.delete({
             where: {id: parseInt(id)}
         })
+
+         
+       
+       
+       
         reply.status(200).send("Sucesso ao deletar")
     } catch (error) {
         console.log(error)

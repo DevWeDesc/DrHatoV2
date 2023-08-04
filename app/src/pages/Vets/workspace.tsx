@@ -27,14 +27,14 @@ import {
   MdPets,
   TbArrowBack,
   TbMedicalCrossFilled,
+  CiStethoscope,
+  MdAttachMoney
+ 
 } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
-import { LoadingSpinner } from "../../components/Loading";
-import { SetExamForm } from "../../components/workspaceVet/SetExamForm";
 import { GenericModal } from "../../components/Modal/GenericModal";
-import { VetInstructions } from "./WorkSpaceVets/instructions";
 import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
 import { PetDetaisl } from "../../interfaces";
 import { motion } from "framer-motion";
@@ -144,7 +144,7 @@ export function WorkSpaceVet() {
               </Tr>
             </Thead>
             <Tbody>
-              {pet.surgeries?.map((surgerie) => (
+              {pet.surgeries?.map((surgerie: any) => (
                 <Tr key={surgerie.id}>
                   <Td>
                     {surgerie.completedDate
@@ -235,7 +235,7 @@ export function WorkSpaceVet() {
                   PROTOCOLOS
                 </Button>
                 <Button
-                 isDisabled={pet.isBusy}
+                  isDisabled={pet.isBusy}
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Exam/${id}`)}
@@ -243,9 +243,7 @@ export function WorkSpaceVet() {
                   EXAMES
                 </Button>
                 <Button
-
-               isDisabled={pet.isBusy}
-
+                  isDisabled={pet.isBusy}
                   onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}
                   height={8}
                   colorScheme="whatsapp"
@@ -253,9 +251,7 @@ export function WorkSpaceVet() {
                   PROCEDIMENTOS
                 </Button>
                 <Button
-
-                 isDisabled={pet.isBusy}
-
+                  isDisabled={pet.isBusy}
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)}
@@ -263,8 +259,7 @@ export function WorkSpaceVet() {
                   VACINAS
                 </Button>
                 <Button
-              isDisabled={pet.isBusy}
-
+                  isDisabled={pet.isBusy}
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Surgeries/${id}`)}
@@ -272,9 +267,7 @@ export function WorkSpaceVet() {
                   CIRURGIAS
                 </Button>
                 <Button
-
-            isDisabled={pet.isBusy}
-
+                  isDisabled={pet.isBusy}
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => navigate(`/WorkSpace/Admissions/${id}`)}
@@ -290,6 +283,24 @@ export function WorkSpaceVet() {
                 >
                   PRONTUÁRIO DO PET
                 </Button>
+                <Button
+                  height={8}
+                  onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}
+                  leftIcon={<CiStethoscope fill="white" size={24} />}
+                  colorScheme="red"
+                >
+                   Concluir Consulta
+                </Button>
+
+                <Button
+                  height={8}
+                  onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}
+                  leftIcon={<MdAttachMoney fill="white" size={24} />}
+                  colorScheme="whatsapp"
+                >
+                   Total nessa consulta: {pet.totalAcc?.price}
+                </Button>
+               
               </Flex>
             </Flex>
           </WorkSpaceHeader>

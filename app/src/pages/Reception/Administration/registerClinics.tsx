@@ -299,14 +299,14 @@ export function RegisterClinics() {
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
-                  name="Painel de Pagamentos"
+                  name="Financeiro"
                   icon={MdOutlinePayments}
-                  path={`/Recepcao/Caixa/Pagamentos`}
+                  path={`/Recepcao/Finance`}
                 />{" "}
                 <GenericLink
-                  name="Painel de Devoluções"
+                  name="Cadastro de Raças"
                   icon={GiCardDiscard}
-                  path={`/Recepcao/Caixa/Returns`}
+                  path={`/Recepcao/CadastroRaças`}
                 />{" "}
                 <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
               </GenericSidebar>

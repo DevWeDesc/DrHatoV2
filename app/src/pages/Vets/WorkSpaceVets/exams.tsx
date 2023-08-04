@@ -41,7 +41,7 @@ export function VetExams() {
 
   async function setExamInPet() {
     try {
-      await api.post(`/setexam/${examId}/${petDetails.recordId}/${petDetails.totalAcc.id}`);
+      api.post(`/setexam/${examId}/${petDetails.recordId}/${petDetails.totalAcc.id}`);
       setReloadData(true);
       toast.success("Exame criado com Sucesso");
     } catch (error) {
@@ -49,14 +49,14 @@ export function VetExams() {
     }
   }
 
-  async function deleteExam(examId: string | number) {
+  async function deleteExam(examId: string | number, examPrice: string | number) {
     try {
       const confirmation = window.confirm(
         "DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
       );
 
       if (confirmation === true) {
-        await api.delete(`/petexam/${examId}`);
+        await api.delete(`/petexam/${examId}/${petDetails.totalAcc.id}/${examPrice}`);
         setReloadData(true);
         toast.warning("Deletado com sucesso!");
       } else {
@@ -158,7 +158,7 @@ export function VetExams() {
                     <Td border="2px" fontSize="1xl" fontWeight="bold">
                       <Button
                         colorScheme="red"
-                        onClick={() => deleteExam(exam.id)}
+                        onClick={() => deleteExam(exam.id, exam.price)}
                       >
                         EXCLUIR ?
                       </Button>

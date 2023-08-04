@@ -22,7 +22,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
     const pet = await prisma.pets.findUnique({ where: { id : parseInt(id)}, 
     include: {customer: 
       {select: { name: true, id: true, balance: true, pets: true}}, 
-      medicineRecords: {select: {petExams: true, observations: true, id: true, petVaccines: true, petSurgeries: true, petProcedures: true }},
+      medicineRecords: {select: {petExams: true, observations: true, id: true, petVaccines: true, petSurgeries: true, petProcedures: true, petBeds: {where: {isCompleted: false}} }},
       queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true}},
       bed: {select: {isBusy: true, entryOur: true, id: true, kennel: {select: {name: true, price: true}}, dailyRate: true, mustFasting: true}},
       priceAccumulator: {select: {id: true, accumulator: true}}
@@ -100,14 +100,24 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
           requested: procedure.requestedDate
         }
         return procedureData;
-       })   ,
+       }),
+       admissions: pet?.medicineRecords?.petBeds.map((bed) => {
+        let bedData = {
+          id: bed.id,
+          entry: bed.entryOur,
+          exit: bed.exitOur,
+          totalDebit: bed.totalDebt,
+          fasting: bed.mustFasting,
+          observations: bed.admissionsObservations
+        } 
+        return bedData
+       }) ,
       queue: pet?.queue,
       totalAcc: {
         id: pet?.priceAccumulator?.id,
         price: pet?.priceAccumulator?.accumulator
-       
+
       }
-      
     }
     return reply.send(petData)
   } catch (error) {
