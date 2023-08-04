@@ -147,24 +147,19 @@ export interface SugeriesProps {
       }
 
   type QueueProps = {
+        id: string | number;
         moreInfos: string;
         queueOur: string;
         vetPreference: string;
+        queueEntry: Date;
+        queryType: string;
       };
 
-<<<<<<< HEAD
       type totalAccProps = {
         id: number;
         price: number | string;
          } 
          
-=======
-
-  type totalAccProps = {
-    id: number;
-    price: number | string;
-     } 
->>>>>>> 3f198a2b15d87d7701a8dc83bacbeac2618d5991
   type customerPetsProps = {
     id: number;
     name: string;
@@ -225,8 +220,5 @@ export interface PetDetaisl {
   bedInfos: BedInfosProps;
   isBusy: boolean;
   totalAcc: totalAccProps;
-<<<<<<< HEAD
   admissions: AdmissionsProps[];
-=======
->>>>>>> 3f198a2b15d87d7701a8dc83bacbeac2618d5991
 }

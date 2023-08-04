@@ -113,7 +113,7 @@ export function Customer() {
       const data = {
         vetPreference: vetPreference,
         queryType: queryType,
-        queueEntry: processData,
+        queueEntry: formattedData,
         petIsInQueue: true,
         moreInfos: moreInfos,
         queueOur: currentDateTime,

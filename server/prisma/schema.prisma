@@ -110,7 +110,8 @@ model MedicineRecord {
   petSurgeries  SurgeriesForPet[]
   petProcedures ProceduresForPet[]
   petBeds       BedsForPet[]
-}
+  petQueues     QueuesForPet[]
+} 
 
 model Exams {
   id               Int       @id @default(autoincrement())
@@ -197,11 +198,24 @@ model Queues {
   pet_id        Int      @unique
   queryType     String?
   vetPreference String?
-  queueEntry    String?
+  queueEntry    DateTime?
+  queueExit     DateTime?
   queueOur      String?
   moreInfos     String?
   petIsInQueue  Boolean? @default(false)
   pets          Pets     @relation(fields: [pet_id], references: [id])
+}
+
+model QueuesForPet {
+  id            Int      @id @default(autoincrement())
+  queueEntry    DateTime?
+  queueExit     DateTime?
+  queryType     String?
+  debitOnThisQuery Decimal?
+  responsibleVeterinarian String?
+  medicine_id        Int
+  medicine           MedicineRecord @relation(fields: [medicine_id], references: [id])
+
 }
 
 model Kennel {

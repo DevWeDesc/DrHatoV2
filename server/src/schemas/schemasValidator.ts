@@ -88,11 +88,15 @@ export const BedSchema = z.object({
 
 export const QueueSchema = z.object({
   vetPreference: z.string().optional(),
-  queueEntry:  z.string().optional(),
+  queueEntry:  z.any().optional(),
+  queueExit: z.any().optional(),
   queueOur: z.string().optional(),
+  debitOnThisQuery: z.number().optional(),
+  responsibleVeterinarian: z.string().optional(),
   moreInfos: z.string().optional(),
   queryType: z.string().optional(),
-  petIsInQueue: z.boolean().optional()
+  petIsInQueue: z.boolean().optional(),
+  
 })
 
 export const ExamsType = ["lab", "image"]
