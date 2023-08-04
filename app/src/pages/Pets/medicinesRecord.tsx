@@ -9,8 +9,11 @@ import {
   Tr,
   Text,
   Button,
+  TableContainer,
+  Input,
+  Textarea,
 } from "@chakra-ui/react";
-import {BiHome, TbArrowBack } from 'react-icons/all'
+import { BiHome, TbArrowBack } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { api } from "../../lib/axios";
@@ -38,7 +41,6 @@ interface PetProps {
   customerName: string;
   codPet: string;
 }
-
 
 export function MedicineRecords() {
   const { id } = useParams<{ id: string }>();
@@ -89,80 +91,70 @@ export function MedicineRecords() {
             direction="column"
             shadow="4px 0px 10px -2px rgba(0, 0, 0, 0.2)"
             zIndex="1"
-            w="30%"
+            w="100%"
           >
             <Flex
+              p="4"
+              gap={4}
               w="100%"
-              h="30%"
-              direction="row"
-              justify="space-evenly"
-              rounded={4}
-              align="center"
-              className="onemain"
+              fontSize="18"
+              justifyContent="center"
+              direction="column"
             >
-              <Flex
-                p="4"
-                gap={4}
-                w="100%"
-                fontSize="18"
-                h="100%"
-                justifyContent="center"
-                direction="column"
-              >
-                <Flex alignItems="center">
-                  <Text w="9rem" fontWeight="bold">
-                    Cliente
-                  </Text>
-                  <Text
-                    fontWeight="bold"
-                    w="100%"
-                    border="2px"
-                    rounded={8}
-                    p="2"
-                    bgColor="gray.100"
-                  >
-                    {pets.customerName}
-                  </Text>
-                </Flex>
-                <Flex alignItems="center">
-                  <Text fontWeight="bold" w="9rem">
-                    Pet
-                  </Text>
-                  <Text
-                    fontWeight="bold"
-                    w="100%"
-                    display="flex"
-                    alignItems="center"
-                    px="3"
-                    border="2px"
-                    height="78px"
-                    rounded={8}
-                    bgColor="gray.100"
-                  >
-                    {`Nome: ${pets.name}, Raça: ${pets.race}, Peso: ${pets.weigth}Kg's,  Sexo ${pets.sexo}, Cor: ${pets.corPet} `}
-                  </Text>
-                </Flex>
-                <Flex alignItems="center">
-                  <Text fontWeight="bold" w="9rem">
-                    Código Único
-                  </Text>
-                  <Text
-                    fontWeight="bold"
-                    w="100%"
-                    display="flex"
-                    alignItems="center"
-                    px="3"
-                    height="48px"
-                    border="2px"
-                    rounded={8}
-                    bgColor="gray.100"
-                    textAlign="center"
-                  >
-                    {pets.codPet}
-                  </Text>
-                </Flex>
-              </Flex>
+              <TableContainer w="100%">
+                <Table variant="simple" w="100%">
+                  <Tbody>
+                    <Tr>
+                      <Th py="0" px="0" fontSize="18" w="30px">
+                        Cliente
+                      </Th>
+                      <Th py="0" px="0">
+                        <Input
+                          py="6"
+                          rounded="0"
+                          borderColor="black"
+                          value={pets.customerName}
+                        />
+                      </Th>
+                    </Tr>
+                    <Tr>
+                      <Th py="0" px="0" fontSize="18" color="black" w="30px">
+                        Pet
+                      </Th>
+                      <Td py="0" px="0">
+                        <Input
+                          py="6"
+                          rounded="0"
+                          borderColor="black"
+                          value={`Nome: ${pets.name}, Raça: ${pets.race}, Peso: ${pets.weigth}Kg's,  Sexo ${pets.sexo}, Cor: ${pets.corPet} `}
+                        />
+                      </Td>
+                    </Tr>
+                    <Tr py="0">
+                      <Th
+                        py="0"
+                        px="0"
+                        pr="5"
+                        fontSize="18"
+                        color="black"
+                        w="30px"
+                      >
+                        Código Único
+                      </Th>
+                      <Td py="0" px="0">
+                        <Input
+                          py="6"
+                          rounded="0"
+                          borderColor="black"
+                          value={pets.codPet}
+                        />
+                      </Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+              </TableContainer>
             </Flex>
+
             <Flex
               direction="column"
               w="100%"
@@ -183,42 +175,271 @@ export function MedicineRecords() {
                 </Button>
               </Flex>
               <Flex h="100%" w="100%" overflow="auto">
-                <Flex w="100%" h="auto" direction="column" fontSize="17" m="2">
-                  <Text
-                    fontWeight="bold"
-                    w="100%"
-                    h="38px"
-                    bgColor="cyan.50"
-                    textDecoration="underline"
-                  >
-                    {" "}
-                    27/06/2023 - 17:30 Consulta ESP Dr Daniel Henrique
-                  </Text>
-                  <Text
-                    fontWeight="bold"
-                    w="100%"
-                    h="38px"
-                    bgColor="cyan.50"
-                    textDecoration="underline"
-                  >
-                    <span
-                      className="textSpan"
-                      style={{ backgroundColor: "#e3f1ef" }}
-                    >
-                      Peso Época:
-                    </span>{" "}
-                    5,9 Kgs
-                  </Text>
-                  <Text
-                    fontWeight="bold"
-                    w="100%"
-                    h="58px"
-                    bgColor="cyan.50"
-                    textDecoration="underline"
-                  >
-                    Observações: Não há observações registradas nessa consulta
-                  </Text>
-                </Flex>
+                <TableContainer w="100%" overflowY="auto">
+                  <Table variant="simple" overflow="auto">
+                    <Tbody overflow="auto">
+                      <Tr>
+                        <Th
+                          colSpan={2}
+                          fontSize="16"
+                          borderColor="black"
+                          borderTop="1px solid black"
+                          bg="gray.300"
+                        >
+                          19/17/23 - Das 14:36 até 14:46 - Retorno - Dr.(a) José
+                          Ricardo Fusaro Serra
+                        </Th>
+                      </Tr>
+                      <Tr>
+                        <Th
+                          fontSize="16"
+                          bg="gray.300"
+                          borderColor="black"
+                          w="30px"
+                          borderRight="1px solid black"
+                        >
+                          Peso à Época
+                        </Th>
+                        <Th fontSize="16" borderColor="black">
+                          3,45Kgs.
+                        </Th>
+                      </Tr>
+                      <Tr p="0">
+                        <Th
+                          fontSize="16"
+                          bg="gray.300"
+                          borderColor="black"
+                          w="30px"
+                        >
+                          Sintomas
+                        </Th>
+                        <Th p="0">
+                          <Textarea
+                            minH="110px"
+                            h="100%"
+                            bg="white"
+                            borderColor="black"
+                            rounded="0"
+                            value="Retorno
+
+Veio retirar resultado de exames com várias alterações, porém não trouxe paciente, irá retornar para aplicação de convênia e receita (estava com duas crianças que não a deixavam conversar)"
+                          ></Textarea>
+                        </Th>
+                      </Tr>
+                    </Tbody>
+                    <Tbody>
+                      <Tr>
+                        <Th
+                          colSpan={2}
+                          fontSize="16"
+                          borderColor="black"
+                          borderTop="1px solid black"
+                          bg="gray.300"
+                        >
+                          13/07/23 - Das 13:38 até : 15:21 - Telefone - Dr.(a)
+                          José Ricardo Fusaro Serra
+                        </Th>
+                      </Tr>
+                      <Tr>
+                        <Th
+                          fontSize="16"
+                          bg="gray.300"
+                          borderColor="black"
+                          w="30px"
+                          borderRight="1px solid black"
+                        >
+                          Peso à Época
+                        </Th>
+                        <Th fontSize="16" borderColor="black">
+                          3,45Kgs.
+                        </Th>
+                      </Tr>
+                      <Tr p="0">
+                        <Th
+                          fontSize="16"
+                          bg="gray.300"
+                          borderColor="black"
+                          w="30px"
+                        >
+                          Sintomas
+                        </Th>
+                        <Th p="0">
+                          <Textarea
+                            minH="110px"
+                            h="100%"
+                            bg="white"
+                            borderColor="black"
+                            rounded="0"
+                            value="Conversado com tutora sobre resultado de exames."
+                          ></Textarea>
+                        </Th>
+                      </Tr>
+                    </Tbody>
+                    <Tbody>
+                      <Tr>
+                        <Th
+                          colSpan={2}
+                          fontSize="16"
+                          borderColor="black"
+                          borderTop="1px solid black"
+                          bg="gray.300"
+                        >
+                          12/07/23 - Das 11:39 até : 12:14 - Retorno - Dr.(a)
+                          Henrique Magoga
+                        </Th>
+                      </Tr>
+                      <Tr>
+                        <Th
+                          fontSize="16"
+                          bg="gray.300"
+                          borderColor="black"
+                          w="30px"
+                          borderRight="1px solid black"
+                        >
+                          Peso à Época
+                        </Th>
+                        <Th fontSize="16" borderColor="black">
+                          3,45Kgs.
+                        </Th>
+                      </Tr>
+                      <Tr p="0">
+                        <Th
+                          fontSize="16"
+                          bg="gray.300"
+                          borderColor="black"
+                          w="30px"
+                        >
+                          Sintomas
+                        </Th>
+                        <Th p="0">
+                          <Textarea
+                            minH="550px"
+                            borderBottom="2px solid black"
+                            bg="white"
+                            borderColor="black"
+                            rounded="0"
+                            value="Retorno
+
+Relata que apresentou diarreia de ontem para hoje.
+Não apresentou emese.
+Refere que depois da fluido o animal ficou mais esperto, se alimentou.
+Animal tinha acesso a rua, há 6 meses esta confinado.
+                            
+TUTORA MUITO CONFUSA, NAO PARA DE ME CORTAR ENQUANTO EU FALO !!
+                            
+Passado resultado de ultrassom - ínfima quantidade de liquido livre;
+Inflamação em alças intestinais;
+Figado toxemico;
+Pancreatopatia
+Linfonodos jejunais aumentados.
+                            
+Conversado sobre possibilidade aumento de linfonodos / liquido livre ser devido ao processo inflamatório intenso, mas não descartando a possibilidade de linfoma primário ou secundário a felv (já que o animal tinha acesso a rua).
+                            
+Enquanto eu falava tutora ficou pedindo para passar antibiótico que o animal iria ficar bem
+                            
+Recoletado hemograma. 
+                            
+Ligar amanha para resultado do hg .. retornar em 10d ou antes se necessario"
+                          ></Textarea>
+                        </Th>
+                      </Tr>
+                      <Tr p="0">
+                        <Th
+                          fontSize="16"
+                          bg="gray.300"
+                          borderColor="black"
+                          w="30px"
+                        >
+                          Prescrição
+                        </Th>
+                        <Th p="0">
+                          <Textarea
+                            minH="330px"
+                            borderBottom="2px solid black"
+                            bg="white"
+                            borderColor="black"
+                            rounded="0"
+                            value="USO ORAL
+
+GAVIZ 10 (VETERINARIO) ________________________ CX
+ADMINISTRAR 1/2 (MEIO) COMPRIMIDO A CADA 12H DURANTE 10 DIAS
+* 30 MINUTOS ANTES DAS OUTRAS MEDICACOES
+                            
+METRONIDAZOL 250 (HUMANO) ___________________CX
+ADMINISTRAR 1/4 (UM QUARTO) DO COMPRIMIDO A CADA 12H DURANTE 10 DIAS
+                            
+PREDINISOLONA 5MG (HUMANO) __________________CX
+ADMINISTRAR 3/4 (TRES QUARTOS) DO COMPRIMIDO A CADA 24H DURANTE 10 DIAS
+                            
+- LIGAR EM 24H PARA RESULTADO DO HEMOGRAMA
+- RETORNAR EM 10 DIAS OU ANTES SE NECESSARIO"
+                          ></Textarea>
+                        </Th>
+                      </Tr>
+                    </Tbody>
+                    <Tbody>
+                      <Tr>
+                        <Th
+                          colSpan={2}
+                          fontSize="16"
+                          borderColor="black"
+                          borderTop="1px solid black"
+                          bg="gray.300"
+                        >
+                          11/07/23 - Das 12:24 até : 12:56 - Consulta - Dr.(a)
+                          José Ricardo Fusaro Serra
+                        </Th>
+                      </Tr>
+                      <Tr>
+                        <Th
+                          fontSize="16"
+                          bg="gray.300"
+                          borderColor="black"
+                          w="30px"
+                          borderRight="1px solid black"
+                        >
+                          Peso à Época
+                        </Th>
+                        <Th fontSize="16" borderColor="black">
+                          3,45Kgs.
+                        </Th>
+                      </Tr>
+                      <Tr p="0">
+                        <Th
+                          fontSize="16"
+                          bg="gray.300"
+                          borderColor="black"
+                          w="30px"
+                        >
+                          Sintomas
+                        </Th>
+                        <Th p="0">
+                          <Textarea
+                            minH="330px"
+                            h="100%"
+                            borderBottom="2px solid black"
+                            bg="white"
+                            borderColor="black"
+                            rounded="0"
+                            value="Alega paciente apresentar êmese algumas vezes após se alimentar.
+Alega paciente estar se alimentando normalmente
+Alega Fezes e urina normais
+Alega paciente com vacinas em dia porem não apresentou carteira de vacinação.
+                            
+                            
+EF.: Paciente apresentou parâmetros normais, alerta e responsivo, eupineico, normocorado, não apresentou dor abdominal a palpação, apresenta desidratação moderada.
+                            
+Coletados Hemograma e bioquímico
+                            
+Aplicado R/L, Acetil e CB
+                            
+Solicirado Ultrassom Abdominal"
+                          ></Textarea>
+                        </Th>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </TableContainer>
               </Flex>
             </Flex>
           </Flex>

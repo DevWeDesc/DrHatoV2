@@ -32,6 +32,8 @@ import {
 } from "../Vets/styles";
 import { PetProps } from "../Pets/details";
 import { DbContext } from "../../contexts/DbContext";
+import { GenericModal } from "../../components/Modal/GenericModal";
+import { CreatePetsForm } from "../../components/Forms/CreatePetsForm";
 
 interface CustomerProps {
   id: string | number;
@@ -71,15 +73,24 @@ export function Customer() {
     rg: "",
   });
   const [petSelected, setPetSelected] = useState<any>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [reload, setReload] = useState(false);
 
   console.log(petSelected);
+  async function loadCustomer() {
+    const response = await api.get(`/customers/${id}`);
+    setCustomer(response.data);
+  }
   useEffect(() => {
-    async function loadCustomer() {
-      const response = await api.get(`/customers/${id}`);
-      setCustomer(response.data);
-    }
     loadCustomer();
   }, [id]);
+
+  useEffect(() => {
+    if (reload != false) {
+      loadCustomer();
+    }
+    setReload(true);
+  });
 
   async function setPetInQueue() {
     if (queryType == "" || petId == "" || vetPreference == "") {
@@ -284,10 +295,11 @@ export function Customer() {
                   SELECIONE UM ANIMAL PARA CONTINUAR
                 </Text>
                 <Button
-                  onClick={() =>
-                    navigate(
+                  onClick={
+                    () => setModalOpen(true)
+                    /*navigate(
                       `/Recepcao/Consultas/Clientes/Pets/Create/${customer.id}`
-                    )
+                    )*/
                   }
                   mb="2"
                   colorScheme="teal"
@@ -643,6 +655,20 @@ export function Customer() {
             >
               GRAVAR
             </Button>
+            <GenericModal
+              isOpen={modalOpen}
+              onRequestClose={() => setModalOpen(false)}
+            >
+              <Text
+                fontWeight="bold"
+                fontSize="2xl"
+                w="100%"
+                textAlign="center"
+              >
+                Cadastro de Animal
+              </Text>
+              <CreatePetsForm reloadPets={reload} />
+            </GenericModal>
           </Flex>
         </WorkSpaceContent>
       </WorkSpaceContainer>

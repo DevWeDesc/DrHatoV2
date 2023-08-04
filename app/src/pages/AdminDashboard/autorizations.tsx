@@ -3,7 +3,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Flex } from "@chakra-ui/react";
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
-import AutorizationsMenu from "../../components/Autorizations";
+import AutorizationsMenu from "../../components/administration/Autorizations";
 
 export function Autorizations() {
   return (
