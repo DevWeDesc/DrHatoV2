@@ -16,6 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import logo from "../../../assets/logoPadronizada.png";
 import petlove from "../../../assets/petlove.svg";
+import { PetDetaisl } from "../../../interfaces";
 import { api } from "../../../lib/axios";
 
 
@@ -50,10 +51,13 @@ export function VetsAdmissions() {
   const navigate = useNavigate();
   const [kennels, setKennels] = useState<KennelsProps[]>([])
   const [beds, setBeds] = useState<Kennels[]>([])
+  const [petDetails, setPetDetails] = useState({} as PetDetaisl)
 
   async function GetAllBeds() {
     const response = await api.get("/admittedpet")
+    const petres = await api.get(`/pets/${id}`)
     setBeds(response.data)
+    setPetDetails(petres.data)
   }
 
   const nextStep = () => {
@@ -87,13 +91,11 @@ export function VetsAdmissions() {
 
   useEffect(() => {
     getKennesl()
+    GetAllBeds()
   }
   ,[])
 
-  useEffect(() => {
 
-    GetAllBeds()
-  },[])
 
 
   const handleAdmittPet = async () => {
@@ -103,6 +105,7 @@ export function VetsAdmissions() {
       bedId,
       isBusy: true,
       mustFasting: fasting,
+      recordId: petDetails.recordId,
       dailyRate: dailyRateState
     }
     try {

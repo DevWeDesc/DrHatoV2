@@ -83,6 +83,7 @@ export const BedSchema = z.object({
   bedId: z.number(),
   entryOur: z.date().optional(),
   dailyRate: z.number().optional(),
+  recordId: z.number(),
 })
 
 export const QueueSchema = z.object({
