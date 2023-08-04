@@ -35,9 +35,11 @@ import { VetsSearch } from "../../../components/Search/vetsSearch";
 import { motion } from "framer-motion";
 import { PaymentsSearch } from "../../../components/Search/paymentsSearch";
 import { GiCardDiscard } from "react-icons/gi";
-import { BsCashCoin } from "react-icons/bs";
+import { BsCashCoin, BsReception4 } from "react-icons/bs";
 import { BiHome } from "react-icons/all";
 import { MdOutlinePayments } from "react-icons/all";
+import { RiLockPasswordFill } from "react-icons/all";
+import { GiMedicines } from "react-icons/gi";
 
 interface QueueProps {
   response: [];
@@ -249,20 +251,29 @@ export function ToolsTable() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Tabela" />
+            <Header title="Tabela" url="/Recepcao" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
-                  name="Painel de Pagamentos"
-                  icon={MdOutlinePayments}
-                  path={`/Recepcao/Caixa/Pagamentos`}
+                  name="Recepção"
+                  icon={BsReception4}
+                  path={`/Recepcao/`}
+                />
+                <GenericLink
+                  name="Trocar Senha"
+                  icon={RiLockPasswordFill}
+                  path={`/Recepcao/Ferramentas/TrocaDeSenha/${1}`}
                 />{" "}
                 <GenericLink
-                  name="Painel de Devoluções"
+                  name="Autorizações"
                   icon={GiCardDiscard}
-                  path={`/Recepcao/Caixa/Returns`}
+                  path={`/Recepcao/Ferramentas/Autorizacao`}
                 />{" "}
-                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
+                <GenericLink
+                  name="Medicamentos"
+                  icon={GiMedicines}
+                  path={`/Medicines`}
+                />{" "}
               </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <Flex mb="8" gap="8" direction="column" align="center">

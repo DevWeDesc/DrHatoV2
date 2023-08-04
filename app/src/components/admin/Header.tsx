@@ -11,8 +11,9 @@ import { DbContext } from "../../contexts/DbContext";
 
 interface HeaderProps {
   title: string;
+  url: string;
 }
-export function Header({ title = "Painel Administrativo" }: HeaderProps) {
+export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
   const user = JSON.parse(localStorage.getItem("user") as string);
   return (
     <Flex
@@ -71,7 +72,7 @@ export function Header({ title = "Painel Administrativo" }: HeaderProps) {
           <Text fontSize="md" fontWeight="bold">
             {user.username}
           </Text>
-          <Link to="/Home">
+          <Link to={url}>
             <Button colorScheme="yellow" leftIcon={<TbArrowBack size={24} />}>
               Voltar
             </Button>

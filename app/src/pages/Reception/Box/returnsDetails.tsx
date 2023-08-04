@@ -25,7 +25,7 @@ import { useParams } from "react-router-dom";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
 import { BiHome } from "react-icons/bi";
-import { BsCashCoin } from "react-icons/bs";
+import { BsCashCoin, BsReception4 } from "react-icons/bs";
 import { GiCardDiscard } from "react-icons/gi";
 
 export function BoxReturnsDetails() {
@@ -52,20 +52,24 @@ export function BoxReturnsDetails() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Devoluções" />
+            <Header
+              title="Painel de Devoluções"
+              url="/Recepcao/Caixa/Returns/"
+            />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
+                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
                 <GenericLink
-                  name="Painel de Pagamentos"
-                  icon={BsCashCoin}
-                  path="/Recepcao/Caixa/Pagamentos"
+                  name="Recepção"
+                  icon={BsReception4}
+                  path={`/Recepcao/`}
                 />
+
                 <GenericLink
                   name="Painel de Devoluções"
                   icon={GiCardDiscard}
                   path="/Recepcao/Caixa/Returns"
                 />
-                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
               </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <TableContainer>

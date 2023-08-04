@@ -26,6 +26,8 @@ import {
   IoIosFlask,
   BsImages,
   AiOutlineSearch,
+  TbVaccine,
+  FaClipboardList,
 } from "react-icons/all";
 import { AdminContainer } from "../AdminDashboard/style";
 import { LabsSearch } from "../../components/Search/labsSearch";
@@ -271,13 +273,23 @@ export function LabExames() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel Veterinário" />
+            <Header title="Painel Veterinário" url="/Home" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
                   name="Pesquisar Cliente"
                   icon={AiOutlineSearch}
                   path="/Vets/Menu"
+                />
+                <GenericLink
+                  name="Internações"
+                  icon={FaClipboardList}
+                  path="/Admissions"
+                />
+                <GenericLink
+                  name="Vacinas"
+                  icon={TbVaccine}
+                  path="/Recepcao/Internacoes/Vacinas"
                 />
                 <GenericLink name="Recepção" icon={BiHome} path="/Recepcao" />
               </GenericSidebar>

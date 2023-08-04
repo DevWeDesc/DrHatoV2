@@ -25,9 +25,10 @@ import { api } from "../../../lib/axios";
 import { useParams } from "react-router-dom";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
-import { AiOutlineSearch } from "react-icons/ai";
 import { GiCardDiscard } from "react-icons/gi";
 import { BsCashCoin } from "react-icons/bs";
+import { BsReception4 } from "react-icons/bs";
+import { BiHome } from "react-icons/bi";
 
 export function BoxNewPayments() {
   const [customers, setCostumers] = useState([]);
@@ -87,9 +88,17 @@ export function BoxNewPayments() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh" maxWidth={1680}>
-            <Header title=" Conta Corrente - Novo Lançamento" />
+            <Header
+              title=" Conta Corrente - Novo Lançamento"
+              url={`/Recepcao/Caixa/Pagamentos/${id}`}
+            />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
+                <GenericLink
+                  name="Recepção"
+                  icon={BsReception4}
+                  path={`/Recepcao/`}
+                />
                 <GenericLink
                   name="Painel de Pagamentos"
                   icon={BsCashCoin}

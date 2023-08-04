@@ -20,7 +20,7 @@ import { useContext, useEffect, useState } from "react";
 import { Header } from "../../components/admin/Header";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import { AiOutlineSearch } from "react-icons/all";
+import { AiOutlineSearch, FaClipboardList, TbVaccine } from "react-icons/all";
 import { AdminContainer } from "../../pages/AdminDashboard/style";
 import { Link, useNavigate } from "react-router-dom";
 import { DbContext } from "../../contexts/DbContext";
@@ -67,18 +67,18 @@ export function SearchAdmission() {
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Painel de Internações" />
+          <Header title="Painel de Internações" url="/Recepcao" />
           <Flex w="100%" my="6" mx="auto" px="6">
             <GenericSidebar>
               <GenericLink
-                name="Pesquisar Cliente"
-                icon={AiOutlineSearch}
-                path="/Vets/Menu"
+                name="Exames"
+                icon={FaClipboardList}
+                path="/Labs/Exames"
               />
               <GenericLink
-                name="Protocolos"
-                icon={SiProtocolsdotio}
-                path="/Admissions/Protocols"
+                name="Vacinas"
+                icon={TbVaccine}
+                path="/Recepcao/Internacoes/Vacinas"
               />
               <GenericLink name="Recepção" icon={BiHome} path="/Recepcao" />
             </GenericSidebar>

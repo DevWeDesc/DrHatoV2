@@ -276,7 +276,7 @@ export function BreedRegistry() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Cadastro de Raças" />
+            <Header title="Cadastro de Raças" url="/Recepcao" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink

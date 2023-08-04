@@ -30,8 +30,9 @@ import { ReturnsSearch } from "../../../components/Search/returnsSearch";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { AiOutlineSearch } from "react-icons/ai";
-import { GiCardDiscard } from "react-icons/gi";
-import { BsCashCoin } from "react-icons/bs";
+import { GiCardDiscard, GiMedicines } from "react-icons/gi";
+import { BsCashCoin, BsReception4, BsTable } from "react-icons/bs";
+import { RiLockPasswordFill } from "react-icons/all";
 import { BiHome } from "react-icons/all";
 
 interface QueueProps {
@@ -244,15 +245,29 @@ export function ToolsAutorizations() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Autorizações" />
+            <Header title="Painel de Autorizações" url="/Recepcao" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
-                  name="Painel de Pagamentos"
-                  icon={BsCashCoin}
-                  path="/Recepcao/Caixa/Pagamentos"
+                  name="Recepção"
+                  icon={BsReception4}
+                  path={`/Recepcao/`}
                 />
-                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
+                <GenericLink
+                  name="Tabela de Preços"
+                  icon={BsTable}
+                  path={`/Recepcao/Ferramentas/Tabela`}
+                />{" "}
+                <GenericLink
+                  name="Trocar de Senha"
+                  icon={RiLockPasswordFill}
+                  path={`/Recepcao/Ferramentas/TrocaDeSenha/${1}`}
+                />{" "}
+                <GenericLink
+                  name="Medicamentos"
+                  icon={GiMedicines}
+                  path={`/Medicines`}
+                />{" "}
               </GenericSidebar>
               <Box
                 flex="1"

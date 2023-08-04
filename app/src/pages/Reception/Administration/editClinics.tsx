@@ -79,7 +79,10 @@ export function EditClinics() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Cadastro de Clínicas" />
+            <Header
+              title="Cadastro de Clínicas"
+              url="/Recepcao/RegistroClinicas"
+            />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink

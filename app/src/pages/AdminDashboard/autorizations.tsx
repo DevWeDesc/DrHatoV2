@@ -28,8 +28,7 @@ import { Icon } from "@chakra-ui/react";
 import { RiAddLine } from "react-icons/ri";
 import { Heading } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import Cookies from 'js-cookie'
-
+import Cookies from "js-cookie";
 
 export function Autorizations() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,14 +37,14 @@ export function Autorizations() {
   const [reloadData, setReloadData] = useState<boolean>(false);
   const [allAutorization, setAllAutorization] = useState([]);
   const autorizations = autorization ? autorization : null;
-  const token = Cookies.get("token") ? Cookies.get("token") : ""
+  const token = Cookies.get("token") ? Cookies.get("token") : "";
   const handleAutorization: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
         name: values.name,
         text: values.text,
       };
-      await api.post("autorizations", data, {headers: {'token': `${token}`} });
+      await api.post("autorizations", data, { headers: { token: `${token}` } });
       setReloadData(true);
       toast.success("Autorização criada com sucesso");
     } catch (error) {
@@ -87,9 +86,9 @@ export function Autorizations() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Autorizações" />
+            <Header title="Painel de Autorizações" url="/Admin/" />
 
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <Sidebar />
 
               <SimpleGrid

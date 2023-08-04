@@ -27,7 +27,12 @@ import { motion } from "framer-motion";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { BsCashCoin } from "react-icons/bs";
-import { BiHome } from "react-icons/all";
+import {
+  AiOutlineSearch,
+  BiHome,
+  FaClipboardList,
+  TbVaccine,
+} from "react-icons/all";
 import { useState } from "react";
 
 export function ReceptionVaccines() {
@@ -42,16 +47,20 @@ export function ReceptionVaccines() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel de Vacinas" />
+            <Header title="Painel de Vacinas" url="/Recepcao" />
             <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
               <GenericSidebar>
                 <GenericLink
-                  name="Painel de Pagamentos"
-                  icon={BsCashCoin}
-                  path="/Recepcao/Caixa/Pagamentos"
+                  name="Internações"
+                  icon={FaClipboardList}
+                  path="/Admissions"
+                />
+                <GenericLink
+                  name="Vacinas"
+                  icon={TbVaccine}
+                  path="/Recepcao/Internacoes/Vacinas"
                 />
                 <GenericLink name="Recepção" icon={BiHome} path="/Recepcao" />
-                <GenericLink name="Home" icon={BiHome} path={`/Home/`} />
               </GenericSidebar>
               <Box flex="1" borderRadius={8} bg="gray.200" p="8">
                 <TableContainer>

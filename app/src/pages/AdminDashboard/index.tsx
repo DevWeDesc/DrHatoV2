@@ -24,7 +24,7 @@ export function AdminMain() {
       <ChakraProvider>
         <AdminContainer>
           <Flex direction="column" h="100vh">
-            <Header title="Painel Administrativo" />
+            <Header title="Painel Administrativo" url="/Home" />
 
             <Flex w="100%" my="6" maxWidth={"100%"} mx="auto" px="6">
               <Sidebar />

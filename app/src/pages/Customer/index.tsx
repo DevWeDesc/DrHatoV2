@@ -71,9 +71,9 @@ export function Customer() {
     tell: "",
     rg: "",
   });
-  const [petSelected, setPetSelected] = useState<any>([])
+  const [petSelected, setPetSelected] = useState<any>([]);
 
-  console.log(petSelected)
+  console.log(petSelected);
   useEffect(() => {
     async function loadCustomer() {
       const response = await api.get(`/customers/${id}`);
@@ -101,7 +101,7 @@ export function Customer() {
       const currentDateTime = formatter.format(new Date());
 
       const data = {
-        vetPreference: vetPreference, 
+        vetPreference: vetPreference,
         queryType: queryType,
         queueEntry: processData,
         petIsInQueue: true,
@@ -147,7 +147,7 @@ export function Customer() {
                 <Button
                   colorScheme="yellow"
                   leftIcon={<TbArrowBack size={24} />}
-                  onClick={() => navigate("/Recepcao")}
+                  onClick={() => navigate("/Recepcao/Consultas")}
                 >
                   Voltar
                 </Button>
@@ -171,7 +171,7 @@ export function Customer() {
               </Flex>
             </Flex>
           </WorkSpaceHeader>
-          <WorkSpaceContent style={{height: "90vh"}}>
+          <WorkSpaceContent style={{ height: "90vh" }}>
             <Flex
               direction="column"
               w="100%"
@@ -279,137 +279,209 @@ export function Customer() {
               align="center"
               textAlign="center"
             >
-              {petSelected.length === 0 ? <>
-              <Text
-                fontWeight="black"
-                bgColor="green.100"
-                width="500px"
-                rounded={4}
-              >
-                SELECIONE UM ANIMAL PARA CONTINUAR
-              </Text>
-              <Button
-                onClick={() =>
-                  navigate(
-                    `/Recepcao/Consultas/Clientes/Pets/Create/${customer.id}`
-                  )
-                }
-                mb="2"
-                colorScheme="teal"
-                height="28px"
-              >
-                ou adicione um novo animal
-              </Button>
-              <Flex overflow="auto" overflowX="auto" w="100%" height="100%">
-                <Table flexDirection="column">
-                  <Thead>
-                    {customer.pets.length < 1 ? (
-                      <Text fontWeight="black" mt="20" fontSize="2xl">
-                        SEM PET CADASTRADO
-                      </Text>
-                    ) : (
-                      <Tr>
-                        <Td fontWeight="bold" border="2px">
-                          Selecione o pet
-                        </Td>
-                        <Td fontWeight="bold" border="2px">
-                          Nome
-                        </Td>
-                        <Td fontWeight="bold" border="2px">
-                          Especie
-                        </Td>
-                        <Td fontWeight="bold" border="2px">
-                          Raça
-                        </Td>
-                        <Td fontWeight="bold" border="2px">
-                          Idade
-                        </Td>
-                        <Td fontWeight="bold" border="2px">
-                          Etiqueta
-                        </Td>
-                      </Tr>
-                    )}
-                  </Thead>
-                  
-                  {customer.pets ? (
-                    customer.pets.map((pet: PetProps | any) => (
-                      <Tbody>
-                        <Tr key={pet.id} bgColor="white">
-                          <Td>
-                            <RadioGroup onChange={setPetId} value={petId}>
-                              <Radio onClick={()=> setPetSelected(pet)}
-                                borderColor="teal.800"
-                                colorScheme="green"
-                                value={pet.id.toString()}
-                              />
-                            </RadioGroup>
+              {petSelected.length === 0 ? (
+                <>
+                  <Text
+                    fontWeight="black"
+                    bgColor="green.100"
+                    width="500px"
+                    rounded={4}
+                  >
+                    SELECIONE UM ANIMAL PARA CONTINUAR
+                  </Text>
+                  <Button
+                    onClick={() =>
+                      navigate(
+                        `/Recepcao/Consultas/Clientes/Pets/Create/${customer.id}`
+                      )
+                    }
+                    mb="2"
+                    colorScheme="teal"
+                    height="28px"
+                  >
+                    ou adicione um novo animal
+                  </Button>
+                  <Flex overflow="auto" overflowX="auto" w="100%" height="100%">
+                    <Table flexDirection="column">
+                      <Thead>
+                        {customer.pets.length < 1 ? (
+                          <Text fontWeight="black" mt="20" fontSize="2xl">
+                            SEM PET CADASTRADO
+                          </Text>
+                        ) : (
+                          <Tr>
+                            <Td fontWeight="bold" border="2px">
+                              Selecione o pet
+                            </Td>
+                            <Td fontWeight="bold" border="2px">
+                              Nome
+                            </Td>
+                            <Td fontWeight="bold" border="2px">
+                              Especie
+                            </Td>
+                            <Td fontWeight="bold" border="2px">
+                              Raça
+                            </Td>
+                            <Td fontWeight="bold" border="2px">
+                              Idade
+                            </Td>
+                            <Td fontWeight="bold" border="2px">
+                              Etiqueta
+                            </Td>
+                          </Tr>
+                        )}
+                      </Thead>
+
+                      {customer.pets ? (
+                        customer.pets.map((pet: PetProps | any) => (
+                          <Tbody>
+                            <Tr key={pet.id} bgColor="white">
+                              <Td>
+                                <RadioGroup onChange={setPetId} value={petId}>
+                                  <Radio
+                                    onClick={() => setPetSelected(pet)}
+                                    borderColor="teal.800"
+                                    colorScheme="green"
+                                    value={pet.id.toString()}
+                                  />
+                                </RadioGroup>
+                              </Td>
+                              <Td fontWeight="black">{pet.name}</Td>
+                              <Td fontWeight="black">{pet.especie}</Td>
+                              <Td fontWeight="black">{pet.race}</Td>
+                              <Td fontWeight="black">{pet.bornDate}</Td>
+                              <Td>
+                                <AiFillTags size={28} color="green" />
+                              </Td>
+                            </Tr>
+                          </Tbody>
+                        ))
+                      ) : (
+                        <Tbody>
+                          <Tr>
+                            <Td>Sem pet cadastrado</Td>
+                            <Td>Empty</Td>
+                            <Td>Empty</Td>
+                            <Td>Empty</Td>
+                            <Td>Empty</Td>
+                          </Tr>
+                        </Tbody>
+                      )}
+                    </Table>
+                  </Flex>
+                </>
+              ) : (
+                <>
+                  <TableContainer>
+                    <Table variant="simple">
+                      <Thead>
+                        <Tr py="6" bg="blue.100">
+                          <Td colSpan={4} fontWeight="bold" textAlign="center">
+                            {" "}
+                            Animal Selecionado
                           </Td>
-                          <Td fontWeight="black">{pet.name}</Td>
-                          <Td fontWeight="black">{pet.especie}</Td>
-                          <Td fontWeight="black">{pet.race}</Td>
-                          <Td fontWeight="black">{pet.bornDate}</Td>
-                          <Td>
-                            <AiFillTags size={28} color="green" />
+                        </Tr>
+                        <Tr>
+                          <Th py="0.5">Nome do Animal</Th>
+                          <Th py="0.5">
+                            <Input
+                              bg="white"
+                              value={petSelected.name}
+                              borderColor="black"
+                            />
+                          </Th>
+                          <Th py="0.5">Espécie</Th>
+                          <Th py="0.5">
+                            <Input
+                              bg="white"
+                              value={petSelected.especie}
+                              borderColor="black"
+                            />
+                          </Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        <Tr>
+                          <Th py="0.5">Raça</Th>
+                          <Th py="0.5">
+                            <Input
+                              bg="white"
+                              value={petSelected.race}
+                              borderColor="black"
+                            />
+                          </Th>
+                          <Th py="0.5">Cor</Th>
+                          <Th py="0.5">
+                            <Input
+                              bg="white"
+                              value={petSelected.corPet}
+                              borderColor="black"
+                            />
+                          </Th>
+                        </Tr>
+                        <Tr>
+                          <Th py="0.5">Nascimento</Th>
+                          <Th py="0.5">
+                            <Input
+                              bg="white"
+                              value={petSelected.especie}
+                              borderColor="black"
+                            />
+                          </Th>
+                          <Th py="0.5">Idade</Th>
+                          <Th py="0.5">
+                            <Input
+                              bg="white"
+                              value={petSelected.bornDate}
+                              borderColor="black"
+                            />
+                          </Th>
+                        </Tr>
+                        <Tr>
+                          <Th py="0.5">Peso</Th>
+                          <Th py="0.5">
+                            <Input
+                              bg="white"
+                              value={petSelected.weigth}
+                              borderColor="black"
+                            />
+                          </Th>
+                          <Th py="0.5">Sexo</Th>
+                          <Th py="0.5">
+                            <Input
+                              bg="white"
+                              value={petSelected.sexo}
+                              borderColor="black"
+                            />
+                          </Th>
+                        </Tr>
+                        <Tr>
+                          <Th py="0.5">Plano de Saúde</Th>
+                          <Th py="0.5" colSpan={3}>
+                            <Select bg={"white"} borderColor="black">
+                              <option value="">Não possui</option>
+                              <option value="">PetLove</option>
+                            </Select>
+                          </Th>
+                        </Tr>
+                        <Tr>
+                          <Td py="0" colSpan={4} px="0">
+                            <Button
+                              py="6"
+                              mt="0.2"
+                              w="100%"
+                              colorScheme="blue"
+                              onClick={() => setPetSelected([])}
+                            >
+                              Voltar para a listagem de Animais
+                            </Button>
                           </Td>
                         </Tr>
                       </Tbody>
-                    ))
-                  ) : (
-                    <Tbody>
-                      <Tr>
-                        <Td>Sem pet cadastrado</Td>
-                        <Td>Empty</Td>
-                        <Td>Empty</Td>
-                        <Td>Empty</Td>
-                        <Td>Empty</Td>
-                      </Tr>
-                    </Tbody>
-                  )}
-                </Table>
-              </Flex>
-              </> : <>
-                    <TableContainer>
-                          <Table variant='simple'>
-                            <Thead>
-                              <Tr py="6" bg="blue.100"><Td colSpan={4} fontWeight="bold" textAlign="center"> Animal Selecionado</Td></Tr>
-                              <Tr>
-                                <Th py="0.5">Nome do Animal</Th>
-                                <Th py="0.5"><Input bg="white" value={petSelected.name} borderColor="black"/></Th>
-                                <Th py="0.5">Espécie</Th>
-                                <Th py="0.5"><Input bg="white" value={petSelected.especie} borderColor="black"/></Th>
-                              </Tr>
-                            </Thead>
-                            <Tbody>
-                              <Tr>
-                                <Th py="0.5">Raça</Th>
-                                <Th py="0.5"><Input bg="white" value={petSelected.race} borderColor="black"/></Th>
-                                <Th py="0.5">Cor</Th>
-                                <Th py="0.5"><Input bg="white" value={petSelected.corPet} borderColor="black"/></Th>
-                              </Tr>
-                              <Tr>
-                                <Th py="0.5">Nascimento</Th>
-                                <Th py="0.5"><Input bg="white" value={petSelected.especie} borderColor="black"/></Th>
-                                <Th py="0.5">Idade</Th>
-                                <Th py="0.5"><Input bg="white" value={petSelected.bornDate}  borderColor="black"/></Th>
-                              </Tr>
-                              <Tr>
-                                <Th py="0.5">Peso</Th>
-                                <Th py="0.5"><Input bg="white" value={petSelected.weigth} borderColor="black"/></Th>
-                                <Th py="0.5">Sexo</Th>
-                                <Th py="0.5"><Input bg="white" value={petSelected.sexo} borderColor="black"/></Th>
-                              </Tr>
-                              <Tr>
-                                <Th py="0.5">Plano de Saúde</Th>
-                                <Th py="0.5" colSpan={3}><Select bg={"white"} borderColor="black">
-                                  <option value="">Não possui</option>
-                                  <option value="">PetLove</option>
-                                  </Select></Th>
-                              </Tr>
-                              <Tr><Td py="0" colSpan={4} px="0"><Button py="6" mt="0.2" w="100%" colorScheme="blue" onClick={()=> setPetSelected([])}>Voltar para a listagem de Animais</Button></Td></Tr>
-                            </Tbody>
-                          </Table>
-                      </TableContainer>
-              </>}
+                    </Table>
+                  </TableContainer>
+                </>
+              )}
             </Flex>
 
             <Flex
@@ -569,8 +641,10 @@ export function Customer() {
                 m="4"
                 w="80%"
                 py="6"
-                onClick={() => {setPetInQueue()
-                navigate('')}}
+                onClick={() => {
+                  setPetInQueue();
+                  navigate("");
+                }}
                 colorScheme="teal"
               >
                 GRAVAR
