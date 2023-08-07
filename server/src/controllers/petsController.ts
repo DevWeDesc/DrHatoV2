@@ -23,7 +23,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
     include: {customer: 
       {select: { name: true, id: true, balance: true, pets: true}}, 
       medicineRecords: {select: {petExams: true, observations: true, id: true, petVaccines: true, petSurgeries: true, petProcedures: true, petBeds: {where: {isCompleted: false}} }},
-      queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true, queueEntry: true}},
+      queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true, queueEntry: true, petIsInQueue: true}},
       bed: {select: {isBusy: true, entryOur: true, id: true, kennel: {select: {name: true, price: true}}, dailyRate: true, mustFasting: true}},
       priceAccumulator: {select: {id: true, accumulator: true}}
     } })
@@ -75,6 +75,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
         let vacineData = {
           id: vaccine.id,
           name: vaccine.name,
+          price: vaccine.price,
           requestedDate: vaccine.requestedDate,
           applicableDate: vaccine.applicationDate
         }

@@ -5,5 +5,6 @@ import { vaccinesController } from '../controllers/vaccinesController'
 export async function vaccinesRoutes(app: FastifyInstance) {
     app.post("/vaccines", vaccinesController.createVaccine)
     app.get("/vaccines", vaccinesController.getAllVaccines)
-    app.post('/vaccinepet/:id/:recordId', vaccinesController.setVaccineInPet)
+    app.post('/vaccinepet/:id/:recordId/:accId', vaccinesController.setVaccineInPet)
+    app.delete('/vaccinepet/:id/:accId/:examPrice', vaccinesController.removeVaccine)
 }

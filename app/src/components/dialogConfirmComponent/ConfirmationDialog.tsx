@@ -17,15 +17,17 @@ interface ConfirmationDialogProps {
   whatIsConfirmerd: string
   describreConfirm: string
   callbackFn: any;
+  disabled: boolean;
 }
 
-export function ConfirmationDialog({buttonTitle, icon, whatIsConfirmerd, describreConfirm, callbackFn}: ConfirmationDialogProps) {
+export function ConfirmationDialog({buttonTitle, icon, whatIsConfirmerd, describreConfirm, callbackFn, disabled}: ConfirmationDialogProps) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const cancelRef = React.useRef()
 
   return (
     <>
       <Button 
+      isDisabled={disabled}
       leftIcon={icon}
       height={8}
       colorScheme='red' onClick={onOpen}>

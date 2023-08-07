@@ -1,7 +1,6 @@
 import { Header } from "../../components/Header";
 import { ChakraProvider } from "@chakra-ui/react";
 import { HomeContainer } from "./style";
-
 import { AsideMenu } from "../../components/AsideMenu";
 import { PlantVetTable } from "../../components/Tables/PlantVetTable";
 import { CardsMenu } from "../../components/CardsMenu";

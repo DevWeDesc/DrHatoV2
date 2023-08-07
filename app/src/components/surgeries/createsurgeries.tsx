@@ -62,7 +62,7 @@ export function Createsurgeries() {
 
     async function setSugeriesInPet ()  {
       try {
-        await api.post(`surgeries/${sugeriesId}/${petDetails.recordId}`)
+        await api.post(`surgeries/${sugeriesId}/${petDetails.recordId}/${petDetails.totalAcc.id}`)
         setReloadData(true);
         toast.success("Cirurgia adicionada com Sucesso")
       } catch (error) {
@@ -70,13 +70,13 @@ export function Createsurgeries() {
       }
     }
   
-    const handleDeleteSugerie = async (did: number) => {
+    const handleDeleteSugerie = async (did: number, sugPrice: string | number) => {
       try {
         const confirm = window.confirm("DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?")
 
         if(confirm === true )
         {
-          await api.delete(`/surgeries/${did}`).then((res) => {
+          await api.delete(`/surgeries/${did}/${petDetails.totalAcc.id}/${sugPrice}`).then((res) => {
             setReloadData(true);
            toast.warning("EXCLUIDO COM SUCESSO") 
           })
@@ -132,7 +132,7 @@ export function Createsurgeries() {
                     <Tr key={sugerie.id}>
                       <Td>{sugerie.name}</Td>
                       <Td>{sugerie.price}</Td>
-                      <Td><Button colorScheme="red" onClick={() => handleDeleteSugerie(sugerie.id)} >EXCLUIR</Button></Td>
+                      <Td><Button colorScheme="red" onClick={() => handleDeleteSugerie(sugerie.id, sugerie.price)} >EXCLUIR</Button></Td>
                     </Tr>
             ) )
           }
