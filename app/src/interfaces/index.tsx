@@ -153,11 +153,12 @@ export interface SugeriesProps {
         vetPreference: string;
         queueEntry: Date;
         queryType: string;
+        petIsInQueue: boolean;
       };
 
       type totalAccProps = {
         id: number;
-        price: number | string;
+        price: number;
          } 
          
   type customerPetsProps = {

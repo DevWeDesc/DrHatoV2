@@ -288,3 +288,22 @@ model SurgeriesForPet {
   medicine_id   Int
   medicine      MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
+
+model HospVetBox {
+  id            Int            @id @default(autoincrement())
+  entryValues Decimal?
+  exitValues Decimal?
+  totalValues Decimal?
+  openBox DateTime?
+  closeBox DateTime?
+  responsbileBox String?
+  boxIsOpen Boolean? @default(false)
+}
+
+
+model UserAccount {
+  id            Int            @id @default(autoincrement())
+  debits Decimal?
+  credits Decimal?
+  
+}

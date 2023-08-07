@@ -1,11 +1,14 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { z } from "zod";
+import { accumulatorService } from "../services/accumulatorService";
 const prisma = new PrismaClient();
 
 type params = {
   id: string;
   recordId: string;
+  accId: string, 
+  sugPrice: string;
 }
 export const surgeriesController = {
   createSurgerie: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -40,7 +43,7 @@ export const surgeriesController = {
   },
 
   setSurgerieInPet: async (request: FastifyRequest<{ Params: params }>, reply: FastifyReply) => {
-    const { id, recordId} = request.params
+    const { id, recordId, accId} = request.params
     try {
       const surgerie = await prisma.surgeries.findUnique({
         where:{id: parseInt(id)}
@@ -50,7 +53,7 @@ export const surgeriesController = {
          return
       }
       await prisma.surgeriesForPet.create({data: {name: surgerie.name, price: surgerie.price, medicine: {connect: {id:parseInt(recordId)}}}})
-
+      await accumulatorService.addPriceToAccum(Number(surgerie.price), accId)
       reply.send("Cirurgia adiciona ao pet com sucesso").status(200)
     } catch (error) {
       reply.send({message: error})
@@ -59,8 +62,11 @@ export const surgeriesController = {
   },
 
   excludePetSugerie: async (request: FastifyRequest<{ Params: params }>, reply: FastifyReply) => {
-     const {id } = request.params
+     const {id, accId, sugPrice } = request.params
      try {
+
+       await accumulatorService.removePriceToAccum(Number(sugPrice), accId)
+
         await prisma.surgeriesForPet.delete({
           where: {id: parseInt(id)}
         })

@@ -18,7 +18,7 @@ import { BiHome, MdPets, TbArrowBack } from "react-icons/all";
 import { AdminContainer } from "../../../pages/AdminDashboard/style";
 import { WorkSpaceHeader } from "../../../pages/Vets/styles";
 import { useNavigate, useParams } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "../../../lib/axios";
 import { PetDetaisl } from "../../../interfaces";
 import moment from "moment";
@@ -28,7 +28,7 @@ export default function DetailsAdmissions() {
   const [confirmation, setConfirmation] = useState<boolean>(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const [petDetails, setPetDetails] = useState<any>({} as PetDetaisl);
+  const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const entryDate = petDetails.bedInfos?.entry;
 
   const totalDaily = moment(new Date()).diff(entryDate, "minutes");
@@ -110,6 +110,10 @@ export default function DetailsAdmissions() {
         toast.error("Falha ao finalizar Internação!")
       }
     } 
+
+    const totalSum = useMemo(() => {
+      return (Number(totalToPayInTimeAdmmited) + Number(petDetails.totalAcc?.price));
+    }, [totalToPayInTimeAdmmited, petDetails.totalAcc?.price])
 
   return (
     <ChakraProvider>
@@ -514,6 +518,7 @@ export default function DetailsAdmissions() {
                           Valor total em procedimentos até o momento
                         </Text>
                         <Input
+                        value={new Intl.NumberFormat("pt-BR",{currency: 'BRL', style: 'currency'}).format(Number(petDetails.totalAcc?.price))}
                           borderY="none"
                           w="15vw"
                           borderColor="black"
@@ -552,7 +557,7 @@ export default function DetailsAdmissions() {
                           Total:
                         </Text>
                         <Text border="2px" w="15vw" >
-                              { new Intl.NumberFormat('pt-BR', {currency: 'BRL', style: 'currency'}).format(totalToPayInTimeAdmmited) }
+                              { new Intl.NumberFormat('pt-BR', {currency: 'BRL', style: 'currency'}).format(totalSum) }
                         </Text>
                         </Flex>
                   

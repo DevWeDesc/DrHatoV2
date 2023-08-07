@@ -39,7 +39,7 @@ export const queueController = {
         })
 
         await  prisma.pets.update({
-            where: { id: parseInt(petId)},data: {debits: {increment: Number(debitOnThisQuery) }}
+            where: { id: parseInt(petId)},data: {debits: {increment: Number(debitOnThisQuery) }, priceAccumulator: {update: {accumulator: 0}}}
         })
 
         reply.send('Fila atualizada')

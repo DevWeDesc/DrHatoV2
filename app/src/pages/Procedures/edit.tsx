@@ -2,7 +2,6 @@ import { Box, Button, ChakraProvider, Flex, Heading } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
-import { CreateProcedureForm } from "../../components/Forms/CreateProcedureForm";
 import { EditProcedureForm } from "../../components/Forms/EditProcedureForm";
 import { AdminContainer } from "../AdminDashboard/style";
 

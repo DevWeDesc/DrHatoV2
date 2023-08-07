@@ -3,12 +3,14 @@ import { PrismaClient } from "@prisma/client";
 import { AdmissionSchema, BedSchema, VaccineSchema } from "../schemas/schemasValidator";
 import { ValidationContract } from "../validators/validateContract";
 import { getFormattedDateTime } from "../utils/getCurrentDate";
+import { accumulatorService } from "../services/accumulatorService";
 const prisma = new PrismaClient();
 
 
 type params = {
     id: string;
     recordId: string;
+    accId: string;
   }
 
 
@@ -42,7 +44,7 @@ export const vaccinesController = {
     },
 
     setVaccineInPet: async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
-        const { id, recordId} = request.params
+        const { id, recordId, accId} = request.params
         const vaccine = await prisma.vaccines.findUnique({where: {id: parseInt(id)}})
         const requestedDate = getFormattedDateTime()
         if(!vaccine) {
@@ -53,12 +55,32 @@ export const vaccinesController = {
             await prisma.vaccinesForPet.create({
                 data: {name: vaccine?.name, price: vaccine?.price, description: vaccine?.description, requestedDate, medicine: {connect: { id: parseInt(recordId)}}}
             })
-
+            
+            await accumulatorService.addPriceToAccum(vaccine?.price, accId)
+            
             reply.status(201).send("Vacina adicionada ao PET")
         } catch (error) {
             reply.send({message: error})
             console.log(error)
         }
         
-    }
+    },
+
+    removeVaccine: async (request: FastifyRequest<{ Params: { id: string; accId: string; examPrice: string;}}>, reply: FastifyReply) => {
+        const {id, accId, examPrice} = request.params
+        try {
+    
+            await accumulatorService.removePriceToAccum(Number(examPrice), accId)
+    
+            await prisma.vaccinesForPet.delete({
+                where: {id: parseInt(id)}
+            })
+    
+            reply.status(200).send("Sucesso ao deletar")
+        } catch (error) {
+            console.log(error)
+        }
+     },
+
+
 }

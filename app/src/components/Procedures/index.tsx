@@ -54,7 +54,7 @@ export default function ProceduresVets() {
       const actualDate = moment(now).format("DD/MM/YYYY");
       console.log("DATA ATUAL", actualDate);
 
-      await api.post(`/procedures/${petDetails.recordId}/${procedureId}`);
+      await api.post(`/procedures/${petDetails.recordId}/${procedureId}/${petDetails.totalAcc.id}`);
       setReloadData(true);
       toast.success("Procedimento incluido com sucesso!!");
     } catch (error) {
@@ -63,13 +63,13 @@ export default function ProceduresVets() {
     }
   };
 
-  const excludeProcedureInPet = async (id: number) => {
+  const excludeProcedureInPet = async (id: number, procedPrice: string | number) => {
     try {
       const confirm = window.confirm(
         "EXCLUIR E UMA OPERAÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
       );
       if (confirm === true) {
-        await api.delete(`/proceduresfp/${id}`);
+        await api.delete(`/proceduresfp/${id}/${petDetails.totalAcc.id}/${procedPrice}`);
         setReloadData(true);
         toast.success("Procedimento excluido com sucesso!!");
       } else {
@@ -154,7 +154,7 @@ export default function ProceduresVets() {
                   </Td>
                   <Td border="2px" fontSize="1xl" fontWeight="bold">
                     <Button
-                      onClick={() => excludeProcedureInPet(procedure.id)}
+                      onClick={() => excludeProcedureInPet(procedure.id, procedure.price)}
                       colorScheme="red"
                     >
                       EXCLUIR

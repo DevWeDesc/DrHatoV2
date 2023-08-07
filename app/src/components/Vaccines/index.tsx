@@ -46,11 +46,30 @@ export default function VaccinesVets() {
 
   async function setVaccineInPet() {
     try {
-      await api.post(`/vaccinepet/${vaccineId}/${petDetails.recordId}`);
+      await api.post(`/vaccinepet/${vaccineId}/${petDetails.recordId}/${petDetails.totalAcc.id}`);
       setReloadData(true);
       toast.success("Vacina criada com Sucesso");
     } catch (error) {
       toast.error("Falha ao cadastrar Vacina!");
+    }
+  }
+
+  async function deleteVaccine(vaccineId: string | number, vaccPrice: string | number) {
+    try {
+      const confirmation = window.confirm(
+        "DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
+      );
+
+      if (confirmation === true) {
+        await api.delete(`/vaccinepet/${vaccineId}/${petDetails.totalAcc.id}/${vaccPrice}`);
+        setReloadData(true);
+        toast.warning("Deletado com sucesso!");
+      } else {
+        return;
+      }
+    } catch (error) {
+      toast.error("Falha ao Deletar!");
+      console.log(error);
     }
   }
 
@@ -167,6 +186,7 @@ export default function VaccinesVets() {
                   <Th>DATA SOLICITADA</Th>
                   <Th>VACINAS</Th>
                   <Th>STATUS</Th>
+                  <Th>EXCLUIR?</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -175,6 +195,7 @@ export default function VaccinesVets() {
                     <Td>{vaccine.requestedDate.toString()}</Td>
                     <Td>{vaccine.name}</Td>
                     <Td color="red">A FAZER</Td>
+                    <Td><Button colorScheme="red" onClick={() => deleteVaccine(vaccine.id, vaccine.price)}>Excluir</Button></Td>
                   </Tr>
                 ))}
               </Tbody>
