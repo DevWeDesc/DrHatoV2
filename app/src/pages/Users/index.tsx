@@ -49,123 +49,117 @@ export function UsersList() {
   }, [loading]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <ChakraProvider>
-        <AdminContainer>
-          <Flex direction="column" h="100vh">
-            <Header title="Usuários" url="/Admin/" />
+    <ChakraProvider>
+      <AdminContainer>
+        <Flex direction="column" h="100vh">
+          <Header title="Usuários" url="/Admin/" />
 
-            <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
-              <Sidebar />
-              <Box
-                flex="1"
-                borderRadius={8}
-                bg="gray.200"
-                p="8"
-                maxH="44rem"
-                overflow="auto"
+          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+            <Sidebar />
+            <Box
+              flex="1"
+              borderRadius={8}
+              bg="gray.200"
+              p="8"
+              maxH="44rem"
+              overflow="auto"
+            >
+              <Flex
+                mb="8"
+                direction="column"
+                justify="space-between"
+                align="center"
               >
-                <Flex
-                  mb="8"
-                  direction="column"
-                  justify="space-between"
-                  align="center"
+                <Heading width="100%" fontSize="30" fontWeight="bold">
+                  Usúarios
+                </Heading>
+
+                <Link
+                  onClick={() => setLoading(true)}
+                  to="/Users/Create"
+                  style={{ width: "100%" }}
                 >
-                  <Heading width="100%" fontSize="30" fontWeight="bold">
-                    Usúarios
-                  </Heading>
-
-                  <Link
-                    onClick={() => setLoading(true)}
-                    to="/Users/Create"
-                    style={{ width: "100%" }}
+                  <Button
+                    as="a"
+                    mt="5"
+                    width="100%"
+                    py="8"
+                    fontSize="20"
+                    colorScheme="whatsapp"
+                    leftIcon={<Icon as={RiAddLine} />}
                   >
-                    <Button
-                      as="a"
-                      mt="5"
-                      width="100%"
-                      py="8"
-                      fontSize="20"
-                      colorScheme="whatsapp"
-                      leftIcon={<Icon as={RiAddLine} />}
-                    >
-                      Criar novo
-                    </Button>
-                  </Link>
-                </Flex>
+                    Criar novo
+                  </Button>
+                </Link>
+              </Flex>
 
-                <Table colorScheme="blackAlpha">
-                  <Thead>
-                    <Tr>
-                      <Th borderColor="black" fontSize="18">
-                        Usuário
-                      </Th>
-                      <Th borderColor="black" fontSize="18">
-                        Tipo de Usuário
-                      </Th>
-                      <Th width="8" borderColor="black" fontSize="18"></Th>
-                    </Tr>
-                  </Thead>
+              <Table colorScheme="blackAlpha">
+                <Thead>
+                  <Tr>
+                    <Th borderColor="black" fontSize="18">
+                      Usuário
+                    </Th>
+                    <Th borderColor="black" fontSize="18">
+                      Tipo de Usuário
+                    </Th>
+                    <Th width="8" borderColor="black" fontSize="18"></Th>
+                  </Tr>
+                </Thead>
 
-                  <Tbody>
-                    {user ? (
-                      user.map((user: any) => (
-                        <Tr key={user.id}>
-                          <Td borderColor="black">
-                            <Box>
-                              <Text
-                                fontWeight="bold"
-                                fontSize="16"
-                                color="gray.800"
-                              >
-                                {user.name}
-                              </Text>
-                              <Text fontSize="15" color="gray.600">
-                                {user.username}
-                              </Text>
-                            </Box>
-                          </Td>
-                          <Td borderColor="black">
-                            <Text fontWeight="bold" color="gray.800">
-                              {user.userType.includes("admin")
-                                ? "ADMINISTRADOR"
-                                : user.userType.includes("vet")
-                                ? "VETERINÁRIO"
-                                : user.userType.includes("reception")
-                                ? "RECEPCIONISTA"
-                                : "USUÁRIO"}
+                <Tbody>
+                  {user ? (
+                    user.map((user: any) => (
+                      <Tr key={user.id}>
+                        <Td borderColor="black">
+                          <Box>
+                            <Text
+                              fontWeight="bold"
+                              fontSize="16"
+                              color="gray.800"
+                            >
+                              {user.name}
                             </Text>
-                          </Td>
+                            <Text fontSize="15" color="gray.600">
+                              {user.username}
+                            </Text>
+                          </Box>
+                        </Td>
+                        <Td borderColor="black">
+                          <Text fontWeight="bold" color="gray.800">
+                            {user.userType.includes("admin")
+                              ? "ADMINISTRADOR"
+                              : user.userType.includes("vet")
+                              ? "VETERINÁRIO"
+                              : user.userType.includes("reception")
+                              ? "RECEPCIONISTA"
+                              : "USUÁRIO"}
+                          </Text>
+                        </Td>
 
-                          <Td borderColor="black">
-                            <Link to={`/Users/Edit/${user.id}`}>
-                              <Button
-                                as="a"
-                                size="md"
-                                fontSize="md"
-                                colorScheme="yellow"
-                                leftIcon={<Icon as={RiPencilLine} />}
-                              >
-                                Editar
-                              </Button>
-                            </Link>
-                          </Td>
-                        </Tr>
-                      ))
-                    ) : (
-                      <LoadingSpinner />
-                    )}
-                  </Tbody>
-                </Table>
-              </Box>
-            </Flex>
+                        <Td borderColor="black">
+                          <Link to={`/Users/Edit/${user.id}`}>
+                            <Button
+                              as="a"
+                              size="md"
+                              fontSize="md"
+                              colorScheme="yellow"
+                              leftIcon={<Icon as={RiPencilLine} />}
+                            >
+                              Editar
+                            </Button>
+                          </Link>
+                        </Td>
+                      </Tr>
+                    ))
+                  ) : (
+                    <LoadingSpinner />
+                  )}
+                </Tbody>
+              </Table>
+            </Box>
           </Flex>
-        </AdminContainer>
-      </ChakraProvider>
-    </motion.div>
+        </Flex>
+      </AdminContainer>
+    </ChakraProvider>
   );
 }

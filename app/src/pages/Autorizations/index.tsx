@@ -29,7 +29,7 @@ import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import { BsArrowLeft } from "react-icons/all";
 import { AdminContainer } from "../AdminDashboard/style";
 import { AiOutlineCheckCircle } from "react-icons/all";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DbContext } from "../../contexts/DbContext";
 import { StyledBox } from "../../components/Header/style";
 import { api } from "../../lib/axios";
@@ -39,12 +39,31 @@ import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { toast } from "react-toastify";
 import { VetsSearch } from "../../components/Search/vetsSearch";
+
 export function GenerateAutorizations() {
   const { autorization, setGenerateAut, dataCustomer } = useContext(DbContext);
   const [value, setValue] = useState("");
   const [petValue, setPetValue] = useState("");
-  const autorizations = autorization ? autorization : null;
+  //const autorizations = autorization ? autorization : null;
   const [createAut, setCreateAut] = useState({});
+  const [customer, setCustomer] = useState([]);
+  const [autorizations, setAutorizations] = useState([]);
+
+  useEffect(() => {
+    async function dataCustomer() {
+      const customer = await api.get("/customers");
+      setCustomer(customer.data);
+    }
+    dataCustomer();
+  }, []);
+
+  useEffect(() => {
+    async function dataAutorizations() {
+      const autorizations = await api.get("/autorizations");
+      setAutorizations(autorizations.data);
+    }
+    dataAutorizations();
+  }, []);
 
   //@ts-ignore
   pdfMake.addVirtualFileSystem(pdfFonts);
@@ -67,6 +86,8 @@ export function GenerateAutorizations() {
         petCod: petDesc.codPet,
       };
 
+      console.log(dataCustomer);
+
       setCreateAut(autorization);
       const docDefinition: TDocumentDefinitions = {
         content: [
@@ -84,18 +105,25 @@ export function GenerateAutorizations() {
     }
   };
 
-  console.log(dataCustomer);
+  //console.log(dataCustomer);
 
   return (
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
           <Header title="Gerar autorizações" url="/Home" />
-          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
             <GenericSidebar>
               <GenericLink icon={BsArrowLeft} name="Voltar" path="/Home" />
             </GenericSidebar>
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
+            <Box
+              flex="1"
+              borderRadius={8}
+              bg="gray.200"
+              p="8"
+              maxH="44rem"
+              overflowY="auto"
+            >
               <Flex mb="8" gap="8" direction="column" align="center">
                 <VetsSearch path="/customersearch" />
 
@@ -112,9 +140,9 @@ export function GenerateAutorizations() {
                     </h2>
                     <AccordionPanel pb={4}>
                       <div className="submenus">
-                        {autorizations?.map((item) => (
+                        {autorizations?.map((item: any) => (
                           <>
-                            <VStack key={item.id}>
+                            <VStack key={item.id} align="left">
                               <RadioGroup onChange={setValue} value={value}>
                                 <Radio
                                   bgColor={value == item.id ? "green" : "red"}
@@ -144,7 +172,7 @@ export function GenerateAutorizations() {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {dataCustomer.map((customer: any) => (
+                      {customer.map((customer: any) => (
                         <Tr>
                           <Td>{customer.name}</Td>
                           <Td>{customer.adress}</Td>

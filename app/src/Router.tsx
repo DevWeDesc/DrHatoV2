@@ -99,6 +99,8 @@ import { BreedRegistry } from "./pages/Reception/Administration/breedRegistry";
 import { OptionSistem } from "./pages/AdminDashboard/optionSistem";
 import { EditPets } from "./pages/Pets/edit";
 import ProtectedRouteMiddleware from "./middleware/ProtectAuthMiddleware";
+import { HealthInsurance } from "./pages/AdminDashboard/healthInsurance";
+import { HealthInsuranceDetails } from "./pages/AdminDashboard/HealthInsuranceDetails";
 
 export function Router() {
   return (
@@ -135,6 +137,11 @@ export function Router() {
           <Route path="/Admin" element={<AdminMain />} />
           <Route path="/Admin/Vaccines" element={<AdminVaccines />} />
           <Route path="/Admin/Surgeryes" element={<AdminSurgery />} />
+          <Route path="/Admin/HealthInsurance" element={<HealthInsurance />} />
+          <Route
+            path="/Admin/HealthInsurance/:id"
+            element={<HealthInsuranceDetails />}
+          />
 
           <Route path="/Admin/Charts" element={<AdminCharts />} />
           <Route path="/Admin/Autorizations" element={<Autorizations />} />

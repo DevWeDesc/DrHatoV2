@@ -52,6 +52,11 @@ export function AdminMain() {
                       Cadastro de Cirurgias
                     </Button>
                   </Link>
+                  <Link to="/Admin/HealthInsurance">
+                    <Button colorScheme="whatsapp" w="100%" py="10">
+                      Cadastro de Plano de Saúde
+                    </Button>
+                  </Link>
                 </Flex>
 
                 <Flex direction="column" w="50%" gap="2">
