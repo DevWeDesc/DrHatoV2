@@ -10,12 +10,9 @@ export const customerController = {
   showAllUsers: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const allUser = await prisma.customer.findMany({
-        include: { pets: true, transaction: true},
+        include: { pets: true, transaction: true, customerAccount: {include: {installments: true}}},
       });
 
-      const teste = await prisma.customer.findMany({
-        where: { adress: "Rua teste"}
-      })
       return reply.send(allUser);
     } catch (error) {
       return reply.status(404).send({ message: error });
