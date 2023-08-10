@@ -303,15 +303,17 @@ model HospVetBox {
 }
 
 model HospBoxHistory {
-  id             Int         @id @default(autoincrement())
-  entryValues    Decimal?
-  exitValues     Decimal?
-  totalValues    Decimal?
-  openBox        DateTime?
-  closeBox       DateTime?
-  responsbileBox String?
-  hospVetBoxId   Int?
-  HospVetBox     HospVetBox? @relation(fields: [hospVetBoxId], references: [id])
+  id           Int                 @id @default(autoincrement())
+  entryValues  Decimal?
+  exitValues   Decimal?
+  totalValues  Decimal?
+  openBox      DateTime?
+  closeBox     DateTime?
+  openBy       String?
+  closedBy     String?
+  hospVetBoxId Int?
+  HospVetBox   HospVetBox?         @relation(fields: [hospVetBoxId], references: [id])
+  installments InstallmentsDebts[]
 }
 
 model CustomerAccount {
@@ -328,9 +330,12 @@ model InstallmentsDebts {
   id                 Int             @id @default(autoincrement())
   debitName          String?
   totalDebit         Decimal?
+  paymentType        String?
   paymentDate        DateTime?
   installmentAmount  Int?
   amountInstallments Decimal?
   customerId         Int
   customerAccount    CustomerAccount @relation(fields: [customerId], references: [id])
+  boxHistoryId       Int
+  boxHistory         HospBoxHistory  @relation(fields: [boxHistoryId], references: [id])
 }
