@@ -7,7 +7,6 @@ export const accountService = {
                     where: {id: parseInt(customerId)}, data: {credits: { increment: values}}
                 })
 
-                return "sucesso"
             } catch (error) {
                 console.log(error)
             }
@@ -45,14 +44,14 @@ export const accountService = {
             }
         },
 
-        installmentDebit: async (accountId: string, totalDebit: number, installmentAmount: number, debitName: string) => {
+        installmentDebit: async (accountId: string, boxId: string, totalDebit: number, installmentAmount: number, debitName: string, paymentType: string) => {
             try {
                 const actualDate = new Date();
                 const amountInstallments = (totalDebit / installmentAmount)
 
-                await prisma.installmentsDebts.create({data: {paymentDate: actualDate, amountInstallments, totalDebit, installmentAmount, debitName,customerAccount: {
+                await prisma.installmentsDebts.create({data: {paymentDate: actualDate, amountInstallments, totalDebit, installmentAmount, paymentType, debitName,customerAccount: {
                     connect: {id: parseInt(accountId)}
-                } }})
+                }, boxHistory: {connect: {id: parseInt(boxId)}} }})
                 
             } catch (error) {
                 console.log(error)

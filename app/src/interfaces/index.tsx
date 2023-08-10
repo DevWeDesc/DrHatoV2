@@ -192,6 +192,28 @@ export interface SugeriesProps {
    fasting: boolean;
    observations: string;
   }
+
+ export type HistoryBoxProps = {
+    id: string | number
+  	entryValues: number
+		exitValues: number
+    totalValues: number
+    openBox: Date | number
+    closeBox: Date | number
+    openBy: string
+    closedBy: string
+    hospVetBoxId: string | number
+}
+
+export interface BoxProps {
+    id: string | number
+		name: string
+		movimentedValues: number
+		entryValues: number
+		exitValues: number
+		boxIsOpen: boolean
+		historyBox: HistoryBoxProps[]
+}
   
 export interface PetDetaisl {
   id: number | string;

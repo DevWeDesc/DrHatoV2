@@ -1,9 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
-import { AdmissionSchema, BedSchema } from "../schemas/schemasValidator";
-import { ValidationContract } from "../validators/validateContract";
 import { z } from "zod";
-const { getDiferrenceBetweenOurs } = require("../utils/countOurs");
 const prisma = new PrismaClient();
 
 const boxSchema = z.object({
@@ -12,7 +9,8 @@ const boxSchema = z.object({
   exitValues: z.number().optional(),   
   movimentedValues: z.number().optional(),
   boxIsOpen: z.boolean().optional(),
-  responsbileBox: z.string().optional(),
+  openBy: z.string().optional(),
+  closedBy: z.string().optional(),
 })
 
 type params = {
@@ -23,13 +21,13 @@ type params = {
 export const boxController = {
 createVetBox: async(request: FastifyRequest, reply: FastifyReply) => {
   const {
-    name, boxIsOpen, entryValues, exitValues, movimentedValues
+    name, boxIsOpen
     } = boxSchema.parse(request.body)
     try {
 
       if(!name) return
       await prisma.hospVetBox.create({
-        data: {name, boxIsOpen: boxIsOpen, entryValues: entryValues, exitValues, movimentedValues}
+        data: {name, boxIsOpen: boxIsOpen, entryValues: 0,  exitValues: 0, movimentedValues:0}
       })
       reply.send("Caixa criado com sucesso")
     } catch (error) {
@@ -41,7 +39,7 @@ createVetBox: async(request: FastifyRequest, reply: FastifyReply) => {
 showVetBox:  async(request: FastifyRequest, reply: FastifyReply) => {
   try {
     const boxs = await prisma.hospVetBox.findMany({include: {historyBox: true}})
-      reply.send(boxs)
+      reply.send(boxs[0])
   } catch (error) {
     console.log(error)
     reply.send(error)
@@ -50,18 +48,24 @@ showVetBox:  async(request: FastifyRequest, reply: FastifyReply) => {
 
 
 openBoxDaily: async(request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
-  const {entryValues, exitValues, responsbileBox} = boxSchema.parse(request.body)
+  const {entryValues, exitValues, openBy} = boxSchema.parse(request.body)
     const {boxId} = request.params
     try {
       const actualDate = new Date();
       if(!entryValues || !exitValues) {
         return
       }
-      await prisma.hospBoxHistory.create({
-        data: {openBox: actualDate, entryValues, exitValues, responsbileBox, totalValues: (entryValues - exitValues), HospVetBox: {connect: {id: parseInt(boxId)}}   }
+
+     const dailyBox = await prisma.hospBoxHistory.create({
+        data: {openBox: actualDate, entryValues, exitValues, openBy, totalValues: (entryValues - exitValues), HospVetBox: {connect: {id: parseInt(boxId)}}   }
       })
 
-      reply.send("Criado com sucesso")
+      await prisma.hospVetBox.update({
+        where: {id: parseInt(boxId)},data: {boxIsOpen: true}
+      })
+
+      
+      reply.send(dailyBox)
 
     } catch (error) {
       console.log(error)
@@ -71,13 +75,13 @@ openBoxDaily: async(request: FastifyRequest<{Params: params}>, reply: FastifyRep
 
 closeBoxDaily: async(request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
   const {boxId, vetBox} = request.params
-  const {entryValues, exitValues} = boxSchema.parse(request.body)
+  const {entryValues, exitValues, closedBy} = boxSchema.parse(request.body)
   try {
     const actualDate = new Date();
 
     await prisma.hospVetBox.update({
       where: {id: parseInt(vetBox)},data:{historyBox: {update: {where: {id: parseInt(boxId)}, data: {
-        closeBox: actualDate, entryValues: {increment: entryValues }, exitValues: {increment: exitValues}
+        closeBox: actualDate, entryValues: {increment: entryValues }, exitValues: {increment: exitValues}, closedBy
       }}}}
     })
 

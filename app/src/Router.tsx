@@ -101,6 +101,7 @@ import { EditPets } from "./pages/Pets/edit";
 import ProtectedRouteMiddleware from "./middleware/ProtectAuthMiddleware";
 import { HealthInsurance } from "./pages/AdminDashboard/healthInsurance";
 import { HealthInsuranceDetails } from "./pages/AdminDashboard/HealthInsuranceDetails";
+import AdminBoxs from "./pages/AdminDashboard/box";
 
 export function Router() {
   return (
@@ -155,6 +156,8 @@ export function Router() {
           <Route path="/Admin/Sectors" element={<SectorsList />} />
           <Route path="/Admin/Instructions" element={<InstructionsList />} />
           <Route path="/Admin/Procedures" element={<ProceduresList />} />
+         
+          <Route path="/Admin/Box" element={<AdminBoxs />} />
           <Route
             path="/Admin/Procedures/Create"
             element={<ProcedureCreate />}
