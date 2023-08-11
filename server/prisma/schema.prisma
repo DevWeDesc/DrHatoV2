@@ -45,7 +45,7 @@ model Customer {
   phone           String           @unique
   tell            String?
   cpf             String           @unique
-  rg              String?
+  rg              String?       
   email           String?
   birthday        String
   balance         Int?
@@ -311,6 +311,7 @@ model HospBoxHistory {
   closeBox     DateTime?
   openBy       String?
   closedBy     String?
+  boxIsOpen        Boolean?         @default(false)
   hospVetBoxId Int?
   HospVetBox   HospVetBox?         @relation(fields: [hospVetBoxId], references: [id])
   installments InstallmentsDebts[]

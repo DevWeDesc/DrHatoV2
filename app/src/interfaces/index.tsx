@@ -202,6 +202,7 @@ export interface SugeriesProps {
     closeBox: Date | number
     openBy: string
     closedBy: string
+    boxIsOpen: boolean;
     hospVetBoxId: string | number
 }
 
