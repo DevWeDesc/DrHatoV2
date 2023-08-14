@@ -19,6 +19,7 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
+import { WeightPetInput } from "../InputMasks/WeightPetInput";
 interface CreateNewPetProps {
   id: number | string;
   name: string;
@@ -279,7 +280,7 @@ export function CreatePetsForm({ reloadPets }: Props) {
       especie: especieState,
       sexo: selectSex,
       race: values.race,
-      weigth: values.peso,
+      weigth: weight.substring(0, 5),
       haveChip: values.haveChip,
       corPet: values.cor,
       sizePet: "",
@@ -298,6 +299,9 @@ export function CreatePetsForm({ reloadPets }: Props) {
     }
     console.log(data);
   };
+
+  const [weight, setWeight] = useState("");
+
   return (
     <ChakraProvider>
       <FormControl
@@ -344,13 +348,13 @@ export function CreatePetsForm({ reloadPets }: Props) {
             <Text w="100%" fontWeight="bold" mt="2">
               Peso
             </Text>
-            <Input
-              {...register("peso")}
+            <WeightPetInput
+              onBlur={""}
+              value={weight}
+              onChange={(e: any) => setWeight(e.target.value)}
               id="peso"
-              maxWidth={320}
               name="peso"
-              type="number"
-            />
+            ></WeightPetInput>
 
             <Text w="100%" fontWeight="bold" mt="2">
               Idade
