@@ -68,7 +68,7 @@ export const customerController = {
 
   findUserById: async (request: FastifyRequest, reply: FastifyReply) => {
     const { id }: any = (request.params)
-    const customer = await prisma.customer.findUnique({ where: { id: parseInt(id) }, include:{pets: true, transaction: true} })
+    const customer = await prisma.customer.findUnique({ where: { id: parseInt(id) }, include:{pets: true, transaction: true, customerAccount: true} })
 
    customer?.transaction.reduce( (acc ,transaction) => {
       //@ts-ignore
