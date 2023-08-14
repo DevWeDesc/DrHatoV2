@@ -9,7 +9,9 @@ const prisma = new PrismaClient();
 export const petsController = {
 getAllPets: async (request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const pets = await prisma.pets.findMany({include: {queue: {select: {  id: true, queryType: true, vetPreference: true}}, customer: {select: {name: true}}}})
+    const pets = await prisma.pets.findMany({include: {queue: {select: {  id: true, queryType: true, vetPreference: true}}, medicineRecords: 
+     { include: {petQueues: true } }
+      ,customer: {select: {name: true}}}})
     return reply.send(pets)
   } catch (error) {
     reply.status(404).send(error)
@@ -22,7 +24,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
     const pet = await prisma.pets.findUnique({ where: { id : parseInt(id)}, 
     include: {customer: 
       {select: { name: true, id: true, balance: true, pets: true}}, 
-      medicineRecords: {select: {petExams: true, observations: true, id: true, petVaccines: true, petSurgeries: true, petProcedures: true, petBeds: {where: {isCompleted: false}} }},
+      medicineRecords: {select: {petExams: true, petQueues: true ,observations: true, id: true, petVaccines: true, petSurgeries: true, petProcedures: true, petBeds: {where: {isCompleted: false}} }},
       queue: {select: { id: true, queryType: true, vetPreference: true, moreInfos: true, queueOur: true, queueEntry: true, petIsInQueue: true}},
       bed: {select: {isBusy: true, entryOur: true, id: true, kennel: {select: {name: true, price: true}}, dailyRate: true, mustFasting: true}},
       priceAccumulator: {select: {id: true, accumulator: true}}
@@ -114,6 +116,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
         return bedData
        }) ,
       queue: pet?.queue,
+      queueHistory: pet?.medicineRecords?.petQueues,
       totalAcc: {
         id: pet?.priceAccumulator?.id,
         price: pet?.priceAccumulator?.accumulator

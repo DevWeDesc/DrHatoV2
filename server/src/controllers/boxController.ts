@@ -57,6 +57,19 @@ showDailyBox: async(request: FastifyRequest, reply: FastifyReply) => {
   }
 },
 
+showlastBoxClosed: async(request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const boxs = await prisma.hospBoxHistory.findMany({
+      where: {boxIsOpen: false}
+    })
+    const lastBox = boxs[boxs.length - 1]
+    reply.send(lastBox)
+
+  } catch (error) {
+    console.log(error)
+  }
+},
+
 
 openBoxDaily: async(request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
   const {entryValues, exitValues, openBy} = boxSchema.parse(request.body)
@@ -122,5 +135,20 @@ closeBoxDaily: async(request: FastifyRequest<{Params: params}>, reply: FastifyRe
   } catch (error) {
     console.log(error)
   }
+},
+
+showCustomerDebitsOpen: async(request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
+        try {
+        const accounts =  await prisma.customer.findMany({
+            where: { customerAccount: {debits: {gte: 1}}},include: {
+              customerAccount: true
+            }
+          })
+          reply.send(accounts)
+        } catch (error) {
+          console.log(error)
+        }
 }
+
+
 }
