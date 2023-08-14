@@ -14,9 +14,9 @@ datasource db {
 
 model User {
   id        Int        @id @default(autoincrement())
-  email     String     @unique
-  username  String
-  password  String
+  email     String?
+  username  String?
+  password  String?
   crmv      Int?
   userIsVet Boolean?   @default(false)
   userType  String[]
