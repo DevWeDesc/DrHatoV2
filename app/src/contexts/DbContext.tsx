@@ -79,10 +79,6 @@ export function DbContextProvider ({children}: DbContextProps) {
           setGroups(groups)
           setProcedures(procedures)
           SetVetsList(vets)
-          setTimeout(()=>{
-            setDbLoaded(true)
-          },2000)
-        
         })
         .catch(error => {
           console.log('Ocorreu um erro:', error);

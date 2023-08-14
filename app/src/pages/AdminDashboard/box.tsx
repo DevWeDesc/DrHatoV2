@@ -30,15 +30,12 @@ import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 import { BoxProps } from "../../interfaces";
 
-
-
-
 export default function AdminBoxs() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { register, handleSubmit } = useForm();
-  const [boxs, setBox] = useState<BoxProps[]>([]);
+  const [boxs, setBox] = useState({} as BoxProps);
   const [reloadData, setReloadData] = useState(false);
-  const handleCreateVaccine: SubmitHandler<FieldValues> = async (values) => {
+  const handleCreateBox: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
         name: values.name,
@@ -46,7 +43,7 @@ export default function AdminBoxs() {
       };
       await api.post("/vetbox", data);
       setReloadData(true);
-      toast.success("Vacina criada com sucesso");
+      toast.success("Caixa criada com sucesso");
     } catch (error) {
       toast.error("Falha ao criar nova Vacina");
       console.log(error);
@@ -151,18 +148,17 @@ export default function AdminBoxs() {
                 </Thead>
 
                 <Tbody>
-                  {boxs.map((box) => (
-                    <Tr key={box.id}>
+                <Tr key={boxs.id}>
                       <Td borderColor="black">
                         <Text fontWeight="bold" color="gray.800">
-                          {box.name}
+                          {boxs.name}
                         </Text>
                       </Td>
                     
-                      <Td borderColor="black">{box.boxIsOpen === true ? "SIM" : "NÃO"}</Td>
-                      <Td borderColor="black">{new Intl.NumberFormat("pt-BR", {currency: 'BRL', style: 'currency'}).format(box.entryValues)}</Td>
-                      <Td borderColor="black">{new Intl.NumberFormat("pt-BR", {currency: 'BRL', style: 'currency'}).format(box.exitValues)}</Td>
-                      <Td borderColor="black">{new Intl.NumberFormat("pt-BR", {currency: 'BRL', style: 'currency'}).format(box.movimentedValues)}</Td>
+                      <Td borderColor="black">{boxs.boxIsOpen === true ? "SIM" : "NÃO"}</Td>
+                      <Td borderColor="black">{new Intl.NumberFormat("pt-BR", {currency: 'BRL', style: 'currency'}).format(boxs.entryValues)}</Td>
+                      <Td borderColor="black">{new Intl.NumberFormat("pt-BR", {currency: 'BRL', style: 'currency'}).format(boxs.exitValues)}</Td>
+                      <Td borderColor="black">{new Intl.NumberFormat("pt-BR", {currency: 'BRL', style: 'currency'}).format(boxs.movimentedValues)}</Td>
                       <Td borderColor="black">          <Button
                             alignItems="center"
                             as="a"
@@ -191,13 +187,12 @@ export default function AdminBoxs() {
 
                
                     </Tr>
-                  ))}
                 </Tbody>
               </Table>
               <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleCreateVaccine)}
+                  onSubmit={handleSubmit(handleCreateBox)}
                 >
                   <Flex
                     direction="column"
