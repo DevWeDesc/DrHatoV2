@@ -32,7 +32,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
 
     const petData = { 
       name: pet?.name,
-      balance: Number(pet?.customer.balance),
+      debits: pet?.debits,
       customerName: pet?.customer.name,
       customerId: pet?.customer.id,
       customerPets: pet?.customer.pets?.map( (pet) => {

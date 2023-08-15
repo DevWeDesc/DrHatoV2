@@ -57,7 +57,7 @@ export function MenuVet() {
     getQueue();
   }, [inQueue.length]);
 
-  //console.log(totalInQueue);
+
 
   const handleNavigateWorkSpace = () => {
     if (!petValue) {
