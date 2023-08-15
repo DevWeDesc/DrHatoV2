@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { ExamsType } from "../schemas/schemasValidator";
 import bcrypt from "bcrypt"
-const prisma = new PrismaClient()
+import { prisma } from "../interface/PrismaInstance";
+
 export class ValidationContract {
     private errors: string[];
     constructor() {
@@ -15,6 +15,8 @@ export class ValidationContract {
         this.errors.push(message)
        } 
     }
+
+
 
     public async checkPassword(value: { email: string, password: string}, message: string) {
       const user = await prisma.user.findUnique({where: {email: value.email }})

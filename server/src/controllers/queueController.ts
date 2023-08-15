@@ -1,10 +1,8 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../interface/PrismaInstance";
 import {QueueSchema } from "../schemas/schemasValidator";
-import { create } from "domain";
-import { accountService } from "../services/accountService";
-import { accumulatorService } from "../services/accumulatorService";
-const prisma = new PrismaClient();
+import { petContract } from "../interface/PetContractInstance";
+
 
 
 type params = {
@@ -32,31 +30,41 @@ export const queueController = {
   finishQueueOfPet:  async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
     const {petId, recordId, queueId, customerId} = request.params
     const {queueEntry, queryType, queueExit, debitOnThisQuery, responsibleVeterinarian} = QueueSchema.parse(request.body)
-    try {
+    try { 
 
-      await prisma.customer.update({
-        where: {id: parseInt(customerId)},data : {
-            customerAccount: {update: {debits: {increment: Number(debitOnThisQuery)}}}
-        }
-      })
+      await petContract.verifyIfIsPossibleEndQueue(recordId, 'Exame em aberto, não possivel é encerrar consulta.')
 
-        await  prisma.pets.update({
-            where: { id: parseInt(petId)},data: {priceAccumulator: {update: {accumulator: 0}}}
+      if(petContract.hadError()){
+        reply.status(400).send(petContract.showErrors()[0])
+        petContract.clearErrors()
+        return
+      } 
+
+
+      
+        await prisma.customer.update({
+          where: {id: parseInt(customerId)},data : {
+              customerAccount: {update: {debits: {increment: Number(debitOnThisQuery)}}}
+          }
         })
+  
+          await  prisma.pets.update({
+              where: { id: parseInt(petId)},data: {priceAccumulator: {update: {accumulator: 0}}}
+          })
+  
+          await prisma.queuesForPet.create({
+              data: {queryType, queueEntry, queueExit, debitOnThisQuery, responsibleVeterinarian, medicine:{ connect: {id: parseInt(recordId)}}}
+          })
+          
+          await prisma.queues.update({
+              where: {id: parseInt(queueId)}, data: {queryType: null, queueEntry: null, queueExit: null, moreInfos: null, vetPreference: null, petIsInQueue: false}
+          })
+  
+      
+          reply.send('Fila atualizada')
+      
 
-        await prisma.queuesForPet.create({
-            data: {queryType, queueEntry, queueExit, debitOnThisQuery, responsibleVeterinarian, medicine:{ connect: {id: parseInt(recordId)}}}
-        })
-        
-        await prisma.queues.update({
-            where: {id: parseInt(queueId)}, data: {queryType: null, queueEntry: null, queueExit: null, moreInfos: null, vetPreference: null, petIsInQueue: false}
-        })
 
-    
-
-       
-
-        reply.send('Fila atualizada')
     } catch (error) {
         console.log(error)
         reply.status(400).send({message: { error}})

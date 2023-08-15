@@ -1,11 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
-import { CustomerSchema, createCustomer } from "../schemas/schemasValidator";
-const prisma = new PrismaClient();
-type params = {
-  id: string;
-  recordId: string;
-}
+import { prisma } from "../interface/PrismaInstance";
+
+
 
 export const labsController = {
   getOpenExamsInLab: async (request:FastifyRequest, reply: FastifyReply) => {

@@ -1,9 +1,9 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
-import { ValidationContract } from "../validators/validateContract";
+import { ValidationContract } from "../validators/userContract";
 import {  ExamSchema  } from "../schemas/schemasValidator";
 import { accumulatorService } from "../services/accumulatorService";
-const prisma = new PrismaClient();
+import { prisma } from "../interface/PrismaInstance";
+
 
 
 type params = {

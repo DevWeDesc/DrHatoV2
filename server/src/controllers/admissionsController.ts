@@ -1,10 +1,10 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
 import { AdmissionSchema, BedSchema } from "../schemas/schemasValidator";
-import { ValidationContract } from "../validators/validateContract";
+import { ValidationContract } from "../validators/userContract";
 import { z } from "zod";
+import { prisma } from "../interface/PrismaInstance";
 const { getDiferrenceBetweenOurs } = require("../utils/countOurs");
-const prisma = new PrismaClient();
+
 
 type params = {
   id: string;

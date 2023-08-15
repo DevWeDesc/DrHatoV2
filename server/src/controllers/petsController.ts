@@ -1,8 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
-import { z } from "zod";
 import { petSchema } from "../schemas/schemasValidator";
-const prisma = new PrismaClient();
+import { prisma } from "../interface/PrismaInstance";
+
 
 
 

@@ -1,11 +1,11 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
-import { ValidationContract } from "../validators/validateContract";
+import { prisma } from "../interface/PrismaInstance";
+import { ValidationContract } from "../validators/userContract";
 import {  UserSchema  } from "../schemas/schemasValidator";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { z } from "zod";
-const prisma = new PrismaClient();
+
 const secret = process.env.JWT_TOKEN
 
 export const userController = {

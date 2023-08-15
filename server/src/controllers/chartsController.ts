@@ -1,13 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
 import '../utils/chartsMarketingCount'
 import { chartsCount } from "../utils/chartsMarketingCount";
-const prisma = new PrismaClient();
-type params = {
-  id: string;
-  recordId: string;
-}
-
+import { prisma } from "../interface/PrismaInstance";
 
 
 export const chartsController = {

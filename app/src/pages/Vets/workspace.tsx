@@ -361,7 +361,7 @@ export function WorkSpaceVet() {
                     display="flex"
                     justifyContent="center"
                   >
-                    Horário
+                    Detalhes
                   </Text>
                   <Text
                     fontWeight="bold"
@@ -427,7 +427,7 @@ export function WorkSpaceVet() {
                     textAlign="center"
                     bgColor="gray.100"
                   >
-                    {`${pet.sexo}, ${pet.weigth}`}
+                    {`${pet.sexo}, ${pet.weigth}Kgs`}
                   </Text>
                   {pet.isBusy === true ? (
                     <Text
