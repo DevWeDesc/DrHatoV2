@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../interface/PrismaInstance";
 import { z } from "zod";
-const prisma = new PrismaClient();
+
 
 const SectorSchema = z.object({
   name: z.string(),

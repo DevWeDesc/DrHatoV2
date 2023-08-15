@@ -1,8 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
-import { ValidationContract } from "../validators/validateContract";
+import { prisma } from "../interface/PrismaInstance";
 import {  GroupSchema, } from "../schemas/schemasValidator";
-const prisma = new PrismaClient();
+
 
 export const groupsController = {
     createGroup:  async (request: FastifyRequest, reply: FastifyReply) => {

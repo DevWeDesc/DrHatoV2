@@ -1,8 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { Prisma, PrismaClient } from "@prisma/client";
-import { z } from "zod";
-const prisma = new PrismaClient();
-
+import { prisma } from "../interface/PrismaInstance";
 export const searchController = {
  getAll: async (request: FastifyRequest<{
     Querystring: { name?: string; cpf?: string; adress?: string };

@@ -1,10 +1,9 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
-import { ValidationContract } from "../validators/validateContract";
-import { CustomerSchema, createCustomer } from "../schemas/schemasValidator";
-import { z } from "zod";
+import { ValidationContract } from "../validators/userContract";
+import { createCustomer } from "../schemas/schemasValidator";
 import { randomNumberAccount } from "../utils/randomNumberAccount";
-const prisma = new PrismaClient();
+import { prisma } from "../interface/PrismaInstance";
+
 
 export const customerController = {
   showAllUsers: async (request: FastifyRequest, reply: FastifyReply) => {

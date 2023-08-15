@@ -1,10 +1,9 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
 import { ProcedureSchema } from "../schemas/schemasValidator";
-import { ValidationContract } from "../validators/validateContract";
+import { ValidationContract } from "../validators/userContract";
 import { getFormattedDateTime } from "../utils/getCurrentDate";
 import { accumulatorService } from "../services/accumulatorService";
-const prisma = new PrismaClient();
+import { prisma } from "../interface/PrismaInstance";
 
 type params = {
   id: string;
