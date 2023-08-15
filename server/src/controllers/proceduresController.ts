@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { ProcedureSchema } from "../schemas/schemasValidator";
 import { ValidationContract } from "../validators/validateContract";
 import { getFormattedDateTime } from "../utils/getCurrentDate";
+import { accumulatorService } from "../services/accumulatorService";
 const prisma = new PrismaClient();
 
 type params = {
@@ -134,9 +135,9 @@ export const proceduresController = {
     }
   },
 
-  setProcedureInPet: async(request: FastifyRequest<{Params: {recordId: string, procedureId: string}}>, reply: FastifyReply) => {
+  setProcedureInPet: async(request: FastifyRequest<{Params: {recordId: string, procedureId: string, accId: string;}}>, reply: FastifyReply) => {
     const actualDate = getFormattedDateTime()
-    const {recordId, procedureId} = request.params
+    const {recordId, procedureId, accId} = request.params
     try {
      
       const procedure = await prisma.procedures.findUnique({where: {id: parseInt(procedureId)}})
@@ -155,7 +156,8 @@ export const proceduresController = {
           medicine: {connect: {id: parseInt(recordId)}}
         }
       })
-    
+      
+      await accumulatorService.addPriceToAccum(procedure?.price, accId)
       reply.status(200).send("Procedimento adicionado com sucesso!")
     } catch (error) {
       reply.status(400).send({message: error})
@@ -163,13 +165,22 @@ export const proceduresController = {
     }
   },
 
-  deleteProcedureOfPet: async (request: FastifyRequest<{Params: { id: string}}>, reply: FastifyReply) => {
+  deleteProcedureOfPet: async (request: FastifyRequest<{Params: { id: string; procedPrice: string; accId: string;}}>, reply: FastifyReply) => {
     try {
-      const { id} = request.params
+
+      const { id, procedPrice, accId} = request.params
+
+
+      await accumulatorService.removePriceToAccum(Number(procedPrice), accId)
+
       await prisma.proceduresForPet.delete({
         where: {id: parseInt(id)}
       })
+
+    
       reply.send("Procedimento deletado com sucesso!").status(203)
+      
+      reply.status(200)
     } catch (error) {
         console.log(error)
         reply.send({message: error})

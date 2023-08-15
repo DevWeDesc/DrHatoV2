@@ -28,38 +28,18 @@ import { GiCardDiscard } from "react-icons/gi";
 import { BsCashCoin } from "react-icons/bs";
 import { BsReception4 } from "react-icons/bs";
 import { BiHome } from "react-icons/bi";
+import { ICustomer } from "../../../interfaces";
 
 export function BoxNewPayments() {
-  const [customers, setCostumers] = useState([]);
+  const [customers, setCostumers] = useState({} as ICustomer);
   const { id } = useParams<{ id: string }>();
   const [cash, setCash] = useState<number | string>("");
   const [client, setClient] = useState([]);
 
   async function getCustomers() {
-    const response = await api.get(`http://localhost:5000/customers/${id}`);
+    const response = await api.get(`/customers/${id}`);
     setCostumers(response.data);
   }
-  const clientes = [
-    {
-      id: 1,
-      name: "Junior Ferreira Campos",
-      animal: "Mel",
-      date: "24/07/23",
-      our: "10:04",
-      balance: "-90,00",
-      state: "Campinas",
-      cep: "13051-207",
-      bairro: "Jardim Santa Cruz",
-      adress: "Avenida Maria Clara Machado",
-      phone: "(11) 98379-0437",
-      vet: "Henrique Magoga",
-    },
-  ];
-
-  useEffect(() => {
-    const clientesFilter: any = clientes.filter((user: any) => user.id == id);
-    setClient(clientesFilter);
-  }, []);
   useEffect(() => {
     getCustomers();
   }, []);
@@ -126,129 +106,127 @@ export function BoxNewPayments() {
                       <Th bg="blue.800" roundedTopEnd="8px"></Th>
                     </Tr>
                   </Thead>
-                  {client.map((user: any) => (
-                    <Tbody>
-                      <Tr>
-                        <Th
-                          fontSize="18"
-                          py="8"
-                          color="black"
-                          bg="blue.100"
-                          borderBottom="1px solid black"
-                        >
-                          Dados do Cliente
-                        </Th>
-                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                        <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      </Tr>
-                      <Tr border="1px solid black">
-                        <Td
-                          borderBottom="2px solid black"
-                          fontSize="18"
-                          fontWeight="bold"
-                          w="10"
-                          p="0"
-                          pl="5"
-                        >
-                          Nome do Cliente
-                        </Td>
-                        <Td borderBottom="1px solid black" colSpan={6} p="0">
-                          <Input
-                            borderLeft="2px solid black"
-                            h="12"
-                            rounded="0"
-                            bg="white"
-                            borderColor="black"
-                            value={user.name}
-                          ></Input>
-                        </Td>
-                      </Tr>
-                      <Tr border="1px solid black">
-                        <Td
-                          borderBottom="2px solid black"
-                          fontSize="18"
-                          fontWeight="bold"
-                          p="0"
-                          pl="5"
-                        >
-                          Endereço
-                        </Td>
-                        <Td borderBottom="1px solid black" colSpan={6} p="0">
-                          <Input
-                            borderLeft="2px solid black"
-                            h="12"
-                            rounded="0"
-                            bg="white"
-                            borderColor="black"
-                            value={user.adress}
-                          ></Input>
-                        </Td>
-                      </Tr>
-                      <Tr border="1px solid black">
-                        <Td
-                          p="0"
-                          pl="5"
-                          borderBottom="2px solid black"
-                          fontSize="18"
-                          fontWeight="bold"
-                          textAlign="start"
-                        >
-                          Telefone / Celular
-                        </Td>
-                        <Td borderBottom="1px solid black" colSpan={6} p="0">
-                          <Input
-                            borderLeft="2px solid black"
-                            h="12"
-                            rounded="0"
-                            bg="white"
-                            borderColor="black"
-                            value={user.phone}
-                          ></Input>
-                        </Td>
-                      </Tr>
-                      <Tr border="1px solid black">
-                        <Td
-                          p="0"
-                          pl="5"
-                          borderBottom="2px solid black"
-                          fontSize="18"
-                          fontWeight="bold"
-                          textAlign="start"
-                        >
-                          Saldo Atual
-                        </Td>
-                        <Td borderBottom="1px solid black" colSpan={6} p="0">
-                          <Input
-                            borderLeft="2px solid black"
-                            h="12"
-                            rounded="0"
-                            bg={BgInput(parseInt(user.balance))}
-                            borderColor="black"
-                            value={user.balance}
-                          ></Input>
-                        </Td>
-                      </Tr>
-                      <Tr border="1px solid black">
-                        <Td
-                          p="0"
-                          py="8"
-                          bg="blue.700"
-                          fontSize="20"
-                          fontWeight="bold"
-                          color="white"
-                          textAlign="center"
-                          colSpan={8}
-                        >
-                          Para Iniciar um lançamento, selecione o tipo de
-                          pagamento
-                        </Td>
-                      </Tr>
-                    </Tbody>
-                  ))}
+                  <Tbody>
+                    <Tr>
+                      <Th
+                        fontSize="18"
+                        py="8"
+                        color="black"
+                        bg="blue.100"
+                        borderBottom="1px solid black"
+                      >
+                        Dados do Cliente
+                      </Th>
+                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                    </Tr>
+                    <Tr border="1px solid black">
+                      <Td
+                        borderBottom="2px solid black"
+                        fontSize="18"
+                        fontWeight="bold"
+                        w="10"
+                        p="0"
+                        pl="5"
+                      >
+                        Nome do Cliente
+                      </Td>
+                      <Td borderBottom="1px solid black" colSpan={6} p="0">
+                        <Input
+                          borderLeft="2px solid black"
+                          h="12"
+                          rounded="0"
+                          bg="white"
+                          borderColor="black"
+                          value={customers.name}
+                        ></Input>
+                      </Td>
+                    </Tr>
+                    <Tr border="1px solid black">
+                      <Td
+                        borderBottom="2px solid black"
+                        fontSize="18"
+                        fontWeight="bold"
+                        p="0"
+                        pl="5"
+                      >
+                        Endereço
+                      </Td>
+                      <Td borderBottom="1px solid black" colSpan={6} p="0">
+                        <Input
+                          borderLeft="2px solid black"
+                          h="12"
+                          rounded="0"
+                          bg="white"
+                          borderColor="black"
+                          value={customers.adress}
+                        ></Input>
+                      </Td>
+                    </Tr>
+                    <Tr border="1px solid black">
+                      <Td
+                        p="0"
+                        pl="5"
+                        borderBottom="2px solid black"
+                        fontSize="18"
+                        fontWeight="bold"
+                        textAlign="start"
+                      >
+                        Telefone / Celular
+                      </Td>
+                      <Td borderBottom="1px solid black" colSpan={6} p="0">
+                        <Input
+                          borderLeft="2px solid black"
+                          h="12"
+                          rounded="0"
+                          bg="white"
+                          borderColor="black"
+                          value={customers.phone}
+                        ></Input>
+                      </Td>
+                    </Tr>
+                    <Tr border="1px solid black">
+                      <Td
+                        p="0"
+                        pl="5"
+                        borderBottom="2px solid black"
+                        fontSize="18"
+                        fontWeight="bold"
+                        textAlign="start"
+                      >
+                        Saldo Atual
+                      </Td>
+                      <Td borderBottom="1px solid black" colSpan={6} p="0">
+                        <Input
+                          borderLeft="2px solid black"
+                          h="12"
+                          rounded="0"
+                          bg={BgInput(parseInt("0"))}
+                          borderColor="black"
+                          value={customers.balance}
+                        ></Input>
+                      </Td>
+                    </Tr>
+                    <Tr border="1px solid black">
+                      <Td
+                        p="0"
+                        py="8"
+                        bg="blue.700"
+                        fontSize="20"
+                        fontWeight="bold"
+                        color="white"
+                        textAlign="center"
+                        colSpan={8}
+                      >
+                        Para Iniciar um lançamento, selecione o tipo de
+                        pagamento
+                      </Td>
+                    </Tr>
+                  </Tbody>
                 </Table>
               </TableContainer>
               <TableContainer>

@@ -3,18 +3,16 @@ import { PrismaClient } from "@prisma/client";
 import { ValidationContract } from "../validators/validateContract";
 import { CustomerSchema, createCustomer } from "../schemas/schemasValidator";
 import { z } from "zod";
+import { randomNumberAccount } from "../utils/randomNumberAccount";
 const prisma = new PrismaClient();
 
 export const customerController = {
   showAllUsers: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const allUser = await prisma.customer.findMany({
-        include: { pets: true, transaction: true},
+        include: { pets: true, transaction: true, customerAccount: {include: {installments: true}}},
       });
 
-      const teste = await prisma.customer.findMany({
-        where: { adress: "Rua teste"}
-      })
       return reply.send(allUser);
     } catch (error) {
       return reply.status(404).send({ message: error });
@@ -46,7 +44,7 @@ export const customerController = {
   createUser: async (request: FastifyRequest, reply: FastifyReply) => {
        const contract = new ValidationContract() ;
 
-       const {name, adress, district, rg  ,phone, tell, email, cpf, birthday, balance, cep, vetPreference, howKnowUs, kindPerson, neighbour, state} = createCustomer.parse(request.body)
+       const {name, adress, district, rg  ,phone, tell, email, cpf, birthday, balance, cep, howKnowUs, kindPerson, neighbour, state} = createCustomer.parse(request.body)
        try {
 
         await contract.customerAlreadyExists(cpf, 'Usuário já existe!')
@@ -57,7 +55,11 @@ export const customerController = {
         }
 
         await prisma.customer.create({
-          data: {name, adress, phone, email, cpf, birthday, balance, cep, district, howKnowUs, rg, tell, kindPerson, neighbour, state }
+          data: {name, adress, phone, email, cpf, birthday, balance, cep, district, howKnowUs, rg, tell, kindPerson, neighbour, state, customerAccount: {create: {
+            accountNumber: randomNumberAccount(100, 100000),
+            credits: 0,
+            debits: 0
+          }} }
         })
        } catch (error) {
         console.error(error)

@@ -10,6 +10,10 @@ export const WorkSpaceHeader = styled.header`
 width: 100%;
 height: 10vh;
 background-color: #eaeaea;
+@media (max-width: 1380px) {
+  width: 100vw;
+  height: 20vh;
+}
 
 `
 
@@ -21,6 +25,11 @@ background-color: #eaeaea;
 export const WorkSpaceContent = styled.div `
 width: 100%;
 height: 80vh;
+@media (max-width: 1380px) {
+  width: 100vw;
+  height: 100vh;
+}
+
 display: grid;
 grid-template-columns: repeat(4, 1fr);
 grid-template-rows: repeat(4, 1fr);

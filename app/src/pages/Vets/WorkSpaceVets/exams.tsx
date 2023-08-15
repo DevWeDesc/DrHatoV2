@@ -26,62 +26,7 @@ import { api } from "../../../lib/axios";
 export function VetExams() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  // const [petDetails, setPetDetails] = useState({} as PetDetaisl);
-  // const [exams, setExams] = useState([]);
-  // const [examId, setExamId] = useState(0);
-  // const [reloadData, setReloadData] = useState(false);
-
-  // console.log(petDetails);
-
-  // async function getPetExams() {
-  //   const response = await api.get(`/pets/${id}`);
-  //   setPetDetails(response.data);
-
-  //   const exams = await api.get("/exams");
-  //   setExams(exams.data);
-  // }
-
-  // async function setExamInPet() {
-  //   try {
-  //     await api.post(`/setexam/${examId}/${petDetails.recordId}`);
-  //     setReloadData(true);
-  //     toast.success("Exame criado com Sucesso");
-  //   } catch (error) {
-  //     toast.error("Falha ao cadastrar exame!");
-  //   }
-  // }
-
-  // async function deleteExam(examId: string | number) {
-  //   try {
-  //     const confirmation = window.confirm(
-  //       "DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
-  //     );
-
-  //     if (confirmation === true) {
-  //       await api.delete(`/petexam/${examId}`);
-  //       setReloadData(true);
-  //       toast.warning("Deletado com sucesso!");
-  //     } else {
-  //       return;
-  //     }
-  //   } catch (error) {
-  //     toast.error("Falha ao Deletar!");
-  //     console.log(error);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   getPetExams();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (reloadData === true) {
-  //     getPetExams();
-  //     setReloadData(false); // Reseta o estado para evitar chamadas infinitas
-  //   }
-  // }, [reloadData]);
-
-  // // console.log("ESTADO DE CHAMADA  API", petDetails);
+  
 
   return (
     <ChakraProvider>

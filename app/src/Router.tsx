@@ -101,6 +101,7 @@ import { EditPets } from "./pages/Pets/edit";
 import ProtectedRouteMiddleware from "./middleware/ProtectAuthMiddleware";
 import { HealthInsurance } from "./pages/AdminDashboard/healthInsurance";
 import { HealthInsuranceDetails } from "./pages/AdminDashboard/HealthInsuranceDetails";
+import AdminBoxs from "./pages/AdminDashboard/box";
 import { AuthContextProvider } from "./contexts/AuthContext";
 
 export function Router() {
@@ -153,7 +154,6 @@ export function Router() {
               path="/Admin/HealthInsurance/:id"
               element={<HealthInsuranceDetails />}
             />
-
             <Route path="/Admin/Charts" element={<AdminCharts />} />
             <Route path="/Admin/Autorizations" element={<Autorizations />} />
             <Route
@@ -166,6 +166,8 @@ export function Router() {
             <Route path="/Admin/Sectors" element={<SectorsList />} />
             <Route path="/Admin/Instructions" element={<InstructionsList />} />
             <Route path="/Admin/Procedures" element={<ProceduresList />} />
+
+            <Route path="/Admin/Box" element={<AdminBoxs />} />
             <Route
               path="/Admin/Procedures/Create"
               element={<ProcedureCreate />}

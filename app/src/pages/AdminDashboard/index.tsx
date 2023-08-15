@@ -85,6 +85,11 @@ export function AdminMain() {
                       Cadastro de Vacinas
                     </Button>
                   </Link>
+                  <Link to="/Admin/Box">
+                    <Button colorScheme="whatsapp" w="100%" py="10">
+                      Cadastro de Caixa
+                    </Button>
+                  </Link>
                 </Flex>
               </Flex>
             </SimpleGrid>

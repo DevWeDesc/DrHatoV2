@@ -1,33 +1,37 @@
-import {ChakraProvider,Flex, Button, Text, FormControl, HStack } from '@chakra-ui/react'
+import {
+  ChakraProvider,
+  Flex,
+  Button,
+  Text,
+  FormControl,
+  HStack,
+} from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
 import { useState, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { DbContext } from '../../contexts/DbContext';
+import { DbContext } from "../../contexts/DbContext";
 
 interface UniversalSearchProps {
-    path: string;
+  path: string;
 }
 
-export function RecepetionSearch({ path}: UniversalSearchProps) {
-const navigate = useNavigate()
-const { setCustomers, customer } = useContext(DbContext)
+export function RecepetionSearch({ path }: UniversalSearchProps) {
+  const navigate = useNavigate();
+  const { setCustomers, customer } = useContext(DbContext);
+  console.log(customer);
 
-    const {register, handleSubmit} = useForm()
+  const { register, handleSubmit } = useForm();
   const handleSearch: SubmitHandler<any> = async (values) => {
     if (values.name) {
       try {
-        const responseName = await api.get(
-          `${path}?name=${values.name}`
-        );
+        const responseName = await api.get(`${path}?name=${values.name}`);
 
         setCustomers(responseName.data);
 
-          toast.success("Cliente encontrado");
-       
- 
+        toast.success("Cliente encontrado");
       } catch (error) {
         toast.error("Cliente não encontrado");
       }
@@ -35,10 +39,8 @@ const { setCustomers, customer } = useContext(DbContext)
 
     if (values.cpf) {
       try {
-        const responseData = await api.get(
-          `${path}?cpf=${values.cpf}`
-        );
-        
+        const responseData = await api.get(`${path}?cpf=${values.cpf}`);
+
         setCustomers(responseData.data);
         if (Object.keys(customer).length == 0) {
           toast.error("Cliente não encontrado");
@@ -52,9 +54,7 @@ const { setCustomers, customer } = useContext(DbContext)
 
     if (values.rg) {
       try {
-        const responserg = await api.get(
-          `${path}?rg=${values.rg}`
-        );
+        const responserg = await api.get(`${path}?rg=${values.rg}`);
         setCustomers(responserg.data);
         if (Object.keys(customer).length == 0) {
           toast.error("Cliente não encontrado");
@@ -69,23 +69,35 @@ const { setCustomers, customer } = useContext(DbContext)
 
   return (
     <ChakraProvider>
-        <Flex direction="row" gap="4">
+      <Flex direction="row" gap="4">
         <FormControl as="form" onSubmit={handleSubmit(handleSearch)}>
           <HStack>
-        <Input label='Nome do Cliente'  {...register("name")} name='name' />
-        <Input  label='CPF do Cliente' {...register('cpf')} name='cpf'  />
-        <Input   label='R.G do Cliente' {...register('rg')} name='rg' />  
-        <Input isDisabled  label='Código do Animal' {...register('codPet')} name='codPet' />
-        <Flex gap="2" align="center" direction="column">
-        <Text fontWeight="bold">Pesquisar Clientes</Text>
-        <Button type="submit" colorScheme="whatsapp" minWidth={220}> Filtrar</Button>
-        </Flex>
-        </HStack>
-        <Button colorScheme="teal" mt="4"
-        onClick={() => navigate("/Recepcao/Create")}
-        >Ou adicione um novo Cliente</Button>
+            <Input label="Nome do Cliente" {...register("name")} name="name" />
+            <Input label="CPF do Cliente" {...register("cpf")} name="cpf" />
+            <Input label="R.G do Cliente" {...register("rg")} name="rg" />
+            <Input
+              isDisabled
+              label="Código do Animal"
+              {...register("codPet")}
+              name="codPet"
+            />
+            <Flex gap="2" align="center" direction="column">
+              <Text fontWeight="bold">Pesquisar Clientes</Text>
+              <Button type="submit" colorScheme="whatsapp" minWidth={220}>
+                {" "}
+                Filtrar
+              </Button>
+            </Flex>
+          </HStack>
+          <Button
+            colorScheme="teal"
+            mt="4"
+            onClick={() => navigate("/Recepcao/Create")}
+          >
+            Ou adicione um novo Cliente
+          </Button>
         </FormControl>
-        </Flex>
+      </Flex>
     </ChakraProvider>
-      )
+  );
 }

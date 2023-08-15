@@ -50,6 +50,7 @@ export function WorkSpaceVet() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAutorizationModalOpen, setAutorizationModalOpen] = useState(false);
   const [reloadData, setReloadData] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user") as string);
   function openModal() {
     setIsModalOpen(true);
   }
@@ -89,7 +90,7 @@ export function WorkSpaceVet() {
         queueEntry: pet.queue.queueEntry,
         queueExit: new Date(),
         debitOnThisQuery: Number(pet.totalAcc.price),
-        responsibleVeterinarian: "Daniel Hato",
+        responsibleVeterinarian: user.username,
       }
 
       await api.put(`/endqueue/${id}/${pet.recordId}/${pet.queue.id}`, data) 
@@ -199,11 +200,11 @@ export function WorkSpaceVet() {
             <Flex
               justify="space-between"
               align="center"
-              width="100%"
+              width="100vw"
               height="100%"
             >
               <Flex align="center" gap="2">
-                <Text m="2" fontSize="2xl" fontWeight="bold">
+                <Text m="2" fontSize="1xl"  fontWeight="bold">
                   WorkSpace Veterinário
                 </Text>
                 <Button
@@ -223,7 +224,7 @@ export function WorkSpaceVet() {
                 </Button>
               </Flex>
 
-              <Flex flexWrap="wrap" justify="start" gap="2" m="4" p="2">
+              <Flex flexWrap="wrap" width="2200px"  height="100%" justify="start" gap="2" m="4" p="2" overflowX="auto">
                 <Button
                   onClick={() => openModal()}
                   height={8}
@@ -304,7 +305,8 @@ export function WorkSpaceVet() {
              
               
  
-                <ConfirmationDialog 
+                  <ConfirmationDialog 
+                disabled={pet.queue?.petIsInQueue === false ? true : false}
                 icon={<CiStethoscope fill="white" size={24}  />} 
                 buttonTitle="Concluir Consulta"
                 whatIsConfirmerd="Tem certeza que deseja encerrar consulta ?"
@@ -316,11 +318,10 @@ export function WorkSpaceVet() {
 
                 <Button
                   height={8}
-                  onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}
                   leftIcon={<MdAttachMoney fill="white" size={24} />}
                   colorScheme="whatsapp"
                 >
-                   Total nessa consulta: {pet.totalAcc?.price}
+                   Total nessa consulta: {new Intl.NumberFormat("pt-BR",{currency: 'BRL', style: 'currency'}).format(Number(pet.totalAcc?.price))}
                 </Button>
                
               </Flex>

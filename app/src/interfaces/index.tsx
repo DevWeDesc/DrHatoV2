@@ -138,60 +138,82 @@ export interface VacinnesProps {
 }
 
 export interface SugeriesProps {
+  id: number;
+  name: string;
+  price: number;
+  scheduledDate?: Date;
+  completedDate?: Date;
+}
 
-      id: number;
-			name: string;
-      price: number;
-		  scheduledDate?: Date
-			completedDate?: Date
-      }
+type QueueProps = {
+  id: string | number;
+  moreInfos: string;
+  queueOur: string;
+  vetPreference: string;
+  queueEntry: Date;
+  queryType: string;
+  petIsInQueue: boolean;
+};
 
-  type QueueProps = {
-        id: string | number;
-        moreInfos: string;
-        queueOur: string;
-        vetPreference: string;
-        queueEntry: Date;
-        queryType: string;
-      };
+type totalAccProps = {
+  id: number;
+  price: number;
+};
 
-      type totalAccProps = {
-        id: number;
-        price: number | string;
-         } 
-         
-  type customerPetsProps = {
-    id: number;
-    name: string;
-  }    
-  type ProceduresProps = {
-    id: number;
-    name: string;
-    price: number;
-    available: boolean;
-    requestedDate: Date 
-  }
+type customerPetsProps = {
+  id: number;
+  name: string;
+};
+type ProceduresProps = {
+  id: number;
+  name: string;
+  price: number;
+  available: boolean;
+  requestedDate: Date;
+};
 
-  type KennelProps = {
-    name: string;
-    price: number;
-  }
-  type BedInfosProps = {
-    id: number;
-    entry: Date | number;
-    kennelName: KennelProps;
-    fasting: boolean;
-  }
+type KennelProps = {
+  name: string;
+  price: number;
+};
+type BedInfosProps = {
+  id: number;
+  entry: Date | number;
+  kennelName: KennelProps;
+  fasting: boolean;
+};
 
-  type AdmissionsProps = {
-    id: number;
-    entry:Date;
-   exit: Date;
-    totalDebit: number | string;
-   fasting: boolean;
-   observations: string;
-  }
-  
+type AdmissionsProps = {
+  id: number;
+  entry: Date;
+  exit: Date;
+  totalDebit: number | string;
+  fasting: boolean;
+  observations: string;
+};
+
+export type HistoryBoxProps = {
+  id: string | number;
+  entryValues: number;
+  exitValues: number;
+  totalValues: number;
+  openBox: Date | number;
+  closeBox: Date | number;
+  openBy: string;
+  closedBy: string;
+  hospVetBoxId: string | number;
+};
+
+export interface BoxProps {
+  id: string | number;
+  name: string;
+  movimentedValues: number;
+  entryValues: number;
+  exitValues: number;
+  boxIsOpen: boolean;
+  historyBox: HistoryBoxProps[];
+}
+
 export interface PetDetaisl {
   id: number | string;
   more: string;
@@ -199,6 +221,7 @@ export interface PetDetaisl {
   balance: number;
   customerName: string;
   customerId: string;
+  customer_id: string;
   especie: string;
   sexo: string;
   race: string;
@@ -214,11 +237,34 @@ export interface PetDetaisl {
   queue: QueueProps;
   exams: ExamsProps[];
   vaccines: VacinnesProps[];
-  surgeries:  SugeriesProps[];
+  surgeries: SugeriesProps[];
   procedures: ProceduresProps[];
   customerPets: customerPetsProps[];
   bedInfos: BedInfosProps;
   isBusy: boolean;
   totalAcc: totalAccProps;
   admissions: AdmissionsProps[];
+  vetPreference: string;
+  customer: { name: string };
+}
+
+export interface ICustomer {
+  id: number;
+  name: string;
+  adress: string;
+  district: string;
+  cep: string | null;
+  neighbour: string;
+  state: string;
+  phone: string;
+  tell: string;
+  cpf: string;
+  rg: string;
+  email: string;
+  birthday: string;
+  balance: number;
+  kindPerson: string;
+  vetPreference: string | null;
+  howKnowUs: string;
+  pets: PetDetaisl[];
 }

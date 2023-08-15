@@ -1,9 +1,8 @@
 import { test, expect, jest } from '@jest/globals'
-import { userController } from '../controllers/userController';
 import { prismaMock } from '../../singleton'
 test('should create new user ', async () => {
   const user = {
-    name: 'Rich',
+    email: 'test@gmai.com',
     username: 'hello@prisma.io',
     password: '123456',
     userType: 'admin'
@@ -15,7 +14,7 @@ test('should create new user ', async () => {
 
 test('should edit user', async () => {
   const updatedUser = {
-    name: 'John Doe',
+    email: 'test@gmai.com',
     username: 'john@example.com',
     password: 'newpassword',
     userType: ['admin', 'regular'],
@@ -29,7 +28,7 @@ test('should edit user', async () => {
   const result = await prismaMock.user.update({
     where: { id: updatedUser.id },
     data: {
-      name: updatedUser.name,
+      email: updatedUser.email,
       password: updatedUser.password,
       userType: updatedUser.userType,
       crmv: updatedUser.crmv,
@@ -41,7 +40,7 @@ test('should edit user', async () => {
   expect(prismaMock.user.update).toHaveBeenCalledWith({
     where: { id: updatedUser.id },
     data: {
-      name: updatedUser.name,
+      email: updatedUser.email,
       password: updatedUser.password,
       userType: updatedUser.userType,
       crmv: updatedUser.crmv,
@@ -52,7 +51,7 @@ test('should edit user', async () => {
 
 test('should show list of users', async () => {
   const users = [
-    { name: 'John', username: 'john@example.com', password: 'password', userType: ['admin'], id: 1, crmv: null, userIsVet: true},
+    { email: 'teste@gmail.com', username: 'john@example.com', password: 'password', userType: ['admin'], id: 1, crmv: null, userIsVet: true},
   ];
   jest.spyOn(prismaMock.user, 'findMany').mockResolvedValue(users);
   const userList = await prismaMock.user.findMany();
