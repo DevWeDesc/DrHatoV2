@@ -5,14 +5,24 @@ import {
     Box, Button
   } from "@chakra-ui/react";
 import moment from "moment";
-  import { useContext } from "react";
+  import { useContext, useState } from "react";
   import { BoxContext } from "../../contexts/BoxContext";
+import { GenericModal } from "../Modal/GenericModal";
 import { PaymentTotalized } from "./paymentTotalized";
 import { ReceveidDocuments } from "./receveidsDocuments";
+import { ShowPaymentsOpenInDay } from "./showPaymentsOpenInDay";
 
 export function ClosedBox() {
-    const {dailyBox, fatherBox,setReloadData } = useContext(BoxContext)
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const {dailyBox, fatherBox,lastBox } = useContext(BoxContext)
     const openedDate = moment(dailyBox?.openBox).format("DD-MM-YYYY");
+    function openModal() {
+      setIsModalOpen(true);
+    }
+    function closeModal() {
+      setIsModalOpen(false);
+    }
+
     return (
         <Flex w="100%" justifyContent="space-between">
         <Flex direction="column" w="40%" borderRight="1px solid black">
@@ -83,6 +93,7 @@ export function ClosedBox() {
               <Input
                 h="51px"
                 w="40%"
+                defaultValue={lastBox.totalValues}
                 bgColor="white"
                 borderX="1px solid black"
                 rounded="0"
@@ -107,6 +118,7 @@ export function ClosedBox() {
                 h="51px"
                 w="40%"
                 bgColor="white"
+                defaultValue={dailyBox.totalValues}
                 borderX="1px solid black"
                 rounded="0"
               />
@@ -154,13 +166,15 @@ export function ClosedBox() {
               <Text w="60%" fontSize="18" fontWeight="bold" pl="5">
                 Não pago
               </Text>
-              <Input
+              <Button
+              colorScheme="yellow"
                 h="51px"
                 w="40%"
-                bgColor="white"
+              
                 borderX="1px solid black"
                 rounded="0"
-              />
+                onClick={() => openModal()}
+              >VISUALIZAR</Button>
             </Flex>
             <Flex
               w="100%"
@@ -202,6 +216,12 @@ export function ClosedBox() {
         <Flex w="60%" direction="column">
           <ReceveidDocuments />
         </Flex>
+        <GenericModal 
+           isOpen={isModalOpen}
+           onRequestClose={closeModal}
+        >
+          <ShowPaymentsOpenInDay/>
+        </GenericModal>
       </Flex>
     )
 }

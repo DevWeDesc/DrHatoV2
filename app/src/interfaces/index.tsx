@@ -193,6 +193,17 @@ export interface SugeriesProps {
    observations: string;
   }
 
+type PetQueueProps = {
+  id: number;
+  queueEntry: Date
+  queueExit: Date
+  queryType: String
+  debitOnThisQuery: Number
+}
+type MedicineRecordsProps = {
+  petQueues: PetQueueProps[]
+}
+
  export type HistoryBoxProps = {
     id: string | number
   	entryValues: number
@@ -241,6 +252,7 @@ export interface PetDetaisl {
   surgeries:  SugeriesProps[];
   procedures: ProceduresProps[];
   customerPets: customerPetsProps[];
+  medicineRecords: MedicineRecordsProps;
   bedInfos: BedInfosProps;
   isBusy: boolean;
   totalAcc: totalAccProps;

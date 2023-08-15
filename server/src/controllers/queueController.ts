@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import {QueueSchema } from "../schemas/schemasValidator";
 import { create } from "domain";
 import { accountService } from "../services/accountService";
+import { accumulatorService } from "../services/accumulatorService";
 const prisma = new PrismaClient();
 
 
@@ -32,6 +33,17 @@ export const queueController = {
     const {petId, recordId, queueId, customerId} = request.params
     const {queueEntry, queryType, queueExit, debitOnThisQuery, responsibleVeterinarian} = QueueSchema.parse(request.body)
     try {
+
+      await prisma.customer.update({
+        where: {id: parseInt(customerId)},data : {
+            customerAccount: {update: {debits: {increment: Number(debitOnThisQuery)}}}
+        }
+      })
+
+        await  prisma.pets.update({
+            where: { id: parseInt(petId)},data: {priceAccumulator: {update: {accumulator: 0}}}
+        })
+
         await prisma.queuesForPet.create({
             data: {queryType, queueEntry, queueExit, debitOnThisQuery, responsibleVeterinarian, medicine:{ connect: {id: parseInt(recordId)}}}
         })
@@ -40,11 +52,9 @@ export const queueController = {
             where: {id: parseInt(queueId)}, data: {queryType: null, queueEntry: null, queueExit: null, moreInfos: null, vetPreference: null, petIsInQueue: false}
         })
 
-        await  prisma.pets.update({
-            where: { id: parseInt(petId)},data: {debits: {increment: Number(debitOnThisQuery) }, priceAccumulator: {update: {accumulator: 0}}}
-        })
+    
 
-        await accountService.pushDebitsToAccount(customerId)
+       
 
         reply.send('Fila atualizada')
     } catch (error) {

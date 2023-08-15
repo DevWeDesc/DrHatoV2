@@ -21,15 +21,17 @@ export const accountService = {
 
                 if(!customer) {
                     return
-                } else {
-                    let totalDebits = customer?.pets.reduce((acc, pet) => acc + Number(pet.debits), Number(customer.customerAccount?.debits))
+                } 
+                    let totalDebits = customer?.pets.map((pet) => {
+                     let totalToPay = pet.debits
+                    })
             
                     await prisma.customer.update({
                      where: {id: parseInt(customerId)},data: {
                          customerAccount: {update: {debits: {increment: Number(totalDebits)}}}
                      }
                  })
-                }
+                
             
             } catch (error) {
                 console.log(error)
