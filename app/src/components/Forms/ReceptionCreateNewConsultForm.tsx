@@ -23,6 +23,7 @@ import { CelularInput } from "../InputMasks/CelularInput";
 import { FixedInput } from "../InputMasks/FixedInput";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, number, date, InferType } from "yup";
+import { useNavigate } from "react-router-dom";
 
 interface CreateNewClienteProps {
   name: string;
@@ -44,11 +45,11 @@ let customerSchema = object({
   name: string().required("Nome é Obrigatório"),
   birthday: string().required("Data de nascimento é Obrigatório"),
   email: string().email("E-mail Invalido").required("E-mail é Obrigatório"),
-  district: string().required("CPF é Obrigatório"),
-  state: string().required("Estado é Obrigatório"),
+  //district: string().required("CPF é Obrigatório"),
+  //state: string().required("Estado é Obrigatório"),
   //cep: string().required("CEP é Obrigatório"),
-  adress: string().required("Endereço é Obrigatório"),
-  neighbour: string().required("Campo Obrigatório"),
+  //adress: string().required("Endereço é Obrigatório"),
+  //neighbour: string().required("Campo Obrigatório"),
   //howKnowUs: string()),
 });
 export function ReceptionCreateNewConsultForm() {
@@ -72,6 +73,7 @@ export function ReceptionCreateNewConsultForm() {
   const [estado, setEstado] = useState("");
   const [tamCep, setTamCep] = useState(0);
   const [errorInput, setErrorInput] = useState(0);
+  const navigate = useNavigate();
 
   const Dayes = {
     phone: CelularValue,
@@ -87,7 +89,7 @@ export function ReceptionCreateNewConsultForm() {
     fetch(`https://viacep.com.br/ws/${CEPValue}/json/`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data.length);
+        console.log(data);
         setLogradouro(data.logradouro);
         setBairro(data.bairro);
         setCidade(data.localidade);
@@ -109,8 +111,8 @@ export function ReceptionCreateNewConsultForm() {
   ) => {
     const data = {
       name: values.name,
-      adress: values.adress,
-      district: values.district,
+      adress: logradouro,
+      district: estado,
       email: values.email,
       birthday: values.birthday.toString(),
       phone: CelularValue,
@@ -120,11 +122,13 @@ export function ReceptionCreateNewConsultForm() {
       cep: CEPValue,
       howKnowUs: howKnow,
       kindPerson: kindPerson,
-      state: values.state,
-      neighbour: values.neighbour,
+      state: estado,
+      neighbour: bairro,
     };
     try {
-      await api.post("/customers", data);
+      await api
+        .post("/customers", data)
+        .then((res) => navigate(`/Recepcao/Consultas/Clientes/${res}`));
       toast.success("Usuário cadastrado");
       console.log(data);
     } catch (error) {
@@ -135,6 +139,7 @@ export function ReceptionCreateNewConsultForm() {
   };
   console.log("Erorr input " + errorInput);
   console.log(CelularValue);
+  console.log(errorInput);
   return (
     <ChakraProvider>
       <Text
@@ -256,7 +261,7 @@ export function ReceptionCreateNewConsultForm() {
                   //{...register("tell")}
                   value={FixedValue}
                   onChange={(e: any) => setFixedValue(e.target.value)}
-                  onBlur=""
+                  onBlur={""}
                 />
 
                 <Text h={errors?.email ? "24px" : "0"}></Text>
@@ -353,7 +358,7 @@ export function ReceptionCreateNewConsultForm() {
                       <Select
                         bg="white"
                         borderColor="gray.900"
-                        {...register("state")}
+                        //{...register("state")}
                         name="state"
                         value={estado}
                         onChange={(e) => setEstado(e.target.value)}
@@ -417,7 +422,9 @@ export function ReceptionCreateNewConsultForm() {
                           setTamCep(tamCep + 1);
                           setCEPValue(e.target.value);
                         }}
-                        onBlur=""
+                        onBlur={() => {
+                          CEPValue === "" ? setErro() : setErrorInput(0);
+                        }}
                       />
                       {errorInput > 0 && (
                         <Text
@@ -441,10 +448,23 @@ export function ReceptionCreateNewConsultForm() {
                       </FormLabel>
                       <Input
                         placeholder="Cidade do Cliente"
-                        {...register("district")}
+                        //{...register("district")}
                         name="district"
+                        onChange={(e) => setCidade(e.target.value)}
                         value={cidade}
+                        onBlur={() => {
+                          cidade === "" ? setErro() : setErrorInput(0);
+                        }}
                       />
+                      {/* {errorInput > 0 && (
+                        <Text
+                          textAlign="start"
+                          color="red.500"
+                          fontWeight="bold"
+                        >
+                          {cidade != "" ? null : "O campo cidade é obrigatório"}
+                        </Text>
+                      )} */}
                     </Flex>
                   </Flex>
                   <Flex w="100%" mt="4" gap="2">
@@ -459,10 +479,11 @@ export function ReceptionCreateNewConsultForm() {
                       </FormLabel>
                       <Input
                         placeholder="Endereço do cliente"
-                        {...register("adress")}
+                        //{...register("adress")}
                         id="adress"
                         name="adress"
                         value={logradouro}
+                        onChange={(e) => setLogradouro(e.target.value)}
                       />
                       {errorInput > 0 && (
                         <Text
@@ -488,9 +509,10 @@ export function ReceptionCreateNewConsultForm() {
                       <Input
                         mt="0"
                         placeholder="Bairro do Cliente"
-                        {...register("neighbour")}
+                        //{...register("neighbour")}
                         name="neighbour"
                         value={bairro}
+                        onChange={(e) => setBairro(e.target.value)}
                       />
                       {errorInput > 0 && (
                         <Text
@@ -520,7 +542,13 @@ export function ReceptionCreateNewConsultForm() {
               </Flex>
             </Flex>
 
-            <Button w="100%" mt="8" colorScheme="whatsapp" type="submit" py="8">
+            <Button
+              w="100%"
+              mt="8"
+              colorScheme="whatsapp"
+              type={errorInput === 0 ? "submit" : "button"}
+              py="8"
+            >
               Cadastrar
             </Button>
           </Flex>
