@@ -288,10 +288,12 @@ export function Router() {
               path="/Recepcao/Caixa/Pagamentos/:id"
               element={<BoxPaymentsDetails />}
             />
-            <Route
+            
+              {/*  <Route
               path="/Recepcao/Caixa/PagamentoCliente/:id"
               element={<BoxNewPaymentsClient />}
-            />
+            />  */}
+          
             <Route
               path="/Recepcao/Caixa/NovoPagamento/:id"
               element={<BoxNewPayments />}

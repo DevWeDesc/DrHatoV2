@@ -1,6 +1,6 @@
 import { Button, Table, TableContainer, Tbody, Td, Thead, Tr } from "@chakra-ui/react";
 import { useState, useEffect, Suspense} from "react";
-import { PetDetaisl } from "../../interfaces";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/axios";
 import { LoadingSpinner } from "../Loading";
 
@@ -18,7 +18,7 @@ interface CustomerProps {
 
 export function ShowPaymentsOpenInDay () {
 const [accountsWithDebits, setAccountsWithDebits] = useState<CustomerProps[]>([])
-
+const navigate = useNavigate()
   async function getPets() {
     const response = await api.get('/debitaccounts')
     setAccountsWithDebits(response.data)
@@ -76,7 +76,7 @@ const [accountsWithDebits, setAccountsWithDebits] = useState<CustomerProps[]>([]
                       {customer.customerAccount.accountNumber}
                     </Td>
                     <Td>
-                      <Button colorScheme="whatsapp">
+                      <Button onClick={() => navigate(`/Recepcao/Caixa/Pagamentos/${customer.id}`)} colorScheme="whatsapp">
                         IR ATÉ PAGAMENTO
                       </Button>
                     </Td>

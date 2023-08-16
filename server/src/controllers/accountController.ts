@@ -6,6 +6,7 @@ type params = {
   id: string;
   customerId: string;
   histBoxId: string;
+  medicineId: string;
 };
 
 export const accountController = {
@@ -40,5 +41,14 @@ export const accountController = {
     } catch (error) {
       console.log(error)
     }
+  },
+
+  getProceduresDebited: async(request: FastifyRequest<{Params: params, Body: {values: number}}>, reply: FastifyReply) => {
+    const { medicineId } = request.params
+      try {
+        
+      } catch (error) {
+        
+      }
   }
 }
