@@ -46,6 +46,30 @@ showVetBox:  async(request: FastifyRequest, reply: FastifyReply) => {
   }
 },
 
+showDailyBox: async(request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const dailyBox = await prisma.hospBoxHistory.findFirst({
+      where: {boxIsOpen: true}
+    })
+    reply.send(dailyBox)
+  } catch (error) {
+    console.log(error)
+  }
+},
+
+showlastBoxClosed: async(request: FastifyRequest, reply: FastifyReply) => {
+  try {
+    const boxs = await prisma.hospBoxHistory.findMany({
+      where: {boxIsOpen: false}
+    })
+    const lastBox = boxs[boxs.length - 1]
+    reply.send(lastBox)
+
+  } catch (error) {
+    console.log(error)
+  }
+},
+
 
 openBoxDaily: async(request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
   const {entryValues, exitValues, openBy} = boxSchema.parse(request.body)
@@ -57,7 +81,7 @@ openBoxDaily: async(request: FastifyRequest<{Params: params}>, reply: FastifyRep
       }
 
      const dailyBox = await prisma.hospBoxHistory.create({
-        data: {openBox: actualDate, entryValues, exitValues, openBy, totalValues: (entryValues - exitValues), HospVetBox: {connect: {id: parseInt(boxId)}}   }
+        data: {openBox: actualDate, entryValues, exitValues,  boxIsOpen: true, openBy, totalValues: (entryValues - exitValues), HospVetBox: {connect: {id: parseInt(boxId)}}   }
       })
 
       await prisma.hospVetBox.update({
@@ -81,7 +105,7 @@ closeBoxDaily: async(request: FastifyRequest<{Params: params}>, reply: FastifyRe
 
     await prisma.hospVetBox.update({
       where: {id: parseInt(vetBox)},data:{historyBox: {update: {where: {id: parseInt(boxId)}, data: {
-        closeBox: actualDate, entryValues: {increment: entryValues }, exitValues: {increment: exitValues}, closedBy
+        closeBox: actualDate, entryValues: {increment: entryValues }, exitValues: {increment: exitValues}, closedBy, boxIsOpen: false
       }}}}
     })
 
@@ -111,5 +135,20 @@ closeBoxDaily: async(request: FastifyRequest<{Params: params}>, reply: FastifyRe
   } catch (error) {
     console.log(error)
   }
+},
+
+showCustomerDebitsOpen: async(request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
+        try {
+        const accounts =  await prisma.customer.findMany({
+            where: { customerAccount: {debits: {gte: 1}}},include: {
+              customerAccount: true
+            }
+          })
+          reply.send(accounts)
+        } catch (error) {
+          console.log(error)
+        }
 }
+
+
 }

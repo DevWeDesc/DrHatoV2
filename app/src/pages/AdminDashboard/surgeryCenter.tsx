@@ -31,6 +31,8 @@ import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
+import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
+import { BsFillTrashFill } from "react-icons/bs";
 
 export function SurgeryCenter() {
   const { register, handleSubmit } = useForm();
@@ -52,44 +54,43 @@ export function SurgeryCenter() {
     setIsModalOpenTwo(false);
   }
 
-  const handleCreateSector: SubmitHandler<FieldValues> = async (values) => {
+  const handleCreateSurgeryCenter: SubmitHandler<FieldValues> = async (
+    values
+  ) => {
     try {
       const data = {
         name: values.name,
       };
-      await api.post("sectors", data);
-      toast.success("Setor criado com sucesso");
+      await api.post("/surgeryCenter", data);
+      toast.success("Centro cirurgico criado com sucesso!!");
       navigate(0);
     } catch (error) {
-      toast.error("Falha ao criar novo setor");
+      toast.error("Falha ao criar novo Centro cirurgico!!");
     }
   };
 
-  async function handleDeleteSector(id: string | number) {
-    const confirm = window.confirm(
-      "Deletar e uma operação irreversivel deseja mesmo continuar?"
-    );
+  async function DeleteSurgeryCenter(id: string | number) {
     try {
-      if (confirm === true) {
-        await api.delete(`sectors/${id}`);
-        toast.success("Setor deletdo com sucesso");
-        navigate(0);
-      }
+      await api.delete(`surgeryCenter/${id}`);
+      toast.success("Centro Cirurgico deletado com sucesso!!");
+      navigate(0);
     } catch (error) {
-      toast.error("Falha ao criar novo setor");
+      toast.error("Falha ao Deletar Centro Cirurgico!!");
     }
   }
 
-  const handleEditSector: SubmitHandler<FieldValues> = async (values) => {
+  const handleEditSurgeryCenter: SubmitHandler<FieldValues> = async (
+    values
+  ) => {
     try {
       const data = {
         name: values.name,
       };
-      await api.put(`sectors/${values.id}`, data);
-      toast.success("Setor editado com sucesso");
+      await api.put(`surgeryCenter/${id}`, data);
+      toast.success("Centro Cirurgico editado com sucesso!!");
       navigate(0);
     } catch (error) {
-      toast.error("Falha ao editar novo setor");
+      toast.error("Falha ao editar Centro Cirurgico!!");
     }
   };
 
@@ -153,15 +154,24 @@ export function SurgeryCenter() {
                       <Flex gap="2" ml="40%">
                         <Button
                           as="a"
-                          size="md"
-                          fontSize="md"
+                          size="sm"
+                          fontSize="sm"
                           colorScheme="yellow"
                           leftIcon={<Icon as={RiPencilLine} />}
                           onClick={() => openModalTwo()}
                         >
                           Editar Centro Cirúrgico
                         </Button>
-                        <Button
+
+                        <ConfirmationDialog
+                          disabled={false}
+                          icon={<BsFillTrashFill fill="white" size={16} />}
+                          buttonTitle="Deletar Centro Cirurgico"
+                          whatIsConfirmerd="Tem certeza que deseja Excluir esse Centro Cirurgico?"
+                          describreConfirm="Excluir o Centro Cirurgico é uma ação irreversivel, tem certeza que deseja excluir?"
+                          callbackFn={() => DeleteSurgeryCenter(1)}
+                        />
+                        {/* <Button
                           as="a"
                           size="md"
                           fontSize="md"
@@ -170,7 +180,7 @@ export function SurgeryCenter() {
                           onClick={() => handleDeleteSector("")}
                         >
                           Deletar Centro Cirúrgico
-                        </Button>
+                        </Button> */}
                       </Flex>
                     </Td>
                   </Tr>
@@ -183,7 +193,7 @@ export function SurgeryCenter() {
               <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleCreateSector)}
+                  onSubmit={handleSubmit(handleCreateSurgeryCenter)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
@@ -214,7 +224,7 @@ export function SurgeryCenter() {
               >
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleEditSector)}
+                  onSubmit={handleSubmit(handleEditSurgeryCenter)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"

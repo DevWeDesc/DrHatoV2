@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import {QueueSchema } from "../schemas/schemasValidator";
 import { create } from "domain";
+import { accountService } from "../services/accountService";
 const prisma = new PrismaClient();
 
 
@@ -10,6 +11,7 @@ type params = {
     petId: string;
     queueId: string;
     recordId: string;
+    customerId: string;
   }
 
 export const queueController = {
@@ -27,7 +29,7 @@ export const queueController = {
 
 
   finishQueueOfPet:  async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
-    const {petId, recordId, queueId} = request.params
+    const {petId, recordId, queueId, customerId} = request.params
     const {queueEntry, queryType, queueExit, debitOnThisQuery, responsibleVeterinarian} = QueueSchema.parse(request.body)
     try {
         await prisma.queuesForPet.create({
@@ -41,6 +43,8 @@ export const queueController = {
         await  prisma.pets.update({
             where: { id: parseInt(petId)},data: {debits: {increment: Number(debitOnThisQuery) }, priceAccumulator: {update: {accumulator: 0}}}
         })
+
+        await accountService.pushDebitsToAccount(customerId)
 
         reply.send('Fila atualizada')
     } catch (error) {

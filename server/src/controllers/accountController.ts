@@ -1,8 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { PrismaClient } from "@prisma/client";
-import { AdmissionSchema, BedSchema } from "../schemas/schemasValidator";
-import { ValidationContract } from "../validators/validateContract";
-import { z } from "zod";
 import { accountService } from "../services/accountService";
 const prisma = new PrismaClient();
 

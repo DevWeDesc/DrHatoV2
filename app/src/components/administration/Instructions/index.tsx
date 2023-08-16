@@ -27,6 +27,8 @@ import { Input } from "../../admin/Input";
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
+import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
+import { BsFillTrashFill } from "react-icons/bs";
 
 //@ts-ignore
 pdfMake.addVirtualFileSystem(pdfFonts);
@@ -79,15 +81,10 @@ export function Instructions() {
   };
 
   async function handleDeleteSector(id: string | number) {
-    const confirm = window.confirm(
-      "Deletar e uma operação irreversivel deseja mesmo continuar?"
-    );
     try {
-      if (confirm === true) {
-        await api.delete(`instructions/${id}`);
-        setReloadData(true);
-        toast.success("Instrução deletada sucesso");
-      }
+      await api.delete(`instructions/${id}`);
+      setReloadData(true);
+      toast.success("Instrução deletada sucesso");
     } catch (error) {
       toast.error("Falha ao deletar");
     }
@@ -127,7 +124,7 @@ export function Instructions() {
     <Box flex="1" borderRadius={8} bg="gray.200" overflow="auto" p="8">
       <Flex mb="8" direction="column" justify="space-between" align="center">
         <Heading width="100%" fontSize="30" fontWeight="bold">
-          Instruções
+          Painel de Instruções
         </Heading>
 
         <Button
@@ -175,8 +172,8 @@ export function Instructions() {
                   <Flex ml="16%">
                     <Button
                       as="a"
-                      size="md"
-                      fontSize="md"
+                      size="sm"
+                      fontSize="sm"
                       colorScheme="yellow"
                       mr="3"
                       leftIcon={<Icon as={RiPencilLine} />}
@@ -185,7 +182,7 @@ export function Instructions() {
                       Editar Instrução
                     </Button>
 
-                    <Button
+                    {/* <Button
                       as="a"
                       size="md"
                       fontSize="md"
@@ -195,13 +192,23 @@ export function Instructions() {
                       mr="3"
                     >
                       Deletar Instrução
-                    </Button>
+                    </Button> */}
+
+                    <ConfirmationDialog
+                      disabled={false}
+                      icon={<BsFillTrashFill fill="white" size={16} />}
+                      buttonTitle="Deletar Instrução"
+                      whatIsConfirmerd="Tem certeza que deseja Excluir essa Instrução?"
+                      describreConfirm="Excluir a Instrução é uma ação irreversivel, tem certeza que deseja excluir?"
+                      callbackFn={() => handleDeleteSector(sector.id)}
+                    />
 
                     <Button
                       as="a"
-                      size="md"
-                      fontSize="md"
+                      size="sm"
+                      fontSize="sm"
                       colorScheme="cyan"
+                      ml="3"
                       mr="3"
                       color="white"
                       leftIcon={<Icon as={AiOutlineDownload} />}

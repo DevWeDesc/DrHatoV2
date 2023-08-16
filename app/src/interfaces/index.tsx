@@ -138,11 +138,80 @@ export interface VacinnesProps {
 }
 
 export interface SugeriesProps {
+<<<<<<< HEAD
   id: number;
   name: string;
   price: number;
   scheduledDate?: Date;
   completedDate?: Date;
+=======
+
+      id: number;
+			name: string;
+      price: number;
+		  scheduledDate?: Date
+			completedDate?: Date
+      }
+
+  type QueueProps = {
+        id: string | number;
+        moreInfos: string;
+        queueOur: string;
+        vetPreference: string;
+        queueEntry: Date;
+        queryType: string;
+        petIsInQueue: boolean;
+      };
+
+      type totalAccProps = {
+        id: number;
+        price: number;
+         } 
+         
+  type customerPetsProps = {
+    id: number;
+    name: string;
+  }    
+  type ProceduresProps = {
+    id: number;
+    name: string;
+    price: number;
+    available: boolean;
+    requestedDate: Date 
+  }
+
+  type KennelProps = {
+    name: string;
+    price: number;
+  }
+  type BedInfosProps = {
+    id: number;
+    entry: Date | number;
+    kennelName: KennelProps;
+    fasting: boolean;
+  }
+
+  type AdmissionsProps = {
+    id: number;
+    entry:Date;
+   exit: Date;
+    totalDebit: number | string;
+   fasting: boolean;
+   observations: string;
+  }
+
+ export type HistoryBoxProps = {
+    id: string | number
+  	entryValues: number
+		exitValues: number
+    totalValues: number
+    openBox: Date | number
+    closeBox: Date | number
+    openBy: string
+    closedBy: string
+    boxIsOpen: boolean;
+    hospVetBoxId: string | number
+>>>>>>> 16c1cfa165e154e2443e1ba1c8dd438a618615cc
 }
 
 type QueueProps = {

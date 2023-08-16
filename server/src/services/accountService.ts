@@ -13,20 +13,24 @@ export const accountService = {
           
         },
 
-        useCreditsToPayDebits: async (customerId: string, values: number) => {
+        pushDebitsToAccount: async (customerId: string) => {
             try {
-                const customer = await prisma.customerAccount.findUnique({
-                    where: { id: parseInt(customerId)}
+                const customer = await prisma.customer.findUnique({
+                    where: {id: parseInt(customerId)},include: {pets: {select: {debits: true}},  customerAccount: true}
                 })
+
                 if(!customer) {
                     return
                 } else {
-
-
-
-                  //  await prisma.customerAccount.update({where: {id: parseInt(customerId)}, data: {debits:  (Number(customer.credits) - Number(customer.debits)), credits: (Number(customer.credits) - Number(values)) }})
-
+                    let totalDebits = customer?.pets.reduce((acc, pet) => acc + Number(pet.debits), Number(customer.customerAccount?.debits))
+            
+                    await prisma.customer.update({
+                     where: {id: parseInt(customerId)},data: {
+                         customerAccount: {update: {debits: {increment: Number(totalDebits)}}}
+                     }
+                 })
                 }
+            
             } catch (error) {
                 console.log(error)
             }

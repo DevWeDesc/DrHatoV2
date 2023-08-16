@@ -15,7 +15,7 @@ datasource db {
 model User {
   id        Int        @id @default(autoincrement())
   email     String     @unique
-  username  String
+  username  String?
   password  String
   crmv      Int?
   userIsVet Boolean?   @default(false)
@@ -311,6 +311,7 @@ model HospBoxHistory {
   closeBox     DateTime?
   openBy       String?
   closedBy     String?
+  boxIsOpen    Boolean?            @default(false)
   hospVetBoxId Int?
   HospVetBox   HospVetBox?         @relation(fields: [hospVetBoxId], references: [id])
   installments InstallmentsDebts[]
