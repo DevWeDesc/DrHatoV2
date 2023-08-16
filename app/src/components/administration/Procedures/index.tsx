@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Text,
   Box,
@@ -21,28 +21,46 @@ import { LoadingSpinner } from "../../../components/Loading";
 import { DbContext } from "../../../contexts/DbContext";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
+import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
+import { BsFillTrashFill } from "react-icons/bs";
+import { ProceduresData } from "../../../interfaces";
 
 export default function ListProcedures() {
-  const { procedures, groups } = useContext(DbContext);
+  //const { procedures, groups } = useContext(DbContext);
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [procedures, setProcedures] = useState([]);
   const navigate = useNavigate();
-  async function handleDeleteProcedure(id: string | number) {
-    const confirm = window.confirm(
-      `DELETAR E UMA OPERAÇÃO IRREVERSIVEL\N TEM CERTEZA QUE DESEJA CONTINUAR?`
-    );
-    try {
-      if (confirm === true) {
-        await api.delete(`procedures/${id}`);
-        navigate(0);
-      }
-      toast.warning("Procedimento Deletado!");
-    } catch (error) {
-      toast.error("Falha ao deletar Procedimento");
-      console.log(error);
-    }
+
+  async function handleDeleteProcedure(Id: number | string) {
+    await api
+      .delete(`/procedures/${Id}`)
+      .then(() => {
+        toast.success("Procedimento deletado com sucesso!!");
+        setLoading(true);
+      })
+      .catch(() => toast.error("Algo deu errado!!"));
   }
+
+  async function getProcedure() {
+    const procedures = await api.get("/procedures");
+    setProcedures(procedures.data);
+  }
+
+  useEffect(() => {
+    getProcedure();
+  }, []);
+
+  useEffect(() => {
+    if (loading === true) {
+      getProcedure();
+      setLoading(false);
+    }
+  }, [loading]);
+
+  console.log(procedures);
   return (
     <Box
       flex="1"
@@ -104,7 +122,7 @@ export default function ListProcedures() {
 
         <Tbody>
           {procedures ? (
-            procedures.map((proceds) => (
+            procedures.map((proceds: ProceduresData) => (
               <Tr key={proceds.id}>
                 <Td borderColor="black">
                   <Text fontWeight="bold" color="gray.800">
@@ -118,7 +136,7 @@ export default function ListProcedures() {
                     style: "currency",
                   }).format(proceds.price)}
                 </Td>
-                <Td borderColor="black">{proceds.sector.name}</Td>
+                <Td borderColor="black">{proceds.sector?.name}</Td>
                 <Td borderColor="black">{proceds.groups.name}</Td>
 
                 <Td borderColor="black" display="flex" gap="2" py="5">
@@ -134,7 +152,15 @@ export default function ListProcedures() {
                     </Button>
                   </Link>
 
-                  <Button
+                  <ConfirmationDialog
+                    disabled={false}
+                    icon={<BsFillTrashFill fill="white" size={16} />}
+                    buttonTitle="Deletar Exame"
+                    whatIsConfirmerd="Tem certeza que deseja Excluir esse Procedimento?"
+                    describreConfirm="Excluir o Procedimento é uma ação irreversivel, tem certeza que deseja excluir?"
+                    callbackFn={() => handleDeleteProcedure(proceds.id)}
+                  />
+                  {/* <Button
                     as="a"
                     size="sm"
                     fontSize="sm"
@@ -143,7 +169,7 @@ export default function ListProcedures() {
                     onClick={() => handleDeleteProcedure(proceds.id)}
                   >
                     Deletar Procedimento
-                  </Button>
+                  </Button> */}
                 </Td>
               </Tr>
             ))
