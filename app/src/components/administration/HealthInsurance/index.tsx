@@ -32,6 +32,8 @@ import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../../components/admin/Input";
 import { borderRadius } from "polished";
+import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
+import { BsFillTrashFill } from "react-icons/bs";
 
 export function HealthInsuranceList() {
   const navigate = useNavigate();
@@ -59,45 +61,30 @@ export function HealthInsuranceList() {
     try {
       const data = {
         name: values.name,
-        price: parseInt(values.price),
       };
-      await api.post("surgeries", data);
+      await api.post("/healthInsurance", data);
       setReloadData(true);
-      toast.success("Cirurgia criada com sucesso");
+      toast.success("Plano de saúde criado com sucesso!!");
     } catch (error) {
-      toast.error("Falha ao criar nova cirurgia");
+      toast.error("Falha ao criar novo Plano de saúde!!");
     }
   };
 
-  async function handleDeleteSector(id: string | number) {
-    const confirm = window.confirm(
-      "Deletar e uma operação irreversivel deseja mesmo continuar?"
-    );
-    try {
-      if (confirm === true) {
-        await api.delete(`sectors/${id}`);
-        toast.success("Setor deletdo com sucesso");
-      }
-    } catch (error) {
-      toast.error("Falha ao criar novo setor");
-    }
-  }
-
-  const handleEditSector: SubmitHandler<FieldValues> = async (values) => {
-    try {
-      const data = {
-        name: values.name,
-      };
-      await api.put(`sectors/${values.id}`, data);
-      toast.success("Setor editado com sucesso");
-      navigate(0);
-    } catch (error) {
-      toast.error("Falha ao editar novo setor");
-    }
-  };
+  // const handleEditSector: SubmitHandler<FieldValues> = async (values) => {
+  //   try {
+  //     const data = {
+  //       name: values.name,
+  //     };
+  //     await api.put(`sectors/${values.id}`, data);
+  //     toast.success("Setor editado com sucesso");
+  //     navigate(0);
+  //   } catch (error) {
+  //     toast.error("Falha ao editar novo setor");
+  //   }
+  // };
 
   async function getSurgeryes() {
-    const Surgeries = await api.get("/surgeries");
+    const Surgeries = await api.get("/healthInsurance");
     setSurgeries(Surgeries.data);
   }
 
@@ -126,6 +113,16 @@ export function HealthInsuranceList() {
       name: "PlanVet",
     },
   ];
+
+  async function DeleteHealth(Id: string) {
+    await api
+      .delete(`/healthInsurance/${Id}`)
+      .then(() => {
+        toast.success("Autorização deletada com sucesso!!");
+        setReloadData(true);
+      })
+      .catch(() => toast.error("Algo deu errado!!"));
+  }
   return (
     <Box
       flex="1"
@@ -179,8 +176,8 @@ export function HealthInsuranceList() {
                   <Flex gap="2">
                     <Button
                       as="a"
-                      size="md"
-                      fontSize="md"
+                      size="sm"
+                      fontSize="sm"
                       colorScheme="yellow"
                       leftIcon={<Icon as={RiPencilLine} />}
                       onClick={() =>
@@ -189,15 +186,15 @@ export function HealthInsuranceList() {
                     >
                       Editar Plano
                     </Button>
-                    <Button
-                      as="a"
-                      size="md"
-                      fontSize="md"
-                      colorScheme="red"
-                      leftIcon={<Icon as={RiPencilLine} />}
-                    >
-                      Deletar Plano
-                    </Button>
+
+                    <ConfirmationDialog
+                      disabled={false}
+                      icon={<BsFillTrashFill fill="white" size={16} />}
+                      buttonTitle="Deletar Plano de Saúde"
+                      whatIsConfirmerd="Tem certeza que deseja Excluir esse Plano de Saúde?"
+                      describreConfirm="Excluir o Plano de Saúde é uma ação irreversivel, tem certeza que deseja excluir?"
+                      callbackFn={() => DeleteHealth(plans.id)}
+                    />
                   </Flex>
                 </Td>
               </Tr>

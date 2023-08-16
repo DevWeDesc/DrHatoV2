@@ -31,6 +31,8 @@ import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
+import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
+import { BsFillTrashFill } from "react-icons/bs";
 
 export function AdminSurgery() {
   const { register, handleSubmit } = useForm();
@@ -69,17 +71,13 @@ export function AdminSurgery() {
     }
   };
 
-  async function handleDeleteSector(id: string | number) {
-    const confirm = window.confirm(
-      "Deletar e uma operação irreversivel deseja mesmo continuar?"
-    );
+  async function DeleteSurgery(id: string | number) {
     try {
-      if (confirm === true) {
-        await api.delete(`sectors/${id}`);
-        toast.success("Setor deletdo com sucesso");
-      }
+      await api.delete(`surgeries/${id}`);
+      setReloadData(true);
+      toast.success("Vacina deletada com sucesso!!");
     } catch (error) {
-      toast.error("Falha ao criar novo setor");
+      toast.error("Falha ao Excluir Vacina!!");
     }
   }
 
@@ -183,15 +181,15 @@ export function AdminSurgery() {
                           <Flex gap="2" ml="30%">
                             <Button
                               as="a"
-                              size="md"
-                              fontSize="md"
+                              size="sm"
+                              fontSize="sm"
                               colorScheme="yellow"
                               leftIcon={<Icon as={RiPencilLine} />}
                               onClick={() => openModalTwo()}
                             >
                               Editar Cirurgia
                             </Button>
-                            <Button
+                            {/* <Button
                               as="a"
                               size="md"
                               fontSize="md"
@@ -200,7 +198,16 @@ export function AdminSurgery() {
                               onClick={() => handleDeleteSector("")}
                             >
                               Deletar Cirurgia
-                            </Button>
+                            </Button> */}
+
+                            <ConfirmationDialog
+                              disabled={false}
+                              icon={<BsFillTrashFill fill="white" size={16} />}
+                              buttonTitle="Deletar Cirurgia"
+                              whatIsConfirmerd="Tem certeza que deseja Excluir essa Cirurgia?"
+                              describreConfirm="Excluir a Cirurgia é uma ação irreversivel, tem certeza que deseja excluir?"
+                              callbackFn={() => DeleteSurgery(surgery.id)}
+                            />
                           </Flex>
                         </Td>
                       </Tr>

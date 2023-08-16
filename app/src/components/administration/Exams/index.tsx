@@ -26,6 +26,8 @@ import { GenericModal } from "../../../components/Modal/GenericModal";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../../components/admin/Input";
+import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
+import { BsFillTrashFill } from "react-icons/bs";
 
 export function ListExams() {
   const { refresh, setRefresh } = useContext(DbContext);
@@ -73,6 +75,16 @@ export function ListExams() {
     }
   };
 
+  async function DeleteExam(ExamId: string) {
+    await api
+      .delete(`/exams/${ExamId}`)
+      .then(() => {
+        toast.success("Exame deletado com sucesso!!");
+        setLoading(true);
+      })
+      .catch(() => toast.error("Algo deu errado!!"));
+  }
+
   return (
     <Box
       flex="1"
@@ -84,7 +96,7 @@ export function ListExams() {
     >
       <Flex direction="column" mb="8" align="left">
         <Heading fontSize="30" fontWeight="bold" mb="5">
-          Exames
+          Painel de Exames
         </Heading>
 
         <Button
@@ -111,6 +123,7 @@ export function ListExams() {
             <Th fontSize="21" borderColor="black">
               Disponivel ?
             </Th>
+            <Th width="8" borderColor="black"></Th>
             <Th width="8" borderColor="black"></Th>
           </Tr>
         </Thead>
@@ -143,13 +156,23 @@ export function ListExams() {
                 <Td borderColor="black">
                   {exam.available === true ? <p>SIM</p> : <p>NÃO</p>}
                 </Td>
-
+                <Td borderColor="black">
+                  {" "}
+                  <ConfirmationDialog
+                    disabled={false}
+                    icon={<BsFillTrashFill fill="white" size={16} />}
+                    buttonTitle="Deletar Exame"
+                    whatIsConfirmerd="Tem certeza que deseja Excluir esse Exame?"
+                    describreConfirm="Excluir a Exame é uma ação irreversivel, tem certeza que deseja excluir?"
+                    callbackFn={() => DeleteExam(exam.id)}
+                  />
+                </Td>
                 <Td borderColor="black">
                   <Link to={`/Admin/Exams/${exam.id}`}>
                     <Button
                       as="a"
-                      size="md"
-                      fontSize="md"
+                      size="sm"
+                      fontSize="sm"
                       colorScheme="yellow"
                       leftIcon={<Icon as={RiPencilLine} />}
                     >

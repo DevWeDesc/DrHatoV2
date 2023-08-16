@@ -27,6 +27,10 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
+import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
+import { CiStethoscope } from "react-icons/ci";
+import { BsFillTrashFill } from "react-icons/bs";
+import vaccines from "../Admissions/vaccines";
 
 interface VaccinesProps {
   id: number | string;
@@ -55,6 +59,7 @@ export default function AdminVaccines() {
       console.log(error);
     }
   };
+
   async function GetVaccine() {
     try {
       const response = await api.get("/vaccines");
@@ -63,6 +68,13 @@ export default function AdminVaccines() {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async function DeleteVaccine(vaccineId: string) {
+    await api
+      .delete(`/vaccine/${vaccineId}`)
+      .then(() => toast.success("Vacina deletada com sucesso"))
+      .catch(() => toast.error("Algo deu errado!!"));
   }
 
   useEffect(() => {
@@ -82,6 +94,8 @@ export default function AdminVaccines() {
   function closeModal() {
     setIsModalOpen(false);
   }
+
+  console.log(vaccines);
 
   return (
     <ChakraProvider>
@@ -130,10 +144,10 @@ export default function AdminVaccines() {
                       Vacina
                     </Th>
                     <Th borderColor="black"></Th>
-                    <Th fontSize="18" borderColor="black">
+                    <Th fontSize="18" borderColor="black" colSpan={2}>
                       Valor
                     </Th>
-                    <Th borderColor="black"></Th>
+                    <Th borderColor="black">Configurações</Th>
                   </Tr>
                 </Thead>
 
@@ -146,15 +160,17 @@ export default function AdminVaccines() {
                         </Text>
                       </Td>
                       <Td borderColor="black"></Td>
-                      <Td borderColor="black">R${vaccine.price}</Td>
+                      <Td borderColor="black" colSpan={2} w="21.8rem">
+                        R${vaccine.price}
+                      </Td>
 
                       <Td borderColor="black">
-                        <Flex gap="2" ml="50%">
+                        <Flex gap="2">
                           <Button
                             alignItems="center"
                             as="a"
-                            size="md"
-                            fontSize="md"
+                            size="sm"
+                            fontSize="sm"
                             colorScheme="yellow"
                             width={220}
                             leftIcon={<Icon size={28} as={RiPencilLine} />}
@@ -162,23 +178,21 @@ export default function AdminVaccines() {
                           >
                             Editar Vacina
                           </Button>
-                          <Button
-                            width={220}
-                            as="a"
-                            size="md"
-                            fontSize="md"
-                            colorScheme="red"
-                            leftIcon={<Icon as={RiPencilLine} />}
-                            //onClick={() => handleDeleteSector(sector.id)}
-                          >
-                            Deletar Vacina
-                          </Button>
+                          <ConfirmationDialog
+                            disabled={false}
+                            icon={<BsFillTrashFill fill="white" size={16} />}
+                            buttonTitle="Deletar Vacina"
+                            whatIsConfirmerd="Tem certeza que deseja Excluir a Vacina?"
+                            describreConfirm="Excluir a vacina é uma ação irreverssivel tem certeza que deseja excluir?"
+                            callbackFn={() => DeleteVaccine(vaccine.id)}
+                          />
                         </Flex>
                       </Td>
                     </Tr>
                   ))}
                 </Tbody>
               </Table>
+
               <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
                 <FormControl
                   as="form"

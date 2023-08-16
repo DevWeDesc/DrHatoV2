@@ -16,7 +16,7 @@ import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
 import { useContext, useEffect, useState } from "react";
 import { GenericModal } from "../../Modal/GenericModal";
 import { DbContext } from "../../../contexts/DbContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoadingSpinner } from "../../Loading";
 import { Input } from "../../admin/Input";
 import { toast } from "react-toastify";
@@ -25,6 +25,8 @@ import { Icon } from "@chakra-ui/react";
 import { RiAddLine } from "react-icons/ri";
 import { Heading } from "@chakra-ui/react";
 import Cookies from "js-cookie";
+import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
+import { BsFillTrashFill } from "react-icons/bs";
 
 export default function AutorizationsMenu() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,6 +36,7 @@ export default function AutorizationsMenu() {
   const [allAutorization, setAllAutorization] = useState([]);
   const autorizations = autorization ? autorization : null;
   const token = Cookies.get("token") ? Cookies.get("token") : "";
+  const navigate = useNavigate();
   const handleAutorization: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
@@ -73,6 +76,16 @@ export default function AutorizationsMenu() {
     }
   }, [reloadData]);
 
+  async function DeleteAutorization(AutorizationId: string) {
+    await api
+      .delete(`/autorization/${AutorizationId}`)
+      .then(() => {
+        toast.success("Autorização deletada com sucesso!!");
+        setReloadData(true);
+      })
+      .catch(() => toast.error("Algo deu errado!!"));
+  }
+
   return (
     <SimpleGrid
       flex="1"
@@ -98,7 +111,7 @@ export default function AutorizationsMenu() {
               direction="column"
             >
               <Heading fontSize="30" fontWeight="bold" pl="2" w="100%" mb="5">
-                Autorizações
+                Painel de Autorizações
               </Heading>
               <Button
                 w="100%"
@@ -136,9 +149,9 @@ export default function AutorizationsMenu() {
                   allAutorization.map((item: any) => (
                     <>
                       {!!item.name && (
-                        <Link
+                        <Box
                           key={item.id}
-                          to={`/Admin/Autorizations/${item.id}`}
+                          //to={`/Admin/Autorizations/${item.id}`}
                         >
                           <Flex
                             py="1"
@@ -147,10 +160,29 @@ export default function AutorizationsMenu() {
                             borderBottom="1px solid black"
                           >
                             <Text>{item.name} </Text>
-
-                            <Button colorScheme="yellow">Editar</Button>
+                            <Flex gap="5" py="2">
+                              <Button
+                                colorScheme="yellow"
+                                size="sm"
+                                onClick={() =>
+                                  navigate(`/Admin/Autorizations/${item.id}`)
+                                }
+                              >
+                                Editar
+                              </Button>
+                              <ConfirmationDialog
+                                disabled={false}
+                                icon={
+                                  <BsFillTrashFill fill="white" size={16} />
+                                }
+                                buttonTitle="Deletar Autorização"
+                                whatIsConfirmerd="Tem certeza que deseja Excluir essa Autorização?"
+                                describreConfirm="Excluir a Autorização é uma ação irreversivel, tem certeza que deseja excluir?"
+                                callbackFn={() => DeleteAutorization(item.id)}
+                              />
+                            </Flex>
                           </Flex>
-                        </Link>
+                        </Box>
                       )}
                     </>
                   ))

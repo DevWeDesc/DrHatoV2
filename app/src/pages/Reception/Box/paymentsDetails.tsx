@@ -4,13 +4,13 @@ import {
   Flex,
   Table,
   Tr,
-  Td,
   Thead,
   Tbody,
   Th,
   Button,
   TableContainer,
   Input,
+  Td,
 } from "@chakra-ui/react";
 import { Header } from "../../../components/admin/Header";
 import { AdminContainer } from "../../AdminDashboard/style";
@@ -22,139 +22,25 @@ import { api } from "../../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { BsReception4 } from "react-icons/bs";
 import { BiCalendarPlus, AiFillEdit } from "react-icons/all";
+import { ICustomer } from "../../../interfaces";
 
 export function BoxPaymentsDetails() {
-  const [client, setClient] = useState([]);
+  const [client, setClient] = useState({} as ICustomer);
   const [launchClient, setLaunchClient] = useState([]);
+  const [cash, setCash] = useState("");
   const { id } = useParams<{ id: string }>();
-  const [cash, setCash] = useState<number | string>("");
   const navigate = useNavigate();
 
   // async function getCustomers() {
   //   const response = await api.get(`http://localhost:5000/customers/${id}`);
   //   setCostumers(response.data);
   // }
-  const clientes = [
-    {
-      id: 1,
-      name: "Junior Ferreira Campos",
-      animal: "Mel",
-      date: "24/07/23",
-      our: "10:04",
-      balance: "-90,00",
-      state: "Campinas",
-      cep: "13051-207",
-      bairro: "Jardim Santa Cruz",
-      adress: "Avenida Maria Clara Machado",
-      phone: "(11) 98379-0437",
-      launch: [
-        {
-          date: "25/05/23",
-          description: "Consulta nº 9921, animal :Mel",
-          debt: "433,00",
-          credit: "",
-          type: "-",
-          balance: "-433,00",
-        },
-        {
-          date: "25/05/23",
-          description: "Pagamento recebido. Caixa :803",
-          debt: "",
-          credit: "216,50",
-          type: "Master Card 2x",
-          balance: "-216,50",
-        },
-        {
-          date: "25/05/23",
-          description: "Pagamento recebido. Caixa :803",
-          debt: "",
-          credit: "216,50",
-          type: "Master Card 2x",
-          balance: "0,00",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Junior Ferreira Campos Teste 2",
-      animal: "Mel",
-      date: "24/07/23",
-      our: "10:04",
-      balance: "90,00",
-      state: "Campinas",
-      cep: "13051-207",
-      bairro: "Jardim Santa Cruz",
-      adress: "Avenida Maria Clara Machado",
-      phone: "(11) 98379-0437",
-      launch: [
-        {
-          date: "25/05/23",
-          description: "Consulta nº 9921, animal :Mel",
-          debt: "433.00",
-          credit: "",
-          type: "-",
-          balance: "-433.00",
-        },
-        {
-          date: "25/05/23",
-          description: "Consulta nº 9921, animal :Mel",
-          debt: "-433.00",
-          credit: "",
-          type: "-",
-          balance: "0.00",
-        },
-        {
-          date: "25/05/23",
-          description: "Pagamento recebido. Caixa :803",
-          debt: "432,00",
-          credit: "216.50",
-          type: "Master Card 2x",
-          balance: "-216.50",
-        },
-        {
-          date: "25/05/23",
-          description: "Pagamento recebido. Caixa :803",
-          debt: "",
-          credit: "216.50",
-          type: "Master Card 2x",
-          balance: "0.00",
-        },
-      ],
-    },
-  ];
-
-  const launch = [
-    {
-      date: "25/05/23",
-      description: "Consulta nº 9921, animal :Mel",
-      debt: "433,00",
-      credit: "",
-      type: "-",
-      balance: "-433,00",
-    },
-    {
-      date: "25/05/23",
-      description: "Pagamento recebido. Caixa :803",
-      debt: "",
-      credit: "216,50",
-      type: "Master Card 2x",
-      balance: "-216,50",
-    },
-    {
-      date: "25/05/23",
-      description: "Pagamento recebido. Caixa :803",
-      debt: "",
-      credit: "216,50",
-      type: "Master Card 2x",
-      balance: "0,00",
-    },
-  ];
-
+  async function getCustomers() {
+    const customer = await api.get(`/customers/${id}`);
+    setClient(customer.data);
+  }
   useEffect(() => {
-    const clientesFilter: any = clientes.filter((user: any) => user.id == id);
-    // const launch: any =
-    setLaunchClient(clientesFilter[0].launch);
-    setClient(clientesFilter);
+    getCustomers();
   }, []);
 
   function BgInput(cash: string | number) {
@@ -177,7 +63,7 @@ export function BoxPaymentsDetails() {
             title="Painel de Conta Corrente"
             url="/Recepcao/Caixa/Pagamentos/"
           />
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <Flex w="100%" my="6" maxWidth={1580} mx="auto" px="6">
             <GenericSidebar>
               <GenericLink
                 name="Recepção"
@@ -263,164 +149,164 @@ export function BoxPaymentsDetails() {
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                     </Tr>
-                    {client.map((user: any) => (
-                      <>
-                        <Tr border="1px solid black">
-                          <Td
-                            fontSize="18"
-                            p="0"
-                            pl="5"
-                            fontWeight="bold"
-                            w="10"
+
+                    <>
+                      <Tr border="1px solid black">
+                        <Td
+                          fontSize="18"
+                          p="0"
+                          pl="5"
+                          fontWeight="bold"
+                          w="10"
+                          borderColor="black"
+                        >
+                          Cliente
+                        </Td>
+                        <Td colSpan={2} py="0" borderColor="black">
+                          <Input
+                            borderTop="1px solid black"
+                            borderRight="2px solid black"
+                            borderLeft="2px solid black"
+                            borderBottom="0"
+                            bg="white"
                             borderColor="black"
-                          >
-                            Cliente
-                          </Td>
-                          <Td colSpan={2} py="0" borderColor="black">
-                            <Input
-                              borderTop="1px solid black"
-                              borderRight="2px solid black"
-                              borderLeft="2px solid black"
-                              borderBottom="0"
-                              bg="white"
-                              borderColor="black"
-                              rounded="0"
-                              value={user.name}
-                            />
-                          </Td>
-                          <Td
-                            pl="0"
-                            textAlign="end"
-                            fontSize="18"
-                            fontWeight="bold"
-                            w="10"
-                            py="0"
+                            rounded="0"
+                            value={client.name}
+                          />
+                        </Td>
+                        <Td
+                          pl="0"
+                          textAlign="end"
+                          fontSize="18"
+                          fontWeight="bold"
+                          w="10"
+                          py="0"
+                          borderColor="black"
+                        >
+                          Endereço
+                        </Td>
+                        <Td colSpan={3} py="0" borderColor="black" pr="0">
+                          <Input
+                            borderTop="1px solid black"
+                            borderLeft="2px solid black"
+                            borderBottom="0"
+                            bg="white"
                             borderColor="black"
-                          >
-                            Endereço
-                          </Td>
-                          <Td colSpan={3} py="0" borderColor="black" pr="0">
-                            <Input
-                              borderTop="1px solid black"
-                              borderLeft="2px solid black"
-                              borderBottom="0"
-                              bg="white"
-                              borderColor="black"
-                              w="100%"
-                              rounded="0"
-                              value={user.adress}
-                            />
-                          </Td>
-                        </Tr>
-                        <Tr border="1px solid black">
-                          <Td
+                            w="100%"
+                            rounded="0"
+                            value={client.adress}
+                          />
+                        </Td>
+                      </Tr>
+                      <Tr border="1px solid black">
+                        <Td
+                          borderColor="black"
+                          fontSize="18"
+                          py="0"
+                          pl="5"
+                          fontWeight="bold"
+                        >
+                          Bairro
+                        </Td>
+                        <Td colSpan={2} py="0" borderColor="black">
+                          <Input
+                            borderRight="2px solid black"
+                            borderLeft="2px solid black"
+                            borderBottom="0"
+                            bg="white"
                             borderColor="black"
-                            fontSize="18"
-                            py="0"
-                            pl="5"
-                            fontWeight="bold"
-                          >
-                            Bairro
-                          </Td>
-                          <Td colSpan={2} py="0" borderColor="black">
-                            <Input
-                              borderRight="2px solid black"
-                              borderLeft="2px solid black"
-                              borderBottom="0"
-                              bg="white"
-                              borderColor="black"
-                              rounded="0"
-                              value={user.bairro}
-                            />
-                          </Td>
-                          <Td
-                            py="0"
-                            fontSize="18"
-                            fontWeight="bold"
-                            pl="0"
-                            textAlign="end"
+                            rounded="0"
+                            value={client.neighbour}
+                          />
+                        </Td>
+                        <Td
+                          py="0"
+                          fontSize="18"
+                          fontWeight="bold"
+                          pl="0"
+                          textAlign="end"
+                          borderColor="black"
+                        >
+                          CEP
+                        </Td>
+                        <Td colSpan={3} pr="0" py="0" borderColor="black">
+                          <Input
+                            borderRight="2px solid black"
+                            borderLeft="2px solid black"
+                            borderBottom="0"
+                            bg="white"
                             borderColor="black"
-                          >
-                            CEP
-                          </Td>
-                          <Td colSpan={3} pr="0" py="0" borderColor="black">
-                            <Input
-                              borderLeft="2px solid black"
-                              borderBottom="0"
-                              bg="white"
-                              borderColor="black"
-                              rounded="0"
-                              value={user.cep}
-                            />
-                          </Td>
-                        </Tr>
-                        <Tr border="1px solid black">
-                          <Td
-                            py="0"
-                            fontSize="18"
-                            pl="5"
-                            fontWeight="bold"
+                            rounded="0"
+                            value={client.cep === null ? "Sem CEP" : client.cep}
+                          />
+                        </Td>
+                      </Tr>
+                      <Tr border="1px solid black">
+                        <Td
+                          py="0"
+                          fontSize="18"
+                          pl="5"
+                          fontWeight="bold"
+                          borderColor="black"
+                        >
+                          Estado
+                        </Td>
+                        <Td colSpan={2} py="0" borderColor="black">
+                          <Input
+                            borderRight="2px solid black"
+                            borderLeft="2px solid black"
+                            borderBottom="0"
+                            bg="white"
                             borderColor="black"
-                          >
-                            Estado
-                          </Td>
-                          <Td colSpan={2} py="0" borderColor="black">
-                            <Input
-                              borderRight="2px solid black"
-                              borderLeft="2px solid black"
-                              borderBottom="0"
-                              bg="white"
-                              borderColor="black"
-                              rounded="0"
-                              value={user.state}
-                            />
-                          </Td>
-                          <Td
-                            fontSize="18"
-                            fontWeight="bold"
-                            py="0"
-                            pl="0"
-                            textAlign="end"
+                            rounded="0"
+                            value={client.district}
+                          />
+                        </Td>
+                        <Td
+                          fontSize="18"
+                          fontWeight="bold"
+                          py="0"
+                          pl="0"
+                          textAlign="end"
+                          borderColor="black"
+                        >
+                          Telefone
+                        </Td>
+                        <Td colSpan={3} py="0" borderColor="black" pr="0">
+                          <Input
+                            borderLeft="2px solid black"
+                            borderBottom="0"
+                            bg="white"
                             borderColor="black"
-                          >
-                            Telefone
-                          </Td>
-                          <Td colSpan={3} py="0" borderColor="black" pr="0">
-                            <Input
-                              borderLeft="2px solid black"
-                              borderBottom="0"
-                              bg="white"
-                              borderColor="black"
-                              rounded="0"
-                              value={user.phone}
-                            />
-                          </Td>
-                        </Tr>
-                        <Tr border="1px solid black">
-                          <Td
-                            fontSize="18"
-                            py="0"
-                            pl="5"
-                            fontWeight="bold"
+                            rounded="0"
+                            value={client.phone}
+                          />
+                        </Td>
+                      </Tr>
+                      <Tr border="1px solid black">
+                        <Td
+                          fontSize="18"
+                          py="0"
+                          pl="5"
+                          fontWeight="bold"
+                          borderColor="black"
+                        >
+                          Saldo Atual
+                        </Td>
+                        <Td colSpan={6} py="0" borderColor="black" pr="0">
+                          <Input
+                            borderLeft="2px solid black"
+                            borderBottom="1px solid black"
+                            onClick={() => console.log(client.balance)}
+                            onChange={() => setCash("0")}
+                            bg={BgInput(parseInt("0"))}
                             borderColor="black"
-                          >
-                            Saldo Atual
-                          </Td>
-                          <Td colSpan={6} py="0" borderColor="black" pr="0">
-                            <Input
-                              borderLeft="2px solid black"
-                              borderBottom="1px solid black"
-                              onClick={() => console.log(user.balance)}
-                              //onChange={() => setCash(user.balance)}
-                              bg={BgInput(parseInt(user.balance))}
-                              borderColor="black"
-                              rounded="0"
-                              value={user.balance}
-                            />
-                          </Td>
-                        </Tr>
-                      </>
-                    ))}
+                            rounded="0"
+                            value={client.balance}
+                          />
+                        </Td>
+                      </Tr>
+                    </>
 
                     <Tr>
                       <Td p="0" py="4" colSpan={8}>

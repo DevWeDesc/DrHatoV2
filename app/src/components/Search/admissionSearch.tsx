@@ -56,6 +56,8 @@ export function AdmissionSearch({ path }: UniversalSearchProps) {
     }
     setData(response?.data);
   };
+
+  console.log(data);
   return (
     <ChakraProvider>
       <Flex direction="row" gap="4">

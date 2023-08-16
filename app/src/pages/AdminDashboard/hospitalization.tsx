@@ -33,6 +33,8 @@ import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
+import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
+import { BsFillTrashFill } from "react-icons/bs";
 
 export function Hospitalization() {
   const { register, handleSubmit } = useForm();
@@ -72,17 +74,12 @@ export function Hospitalization() {
   };
 
   async function handleDeleteSector(id: string | number) {
-    const confirm = window.confirm(
-      "Deletar e uma operação irreversivel deseja mesmo continuar?"
-    );
     try {
-      if (confirm === true) {
-        await api.delete(`sectors/${id}`);
-        setReloadData(true);
-        toast.success("Leito deletado com sucesso");
-      }
+      await api.delete(`admissions/${id}`);
+      setReloadData(true);
+      toast.success("Leito deletado com sucesso!!");
     } catch (error) {
-      toast.error("Falha ao criar novo setor");
+      toast.error("Falha ao deletar o Leito!!");
     }
   }
 
@@ -179,19 +176,28 @@ export function Hospitalization() {
                         <Td borderColor="black">{bed.totalBeds}</Td>
                         <Td borderColor="black">{bed.price}</Td>
                         <Td borderColor="black">
-                          <Flex gap="2" ml="40%">
+                          <Flex gap="2">
                             <Button
                               alignItems="center"
-                              size="md"
-                              width={220}
-                              fontSize="md"
+                              size="sm"
+                              width={120}
+                              fontSize="sm"
                               colorScheme="yellow"
                               leftIcon={<Icon as={RiPencilLine} />}
                               onClick={() => openModalTwo()}
                             >
                               Editar Leito
                             </Button>
-                            <Button
+
+                            <ConfirmationDialog
+                              disabled={false}
+                              icon={<BsFillTrashFill fill="white" size={16} />}
+                              buttonTitle="Deletar Leito"
+                              whatIsConfirmerd="Tem certeza que deseja Excluir esse Leito?"
+                              describreConfirm="Excluir Leito é uma ação irreversivel, tem certeza que deseja excluir?"
+                              callbackFn={() => handleDeleteSector(bed.id)}
+                            />
+                            {/* <Button
                               alignItems="center"
                               size="md"
                               width={220}
@@ -201,7 +207,7 @@ export function Hospitalization() {
                               onClick={() => handleDeleteSector("")}
                             >
                               Deletar Leito
-                            </Button>
+                            </Button> */}
                           </Flex>
                         </Td>
                       </Tr>

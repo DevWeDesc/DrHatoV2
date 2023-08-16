@@ -87,13 +87,54 @@ export function LabExames() {
 
   let typeTable: ReactNode;
   switch (true) {
+    case Object.keys(dataPet).length >= 1:
+      typeTable = (
+        <Table colorScheme="blackAlpha">
+          <Thead>
+            <Tr>
+              <Th>Animal</Th>
+              <Th>Procedimentos</Th>
+              <Th>Código</Th>
+              <Th>Data</Th>
+              <Th>Hora</Th>
+              <Th>Preferência</Th>
+              <Th>Especialidade</Th>
+            </Tr>
+          </Thead>
+
+          <Tbody>
+            {dataPet.map((pet: any) => (
+              <Tr key={pet.id}>
+                <Td>
+                  <Button
+                    colorScheme="whatsapp"
+                    onClick={() => navigate(`/Labs/Set/${pet.id}`)}
+                  >
+                    {pet.petName}
+                  </Button>
+                </Td>
+                <Td>
+                  <Text>{pet.name}</Text>
+                </Td>
+                <Td>92487</Td>
+                <Td>04/04/2023</Td>
+
+                <Td>25:53</Td>
+                <Td>
+                  {pet.vetPreference ? pet.vetPreference : "Sem Preferência"}
+                </Td>
+                <Td>Sem Especialidade</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      );
+      break;
     case Object.keys(dataCustomer).length >= 1:
       typeTable = (
         <Table colorScheme="blackAlpha">
           <Thead>
             <Tr>
-              <Th>CPF</Th>
-              <Th>Cliente</Th>
               <Th>Animal</Th>
               <Th>Procedimentos</Th>
               <Th>Código</Th>
@@ -107,19 +148,16 @@ export function LabExames() {
           <Tbody>
             {dataCustomer.map((customer: any) => (
               <Tr key={customer.id}>
-                <Td>{customer.cpf}</Td>
+                <Td>{customer.petName}</Td>
 
                 <Td>
                   <Button
                     colorScheme="whatsapp"
-                    onClick={() => handleNavigateWorkSpace()}
+                    onClick={() => navigate(`/Labs/Set/${customer.id}`)}
                   >
                     {customer.name}
                   </Button>
-                </Td>
-
-                <Td>
-                  <Menu>
+                  {/* <Menu>
                     <MenuButton border="1px" as={Button} rightIcon={<Burger />}>
                       <StyledBox>
                         <Text>pets</Text>
@@ -149,47 +187,9 @@ export function LabExames() {
                         </Flex>
                       ))}
                     </MenuList>
-                  </Menu>
+                  </Menu> */}
                 </Td>
-                <Td>
-                  {" "}
-                  <Menu>
-                    <MenuButton border="1px" as={Button} rightIcon={<Burger />}>
-                      <StyledBox>
-                        <Text>Procedimentos</Text>
-                      </StyledBox>
-                    </MenuButton>
-                    <MenuList bg="green.100">
-                      {labs.map((pets: any) => (
-                        <>
-                          {namePet === pets.medicine.pet.name && (
-                            <Flex
-                              direction="column"
-                              align="center"
-                              p="2px"
-                              gap="2"
-                              key={pets.id}
-                            >
-                              <RadioGroup
-                                value={procedure}
-                                onChange={setProcedure}
-                              >
-                                <Radio
-                                  bgColor={
-                                    procedure == pets.id ? "green" : "red"
-                                  }
-                                  value={pets.id as any}
-                                >
-                                  {pets.name}
-                                </Radio>
-                              </RadioGroup>
-                            </Flex>
-                          )}
-                        </>
-                      ))}
-                    </MenuList>
-                  </Menu>
-                </Td>
+
                 <Td>92487</Td>
                 <Td>04/04/2023</Td>
 
@@ -199,7 +199,7 @@ export function LabExames() {
                     ? customer.vetPreference
                     : "Sem Preferência"}
                 </Td>
-                <Td>0</Td>
+                <Td>Sem Especialidade</Td>
               </Tr>
             ))}
           </Tbody>
@@ -258,11 +258,11 @@ export function LabExames() {
           </Table>
         </>
       );
-
       break;
   }
 
   console.log("DATA RESPONSE", dataCustomer);
+  console.log("Data Pet", dataPet);
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -296,7 +296,7 @@ export function LabExames() {
               overflow="auto"
             >
               <Flex mb="8" gap="8" direction="column" align="center">
-                <VetsSearch path="vetsearch" />
+                <VetsSearch path="labsearch" />
                 <Button
                   colorScheme="teal"
                   onClick={() => navigate("/Queue/Labs")}

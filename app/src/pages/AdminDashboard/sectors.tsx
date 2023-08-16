@@ -31,6 +31,8 @@ import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
+import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
+import { BsFillTrashFill } from "react-icons/bs";
 
 export function SectorsList() {
   // const { sectors } = useContext(DbContext);
@@ -106,17 +108,22 @@ export function SectorsList() {
   };
 
   async function handleDeleteSector(id: string | number) {
-    const confirm = window.confirm(
-      "Deletar e uma operação irreversivel deseja mesmo continuar?"
-    );
     try {
-      if (confirm === true) {
-        await api.delete(`sectors/${id}`);
-        toast.success("Setor deletdo com sucesso");
-        setLoading(true);
-      }
+      await api.delete(`sectors/${id}`);
+      toast.success("Setor deletado com sucesso");
+      setLoading(true);
     } catch (error) {
-      toast.error("Falha ao criar novo setor");
+      toast.error("Falha ao deletar setor");
+    }
+  }
+
+  async function handleDeleteGroup(id: string | number) {
+    try {
+      await api.delete(`groups/${id}`);
+      toast.success("Grupo deletado com sucesso");
+      setLoading(true);
+    } catch (error) {
+      toast.error("Falha ao deletar Grupo");
     }
   }
 
@@ -217,7 +224,19 @@ export function SectorsList() {
                                 >
                                   Editar setor
                                 </Button>
-                                <Button
+                                <ConfirmationDialog
+                                  disabled={false}
+                                  icon={
+                                    <BsFillTrashFill fill="white" size={16} />
+                                  }
+                                  buttonTitle="Deletar Setor"
+                                  whatIsConfirmerd="Tem certeza que deseja Excluir esse Setor?"
+                                  describreConfirm="Excluir o Setor é uma ação irreversivel, tem certeza que deseja excluir?"
+                                  callbackFn={() =>
+                                    handleDeleteSector(sector.id)
+                                  }
+                                />
+                                {/* <Button
                                   as="a"
                                   size="sm"
                                   fontSize="sm"
@@ -226,7 +245,7 @@ export function SectorsList() {
                                   onClick={() => handleDeleteSector(sector.id)}
                                 >
                                   Deletar Setor
-                                </Button>
+                                </Button> */}
                               </Flex>
                             </Td>
                           </Tr>
@@ -304,7 +323,19 @@ export function SectorsList() {
                                 >
                                   Editar Grupo
                                 </Button>
-                                <Button
+                                <ConfirmationDialog
+                                  disabled={false}
+                                  icon={
+                                    <BsFillTrashFill fill="white" size={16} />
+                                  }
+                                  buttonTitle="Deletar Grupo"
+                                  whatIsConfirmerd="Tem certeza que deseja Excluir esse Grupo?"
+                                  describreConfirm="Excluir o Grupo é uma ação irreversivel, tem certeza que deseja excluir?"
+                                  callbackFn={() =>
+                                    handleDeleteSector(group.id)
+                                  }
+                                />
+                                {/* <Button
                                   as="a"
                                   size="sm"
                                   fontSize="sm"
@@ -313,7 +344,7 @@ export function SectorsList() {
                                   onClick={() => handleDeleteSector(group.id)}
                                 >
                                   Deletar Grupo
-                                </Button>
+                                </Button> */}
                               </Flex>
                             </Td>
                           </Tr>
