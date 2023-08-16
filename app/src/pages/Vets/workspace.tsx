@@ -93,8 +93,8 @@ export function WorkSpaceVet() {
         responsibleVeterinarian: user.username,
       }
 
-      await api.put(`/endqueue/${id}/${pet.recordId}/${pet.queue.id}`, data) 
-
+      await api.put(`/endqueue/${id}/${pet.recordId}/${pet.queue.id}/${pet.customerId}`, data) 
+      console.log(data);
       toast.success("Consulta finalizada com sucesso!!")
       navigate("/Vets/Menu")
       
@@ -361,7 +361,7 @@ export function WorkSpaceVet() {
                     display="flex"
                     justifyContent="center"
                   >
-                    Horário
+                    Detalhes
                   </Text>
                   <Text
                     fontWeight="bold"
@@ -427,7 +427,7 @@ export function WorkSpaceVet() {
                     textAlign="center"
                     bgColor="gray.100"
                   >
-                    {`${pet.sexo}, ${pet.weigth}`}
+                    {`${pet.sexo}, ${pet.weigth}Kgs`}
                   </Text>
                   {pet.isBusy === true ? (
                     <Text

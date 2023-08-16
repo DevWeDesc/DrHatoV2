@@ -1,8 +1,8 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { prisma } from "../interface/PrismaInstance";
 import { z } from "zod";
 import { accumulatorService } from "../services/accumulatorService";
-const prisma = new PrismaClient();
+
 
 type params = {
   id: string;

@@ -1,8 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
-import { z } from "zod";
 import { petSchema } from "../schemas/schemasValidator";
-const prisma = new PrismaClient();
+import { prisma } from "../interface/PrismaInstance";
+
 
 
 
@@ -32,7 +31,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
 
     const petData = { 
       name: pet?.name,
-      balance: Number(pet?.customer.balance),
+      debits: pet?.debits,
       customerName: pet?.customer.name,
       customerId: pet?.customer.id,
       customerPets: pet?.customer.pets?.map( (pet) => {

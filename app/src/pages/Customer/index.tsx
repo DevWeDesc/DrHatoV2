@@ -75,25 +75,23 @@ export function Customer() {
   const [petSelected, setPetSelected] = useState<any>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [reload, setReload] = useState(false);
-
-  console.log(petSelected);
   async function loadCustomer() {
     const response = await api.get(`/customers/${id}`);
     setCustomer(response.data);
   }
   useEffect(() => {
     loadCustomer();
-  }, [id]);
+  }, []);
 
   useEffect(() => {
     if (reload != false) {
       loadCustomer();
     }
     setReload(true);
-  });
+  },[reload]);
 
   async function setPetInQueue() {
-    if (queryType == "" || petId == "" || vetPreference == "") {
+    if (!queryType || !petId || !vetPreference) {
       toast.error(`Antes de colocar o Pet na Fila e necessário selecionar todos campos obrigatórios\n
     1. Selecione o Pet\n,
     2. Selecione o Tipo de Atendimento\n
@@ -119,7 +117,7 @@ export function Customer() {
         queueOur: currentDateTime,
       };
 
-      console.log(data);
+
       await api.put(`queue/${petSelected.id}`, data);
       toast.success("Pet colocado na fila com sucesso!");
     } catch (error) {

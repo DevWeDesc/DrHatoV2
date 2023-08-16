@@ -1,7 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { PrismaClient } from "@prisma/client";
 import { accountService } from "../services/accountService";
-const prisma = new PrismaClient();
+
 
 type params = {
   id: string;

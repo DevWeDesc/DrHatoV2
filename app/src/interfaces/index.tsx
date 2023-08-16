@@ -138,6 +138,7 @@ export interface VacinnesProps {
 }
 
 export interface SugeriesProps {
+
   id: number;
   name: string;
   price: number;
@@ -240,6 +241,7 @@ export interface PetDetaisl {
   surgeries: SugeriesProps[];
   procedures: ProceduresProps[];
   customerPets: customerPetsProps[];
+  medicineRecords: MedicineRecordsProps;
   bedInfos: BedInfosProps;
   isBusy: boolean;
   totalAcc: totalAccProps;
