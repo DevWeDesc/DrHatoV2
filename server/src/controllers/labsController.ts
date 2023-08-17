@@ -33,7 +33,7 @@ export const labsController = {
           const result = await prisma.examsForPet.findMany({
             where: {
                   OR: [
-                    {requesteData: { startsWith: requesteData},
+                    {requesteData: { gte: requesteData},
                         name: {startsWith: name},
                         medicine: {pet: {name: { startsWith: petName }}}
                   }
@@ -78,7 +78,7 @@ export const labsController = {
       const result = await prisma.examsForPet.findMany({
         where: {
               OR: [
-                {requesteData: { startsWith: requesteData},
+                {requesteData: { gte: requesteData},
                     name: {startsWith: name},
                     medicine: {pet: {name: { startsWith: petName }}}
               }

@@ -53,13 +53,15 @@ export const customerController = {
           return
         }
 
-        await prisma.customer.create({
+      const customer =  await prisma.customer.create({
           data: {name, adress, phone, email, cpf, birthday, balance, cep, district, howKnowUs, rg, tell, kindPerson, neighbour, state, customerAccount: {create: {
             accountNumber: randomNumberAccount(100, 100000),
             credits: 0,
             debits: 0
           }} }
         })
+
+        reply.send(customer.id)
        } catch (error) {
         console.error(error)
        }
@@ -67,7 +69,7 @@ export const customerController = {
 
   findUserById: async (request: FastifyRequest, reply: FastifyReply) => {
     const { id }: any = (request.params)
-    const customer = await prisma.customer.findUnique({ where: { id: parseInt(id) }, include:{pets: true, transaction: true, customerAccount: true} })
+    const customer = await prisma.customer.findUnique({ where: { id: parseInt(id) }, include:{pets: true, transaction: true, customerAccount: {include: {installments: true}}} })
 
    customer?.transaction.reduce( (acc ,transaction) => {
       //@ts-ignore

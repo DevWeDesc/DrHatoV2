@@ -132,7 +132,7 @@ model ExamsForPet {
   id                 Int            @id @default(autoincrement())
   name               String
   price              Decimal
-  requesteData       String?
+  requesteData       DateTime?
   requestedFor       String?
   responsibleForExam String?
   doneExame          Boolean?       @default(false)

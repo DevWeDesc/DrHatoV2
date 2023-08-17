@@ -86,11 +86,21 @@ export function Customer() {
   useEffect(() => {
     if (reload === true) {
       loadCustomer();
+
       setReload(false);
     }
   }, [reload]);
 
-  console.log(queryType, petSelected.id, vetPreference);
+
+
+
+  async function setPetInQueue() {
+    if (!queryType || !petId || !vetPreference) {
+      toast.error(`Antes de colocar o Pet na Fila e necessário selecionar todos campos obrigatórios\n
+    1. Selecione o Pet\n,
+    2. Selecione o Tipo de Atendimento\n
+    3. Selecione o Veterinário`);
+    }
 
   async function setPetInQueue() {
     try {
