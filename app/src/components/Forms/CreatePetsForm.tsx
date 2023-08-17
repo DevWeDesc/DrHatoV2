@@ -38,15 +38,16 @@ interface CreateNewPetProps {
 
 interface Props {
   reloadPets?: any;
+  onRequestClose?: () => void;
 }
 
-export function CreatePetsForm({ reloadPets }: Props) {
+export function CreatePetsForm({ reloadPets, onRequestClose }: Props) {
   const { register, handleSubmit } = useForm();
   const { id } = useParams<{ id: string }>();
   const [especieState, setEspecie] = useState("");
   const [raceState, setRace] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState<string | number>("");
   const [selectSex, setSelectedSex] = useState("");
   const years = Array.from({ length: 21 }, (_, i) => i);
   const months = Array.from({ length: 13 }, (_, i) => i);
@@ -289,9 +290,19 @@ export function CreatePetsForm({ reloadPets }: Props) {
     };
 
     try {
-      await api.post(`/pets/${id}`, data);
-      toast.success("pet cadastrado com sucesso");
-      console.log(values.especie);
+      if (
+        (selectedMonth != "" && selectedYear != "") ||
+        (selectedMonth === "" && selectedYear != "") ||
+        (selectedMonth != "" && selectedYear === "")
+      ) {
+        await api.post(`/pets/${id}`, data);
+        reloadPets();
+        onRequestClose();
+        toast.success("pet cadastrado com sucesso");
+        console.log(values.especie);
+      } else {
+        toast.error("Insira a idade correta do animal!!");
+      }
     } catch (error) {
       console.error(error);
       toast.error("Falha ao cadastrar pet, verifique se o mesmo ja não existe");

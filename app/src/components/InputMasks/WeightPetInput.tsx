@@ -24,7 +24,7 @@ export function WeightPetInput({ value, onChange, name, id }: PropsInputs) {
         (e.target.style.backgroundColor = "white"),
           (e.target.style.borderColor = "black");
       }}
-      mask="99,99kg"
+      mask="9.9kg"
       value={value}
       onChange={onChange}
       placeholder="Peso do Animal"
