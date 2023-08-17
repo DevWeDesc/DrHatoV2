@@ -103,6 +103,8 @@ import { HealthInsurance } from "./pages/AdminDashboard/healthInsurance";
 import { HealthInsuranceDetails } from "./pages/AdminDashboard/HealthInsuranceDetails";
 import AdminBoxs from "./pages/AdminDashboard/box";
 import { AuthContextProvider } from "./contexts/AuthContext";
+import { Reminder } from "./components/reminder";
+import ReminderPage from "./pages/ReminderPage";
 
 export function Router() {
   return (
@@ -112,6 +114,7 @@ export function Router() {
           <Route path="/" element={<Login />} />
           <Route element={<DefaultLayout />}>
             <Route path="/Home" element={<Home />} />
+            <Route path="/Reminder" element={<ReminderPage />} />
             <Route path="/Reports" element={<Reports />} />
             <Route path="/Reports/Comission" element={<ReportsComission />} />
             <Route path="/Reports/Cashflow" element={<ReportsCashFlow />} />
@@ -288,10 +291,12 @@ export function Router() {
               path="/Recepcao/Caixa/Pagamentos/:id"
               element={<BoxPaymentsDetails />}
             />
-            <Route
+            
+              {/*  <Route
               path="/Recepcao/Caixa/PagamentoCliente/:id"
               element={<BoxNewPaymentsClient />}
-            />
+            />  */}
+          
             <Route
               path="/Recepcao/Caixa/NovoPagamento/:id"
               element={<BoxNewPayments />}

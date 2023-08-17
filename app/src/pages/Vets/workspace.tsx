@@ -14,7 +14,6 @@ import {
   Tr,
   Td,
   Tbody,
-  Textarea,
   HStack,
   VStack,
   Select,
@@ -28,8 +27,7 @@ import {
   TbArrowBack,
   TbMedicalCrossFilled,
   CiStethoscope,
-  MdAttachMoney
- 
+  MdAttachMoney,
 } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -39,8 +37,10 @@ import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
 import { PetDetaisl } from "../../interfaces";
 import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 import { toast } from "react-toastify";
-
-
+import { Textarea } from "@chakra-ui/react";
+import { TDocumentDefinitions } from "pdfmake/interfaces";
+import * as pdfMake from "pdfmake/build/pdfmake";
+import * as pdfFonts from "pdfmake/build/vfs_fonts";
 
 export function WorkSpaceVet() {
   const { id } = useParams<{ id: string }>();
@@ -50,7 +50,20 @@ export function WorkSpaceVet() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAutorizationModalOpen, setAutorizationModalOpen] = useState(false);
   const [reloadData, setReloadData] = useState(false);
+  const [viewComponentPrint, setViewComponentPrint] = useState("");
+  const [PdfDiagnostic, setPdfDiagnostic] = useState("");
+  const [PdfPrescrition, setPdfPrescrition] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
+
+  function handleCreateInstruction(text: string) {
+    const docDefinition: TDocumentDefinitions = {
+      content: [`${text}`],
+      pageMargins: [50, 50],
+      pageSize: "A4",
+    };
+    pdfMake.createPdf(docDefinition).open();
+  }
+
   function openModal() {
     setIsModalOpen(true);
   }
@@ -91,17 +104,48 @@ export function WorkSpaceVet() {
         queueExit: new Date(),
         debitOnThisQuery: Number(pet.totalAcc.price),
         responsibleVeterinarian: user.username,
-      }
+      };
 
-      await api.put(`/endqueue/${id}/${pet.recordId}/${pet.queue.id}/${pet.customerId}`, data) 
+      await api.put(
+        `/endqueue/${id}/${pet.recordId}/${pet.queue.id}/${pet.customerId}`,
+        data
+      );
       console.log(data);
-      toast.success("Consulta finalizada com sucesso!!")
-      navigate("/Vets/Menu")
-      
+      toast.success("Consulta finalizada com sucesso!!");
+      navigate("/Vets/Menu");
     } catch (error) {
-      toast.error("Falha ao encerrar consulta!!")
-      console.log(error)
+      toast.error("Falha ao encerrar consulta!!");
+      console.log(error);
     }
+  };
+
+  let ComponentPrint;
+  switch (true) {
+    case viewComponentPrint == "Diagnóstico":
+      ComponentPrint = (
+        <div>
+          <Textarea
+            minW="45.7rem"
+            minH="12.5rem"
+            value={PdfDiagnostic}
+            onChange={(e) => setPdfDiagnostic(e.target.value)}
+          />
+        </div>
+      );
+      break;
+    case viewComponentPrint == "Prescrição":
+      ComponentPrint = (
+        <Textarea
+          minW="45.7rem"
+          minH="12.5rem"
+          value={PdfPrescrition}
+          onChange={(e) => setPdfPrescrition(e.target.value)}
+        />
+      );
+      break;
+    default:
+      ComponentPrint = <Text>Nenhuma informação a ser exibida</Text>;
+      break;
   }
 
   let viewComponent;
@@ -194,275 +238,283 @@ export function WorkSpaceVet() {
   }
 
   return (
-      <ChakraProvider>
-        <WorkSpaceContainer>
-          <WorkSpaceHeader>
+    <ChakraProvider>
+      <WorkSpaceContainer>
+        <WorkSpaceHeader>
+          <Flex
+            justify="space-between"
+            align="center"
+            width="100vw"
+            height="100%"
+          >
+            <Flex align="center" gap="2">
+              <Text m="2" fontSize="1xl" fontWeight="bold">
+                WorkSpace Veterinário
+              </Text>
+              <Button
+                colorScheme="teal"
+                leftIcon={<BiHome size={24} />}
+                onClick={() => navigate("/Home")}
+              >
+                Home
+              </Button>
+
+              <Button
+                colorScheme="yellow"
+                leftIcon={<TbArrowBack size={24} />}
+                onClick={() => navigate("/Vets/Menu")}
+              >
+                Voltar
+              </Button>
+            </Flex>
+
             <Flex
-              justify="space-between"
-              align="center"
-              width="100vw"
+              flexWrap="wrap"
+              width="2200px"
               height="100%"
+              justify="start"
+              gap="2"
+              m="4"
+              p="2"
+              overflowX="auto"
             >
-              <Flex align="center" gap="2">
-                <Text m="2" fontSize="1xl"  fontWeight="bold">
-                  WorkSpace Veterinário
-                </Text>
-                <Button
-                  colorScheme="teal"
-                  leftIcon={<BiHome size={24} />}
-                  onClick={() => navigate("/Home")}
-                >
-                  Home
-                </Button>
+              <Button
+                onClick={() => openModal()}
+                height={8}
+                colorScheme="whatsapp"
+              >
+                FORMULÁRIOS
+              </Button>
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Instructions/${id}`)}
+              >
+                INSTRUÇÕES PROPRIETÁRIO
+              </Button>
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => openAutorizationModal()}
+              >
+                AUTORIZAÇÕES
+              </Button>
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Protocols/${id}`)}
+              >
+                PROTOCOLOS
+              </Button>
+              <Button
+                isDisabled={pet.isBusy}
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Exam/${id}`)}
+              >
+                EXAMES
+              </Button>
+              <Button
+                isDisabled={pet.isBusy}
+                onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}
+                height={8}
+                colorScheme="whatsapp"
+              >
+                PROCEDIMENTOS
+              </Button>
+              <Button
+                isDisabled={pet.isBusy}
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)}
+              >
+                VACINAS
+              </Button>
+              <Button
+                isDisabled={pet.isBusy}
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Surgeries/${id}`)}
+              >
+                CIRURGIAS
+              </Button>
+              <Button
+                isDisabled={pet.isBusy}
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Admissions/${id}`)}
+              >
+                INTERNAR
+              </Button>
 
-                <Button
-                  colorScheme="yellow"
-                  leftIcon={<TbArrowBack size={24} />}
-                  onClick={() => navigate("/Vets/Menu")}
-                >
-                  Voltar
-                </Button>
-              </Flex>
+              <Button
+                height={8}
+                onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}
+                leftIcon={<MdPets />}
+                colorScheme="messenger"
+              >
+                PRONTUÁRIO DO PET
+              </Button>
 
-              <Flex flexWrap="wrap" width="2200px"  height="100%" justify="start" gap="2" m="4" p="2" overflowX="auto">
-                <Button
-                  onClick={() => openModal()}
-                  height={8}
-                  colorScheme="whatsapp"
-                >
-                  FORMULÁRIOS
-                </Button>
-                <Button
-                  height={8}
-                  colorScheme="whatsapp"
-                  onClick={() => navigate(`/WorkSpace/Instructions/${id}`)}
-                >
-                  INSTRUÇÕES PROPRIETÁRIO
-                </Button>
-                <Button
-                  height={8}
-                  colorScheme="whatsapp"
-                  onClick={() => openAutorizationModal()}
-                >
-                  AUTORIZAÇÕES
-                </Button>
-                <Button
-                  height={8}
-                  colorScheme="whatsapp"
-                  onClick={() => navigate(`/WorkSpace/Protocols/${id}`)}
-                >
-                  PROTOCOLOS
-                </Button>
-                <Button
-                  isDisabled={pet.isBusy}
-                  height={8}
-                  colorScheme="whatsapp"
-                  onClick={() => navigate(`/WorkSpace/Exam/${id}`)}
-                >
-                  EXAMES
-                </Button>
-                <Button
-                  isDisabled={pet.isBusy}
-                  onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}
-                  height={8}
-                  colorScheme="whatsapp"
-                >
-                  PROCEDIMENTOS
-                </Button>
-                <Button
-                  isDisabled={pet.isBusy}
-                  height={8}
-                  colorScheme="whatsapp"
-                  onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)}
-                >
-                  VACINAS
-                </Button>
-                <Button
-                  isDisabled={pet.isBusy}
-                  height={8}
-                  colorScheme="whatsapp"
-                  onClick={() => navigate(`/WorkSpace/Surgeries/${id}`)}
-                >
-                  CIRURGIAS
-                </Button>
-                <Button
-                  isDisabled={pet.isBusy}
-                  height={8}
-                  colorScheme="whatsapp"
-                  onClick={() => navigate(`/WorkSpace/Admissions/${id}`)}
-                >
-                  INTERNAR
-                </Button>
-
-                <Button
-                  height={8}
-                  onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}
-                  leftIcon={<MdPets />}
-                  colorScheme="messenger"
-                >
-                  PRONTUÁRIO DO PET
-                </Button>
-             
-              
- 
-                  <ConfirmationDialog 
+              <ConfirmationDialog
                 disabled={pet.queue?.petIsInQueue === false ? true : false}
-                icon={<CiStethoscope fill="white" size={24}  />} 
+                icon={<CiStethoscope fill="white" size={24} />}
                 buttonTitle="Concluir Consulta"
                 whatIsConfirmerd="Tem certeza que deseja encerrar consulta ?"
                 describreConfirm="Encerrar a consulta registra todos débitos desta consulta no pet, e é uma ação irreversivel !!"
                 callbackFn={handleCloseQuery}
-                
+              />
 
-                />
-
-                <Button
-                  height={8}
-                  leftIcon={<MdAttachMoney fill="white" size={24} />}
-                  colorScheme="whatsapp"
-                >
-                   Total nessa consulta: {new Intl.NumberFormat("pt-BR",{currency: 'BRL', style: 'currency'}).format(Number(pet.totalAcc?.price))}
-                </Button>
-               
-              </Flex>
+              <Button
+                height={8}
+                leftIcon={<MdAttachMoney fill="white" size={24} />}
+                colorScheme="whatsapp"
+              >
+                Total nessa consulta:{" "}
+                {new Intl.NumberFormat("pt-BR", {
+                  currency: "BRL",
+                  style: "currency",
+                }).format(Number(pet.totalAcc?.price))}
+              </Button>
             </Flex>
-          </WorkSpaceHeader>
-          <WorkSpaceContent>
-            <div className="div1">
-              <Flex m="4" gap="2" direction="row">
-                <VStack>
-                  <Text
-                    fontWeight="bold"
-                    w="150px"
-                    display="flex"
-                    justifyContent="center"
-                  >
-                    Cliente
-                  </Text>
-                  <Text
-                    fontWeight="bold"
-                    w="150px"
-                    display="flex"
-                    justifyContent="center"
-                  >
-                    Gastos
-                  </Text>
-                  <Text
-                    fontWeight="bold"
-                    w="150px"
-                    display="flex"
-                    justifyContent="center"
-                  >
-                    Animal
-                  </Text>
-                  <Text
-                    fontWeight="bold"
-                    w="150px"
-                    display="flex"
-                    justifyContent="center"
-                  >
-                    Detalhes
-                  </Text>
-                  <Text
-                    fontWeight="bold"
-                    w="150px"
-                    display="flex"
-                    justifyContent="center"
-                  >
-                    Internações
-                  </Text>
-                  <Text
-                    fontWeight="bold"
-                    w="150px"
-                    display="flex"
-                    justifyContent="center"
-                  >
-                    Plano de Saúde
-                  </Text>
-                </VStack>
-                <VStack w="100%">
-                  <Text
-                    border="1px"
-                    width="100%"
-                    rounded="4px"
-                    fontWeight="bold"
-                    textAlign="center"
-                    bgColor="gray.100"
-                  >
-                    {pet.customerName}
-                  </Text>
-                  <Text
-                    width="100%"
-                    border="1px"
-                    rounded="4px"
-                    fontWeight="bold"
-                    textAlign="center"
-                    bgColor="gray.100"
-                  >
-                    {new Intl.NumberFormat("pt-BR", {
-                      currency: "BRL",
-                      style: "currency",
-                    }).format(pet.balance)}
-                  </Text>
-                  <Text
-                    width="100%"
-                    border="1px"
-                    rounded="4px"
-                    fontWeight="bold"
-                    textAlign="center"
-                    bgColor="gray.100"
-                    cursor="pointer"
-                    onClick={() =>
-                      navigate(`/Recepcao/Consultas/Clientes/Pets/Edit/${id}`)
-                    }
-                  >
-                    {`${pet.name}, ${pet.race}`}
-                  </Text>
+          </Flex>
+        </WorkSpaceHeader>
+        <WorkSpaceContent>
+          <div className="div1">
+            <Flex m="4" gap="2" direction="row">
+              <VStack>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Cliente
+                </Text>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Gastos
+                </Text>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Animal
+                </Text>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Detalhes
+                </Text>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Internações
+                </Text>
+                <Text
+                  fontWeight="bold"
+                  w="150px"
+                  display="flex"
+                  justifyContent="center"
+                >
+                  Plano de Saúde
+                </Text>
+              </VStack>
+              <VStack w="100%">
+                <Text
+                  border="1px"
+                  width="100%"
+                  rounded="4px"
+                  fontWeight="bold"
+                  textAlign="center"
+                  bgColor="gray.100"
+                >
+                  {pet.customerName}
+                </Text>
+                <Text
+                  width="100%"
+                  border="1px"
+                  rounded="4px"
+                  fontWeight="bold"
+                  textAlign="center"
+                  bgColor="gray.100"
+                >
+                  {new Intl.NumberFormat("pt-BR", {
+                    currency: "BRL",
+                    style: "currency",
+                  }).format(pet.balance)}
+                </Text>
+                <Text
+                  width="100%"
+                  border="1px"
+                  rounded="4px"
+                  fontWeight="bold"
+                  textAlign="center"
+                  bgColor="gray.100"
+                  cursor="pointer"
+                  onClick={() =>
+                    navigate(`/Recepcao/Consultas/Clientes/Pets/Edit/${id}`)
+                  }
+                >
+                  {`${pet.name}, ${pet.race}`}
+                </Text>
 
+                <Text
+                  width="100%"
+                  border="1px"
+                  rounded="4px"
+                  fontWeight="bold"
+                  textAlign="center"
+                  bgColor="gray.100"
+                >
+                  {`${pet.sexo}, ${pet.weigth}Kgs`}
+                </Text>
+                {pet.isBusy === true ? (
                   <Text
                     width="100%"
                     border="1px"
                     rounded="4px"
                     fontWeight="bold"
                     textAlign="center"
-                    bgColor="gray.100"
+                    bgColor="red.200"
                   >
-                    {`${pet.sexo}, ${pet.weigth}Kgs`}
+                    ANIMAL ESTÁ INTERNADO
                   </Text>
-                  {pet.isBusy === true ? (
-                    <Text
-                      width="100%"
-                      border="1px"
-                      rounded="4px"
-                      fontWeight="bold"
-                      textAlign="center"
-                      bgColor="red.200"
-                    >
-                      ANIMAL ESTÁ INTERNADO
-                    </Text>
-                  ) : (
-                    <Text
-                      width="100%"
-                      border="1px"
-                      rounded="4px"
-                      fontWeight="bold"
-                      textAlign="center"
-                      bgColor="green.100"
-                    >
-                      ANIMAL NÃO SE ENCONTRA INTERNADO
-                    </Text>
-                  )}
+                ) : (
                   <Text
                     width="100%"
                     border="1px"
                     rounded="4px"
                     fontWeight="bold"
                     textAlign="center"
-                    bgColor="gray.100"
+                    bgColor="green.100"
                   >
-                    {pet.more != "" ? "PetLove" : "Sem plano de Saúde"}
+                    ANIMAL NÃO SE ENCONTRA INTERNADO
                   </Text>
-                  {/* <Select
+                )}
+                <Text
+                  width="100%"
+                  border="1px"
+                  rounded="4px"
+                  fontWeight="bold"
+                  textAlign="center"
+                  bgColor="gray.100"
+                >
+                  {pet.more != "" ? "PetLove" : "Sem plano de Saúde"}
+                </Text>
+                {/* <Select
                     border="1px"
                     height="26px"
                     width="100%"
@@ -476,190 +528,201 @@ export function WorkSpaceVet() {
                     <option value="option1">Não tenho plano de saúde</option>
                     <option value="option2">Pet Love</option>
                   </Select> */}
-                </VStack>
-              </Flex>
-              <Flex direction="column" mx="4">
-                <Text fontSize="md" mx="2" mt="0" fontWeight="bold">
-                  Observações
-                </Text>
-                <Textarea
-                  color="red.900"
-                  borderColor="black"
-                  value={pet.queue?.moreInfos}
-                ></Textarea>
-              </Flex>
-            </div>
-            <Flex direction="column" className="div2">
-              <Flex
-                backgroundColor="cyan.100"
-                w="100%"
-                h="48px"
-                direction="row"
-                align="center"
-                justify="center"
-              >
-                <Text mr="1">Exames - </Text>
-                <Text mr="2" color="red">
-                  Vermelho: Por fazer{" "}
-                </Text>
-                /
-                <Text ml="2" color="green">
-                  Verde: pronto
-                </Text>
-              </Flex>
-
-              <Flex m="2" direction="column" gap="2" overflow="auto">
-                {pet.exams ? (
-                  pet.exams.map((exam) => (
-                    <Flex
-                      key={exam.id}
-                      w="100%"
-                      backgroundColor="gray.100"
-                      p="2"
-                      justify="space-between"
-                    >
-                      <>
-                        {exam.doneExam === true ? (
-                          <Text color="green.400" fontWeight="bold">
-                            {exam.name}
-                          </Text>
-                        ) : (
-                          <Text color="red.400" fontWeight="bold">
-                            {exam.name}
-                          </Text>
-                        )}
-                      </>
-                      <Text>{exam.requestedData}</Text>
-                    </Flex>
-                  ))
-                ) : (
-                  <Text>Sem exame Solicitado</Text>
-                )}
-              </Flex>
+              </VStack>
             </Flex>
-            <div className="div3">
-              <HStack spacing={4} m="2" w="100%">
-                <Button w="25%" colorScheme="whatsapp">
-                  Diagnóstico
-                </Button>
-                <Button w="25%" colorScheme="whatsapp">
-                  Prescrição
-                </Button>
-                <Button w="25%" colorScheme="whatsapp">
-                  Sintomas
-                </Button>
-                <Button w="25%" colorScheme="whatsapp">
-                  Solicitar Exame
-                </Button>
-              </HStack>
+            <Flex direction="column" mx="4">
+              <Text fontSize="md" mx="2" mt="0" fontWeight="bold">
+                Observações
+              </Text>
               <Textarea
-                border="1px"
-                minHeight={220}
-                m="2"
-                maxWidth="100%"
+                color="red.900"
+                borderColor="black"
+                value={pet.queue?.moreInfos}
               ></Textarea>
-            </div>
-            <div className="div4">
-              <Flex justify="space-between" gap="2" m="2">
-                <Button
-                  leftIcon={<MdPets />}
-                  height={8}
-                  colorScheme="whatsapp"
-                  w="33%"
-                  py="5"
-                  onClick={() => setHandleViewComponent("allPets")}
-                >
-                  Outros Animais
-                </Button>
-                <Button
-                  leftIcon={<TbMedicalCrossFilled />}
-                  height={8}
-                  colorScheme="whatsapp"
-                  w="33%"
-                  py="5"
-                  onClick={() => setHandleViewComponent("vaccines")}
-                >
-                  Vacinas
-                </Button>
-                <Button
-                  leftIcon={<AiFillMedicineBox />}
-                  height={8}
-                  colorScheme="whatsapp"
-                  w="33%"
-                  py="5"
-                  onClick={() => setHandleViewComponent("surgeries")}
-                >
-                  Cirurgias
-                </Button>
-              </Flex>
-
-              <Flex
-                width="100%"
-                maxHeight="800px"
-                m="2"
-                direction="column"
-                gap="2"
-                overflowY="auto"
-              >
-                {viewComponent}
-              </Flex>
-            </div>
-          </WorkSpaceContent>
-          <WorkSpaceFooter>
+            </Flex>
+          </div>
+          <Flex direction="column" className="div2">
             <Flex
-              justify="space-evenly"
+              backgroundColor="cyan.100"
+              w="100%"
+              h="48px"
+              direction="row"
               align="center"
-              width="100%"
-              height="100%"
-              px="2"
+              justify="center"
             >
-              <Button colorScheme="teal" w="25%" mr="3" py="6">
-                Imprimir Receita
+              <Text mr="1">Exames - </Text>
+              <Text mr="2" color="red">
+                Vermelho: Por fazer{" "}
+              </Text>
+              /
+              <Text ml="2" color="green">
+                Verde: pronto
+              </Text>
+            </Flex>
+
+            <Flex m="2" direction="column" gap="2" overflow="auto">
+              {pet.exams ? (
+                pet.exams.map((exam) => (
+                  <Flex
+                    key={exam.id}
+                    w="100%"
+                    backgroundColor="gray.100"
+                    p="2"
+                    justify="space-between"
+                  >
+                    <>
+                      {exam.doneExam === true ? (
+                        <Text color="green.400" fontWeight="bold">
+                          {exam.name}
+                        </Text>
+                      ) : (
+                        <Text color="red.400" fontWeight="bold">
+                          {exam.name}
+                        </Text>
+                      )}
+                    </>
+                    <Text>{exam.requestedData}</Text>
+                  </Flex>
+                ))
+              ) : (
+                <Text>Sem exame Solicitado</Text>
+              )}
+            </Flex>
+          </Flex>
+          <div className="div3">
+            <HStack spacing={4} m="2" w="100%">
+              <Button
+                w="25%"
+                colorScheme="whatsapp"
+                onClick={() => setViewComponentPrint("Diagnóstico")}
+              >
+                Diagnóstico
               </Button>
-              <Button colorScheme="whatsapp" w="25%" mr="3" py="6">
-                Imprimir Raio-X
+              <Button
+                w="25%"
+                colorScheme="whatsapp"
+                onClick={() => setViewComponentPrint("Prescrição")}
+              >
+                Prescrição
               </Button>
-              <Button colorScheme="whatsapp" w="25%" mr="3" py="6">
-                Imprimir Solicitação Exames
+              <Button w="25%" colorScheme="whatsapp">
+                Sintomas
               </Button>
-              <Button colorScheme="red" w="25%" py="6">
-                Gravar Alterações
+              <Button w="25%" colorScheme="whatsapp">
+                Solicitar Exame
+              </Button>
+            </HStack>
+            <Flex>{ComponentPrint}</Flex>
+          </div>
+          <div className="div4">
+            <Flex justify="space-between" gap="2" m="2">
+              <Button
+                leftIcon={<MdPets />}
+                height={8}
+                colorScheme="whatsapp"
+                w="33%"
+                py="5"
+                onClick={() => setHandleViewComponent("allPets")}
+              >
+                Outros Animais
+              </Button>
+              <Button
+                leftIcon={<TbMedicalCrossFilled />}
+                height={8}
+                colorScheme="whatsapp"
+                w="33%"
+                py="5"
+                onClick={() => setHandleViewComponent("vaccines")}
+              >
+                Vacinas
+              </Button>
+              <Button
+                leftIcon={<AiFillMedicineBox />}
+                height={8}
+                colorScheme="whatsapp"
+                w="33%"
+                py="5"
+                onClick={() => setHandleViewComponent("surgeries")}
+              >
+                Cirurgias
               </Button>
             </Flex>
-          </WorkSpaceFooter>
-        </WorkSpaceContainer>
-        <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-          <Flex direction="column" gap="4" border="2px" m="4" p="4" rounded={8}>
-            <Button colorScheme="whatsapp">
-              FICHA ANESTÉSICA PERSONALIZADA
-            </Button>
-            <Button colorScheme="whatsapp">FICHA ANESTÉSICA TOMOGRAFIA</Button>
 
-            <Button colorScheme="whatsapp">FICHA DE PARÂMETROS</Button>
-            <Button colorScheme="whatsapp">FICHA DE MEDICAÇÃO</Button>
-          </Flex>
-        </GenericModal>
-
-        <GenericModal
-          isOpen={isAutorizationModalOpen}
-          onRequestClose={closeAutorizationModal}
-        >
-          <Flex direction="column" align="center" gap="8">
-            <Text fontWeight="bold" fontSize="2xl">
-              {pet.name}
-            </Text>
-            <Select
-              bgColor="gray.100"
-              borderColor="black"
-              placeholder="Selecione a Autorização"
+            <Flex
+              width="100%"
+              maxHeight="800px"
+              m="2"
+              direction="column"
+              gap="2"
+              overflowY="auto"
             >
-              <option value="option1">Option 1 </option>
-              <option value="option2">Option 2</option>
-              <option value="option3">Option 3</option>
-            </Select>
-            <WorkVetAutorization />
+              {viewComponent}
+            </Flex>
+          </div>
+        </WorkSpaceContent>
+        <WorkSpaceFooter>
+          <Flex
+            justify="space-evenly"
+            align="center"
+            width="100%"
+            height="100%"
+            px="2"
+          >
+            <Button
+              colorScheme="teal"
+              w="25%"
+              mr="3"
+              py="6"
+              onClick={() => {
+                viewComponentPrint === "Diagnóstico"
+                  ? handleCreateInstruction(PdfDiagnostic)
+                  : handleCreateInstruction(PdfPrescrition);
+              }}
+            >
+              Imprimir Receita
+            </Button>
+            <Button colorScheme="whatsapp" w="25%" mr="3" py="6">
+              Imprimir Raio-X
+            </Button>
+            <Button colorScheme="whatsapp" w="25%" mr="3" py="6">
+              Imprimir Solicitação Exames
+            </Button>
+            <Button colorScheme="red" w="25%" py="6">
+              Gravar Alterações
+            </Button>
           </Flex>
-        </GenericModal>
-      </ChakraProvider>
+        </WorkSpaceFooter>
+      </WorkSpaceContainer>
+      <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+        <Flex direction="column" gap="4" border="2px" m="4" p="4" rounded={8}>
+          <Button colorScheme="whatsapp">FICHA ANESTÉSICA PERSONALIZADA</Button>
+          <Button colorScheme="whatsapp">FICHA ANESTÉSICA TOMOGRAFIA</Button>
+
+          <Button colorScheme="whatsapp">FICHA DE PARÂMETROS</Button>
+          <Button colorScheme="whatsapp">FICHA DE MEDICAÇÃO</Button>
+        </Flex>
+      </GenericModal>
+
+      <GenericModal
+        isOpen={isAutorizationModalOpen}
+        onRequestClose={closeAutorizationModal}
+      >
+        <Flex direction="column" align="center" gap="8">
+          <Text fontWeight="bold" fontSize="2xl">
+            {pet.name}
+          </Text>
+          <Select
+            bgColor="gray.100"
+            borderColor="black"
+            placeholder="Selecione a Autorização"
+          >
+            <option value="option1">Option 1 </option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </Select>
+          <WorkVetAutorization />
+        </Flex>
+      </GenericModal>
+    </ChakraProvider>
   );
 }

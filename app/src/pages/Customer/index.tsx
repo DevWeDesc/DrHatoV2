@@ -84,11 +84,15 @@ export function Customer() {
   }, []);
 
   useEffect(() => {
-    if (reload != false) {
+    if (reload === true) {
       loadCustomer();
+
+      setReload(false);
     }
-    setReload(true);
-  },[reload]);
+  }, [reload]);
+
+
+
 
   async function setPetInQueue() {
     if (!queryType || !petId || !vetPreference) {
@@ -98,6 +102,7 @@ export function Customer() {
     3. Selecione o Veterinário`);
     }
 
+  async function setPetInQueue() {
     try {
       const formattedData = new Date();
       const processData = new Intl.DateTimeFormat().format(formattedData);
@@ -116,10 +121,15 @@ export function Customer() {
         moreInfos: moreInfos,
         queueOur: currentDateTime,
       };
-
-
-      await api.put(`queue/${petSelected.id}`, data);
-      toast.success("Pet colocado na fila com sucesso!");
+      if (!!queryType && !!petSelected.id && !!vetPreference) {
+        await api.put(`queue/${petSelected.id}`, data);
+        toast.success("Pet colocado na fila com sucesso!");
+      } else {
+        toast.error(`Antes de colocar o Pet na Fila e necessário selecionar todos campos obrigatórios\n
+        1. Selecione o Pet\n,
+        2. Selecione o Tipo de Atendimento\n
+        3. Selecione o Veterinário`);
+      }
     } catch (error) {
       toast.error("Falha ao colocar na fila");
     }
@@ -665,7 +675,10 @@ export function Customer() {
               >
                 Cadastro de Animal
               </Text>
-              <CreatePetsForm reloadPets={reload} />
+              <CreatePetsForm
+                onRequestClose={() => setModalOpen(false)}
+                reloadPets={() => setReload(true)}
+              />
             </GenericModal>
           </Flex>
         </WorkSpaceContent>

@@ -16,25 +16,22 @@ import { Header } from "../../../components/admin/Header";
 import { AdminContainer } from "../../AdminDashboard/style";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
-import { BiHome, BsCashCoin } from "react-icons/all";
-import { useEffect, useState } from "react";
+import {  BsCashCoin } from "react-icons/all";
+import { useEffect, useState, useContext } from "react";
 import { api } from "../../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { BsReception4 } from "react-icons/bs";
 import { BiCalendarPlus, AiFillEdit } from "react-icons/all";
 import { ICustomer } from "../../../interfaces";
+import { BoxContext } from "../../../contexts/BoxContext";
+
+
 
 export function BoxPaymentsDetails() {
   const [client, setClient] = useState({} as ICustomer);
-  const [launchClient, setLaunchClient] = useState([]);
-  const [cash, setCash] = useState("");
+  const {fatherBox, dailyBox} = useContext(BoxContext)
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
-  // async function getCustomers() {
-  //   const response = await api.get(`http://localhost:5000/customers/${id}`);
-  //   setCostumers(response.data);
-  // }
   async function getCustomers() {
     const customer = await api.get(`/customers/${id}`);
     setClient(customer.data);
@@ -43,17 +40,7 @@ export function BoxPaymentsDetails() {
     getCustomers();
   }, []);
 
-  function BgInput(cash: string | number) {
-    if (cash === "") {
-      return "white";
-    } else if (cash >= 0) {
-      return "green.100";
-    } else if (cash < 0) {
-      return "red.100";
-    } else {
-      return "white";
-    }
-  }
+
 
   return (
     <ChakraProvider>
@@ -148,6 +135,7 @@ export function BoxPaymentsDetails() {
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
                     </Tr>
 
                     <>
@@ -171,7 +159,7 @@ export function BoxPaymentsDetails() {
                             bg="white"
                             borderColor="black"
                             rounded="0"
-                            value={client.name}
+                            defaultValue={client.name}
                           />
                         </Td>
                         <Td
@@ -194,7 +182,7 @@ export function BoxPaymentsDetails() {
                             borderColor="black"
                             w="100%"
                             rounded="0"
-                            value={client.adress}
+                            defaultValue={client.adress}
                           />
                         </Td>
                       </Tr>
@@ -216,7 +204,7 @@ export function BoxPaymentsDetails() {
                             bg="white"
                             borderColor="black"
                             rounded="0"
-                            value={client.neighbour}
+                            defaultValue={client.neighbour}
                           />
                         </Td>
                         <Td
@@ -237,7 +225,7 @@ export function BoxPaymentsDetails() {
                             bg="white"
                             borderColor="black"
                             rounded="0"
-                            value={client.cep === null ? "Sem CEP" : client.cep}
+                            defaultValue={client.cep === null ? "Sem CEP" : client.cep}
                           />
                         </Td>
                       </Tr>
@@ -259,7 +247,7 @@ export function BoxPaymentsDetails() {
                             bg="white"
                             borderColor="black"
                             rounded="0"
-                            value={client.district}
+                            defaultValue={client.district}
                           />
                         </Td>
                         <Td
@@ -279,7 +267,7 @@ export function BoxPaymentsDetails() {
                             bg="white"
                             borderColor="black"
                             rounded="0"
-                            value={client.phone}
+                            defaultValue={client.phone}
                           />
                         </Td>
                       </Tr>
@@ -291,18 +279,38 @@ export function BoxPaymentsDetails() {
                           fontWeight="bold"
                           borderColor="black"
                         >
-                          Saldo Atual
+                          Débitos Atuais
                         </Td>
                         <Td colSpan={6} py="0" borderColor="black" pr="0">
                           <Input
                             borderLeft="2px solid black"
                             borderBottom="1px solid black"
-                            onClick={() => console.log(client.balance)}
-                            onChange={() => setCash("0")}
-                            bg={BgInput(parseInt("0"))}
+                            
+                          bgColor="red.100"
                             borderColor="black"
                             rounded="0"
-                            value={client.balance}
+                            defaultValue={client.customerAccount?.debits}
+                          />
+                        </Td>
+                      </Tr>
+                      <Tr border="1px solid black">
+                        <Td
+                          fontSize="18"
+                          py="0"
+                          pl="5"
+                          fontWeight="bold"
+                          borderColor="black"
+                        >
+                          Créditos Atuais
+                        </Td>
+                        <Td colSpan={6} py="0" borderColor="black" pr="0">
+                          <Input
+                            borderLeft="2px solid black"
+                            borderBottom="1px solid black"
+                            bgColor="green.100"
+                            borderColor="black"
+                            rounded="0"
+                            defaultValue={client.customerAccount?.credits}
                           />
                         </Td>
                       </Tr>
@@ -386,52 +394,46 @@ export function BoxPaymentsDetails() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {launchClient.map((lanc: any) => (
-                      <Tr
-                        bg="white"
-                        cursor="pointer"
-                        onClick={() =>
-                          navigate(`/Recepcao/Caixa/PagamentoCliente/${id}`)
-                        }
-                      >
-                        <Td border="1px solid black">{lanc.date}</Td>
-                        <Td
-                          border="1px solid black"
-                          isNumeric
-                          fontWeight="bold"
-                        >
-                          Indefinido
-                        </Td>
-                        <Td border="1px solid black">{lanc.description}</Td>
-                        <Td
-                          border="1px solid black"
-                          isNumeric
-                          fontWeight="bold"
-                          bg={lanc.debt <= 0 ? "green.100" : "red.100"}
-                        >
-                          {lanc.debt === "" ? "0.00" : lanc.debt}
-                        </Td>
-                        <Td
-                          border="1px solid black"
-                          bg={BgInput(
-                            parseInt(lanc.credit === "" ? "0.00" : lanc.credit)
-                          )}
-                        >
-                          {lanc.credit === "" ? "0.00" : lanc.credit}
-                        </Td>
-                        <Td border="1px solid black">{lanc.type}</Td>
-                        <Td
-                          border="1px solid black"
-                          bg={BgInput(
-                            parseInt(lanc.debt === "" ? 0 : lanc.debt) -
-                              parseInt(lanc.credit === "" ? 0 : lanc.credit)
-                          )}
-                        >
-                          {parseInt(lanc.debt === "" ? 0 : lanc.debt) -
-                            parseInt(lanc.credit === "" ? 0 : lanc.credit)}
-                        </Td>
+                   {
+                     client?.customerAccount?.installments.length >= 1 ? client?.customerAccount?.installments.map((installment) => (
+                        <Tr key={installment.id} >
+                            <Td>
+                              {new Intl.DateTimeFormat('pt-BR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              }).format(new Date(installment?.paymentDate))}
+                            </Td>
+                            <Td>
+                                {fatherBox.name}
+                            </Td>
+                            <Td>
+                              Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
+                            </Td>
+                            <Td>
+                              0
+                            </Td>
+                            <Td border="2px" bgColor='green.100'>
+                              {new Intl.NumberFormat('pt-BR', {
+                                currency: 'BRL',
+                                style: 'currency'
+                              }).format(installment.totalDebit)}
+                            </Td>
+                            <Td>
+                              {installment.paymentType}
+                            </Td>
+                            <Td>
+                              {client.customerAccount?.debits}
+                            </Td>
+                        </Tr>
+                     )) : (
+                      <Tr>
+
                       </Tr>
-                    ))}
+                     )
+                    }
                   </Tbody>
                 </Table>
               </TableContainer>

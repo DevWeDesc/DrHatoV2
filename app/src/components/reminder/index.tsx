@@ -17,11 +17,20 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import { Text } from "@chakra-ui/react";
+import {
+  List,
+  ListItem,
+  ListIcon,
+  OrderedList,
+  UnorderedList,
+} from "@chakra-ui/react";
+import { MdCheckCircle, MdSettings, MdWarning } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export const Reminder = () => {
+  const navigate = useNavigate();
   return (
     <Alert
-      cursor="pointer"
       status="warning"
       variant="subtle"
       flexDirection="column"
@@ -29,6 +38,8 @@ export const Reminder = () => {
       justifyContent="center"
       textAlign="center"
       w="400px"
+      onClick={() => navigate("/Reminder")}
+      cursor="pointer"
     >
       <AlertIcon boxSize="40px" mr={0} />
       <AlertTitle mt={4} mb={1} fontSize="lg">
@@ -39,24 +50,32 @@ export const Reminder = () => {
           {" "}
           Para entrar na consulta, basta clicar <br /> no nome do cliente!!
         </Text>
-        <TableContainer w="100%">
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Cliente</Th>
-                <Th>Data</Th>
-                <Th>Retorno</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              <Tr>
-                <Td>Vinicius</Td>
-                <Td>15/08/2023</Td>
-                <Td>Consulta Especial</Td>
-              </Tr>
-            </Tbody>
-          </Table>
-        </TableContainer>
+        <List spacing={3}>
+          <ListItem fontWeight="bold" cursor="pointer">
+            <ListIcon as={MdWarning} fontSize="22px" color="orange.600" />
+            Cliente Vinicius: Data 15/08/2023: Retorno consulta especial
+          </ListItem>
+          <ListItem fontWeight="bold" cursor="pointer">
+            <ListIcon as={MdWarning} fontSize="22px" color="orange.600" />
+            Cliente Dilan: Data 10/08/2023: Retorno consulta especial
+          </ListItem>
+          <ListItem fontWeight="bold" cursor="pointer">
+            <ListIcon as={MdWarning} fontSize="22px" color="orange.600" />
+            Cliente Danilo: Data 10/08/2023: Retorno consulta especial
+          </ListItem>
+          <ListItem fontWeight="bold" cursor="pointer">
+            <ListIcon as={MdWarning} fontSize="22px" color="orange.600" />
+            Cliente Glauco: Data 10/08/2023: Retorno consulta especial
+          </ListItem>
+          <ListItem fontWeight="bold" cursor="pointer">
+            <ListIcon as={MdWarning} fontSize="22px" color="orange.600" />
+            Cliente Glauco: Data 10/08/2023: Retorno consulta especial
+          </ListItem>
+          <ListItem fontWeight="bold" cursor="pointer">
+            <ListIcon as={MdWarning} fontSize="22px" color="orange.600" />
+            Cliente Glauco: Data 10/08/2023: Retorno consulta especial
+          </ListItem>
+        </List>
       </AlertDescription>
     </Alert>
   );

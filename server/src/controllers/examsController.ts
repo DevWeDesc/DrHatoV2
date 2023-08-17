@@ -94,8 +94,7 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
     const { id, recordId, accId} = request.params
     const  requestedFor = null
     const getExame = await prisma.exams.findUnique({where: {id: parseInt(id)}})
-    const formattedData = new Date()
-    const processData = new Intl.DateTimeFormat().format(formattedData)
+    const processData = new Date()
     if(!getExame || getExame.available === false) {
         reply.status(400).send("Exame não disponivel/Falha ao criar exame")
         return
