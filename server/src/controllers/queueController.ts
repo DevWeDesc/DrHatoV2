@@ -72,6 +72,18 @@ export const queueController = {
 
   },
 
+  getQueuePetHistory: async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
+    const {recordId} = request.params
+    try {
+      const debitsInQueue = await prisma.queuesForPet.findMany({where: {
+        
+      }})
+
+      reply.send(debitsInQueue)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
 }
