@@ -137,7 +137,6 @@ export function CreatePetsForm({ reloadPets }: Props) {
           <option value="Schnauzer">Schnauzer</option>
           <option value="Bull Dog">Bull Dog</option>
           <option value="Starforshire Bull Terrier">
-            Starforshire Bull Terrier
           </option>
           <option value="Boxer Inglês">Boxer Inglês</option>
           <option value="Americano">Americano</option>

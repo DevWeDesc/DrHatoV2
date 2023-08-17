@@ -56,9 +56,14 @@ export const accountService = {
                 const amountInstallments = (totalDebit / installmentAmount)
 
                 await prisma.installmentsDebts.create({data: {paymentDate: actualDate, amountInstallments, totalDebit, installmentAmount, paymentType, debitName,customerAccount: {
-                    connect: {id: parseInt(accountId)}
+                    connect: {customerId: parseInt(accountId)}
                 }, boxHistory: {connect: {id: parseInt(boxId)}} }})
                 
+                await prisma.customer.update({
+                    where: {id: parseInt(accountId)}, data: {
+                        customerAccount: {update: {debits: {decrement: totalDebit}}
+                    }
+                }})
             } catch (error) {
                 console.log(error)
             }

@@ -192,6 +192,17 @@ type AdmissionsProps = {
   fasting: boolean;
   observations: string;
 };
+type PetQueueProps = {
+  id: number;
+  queueEntry: Date
+  queueExit: Date
+  queryType: String
+  debitOnThisQuery: Number
+}
+type MedicineRecordsProps = {
+  petQueues: PetQueueProps[]
+}
+
 
 export type HistoryBoxProps = {
   id: string | number;
@@ -201,6 +212,7 @@ export type HistoryBoxProps = {
   openBox: Date | number;
   closeBox: Date | number;
   openBy: string;
+  boxIsOpen: boolean;
   closedBy: string;
   hospVetBoxId: string | number;
 };
@@ -250,6 +262,23 @@ export interface PetDetaisl {
   customer: { name: string };
 }
 
+type AccountProps = {
+  id: number;
+  accountNumber: number;
+  debits:  number;
+  credits:  number;
+  installments: InstallmentsProps[];
+}
+type InstallmentsProps = {
+  id: number;
+  debitName: string
+  totalDebit: number;
+  paymentType: string
+  paymentDate: Date | number;
+  installmentAmount: number;
+  amountInstallments: number; 
+
+}
 export interface ICustomer {
   id: number;
   name: string;
@@ -268,5 +297,6 @@ export interface ICustomer {
   kindPerson: string;
   vetPreference: string | null;
   howKnowUs: string;
+  customerAccount: AccountProps;
   pets: PetDetaisl[];
 }

@@ -84,11 +84,13 @@ export function Customer() {
   }, []);
 
   useEffect(() => {
-    if (reload != false) {
+    if (reload === true) {
       loadCustomer();
+      setReload(false); // Rese
     }
-    setReload(true);
   },[reload]);
+
+
 
   async function setPetInQueue() {
     if (!queryType || !petId || !vetPreference) {
