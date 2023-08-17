@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 
 interface CreateNewClienteProps {
   name: string;
+  surname: string;
   adress: string;
   phone: string;
   cpf: string;
@@ -43,6 +44,7 @@ interface CreateNewClienteProps {
 
 let customerSchema = object({
   name: string().required("Nome é Obrigatório"),
+  surname: string().required("Sobrenome é Obrigatório"),
   birthday: string().required("Data de nascimento é Obrigatório"),
   email: string().email("E-mail Invalido").required("E-mail é Obrigatório"),
   //district: string().required("CPF é Obrigatório"),
@@ -110,7 +112,7 @@ export function ReceptionCreateNewConsultForm() {
     values
   ) => {
     const data = {
-      name: values.name,
+      name: values.name + values.surname,
       adress: logradouro,
       district: estado,
       email: values.email,
@@ -128,7 +130,7 @@ export function ReceptionCreateNewConsultForm() {
     try {
       await api
         .post("/customers", data)
-        .then((res) => navigate(`/Recepcao/Consultas/Clientes/${res}`));
+        .then((res) => navigate(`/Recepcao/Consultas/Clientes/${res.data.id}`));
       toast.success("Usuário cadastrado");
       console.log(data);
     } catch (error) {
@@ -168,28 +170,53 @@ export function ReceptionCreateNewConsultForm() {
             w="60%"
           >
             <Flex justify="space-between" style={{ overflow: "none" }}>
-              <Flex direction="column" w="100%">
-                <FormLabel
-                  textAlign="left"
-                  fontWeight="bold"
-                  htmlFor="name"
-                  w="100%"
-                  fontSize="17"
-                  mb="0"
-                >
-                  * Nome Cliente
-                </FormLabel>
-                <Input
-                  w="100%"
-                  placeholder="Nome do cliente"
-                  {...register("name")}
-                  id="name"
-                  minWidth={320}
-                  name="name"
-                />
-                <Text color="red.500" fontWeight="bold" textAlign="left">
-                  {errors?.name?.message}
-                </Text>
+              <Flex w="100%" gap="2">
+                <Flex w="50%" direction="column">
+                  <FormLabel
+                    textAlign="left"
+                    fontWeight="bold"
+                    htmlFor="name"
+                    w="100%"
+                    fontSize="17"
+                    mb="0"
+                  >
+                    * Nome Cliente
+                  </FormLabel>
+                  <Input
+                    w="100%"
+                    placeholder="Nome do cliente"
+                    {...register("name")}
+                    id="name"
+                    minWidth={320}
+                    name="name"
+                  />
+                  <Text color="red.500" fontWeight="bold" textAlign="left">
+                    {errors?.name?.message}
+                  </Text>
+                </Flex>
+                <Flex w="50%" direction="column">
+                  <FormLabel
+                    textAlign="left"
+                    fontWeight="bold"
+                    htmlFor="name"
+                    w="100%"
+                    fontSize="17"
+                    mb="0"
+                  >
+                    * Sobrenome do Cliente
+                  </FormLabel>
+                  <Input
+                    w="100%"
+                    placeholder="Sobrenome do cliente"
+                    {...register("surname")}
+                    id="surname"
+                    minWidth={320}
+                    name="surname"
+                  />
+                  <Text color="red.500" fontWeight="bold" textAlign="left">
+                    {errors?.surname?.message}
+                  </Text>
+                </Flex>
               </Flex>
             </Flex>
             <Flex

@@ -25,8 +25,10 @@ import {
   UnorderedList,
 } from "@chakra-ui/react";
 import { MdCheckCircle, MdSettings, MdWarning } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export const Reminder = () => {
+  const navigate = useNavigate();
   return (
     <Alert
       status="warning"
@@ -36,6 +38,8 @@ export const Reminder = () => {
       justifyContent="center"
       textAlign="center"
       w="400px"
+      onClick={() => navigate("/Reminder")}
+      cursor="pointer"
     >
       <AlertIcon boxSize="40px" mr={0} />
       <AlertTitle mt={4} mb={1} fontSize="lg">
