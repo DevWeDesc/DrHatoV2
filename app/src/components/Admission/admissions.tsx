@@ -8,29 +8,19 @@ import {
   Thead,
   Tbody,
   Th,
-  Text,
-  RadioGroup,
-  Radio,
-  Menu,
-  MenuButton,
-  MenuList,
-  Button,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { Header } from "../../components/admin/Header";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import { AiOutlineSearch, FaClipboardList, TbVaccine } from "react-icons/all";
+import { FaClipboardList, TbVaccine } from "react-icons/all";
 import { AdminContainer } from "../../pages/AdminDashboard/style";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { DbContext } from "../../contexts/DbContext";
-import { StyledBox } from "../../components/Header/style";
-import { MdPets as Burger } from "react-icons/all";
-import { toast } from "react-toastify";
 import { api } from "../../lib/axios";
 import { AdmissionSearch } from "../Search/admissionSearch";
-import { SiProtocolsdotio } from "react-icons/all";
 import { BiHome } from "react-icons/all";
+import { PetDetaisl } from "../../interfaces";
 
 interface QueueProps {
   response: [];
@@ -38,30 +28,19 @@ interface QueueProps {
 }
 
 export function SearchAdmission() {
-  const [petValue, setPetValue] = useState("");
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
-  const [totalInQueue, setTotalInQueue] = useState(0 as any);
+  const [addmitedPets, setAdmmitedPets] = useState<PetDetaisl[]>([])
   let { dataCustomer } = useContext(DbContext);
   const navigate = useNavigate();
-  const handleNavigateWorkSpace = () => {
-    if (!petValue) {
-      toast.error("Selecione um PET");
-      return;
-    }
-    navigate(`/Vets/Workspace/${petValue}`);
-  };
-
-  console.log(inQueue);
-
   useEffect(() => {
     async function getQueue() {
-      const response = await api.get("/pets/queue");
-      const total = await api.get("/pets/queue");
-      setTotalInQueue(total.data);
-      setInQueue(response.data.response);
+      const response = await api.get("/petsadmitted")
+      setAdmmitedPets(response.data)
     }
     getQueue();
   }, [inQueue.length]);
+
+
 
   return (
     <ChakraProvider>
@@ -102,93 +81,39 @@ export function SearchAdmission() {
                     </Thead>
 
                     <Tbody>
-                      {Object.keys(dataCustomer).length >= 1
-                        ? dataCustomer.map((user: any) => (
-                            <Tr key={user.id}>
-                              <Td>{user.cpf}</Td>
-
-                              <Td>
-                                <Button
-                                  colorScheme="whatsapp"
-                                  onClick={() =>
-                                    navigate(`/Admissions/${user.id}`)
-                                  }
-                                >
-                                  {user.name}
-                                </Button>
-                              </Td>
-
-                              <Td>
-                                <Menu>
-                                  <MenuButton
-                                    border="1px"
-                                    as={Button}
-                                    rightIcon={<Burger />}
-                                  >
-                                    <StyledBox>
-                                      <Text>pets</Text>
-                                    </StyledBox>
-                                  </MenuButton>
-                                  <MenuList bg="green.100">
-                                    {user.pets?.map((pets: any) => (
-                                      <Flex
-                                        direction="column"
-                                        align="center"
-                                        p="2px"
-                                        gap="2"
-                                        key={pets.id}
-                                      >
-                                        <RadioGroup
-                                          onChange={setPetValue}
-                                          value={petValue}
-                                        >
-                                          <Radio
-                                            bgColor={
-                                              petValue == pets.id
-                                                ? "green"
-                                                : "red"
-                                            }
-                                            value={pets.id as any}
-                                          >
-                                            {pets.name}
-                                          </Radio>
-                                        </RadioGroup>
-                                      </Flex>
-                                    ))}
-                                  </MenuList>
-                                </Menu>
-                              </Td>
-                              <Td>92487</Td>
-                              <Td>04/04/2023</Td>
-
-                              <Td>25:53</Td>
-                              <Td>
-                                {user.vetPreference
-                                  ? user.vetPreference
-                                  : "Sem Preferência"}
-                              </Td>
-                              <Td>0</Td>
-                            </Tr>
-                          ))
-                        : inQueue.map((queue: any) => (
-                            <Tr
-                              key={queue.id}
-                              cursor="pointer"
-                              onClick={() =>
-                                navigate(`/Admissions/${queue.id}`)
-                              }
-                            >
-                              {/*<Td>{queue.customerCpf}</Td>*/}
-                              <Td>{queue.customerName}</Td>
-                              <Td>{queue.name} </Td>
-                              <Td>Empty</Td>
-                              <Td>{queue.race}</Td>
-                              <Td>{queue.ouor}</Td>
-                              <Td>{queue.codPet}</Td>
-                              <Td>Empty</Td>
-                              <Td>Empty</Td>
-                            </Tr>
-                          ))}
+                          {
+                            addmitedPets.length >= 1 ? addmitedPets.map((pet) =>
+                            (<Tr onClick={() => navigate(`/Admissions/${pet.id}`)} key={pet.id}>
+                                <Td>{pet.customer.name}</Td>
+                                <Td>{pet.name}</Td>
+                                <Td>{pet.especie}</Td>
+                                <Td>{pet.race}</Td>
+                                <Td>{new Intl.DateTimeFormat('pt-BR', {
+                                      day: '2-digit',
+                                      month: '2-digit',
+                                      year: '2-digit',
+                                      hour: '2-digit',
+                                      minute: '2-digit'
+                                  //@ts-ignore
+                               }).format(new Date(pet?.bed?.entryOur))}</Td>
+                               <Td>
+                                {pet.codPet}
+                               </Td>
+                               <Td>
+                               
+                                {
+                                  //@ts-ignore
+                                pet?.bed?.kennel.name
+                                }
+                               </Td>
+                               <Td>{
+                               //@ts-ignore
+                               pet?.bed?.id}</Td>
+                            </Tr>)) : 
+                            (<Tr>
+                                <h1>SEM ANIMAIS INTERNADOS NO MOMENTO</h1>
+                            </Tr>)
+                          }
                     </Tbody>
                   </Table>
                 </Flex>

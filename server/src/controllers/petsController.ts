@@ -214,6 +214,7 @@ petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
         codPet: pet.codPet.substring(0,6).concat("..."),
         queueEntry: pet.queue?.queueEntry,
         ouor: pet.queue?.queueOur,
+        especie: pet.especie,
         more: pet.queue?.moreInfos,
         race: pet.race,
         customerCpf: pet.customer.cpf,
@@ -230,4 +231,5 @@ petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
   } catch (error) {
     reply.status(404).send(error)
   }
-}}
+}
+}

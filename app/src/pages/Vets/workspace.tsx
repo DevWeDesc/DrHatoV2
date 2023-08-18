@@ -104,6 +104,7 @@ export function WorkSpaceVet() {
         queueExit: new Date(),
         debitOnThisQuery: Number(pet.totalAcc.price),
         responsibleVeterinarian: user.username,
+        petName: pet.name
       };
 
       await api.put(
@@ -479,7 +480,7 @@ export function WorkSpaceVet() {
                   textAlign="center"
                   bgColor="gray.100"
                 >
-                  {`${pet.sexo}, ${pet.weigth}Kgs`}
+                  {`${pet.sexo}, ${pet.weigth}`}
                 </Text>
                 {pet.isBusy === true ? (
                   <Text

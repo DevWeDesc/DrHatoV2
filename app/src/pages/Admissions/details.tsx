@@ -1,9 +1,6 @@
 import { Flex } from "@chakra-ui/layout";
-import { ChakraProvider } from "@chakra-ui/react";
-import React from "react";
-import { SearchAdmission } from "../../components/Admission/admissions";
+import { ChakraProvider } from "@chakra-ui/react";;
 import { AdminContainer } from "../AdminDashboard/style";
-import { Header } from "../../components/admin/Header";
 import DetailsAdmissions from "../../components/Admission/AdmissionDetails";
 
 export function AdmissionDetails() {
