@@ -17,7 +17,7 @@ import { CreateUser } from "./pages/Users/create";
 import { Reception } from "./pages/Reception";
 import { ReceptionConsults } from "./pages/Reception/consults";
 import { Finance } from "./pages/Finance";
-import { Customer } from "./pages/Customer";
+import {  CustomerDetails } from "./pages/Customer";
 import { Pets } from "./pages/Pets";
 import { CreatePets } from "./pages/Pets/create";
 import { DetailsPets } from "./pages/Pets/details";
@@ -263,7 +263,7 @@ export function Router() {
             <Route path="/Recepcao/Change" element={<ChangeConsult />} />
             <Route
               path="/Recepcao/Consultas/Clientes/:id"
-              element={<Customer />}
+              element={<CustomerDetails />}
             />
             <Route
               path="/Recepcao/Consultas/Clientes/Pets"

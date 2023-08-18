@@ -25,20 +25,112 @@ import { BiCalendarPlus, AiFillEdit } from "react-icons/all";
 import { ICustomer } from "../../../interfaces";
 import { BoxContext } from "../../../contexts/BoxContext";
 
-
-
 export function BoxPaymentsDetails() {
   const [client, setClient] = useState({} as ICustomer);
   const {fatherBox, dailyBox} = useContext(BoxContext)
+  const [typePayment, setTypePayment] = useState(false)
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+  
   async function getCustomers() {
     const customer = await api.get(`/customers/${id}`);
     setClient(customer.data);
   }
+
+
   useEffect(() => {
     getCustomers();
   }, []);
+
+
+
+  let typePaymentShow;
+  switch(true) {
+    case typePayment === false: 
+    typePaymentShow = (
+      <>
+      {
+        client?.customerAccount?.installments.length >= 1 ? client?.customerAccount?.installments.map((installment) => (
+           <Tr key={installment.id} >
+               <Td>
+                 {new Intl.DateTimeFormat('pt-BR', {
+                   day: '2-digit',
+                   month: '2-digit',
+                   year: '2-digit',
+                   hour: '2-digit',
+                   minute: '2-digit'
+                 }).format(new Date(installment?.paymentDate))}
+               </Td>
+               <Td>
+                 Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
+               </Td>
+               <Td>
+                 0
+               </Td>
+               <Td border="2px" bgColor='green.100'>
+                 {new Intl.NumberFormat('pt-BR', {
+                   currency: 'BRL',
+                   style: 'currency'
+                 }).format(installment.totalDebit)}
+               </Td>
+               <Td>
+                 {installment.paymentType}
+               </Td>
+               <Td>
+                 {client.customerAccount?.debits}
+               </Td>
+           </Tr>
+        )) : (
+         <Tr>
+
+         </Tr>
+        )
+       }
+       </>
+    )
+    break;
+    case typePayment === true: 
+    typePaymentShow = (
+      <>
+        {
+          client ? client?.pets.map(
+            (pet) => (
+                <>
+                  {
+                    pet?.medicineRecords?.petQueues.map((queue) => (
+                      <Tr key={pet.id}>
+                      <Td>{new Intl.DateTimeFormat('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }).format(new Date(queue?.queueExit))}</Td>
+                      <Td>
+                        {`${queue.queryType} Cod: ${queue.id}`}
+                      </Td>
+                      <Td border="2px" bgColor='red.100'>
+                    {new Intl.NumberFormat('pt-BR', {
+                      currency: 'BRL',
+                      style: 'currency'
+                    }).format(queue.debitOnThisQuery)}
+                     </Td>
+                     <Td>0</Td>
+                     <Td>Entrada</Td>
+                     <Td>{client.customerAccount.credits}</Td>
+                     </Tr>
+                    ))
+                  }
+            </>
+            )
+          ) : ( <h1>fon</h1>)
+        }
+        
+       </>
+    )
+    break;
+  }
 
 
 
@@ -345,7 +437,13 @@ export function BoxPaymentsDetails() {
                         bg="blue.100"
                         borderBottom="1px solid black"
                       >
-                        Exibindo todos os lançamentos
+                        Exibindo todos os lançamentos: <Button colorScheme="whatsapp"
+                           onClick={() => setTypePayment(false)}
+                        >CRÉDITOS</Button> 
+                        <Button 
+                        ml={2}
+                        onClick={() => setTypePayment(true)}
+                        colorScheme="whatsapp" >DÉBITOS</Button>
                       </Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
@@ -358,9 +456,7 @@ export function BoxPaymentsDetails() {
                       <Th border="1px solid black" fontSize="18" color="white">
                         Data
                       </Th>
-                      <Th border="1px solid black" fontSize="18" color="white">
-                        Caixa
-                      </Th>
+                  
                       <Th border="1px solid black" fontSize="18" color="white">
                         Descrição
                       </Th>
@@ -394,46 +490,7 @@ export function BoxPaymentsDetails() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                   {
-                     client?.customerAccount?.installments.length >= 1 ? client?.customerAccount?.installments.map((installment) => (
-                        <Tr key={installment.id} >
-                            <Td>
-                              {new Intl.DateTimeFormat('pt-BR', {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: '2-digit',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              }).format(new Date(installment?.paymentDate))}
-                            </Td>
-                            <Td>
-                                {fatherBox.name}
-                            </Td>
-                            <Td>
-                              Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
-                            </Td>
-                            <Td>
-                              0
-                            </Td>
-                            <Td border="2px" bgColor='green.100'>
-                              {new Intl.NumberFormat('pt-BR', {
-                                currency: 'BRL',
-                                style: 'currency'
-                              }).format(installment.totalDebit)}
-                            </Td>
-                            <Td>
-                              {installment.paymentType}
-                            </Td>
-                            <Td>
-                              {client.customerAccount?.debits}
-                            </Td>
-                        </Tr>
-                     )) : (
-                      <Tr>
-
-                      </Tr>
-                     )
-                    }
+                        {typePaymentShow}
                   </Tbody>
                 </Table>
               </TableContainer>
