@@ -193,6 +193,7 @@ type AdmissionsProps = {
   observations: string;
 };
 type PetQueueProps = {
+  [x: string]: any;
   id: number;
   queueEntry: Date
   queueExit: Date

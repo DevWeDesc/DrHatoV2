@@ -11,6 +11,7 @@ type params = {
     queueId: string;
     recordId: string;
     customerId: string;
+    date: string;
   }
 
 export const queueController = {
@@ -73,13 +74,28 @@ export const queueController = {
   },
 
   getQueuePetHistory: async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
-    const {recordId} = request.params
-    try {
-      const debitsInQueue = await prisma.queuesForPet.findMany({where: {
-        
-      }})
+    const {date, petId} = request.params
+    const today = new Date(date);
+    today.setHours(0, 0, 0, 0); 
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
 
-      reply.send(debitsInQueue)
+    try {
+      
+      const petsProcedures =  await prisma.pets.findUnique({
+        where: {id: parseInt(petId)},include: {medicineRecords: {include:{
+          petVaccines: {where: {requestedDate: {gte: date, lt: tomorrow}}},
+          petExams: {where: {requesteData: {gte: today,
+              lt: tomorrow}}},
+          petSurgeries: {where:{scheduledDate: {gte: date, lt: tomorrow} }}
+        }}}
+      })
+      
+      const data = {
+        petsProcedures
+      }
+
+      reply.send(data)
     } catch (error) {
       console.log(error)
     }
