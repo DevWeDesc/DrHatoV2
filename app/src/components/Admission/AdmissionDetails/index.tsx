@@ -13,6 +13,7 @@ import {
   Tr,
   Td,
   Th,
+  Textarea,
 } from "@chakra-ui/react";
 import { BiHome, MdPets, TbArrowBack } from "react-icons/all";
 import { AdminContainer } from "../../../pages/AdminDashboard/style";
@@ -52,11 +53,11 @@ export default function DetailsAdmissions() {
 
   const totalToPayInTimeAdmmited = handleWithPriceChanges();
 
-  function getNextPaymentHour (hourParam: number) {
-    const IntervalsMinutes = (totalDaily / hourParam);
+  function getNextPaymentHour(hourParam: number) {
+    const IntervalsMinutes = totalDaily / hourParam;
     const nextPayment = Math.round(IntervalsMinutes + hourParam);
     const restTime = (nextPayment - (totalDaily % hourParam)) / 60;
-    return restTime.toFixed(1)
+    return restTime.toFixed(1);
   }
 
   let dailyValue;
@@ -65,9 +66,8 @@ export default function DetailsAdmissions() {
       dailyValue = `${totalDaily} Minutos`;
       break;
     case totalDaily >= 720:
-    
-    dailyValue = `${(totalDaily / 720).toFixed(2)} Diárias`
-      
+      dailyValue = `${(totalDaily / 720).toFixed(2)} Diárias`;
+
       break;
     default:
       dailyValue = `${totalDaily}`;
@@ -84,36 +84,36 @@ export default function DetailsAdmissions() {
     getAdmissionDetails();
   }, []);
 
-  
+  const handleEndAdmission = async () => {
+    try {
+      const confirmation = window.confirm(
+        "VOCÊ ESTÁ ENCERRANDO UMA INTERNAÇÃO TEM CERTEZA QUE DESEJA CONTINUAR?"
+      );
 
-    const handleEndAdmission = async () => {
-      try {
-        const confirmation = window.confirm("VOCÊ ESTÁ ENCERRANDO UMA INTERNAÇÃO TEM CERTEZA QUE DESEJA CONTINUAR?")
-
-        if(confirmation === true) {
-          const data = {
-            petId: Number(id),
-            bedId: petDetails?.bedInfos?.id,
-            admissionId: petDetails?.admissions[0].id
-       
-          }
-          await api.put("endadmission", data)
-          toast.success("Internação finalizada com Sucesso!")
-          navigate("/Admissions")
-        } else {
-          toast.warning("Confirmação recusada, ANIMAL CONTINUA INTERNADO!")
-          return
-        }
-       
-      } catch (error) {
-        console.error(error)
-        toast.error("Falha ao finalizar Internação!")
+      if (confirmation === true) {
+        const data = {
+          petId: Number(id),
+          bedId: petDetails?.bedInfos?.id,
+          admissionId: petDetails?.admissions[0].id,
+        };
+        await api.put("endadmission", data);
+        toast.success("Internação finalizada com Sucesso!");
+        navigate("/Admissions");
+      } else {
+        toast.warning("Confirmação recusada, ANIMAL CONTINUA INTERNADO!");
+        return;
       }
-    } 
+    } catch (error) {
+      console.error(error);
+      toast.error("Falha ao finalizar Internação!");
+    }
+  };
 
-    const totalSum = useMemo(() => {
-      return (Number(totalToPayInTimeAdmmited) + Number(petDetails.totalAcc?.price));
-    }, [totalToPayInTimeAdmmited, petDetails.totalAcc?.price])
+  const totalSum = useMemo(() => {
+    return (
+      Number(totalToPayInTimeAdmmited) + Number(petDetails.totalAcc?.price)
+    );
+  }, [totalToPayInTimeAdmmited, petDetails.totalAcc?.price]);
 
   return (
     <ChakraProvider>
@@ -148,6 +148,14 @@ export default function DetailsAdmissions() {
               </Flex>
 
               <Flex flexWrap="wrap" justify="start" gap="2" m="4" p="2">
+              <Button
+                  //onClick={() => openModal()}
+                  height={8}
+                  colorScheme="whatsapp"
+                  onClick={() => setAdmissionDiary(false)}
+                >
+                  Adicionar novo item do diário
+                </Button>
                 <Button
                   //onClick={() => openModal()}
                   height={8}
@@ -254,39 +262,39 @@ export default function DetailsAdmissions() {
                           Preferência Veterinário
                         </Th>
                       </Tr>
-
-                      </Thead>
-                      <Tbody>
-                          <Tr>
-                            <Td borderRight="2px">
-                              {petDetails?.customerName}
-                            </Td>
-                            <Td w={300} borderRight="2px" >
-                              <Flex direction="column" gap="2">
-                            <Text> {petDetails.name},{petDetails.especie},{petDetails.race}</Text> 
-                            <Text> {petDetails.sexo}, {petDetails.bornDate}</Text> 
+                    </Thead>
+                    <Tbody>
+                      <Tr>
+                        <Td borderRight="2px">{petDetails?.customerName}</Td>
+                        <Td w={300} borderRight="2px">
+                          <Flex direction="column" gap="2">
+                            <Text>
+                              {" "}
+                              {petDetails.name},{petDetails.especie},
+                              {petDetails.race}
+                            </Text>
+                            <Text>
+                              {" "}
+                              {petDetails.sexo}, {petDetails.bornDate}
+                            </Text>
                             {petDetails.codPet}
-                              </Flex>
-                             
-                            </Td>
-                            <Td borderRight="2px" >
-                              {petDetails.bedInfos?.fasting === true ? "ANIMAL PRECISA DE JEJUM" : "ANIMAL NÃO PRECISA DE JEJUM"} 
-                            </Td>
-                            <Td borderRight="2px" >
-                              {petDetails.bedInfos?.kennelName?.name}
-                            </Td >
-                            <Td borderRight="2px" >
-                              {formattedDate}
-                            </Td>
-                            <Td>
-                              {petDetails.queue?.vetPreference}
-                            </Td>
-                          </Tr>
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-          
-          
+                          </Flex>
+                        </Td>
+                        <Td borderRight="2px">
+                          {petDetails.bedInfos?.fasting === true
+                            ? "ANIMAL PRECISA DE JEJUM"
+                            : "ANIMAL NÃO PRECISA DE JEJUM"}
+                        </Td>
+                        <Td borderRight="2px">
+                          {petDetails.bedInfos?.kennelName?.name}
+                        </Td>
+                        <Td borderRight="2px">{formattedDate}</Td>
+                        <Td>{petDetails.queue?.vetPreference}</Td>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+
                 <Button
                   bg="blue.400"
                   color="white"
@@ -326,19 +334,37 @@ export default function DetailsAdmissions() {
                         </Text>
                         <Text
                           fontSize="20"
+                          bg="blue.300"
+                          w="100%"
+                          textAlign="center"
+                          py={2}
+                          fontWeight="bold"
+                        >
+                          Inserir novo item do diário da internação
+                        </Text>
+                        <Textarea pt="6" minH="40" defaultValue={`Evolução de quadro clinico:
+Mudanças de Protocolo:
+Metas para as próximas 12h horas:
+Prognóstico: 
+Previsão de alta:`}>
+
+                        </Textarea>
+                        <Button colorScheme="whatsapp">Gravar</Button>
+                        <Text
+                          fontSize="20"
                           bg="yellow.300"
                           w="100%"
                           textAlign="center"
                           py={2}
                           fontWeight="bold"
                         >
-                          Tempo Restante até o final da diaría: {getNextPaymentHour(1440)}
+                          Tempo Restante até o final da diaría:{" "}
+                          {getNextPaymentHour(1440)}
                         </Text>
                         <Button
                           py="8"
                           bg="whatsapp.500"
                           fontSize="20"
-
                           fontWeight="bold"
                           color="white"
                           boxShadow="0px 4px 5px rgba(0, 0, 0, 0.6)"
@@ -360,7 +386,7 @@ export default function DetailsAdmissions() {
                   {admissiondiary === true && (
                     <Flex direction="column">
                       <Flex>
-                        <Text
+                        {/* <Text
                           w="12vw"
                           fontWeight="bold"
                           pl="2"
@@ -414,6 +440,17 @@ export default function DetailsAdmissions() {
                           border="1px solid black"
                         >
                           Ação
+                        </Text> */}
+                                                <Text
+                          w="73vw"
+                          fontWeight="bold"
+                          pl="2"
+                          bg="blue.100"
+                          fontSize="20"
+                          height="40px"
+                          border="1px solid black"
+                        >
+                          
                         </Text>
                         <Text
                           w="12vw"
@@ -439,7 +476,7 @@ export default function DetailsAdmissions() {
                         </Text>
                       </Flex>
                       <Flex>
-                        <Input
+                        {/* <Input
                           type="date"
                           w="12vw"
                           fontWeight="bold"
@@ -510,7 +547,7 @@ export default function DetailsAdmissions() {
                           height="40px"
                           border="1px solid black"
                           rounded="0"
-                        />
+                        /> */}
                       </Flex>
                       <Flex align="center" borderY="1px solid black">
                         <Text w="60vw"></Text>
@@ -518,7 +555,10 @@ export default function DetailsAdmissions() {
                           Valor total em procedimentos até o momento
                         </Text>
                         <Input
-                        value={new Intl.NumberFormat("pt-BR",{currency: 'BRL', style: 'currency'}).format(Number(petDetails.totalAcc?.price))}
+                          value={new Intl.NumberFormat("pt-BR", {
+                            currency: "BRL",
+                            style: "currency",
+                          }).format(Number(petDetails.totalAcc?.price))}
                           borderY="none"
                           w="15vw"
                           borderColor="black"
@@ -527,7 +567,7 @@ export default function DetailsAdmissions() {
                       </Flex>
                       <Flex align="center" borderY="1px solid black">
                         <Text w="70vw"></Text>
-                        <Text w="15vw" fontWeight="bold">
+                        <Text w="15vw" fontWeight="bold" pl="4">
                           Diaria(S) até o momento
                         </Text>
                         <Input
@@ -553,43 +593,45 @@ export default function DetailsAdmissions() {
                           align="center"
                           w="3vw"
                           fontWeight="bold"
+                          mr="4"
                         >
-                          Total:
+                          Total
                         </Text>
-                        <Text border="2px" w="15vw" >
-                              { new Intl.NumberFormat('pt-BR', {currency: 'BRL', style: 'currency'}).format(totalSum) }
+                        <Text py="1" borderY="0px" borderX="1px solid black" w="14.9vw" textAlign="start" pl="4">
+                          {new Intl.NumberFormat("pt-BR", {
+                            currency: "BRL",
+                            style: "currency",
+                          }).format(totalSum)}
                         </Text>
-                        </Flex>
-                  
-              
-                    {
-                      totalDaily >= 60 ? (
+                      </Flex>
+
+                      {totalDaily >= 60 ? (
                         <Text
-                        fontSize="20"
-                        bg="yellow.300"
-                        w="100%"
-                        textAlign="center"
-                        py={2}
-                        fontWeight="bold"
-                        color="red"
-                      >
-                        Tempo de Tolerância Restante: {totalDaily >= 60 ?  "Esgotado" : "Em Tolerancia"} 
-                      </Text>
+                          fontSize="20"
+                          bg="yellow.300"
+                          w="100%"
+                          textAlign="center"
+                          py={2}
+                          fontWeight="bold"
+                          color="red"
+                        >
+                          Tempo de Tolerância Restante:{" "}
+                          {totalDaily >= 60 ? "Esgotado" : "Em Tolerancia"}
+                        </Text>
                       ) : (
                         <Text
-                        color="green"
-                        fontSize="20"
-                        bg="yellow.300"
-                        w="100%"
-                        textAlign="center"
-                        py={2}
-                        fontWeight="bold"
-                      >
-                        Tempo de Tolerância Restante: {totalDaily  >= 60 ?  "Esgotado" : "Em Tolerancia"} 
-                      </Text>
-                      )
-                      
-                    }
+                          color="green"
+                          fontSize="20"
+                          bg="yellow.300"
+                          w="100%"
+                          textAlign="center"
+                          py={2}
+                          fontWeight="bold"
+                        >
+                          Tempo de Tolerância Restante:{" "}
+                          {totalDaily >= 60 ? "Esgotado" : "Em Tolerancia"}
+                        </Text>
+                      )}
                       <Text
                         fontSize="20"
                         bg="yellow.300"

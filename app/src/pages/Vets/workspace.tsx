@@ -5,7 +5,6 @@ import {
   WorkSpaceFooter,
 } from "./styles";
 import {
-  Text,
   Button,
   ChakraProvider,
   Flex,
@@ -19,6 +18,8 @@ import {
   Select,
   TableContainer,
   Th,
+  Input,
+  Text,
 } from "@chakra-ui/react";
 import {
   AiFillMedicineBox,
@@ -54,6 +55,7 @@ export function WorkSpaceVet() {
   const [PdfDiagnostic, setPdfDiagnostic] = useState("");
   const [PdfPrescrition, setPdfPrescrition] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
+  const [modalWeigthPet, setModalWeigthPet] = useState(false);
 
   function handleCreateInstruction(text: string) {
     const docDefinition: TDocumentDefinitions = {
@@ -471,16 +473,27 @@ export function WorkSpaceVet() {
                   {`${pet.name}, ${pet.race}`}
                 </Text>
 
-                <Text
+                <Flex
                   width="100%"
                   border="1px"
                   rounded="4px"
                   fontWeight="bold"
                   textAlign="center"
                   bgColor="gray.100"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
                 >
-                  {`${pet.sexo}, ${pet.weigth}Kgs`}
-                </Text>
+                  <Text w="6rem"></Text>
+                  <Text> {`${pet.sexo}, ${pet.weigth}Kgs`} </Text>{" "}
+                  <Button
+                    size="sm"
+                    colorScheme="yellow"
+                    onClick={() => setModalWeigthPet(true)}
+                  >
+                    Editar Peso
+                  </Button>
+                </Flex>
                 {pet.isBusy === true ? (
                   <Text
                     width="100%"
@@ -700,6 +713,19 @@ export function WorkSpaceVet() {
 
           <Button colorScheme="whatsapp">FICHA DE PARÂMETROS</Button>
           <Button colorScheme="whatsapp">FICHA DE MEDICAÇÃO</Button>
+        </Flex>
+      </GenericModal>
+      <GenericModal
+        isOpen={modalWeigthPet}
+        onRequestClose={() => setModalWeigthPet(false)}
+      >
+        <Text textAlign="center" fontSize="18" fontWeight="bold" mb="10">
+          Edição de Peso de animal
+        </Text>
+        <Flex direction="column" gap="15">
+          <Text>Insira o peso do animal</Text>
+          <Input focusBorderColor="green" />
+          <Button colorScheme="yellow">Editar</Button>
         </Flex>
       </GenericModal>
 

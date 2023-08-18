@@ -16,7 +16,7 @@ import { Header } from "../../../components/admin/Header";
 import { AdminContainer } from "../../AdminDashboard/style";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
-import {  BsCashCoin } from "react-icons/all";
+import { BsCashCoin } from "react-icons/all";
 import { useEffect, useState, useContext } from "react";
 import { api } from "../../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
@@ -27,112 +27,98 @@ import { BoxContext } from "../../../contexts/BoxContext";
 
 export function BoxPaymentsDetails() {
   const [client, setClient] = useState({} as ICustomer);
-  const {fatherBox, dailyBox} = useContext(BoxContext)
-  const [typePayment, setTypePayment] = useState(false)
+  const { fatherBox, dailyBox } = useContext(BoxContext);
+  const [typePayment, setTypePayment] = useState(false);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  
   async function getCustomers() {
     const customer = await api.get(`/customers/${id}`);
     setClient(customer.data);
   }
 
-
   useEffect(() => {
     getCustomers();
   }, []);
 
-
-
   let typePaymentShow;
-  switch(true) {
-    case typePayment === false: 
-    typePaymentShow = (
-      <>
-      {
-        client?.customerAccount?.installments.length >= 1 ? client?.customerAccount?.installments.map((installment) => (
-           <Tr key={installment.id} >
-               <Td>
-                 {new Intl.DateTimeFormat('pt-BR', {
-                   day: '2-digit',
-                   month: '2-digit',
-                   year: '2-digit',
-                   hour: '2-digit',
-                   minute: '2-digit'
-                 }).format(new Date(installment?.paymentDate))}
-               </Td>
-               <Td>
-                 Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
-               </Td>
-               <Td>
-                 0
-               </Td>
-               <Td border="2px" bgColor='green.100'>
-                 {new Intl.NumberFormat('pt-BR', {
-                   currency: 'BRL',
-                   style: 'currency'
-                 }).format(installment.totalDebit)}
-               </Td>
-               <Td>
-                 {installment.paymentType}
-               </Td>
-               <Td>
-                 {client.customerAccount?.debits}
-               </Td>
-           </Tr>
-        )) : (
-         <Tr>
-
-         </Tr>
-        )
-       }
-       </>
-    )
-    break;
-    case typePayment === true: 
-    typePaymentShow = (
-      <>
-        {
-          client ? client?.pets.map(
-            (pet) => (
-                <>
-                  {
-                    pet?.medicineRecords?.petQueues.map((queue) => (
-                      <Tr key={pet.id}>
-                      <Td>{new Intl.DateTimeFormat('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      }).format(new Date(queue?.queueExit))}</Td>
-                      <Td>
-                        {`${queue.queryType} Cod: ${queue.id}`}
-                      </Td>
-                      <Td border="2px" bgColor='red.100'>
-                    {new Intl.NumberFormat('pt-BR', {
-                      currency: 'BRL',
-                      style: 'currency'
-                    }).format(queue.debitOnThisQuery)}
-                     </Td>
-                     <Td>0</Td>
-                     <Td>Entrada</Td>
-                     <Td>{client.customerAccount.credits}</Td>
-                     </Tr>
-                    ))
-                  }
-            </>
-            )
-          ) : ( <h1>fon</h1>)
-        }
-        
-       </>
-    )
-    break;
+  switch (true) {
+    case typePayment === false:
+      typePaymentShow = (
+        <>
+          {client?.customerAccount?.installments.length >= 1 ? (
+            client?.customerAccount?.installments.map((installment) => (
+              <Tr key={installment.id}>
+                <Td>
+                  Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
+                </Td>
+                <Td>
+                  {new Intl.DateTimeFormat("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }).format(new Date(installment?.paymentDate))}
+                </Td>
+                <Td>0</Td>
+                <Td border="2px" bgColor="green.100">
+                  {new Intl.NumberFormat("pt-BR", {
+                    currency: "BRL",
+                    style: "currency",
+                  }).format(installment.totalDebit)}
+                </Td>
+                <Td>{installment.paymentType}</Td>
+                <Td>{client.customerAccount?.debits}</Td>
+              </Tr>
+            ))
+          ) : (
+            <Tr></Tr>
+          )}
+        </>
+      );
+      break;
+    case typePayment === true:
+      typePaymentShow = (
+        <>
+          {client ? (
+            client?.pets.map((pet) => (
+              <>
+                {pet?.medicineRecords?.petQueues.map((queue) => (
+                  <Tr key={pet.id}>
+                    <Td width="10px">
+                      {`${queue.queryType} Cod: ${queue.id}`}
+                    </Td>
+                    <Td width="300px">
+                      {" "}
+                      {new Intl.DateTimeFormat("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }).format(new Date(queue?.queueExit))}
+                    </Td>
+                    <Td border="2px" bgColor="red.100">
+                      {new Intl.NumberFormat("pt-BR", {
+                        currency: "BRL",
+                        style: "currency",
+                      }).format(queue.debitOnThisQuery)}
+                    </Td>
+                    <Td>0</Td>
+                    <Td>Entrada</Td>
+                    <Td>{client.customerAccount.credits}</Td>
+                  </Tr>
+                ))}
+              </>
+            ))
+          ) : (
+            <h1>fon</h1>
+          )}
+        </>
+      );
+      break;
   }
-
-
 
   return (
     <ChakraProvider>
@@ -221,7 +207,7 @@ export function BoxPaymentsDetails() {
                       >
                         Dados do Cliente
                       </Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
@@ -317,7 +303,9 @@ export function BoxPaymentsDetails() {
                             bg="white"
                             borderColor="black"
                             rounded="0"
-                            defaultValue={client.cep === null ? "Sem CEP" : client.cep}
+                            defaultValue={
+                              client.cep === null ? "Sem CEP" : client.cep
+                            }
                           />
                         </Td>
                       </Tr>
@@ -377,8 +365,7 @@ export function BoxPaymentsDetails() {
                           <Input
                             borderLeft="2px solid black"
                             borderBottom="1px solid black"
-                            
-                          bgColor="red.100"
+                            bgColor="red.100"
                             borderColor="black"
                             rounded="0"
                             defaultValue={client.customerAccount?.debits}
@@ -437,15 +424,21 @@ export function BoxPaymentsDetails() {
                         bg="blue.100"
                         borderBottom="1px solid black"
                       >
-                        Exibindo todos os lançamentos: <Button colorScheme="whatsapp"
-                           onClick={() => setTypePayment(false)}
-                        >CRÉDITOS</Button> 
-                        <Button 
-                        ml={2}
-                        onClick={() => setTypePayment(true)}
-                        colorScheme="whatsapp" >DÉBITOS</Button>
+                        Exibindo todos os lançamentos:{" "}
+                        <Button
+                          colorScheme="whatsapp"
+                          onClick={() => setTypePayment(false)}
+                        >
+                          CRÉDITOS
+                        </Button>
+                        <Button
+                          ml={2}
+                          onClick={() => setTypePayment(true)}
+                          colorScheme="whatsapp"
+                        >
+                          DÉBITOS
+                        </Button>
                       </Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
@@ -454,11 +447,11 @@ export function BoxPaymentsDetails() {
                     </Tr>
                     <Tr border="1px solid black" bg="blue.400">
                       <Th border="1px solid black" fontSize="18" color="white">
-                        Data
-                      </Th>
-                  
-                      <Th border="1px solid black" fontSize="18" color="white">
                         Descrição
+                      </Th>
+
+                      <Th border="1px solid black" fontSize="18" color="white">
+                        Data
                       </Th>
                       <Th
                         border="1px solid black"
@@ -489,9 +482,7 @@ export function BoxPaymentsDetails() {
                       </Th>
                     </Tr>
                   </Thead>
-                  <Tbody>
-                        {typePaymentShow}
-                  </Tbody>
+                  <Tbody>{typePaymentShow}</Tbody>
                 </Table>
               </TableContainer>
               <Button w="100%" py="8" colorScheme="whatsapp">

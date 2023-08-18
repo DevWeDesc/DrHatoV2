@@ -136,23 +136,23 @@ export function EditUser() {
                       {...register("email")}
                       name="email"
                       label="Novo email de usuário"
+                      defaultValue={customer.username}
                     />
                     <Input
                       {...register("username")}
                       name="username"
                       label="Novo nome de usuário"
+                      defaultValue={customer.email}
                     />
                     <Input
                       {...register("password")}
                       name="password"
                       label="Nova senha de usuário"
+                      defaultValue={"*******"}
                     />
 
                     <HStack mt="4">
-                      <VStack>
-                        <label htmlFor="userIsVet">
-                          USUÁRIO E VETERINÁRIO?
-                        </label>
+                      <Flex gap="4">
                         <Checkbox
                           size="lg"
                           colorScheme="whatsapp"
@@ -161,11 +161,13 @@ export function EditUser() {
                           name="userIsVet"
                           id="userIsVet"
                         />
-                      </VStack>
+                        <Text>USUÁRIO E VETERINÁRIO?</Text>
+                      </Flex>
                     </HStack>
 
-                    <Flex align="center" justify="center" gap={4}>
+                    <Flex align="center" justify="center" w="100%" gap={4}>
                       <Button
+                        w="40%"
                         mt="4"
                         colorScheme="whatsapp"
                         type="submit"
@@ -174,6 +176,7 @@ export function EditUser() {
                         Editar
                       </Button>
                       <Button
+                        w="40%"
                         mt="4"
                         colorScheme="red"
                         type="submit"
