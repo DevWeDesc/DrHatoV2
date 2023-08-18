@@ -226,4 +226,15 @@ export const admissionsController = {
       reply.status(400).send({ message: error });
     }
   },
+
+  showAdmitedPets: async (request: FastifyRequest, reply: FastifyReply) => {
+      try {
+          const admmitepet = await prisma.pets.findMany({
+            where: {bed: {isBusy: true}}, include: {bed: {include: {kennel: true}}, customer: {select: {name: true}}, medicineRecords: {include: {petBeds: {where: {isCompleted: false} }}}}
+          })
+          reply.send(admmitepet)
+      } catch (error) {
+        console.log(error)
+      }
+  }
 };

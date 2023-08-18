@@ -95,6 +95,7 @@ export const QueueSchema = z.object({
   responsibleVeterinarian: z.string().optional(),
   moreInfos: z.string().optional(),
   queryType: z.string().optional(),
+  petName: z.string().optional(),
   petIsInQueue: z.boolean().optional(),
   
 })

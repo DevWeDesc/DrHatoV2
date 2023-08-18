@@ -108,7 +108,7 @@ export function BoxPaymentsDetails() {
                         minute: '2-digit'
                       }).format(new Date(queue?.queueExit))}</Td>
                       <Td>
-                        {`${queue.queryType} Cod: ${queue.id}`}
+                        {`${queue.queryType} Cod: ${queue.id} Animal: ${queue?.petName}`}
                       </Td>
                       <Td border="2px" bgColor='red.100'>
                     {new Intl.NumberFormat('pt-BR', {

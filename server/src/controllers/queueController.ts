@@ -29,7 +29,7 @@ export const queueController = {
 
   finishQueueOfPet:  async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
     const {petId, recordId, queueId, customerId} = request.params
-    const {queueEntry, queryType, queueExit, debitOnThisQuery, responsibleVeterinarian} = QueueSchema.parse(request.body)
+    const {queueEntry, queryType, queueExit, debitOnThisQuery, responsibleVeterinarian, petName} = QueueSchema.parse(request.body)
     try { 
 
       await petContract.verifyIfIsPossibleEndQueue(recordId, 'Exame em aberto, não possivel é encerrar consulta.')
@@ -53,7 +53,7 @@ export const queueController = {
           })
   
           await prisma.queuesForPet.create({
-              data: {queryType, queueEntry, queueExit, debitOnThisQuery, responsibleVeterinarian, medicine:{ connect: {id: parseInt(recordId)}}}
+              data: {queryType, queueEntry, queueExit, debitOnThisQuery,petName, responsibleVeterinarian, medicine:{ connect: {id: parseInt(recordId)}}}
           })
           
           await prisma.queues.update({
