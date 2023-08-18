@@ -148,7 +148,9 @@ showCustomerDebitsOpen: async(request: FastifyRequest<{Params: params}>, reply: 
         } catch (error) {
           console.log(error)
         }
-}
+},
+
+
 
 
 }

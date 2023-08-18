@@ -197,7 +197,8 @@ type PetQueueProps = {
   queueEntry: Date
   queueExit: Date
   queryType: String
-  debitOnThisQuery: Number
+  debitOnThisQuery: number;
+  responsibleVeterinarian: string;
 }
 type MedicineRecordsProps = {
   petQueues: PetQueueProps[]
