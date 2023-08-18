@@ -12,15 +12,12 @@ import {
   Textarea,
   RadioGroup,
   Radio,
-  Tfoot,
   Th,
-  TableCaption,
   TableContainer,
   Input,
   Select,
 } from "@chakra-ui/react";
 import { useEffect, useState, useContext } from "react";
-import { ReceptionSidebar } from "../../components/Sidebars/ReceptionBar";
 import { AiFillTags, BiHome, TbArrowBack } from "react-icons/all";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
@@ -50,7 +47,7 @@ interface CustomerProps {
   rg: string;
 }
 
-export function Customer() {
+export function CustomerDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { vets } = useContext(DbContext);

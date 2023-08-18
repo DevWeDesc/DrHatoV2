@@ -92,8 +92,6 @@ export const searchController = {
   }
 
 
-
-
 }
 
 
