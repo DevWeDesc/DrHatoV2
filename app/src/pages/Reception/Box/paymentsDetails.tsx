@@ -16,7 +16,7 @@ import { Header } from "../../../components/admin/Header";
 import { AdminContainer } from "../../AdminDashboard/style";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
-import {  BsCashCoin } from "react-icons/all";
+import { BsCashCoin } from "react-icons/all";
 import { useEffect, useState, useContext } from "react";
 import { api } from "../../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
@@ -27,23 +27,19 @@ import { BoxContext } from "../../../contexts/BoxContext";
 
 export function BoxPaymentsDetails() {
   const [client, setClient] = useState({} as ICustomer);
-  const {fatherBox, dailyBox} = useContext(BoxContext)
-  const [typePayment, setTypePayment] = useState(false)
+  const { fatherBox, dailyBox } = useContext(BoxContext);
+  const [typePayment, setTypePayment] = useState(false);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  
   async function getCustomers() {
     const customer = await api.get(`/customers/${id}`);
     setClient(customer.data);
   }
 
-
   useEffect(() => {
     getCustomers();
   }, []);
-
-
 
   let typePaymentShow;
   switch(true) {
@@ -132,8 +128,6 @@ export function BoxPaymentsDetails() {
     break;
   }
 
-
-
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -221,7 +215,7 @@ export function BoxPaymentsDetails() {
                       >
                         Dados do Cliente
                       </Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
@@ -317,7 +311,9 @@ export function BoxPaymentsDetails() {
                             bg="white"
                             borderColor="black"
                             rounded="0"
-                            defaultValue={client.cep === null ? "Sem CEP" : client.cep}
+                            defaultValue={
+                              client.cep === null ? "Sem CEP" : client.cep
+                            }
                           />
                         </Td>
                       </Tr>
@@ -377,8 +373,7 @@ export function BoxPaymentsDetails() {
                           <Input
                             borderLeft="2px solid black"
                             borderBottom="1px solid black"
-                            
-                          bgColor="red.100"
+                            bgColor="red.100"
                             borderColor="black"
                             rounded="0"
                             defaultValue={client.customerAccount?.debits}
@@ -437,15 +432,21 @@ export function BoxPaymentsDetails() {
                         bg="blue.100"
                         borderBottom="1px solid black"
                       >
-                        Exibindo todos os lançamentos: <Button colorScheme="whatsapp"
-                           onClick={() => setTypePayment(false)}
-                        >CRÉDITOS</Button> 
-                        <Button 
-                        ml={2}
-                        onClick={() => setTypePayment(true)}
-                        colorScheme="whatsapp" >DÉBITOS</Button>
+                        Exibindo todos os lançamentos:{" "}
+                        <Button
+                          colorScheme="whatsapp"
+                          onClick={() => setTypePayment(false)}
+                        >
+                          CRÉDITOS
+                        </Button>
+                        <Button
+                          ml={2}
+                          onClick={() => setTypePayment(true)}
+                          colorScheme="whatsapp"
+                        >
+                          DÉBITOS
+                        </Button>
                       </Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
@@ -454,11 +455,11 @@ export function BoxPaymentsDetails() {
                     </Tr>
                     <Tr border="1px solid black" bg="blue.400">
                       <Th border="1px solid black" fontSize="18" color="white">
-                        Data
-                      </Th>
-                  
-                      <Th border="1px solid black" fontSize="18" color="white">
                         Descrição
+                      </Th>
+
+                      <Th border="1px solid black" fontSize="18" color="white">
+                        Data
                       </Th>
                       <Th
                         border="1px solid black"
@@ -489,9 +490,7 @@ export function BoxPaymentsDetails() {
                       </Th>
                     </Tr>
                   </Thead>
-                  <Tbody>
-                        {typePaymentShow}
-                  </Tbody>
+                  <Tbody>{typePaymentShow}</Tbody>
                 </Table>
               </TableContainer>
               <Button w="100%" py="8" colorScheme="whatsapp">
