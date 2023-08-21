@@ -19,17 +19,22 @@ import { BiHome, MdPets, TbArrowBack } from "react-icons/all";
 import { AdminContainer } from "../../../pages/AdminDashboard/style";
 import { WorkSpaceHeader } from "../../../pages/Vets/styles";
 import { useNavigate, useParams } from "react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { api } from "../../../lib/axios";
 import { PetDetaisl } from "../../../interfaces";
 import moment from "moment";
 import { toast } from "react-toastify";
+import { UrlContext } from "../../../contexts/UrlContext";
+
 export default function DetailsAdmissions() {
   const [admissiondiary, setAdmissionDiary] = useState<number | boolean>(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const entryDate = petDetails.bedInfos?.entry;
+  const { setUrl } = useContext(UrlContext);
+
+  console.log(petDetails);
 
   const totalDaily = moment(new Date()).diff(entryDate, "minutes");
 
@@ -147,7 +152,7 @@ export default function DetailsAdmissions() {
               </Flex>
 
               <Flex flexWrap="wrap" justify="start" gap="2" m="4" p="2">
-              <Button
+                <Button
                   //onClick={() => openModal()}
                   height={8}
                   colorScheme="whatsapp"
@@ -159,7 +164,10 @@ export default function DetailsAdmissions() {
                   //onClick={() => openModal()}
                   height={8}
                   colorScheme="whatsapp"
-                  onClick={() => navigate(`/Admissions/Procedures/${id}`)}
+                  onClick={() => {
+                    setUrl(`/Admissions/${petDetails.recordId}`);
+                    navigate(`/Admissions/Procedures/${petDetails.recordId}`);
+                  }}
                 >
                   Procedimentos
                 </Button>
@@ -341,13 +349,15 @@ export default function DetailsAdmissions() {
                         >
                           Inserir novo item do diário da internação
                         </Text>
-                        <Textarea pt="6" minH="40" defaultValue={`Evolução de quadro clinico:
+                        <Textarea
+                          pt="6"
+                          minH="40"
+                          defaultValue={`Evolução de quadro clinico:
 Mudanças de Protocolo:
 Metas para as próximas 12h horas:
 Prognóstico: 
-Previsão de alta:`}>
-
-                        </Textarea>
+Previsão de alta:`}
+                        ></Textarea>
                         <Button colorScheme="whatsapp">Gravar</Button>
                         <Text
                           fontSize="20"
@@ -440,7 +450,7 @@ Previsão de alta:`}>
                         >
                           Ação
                         </Text> */}
-                                                <Text
+                        <Text
                           w="73vw"
                           fontWeight="bold"
                           pl="2"
@@ -448,9 +458,7 @@ Previsão de alta:`}>
                           fontSize="20"
                           height="40px"
                           border="1px solid black"
-                        >
-                          
-                        </Text>
+                        ></Text>
                         <Text
                           w="12vw"
                           fontWeight="bold"
@@ -596,7 +604,14 @@ Previsão de alta:`}>
                         >
                           Total
                         </Text>
-                        <Text py="1" borderY="0px" borderX="1px solid black" w="14.9vw" textAlign="start" pl="4">
+                        <Text
+                          py="1"
+                          borderY="0px"
+                          borderX="1px solid black"
+                          w="14.9vw"
+                          textAlign="start"
+                          pl="4"
+                        >
                           {new Intl.NumberFormat("pt-BR", {
                             currency: "BRL",
                             style: "currency",
