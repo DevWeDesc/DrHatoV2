@@ -11,6 +11,7 @@ type params = {
     queueId: string;
     recordId: string;
     customerId: string;
+    date: string;
   }
 
 export const queueController = {
@@ -29,7 +30,7 @@ export const queueController = {
 
   finishQueueOfPet:  async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
     const {petId, recordId, queueId, customerId} = request.params
-    const {queueEntry, queryType, queueExit, debitOnThisQuery, responsibleVeterinarian} = QueueSchema.parse(request.body)
+    const {queueEntry, queryType, queueExit, debitOnThisQuery, responsibleVeterinarian, petName} = QueueSchema.parse(request.body)
     try { 
 
       await petContract.verifyIfIsPossibleEndQueue(recordId, 'Exame em aberto, não possivel é encerrar consulta.')
@@ -53,7 +54,7 @@ export const queueController = {
           })
   
           await prisma.queuesForPet.create({
-              data: {queryType, queueEntry, queueExit, debitOnThisQuery, responsibleVeterinarian, medicine:{ connect: {id: parseInt(recordId)}}}
+              data: {queryType, queueEntry, queueExit, debitOnThisQuery,petName, responsibleVeterinarian, medicine:{ connect: {id: parseInt(recordId)}}}
           })
           
           await prisma.queues.update({
@@ -73,13 +74,28 @@ export const queueController = {
   },
 
   getQueuePetHistory: async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
-    const {recordId} = request.params
-    try {
-      const debitsInQueue = await prisma.queuesForPet.findMany({where: {
-        
-      }})
+    const {date, petId} = request.params
+    const today = new Date(date);
+    today.setHours(0, 0, 0, 0); 
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
 
-      reply.send(debitsInQueue)
+    try {
+      
+      const petsProcedures =  await prisma.pets.findUnique({
+        where: {id: parseInt(petId)},include: {medicineRecords: {include:{
+          petVaccines: {where: {requestedDate: {gte: date, lt: tomorrow}}},
+          petExams: {where: {requesteData: {gte: today,
+              lt: tomorrow}}},
+          petSurgeries: {where:{scheduledDate: {gte: date, lt: tomorrow} }}
+        }}}
+      })
+      
+      const data = {
+        petsProcedures
+      }
+
+      reply.send(data)
     } catch (error) {
       console.log(error)
     }

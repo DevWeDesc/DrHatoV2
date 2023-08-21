@@ -26,7 +26,6 @@ import moment from "moment";
 import { toast } from "react-toastify";
 export default function DetailsAdmissions() {
   const [admissiondiary, setAdmissionDiary] = useState<number | boolean>(false);
-  const [confirmation, setConfirmation] = useState<boolean>(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);

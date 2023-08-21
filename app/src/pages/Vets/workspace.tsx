@@ -106,6 +106,7 @@ export function WorkSpaceVet() {
         queueExit: new Date(),
         debitOnThisQuery: Number(pet.totalAcc.price),
         responsibleVeterinarian: user.username,
+        petName: pet.name
       };
 
       await api.put(

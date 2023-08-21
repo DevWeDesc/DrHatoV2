@@ -44,6 +44,8 @@ export default function VaccinesVets() {
     }
   }
 
+  console.log(petDetails)
+
   async function setVaccineInPet() {
     try {
       await api.post(`/vaccinepet/${vaccineId}/${petDetails.recordId}/${petDetails.totalAcc.id}`);

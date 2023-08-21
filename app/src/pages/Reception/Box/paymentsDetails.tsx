@@ -42,82 +42,90 @@ export function BoxPaymentsDetails() {
   }, []);
 
   let typePaymentShow;
-  switch (true) {
-    case typePayment === false:
-      typePaymentShow = (
-        <>
-          {client?.customerAccount?.installments.length >= 1 ? (
-            client?.customerAccount?.installments.map((installment) => (
-              <Tr key={installment.id}>
-                <Td>
-                  Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
-                </Td>
-                <Td>
-                  {new Intl.DateTimeFormat("pt-BR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }).format(new Date(installment?.paymentDate))}
-                </Td>
-                <Td>0</Td>
-                <Td border="2px" bgColor="green.100">
-                  {new Intl.NumberFormat("pt-BR", {
-                    currency: "BRL",
-                    style: "currency",
-                  }).format(installment.totalDebit)}
-                </Td>
-                <Td>{installment.paymentType}</Td>
-                <Td>{client.customerAccount?.debits}</Td>
-              </Tr>
-            ))
-          ) : (
-            <Tr></Tr>
-          )}
-        </>
-      );
-      break;
-    case typePayment === true:
-      typePaymentShow = (
-        <>
-          {client ? (
-            client?.pets.map((pet) => (
-              <>
-                {pet?.medicineRecords?.petQueues.map((queue) => (
-                  <Tr key={pet.id}>
-                    <Td width="10px">
-                      {`${queue.queryType} Cod: ${queue.id}`}
-                    </Td>
-                    <Td width="300px">
-                      {" "}
-                      {new Intl.DateTimeFormat("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }).format(new Date(queue?.queueExit))}
-                    </Td>
-                    <Td border="2px" bgColor="red.100">
-                      {new Intl.NumberFormat("pt-BR", {
-                        currency: "BRL",
-                        style: "currency",
-                      }).format(queue.debitOnThisQuery)}
-                    </Td>
-                    <Td>0</Td>
-                    <Td>Entrada</Td>
-                    <Td>{client.customerAccount.credits}</Td>
-                  </Tr>
-                ))}
-              </>
-            ))
-          ) : (
-            <h1>fon</h1>
-          )}
-        </>
-      );
-      break;
+  switch(true) {
+    case typePayment === false: 
+    typePaymentShow = (
+      <>
+      {
+        client?.customerAccount?.installments.length >= 1 ? client?.customerAccount?.installments.map((installment) => (
+           <Tr key={installment.id} >
+               <Td>
+                 {new Intl.DateTimeFormat('pt-BR', {
+                   day: '2-digit',
+                   month: '2-digit',
+                   year: '2-digit',
+                   hour: '2-digit',
+                   minute: '2-digit'
+                 }).format(new Date(installment?.paymentDate))}
+               </Td>
+               <Td>
+                 Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
+               </Td>
+               <Td>
+                 0
+               </Td>
+               <Td border="2px" bgColor='green.100'>
+                 {new Intl.NumberFormat('pt-BR', {
+                   currency: 'BRL',
+                   style: 'currency'
+                 }).format(installment.totalDebit)}
+               </Td>
+               <Td>
+                 {installment.paymentType}
+               </Td>
+               <Td>
+                 {client.customerAccount?.debits}
+               </Td>
+           </Tr>
+        )) : (
+         <Tr>
+
+         </Tr>
+        )
+       }
+       </>
+    )
+    break;
+    case typePayment === true: 
+    typePaymentShow = (
+      <>
+        {
+          client ? client?.pets.map(
+            (pet) => (
+                <>
+                  {
+                    pet?.medicineRecords?.petQueues.map((queue) => (
+                      <Tr key={pet.id}>
+                      <Td>{new Intl.DateTimeFormat('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }).format(new Date(queue?.queueExit))}</Td>
+                      <Td>
+                        {`${queue.queryType} Cod: ${queue.id} Animal: ${queue?.petName}`}
+                      </Td>
+                      <Td border="2px" bgColor='red.100'>
+                    {new Intl.NumberFormat('pt-BR', {
+                      currency: 'BRL',
+                      style: 'currency'
+                    }).format(queue.debitOnThisQuery)}
+                     </Td>
+                     <Td>0</Td>
+                     <Td>Entrada</Td>
+                     <Td>{client.customerAccount.credits}</Td>
+                     </Tr>
+                    ))
+                  }
+            </>
+            )
+          ) : ( <h1>fon</h1>)
+        }
+        
+       </>
+    )
+    break;
   }
 
   return (

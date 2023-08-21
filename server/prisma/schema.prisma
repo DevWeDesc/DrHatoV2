@@ -215,6 +215,7 @@ model QueuesForPet {
   queryType               String?
   debitOnThisQuery        Decimal?
   responsibleVeterinarian String?
+  petName                String?
   medicine_id             Int
   medicine                MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
@@ -250,6 +251,7 @@ model BedsForPet {
   mustFasting            Boolean?       @default(false)
   totalDebt              Decimal?
   isCompleted            Boolean?       @default(false)
+
   admissionsObservations Json?
   medicine_id            Int
   medicine               MedicineRecord @relation(fields: [medicine_id], references: [id])
