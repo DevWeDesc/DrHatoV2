@@ -3,8 +3,6 @@ import { prisma } from "../interface/PrismaInstance";
 import {QueueSchema } from "../schemas/schemasValidator";
 import { petContract } from "../interface/PetContractInstance";
 
-
-
 type params = {
     id: string;
     petId: string;
@@ -83,17 +81,27 @@ export const queueController = {
     try {
       
       const petsProcedures =  await prisma.pets.findUnique({
-        where: {id: parseInt(petId)},include: {medicineRecords: {include:{
+        where: {id: parseInt(petId)},include: {customer: {select: {name: true}},medicineRecords: {include:{
           petVaccines: {where: {requestedDate: {gte: date, lt: tomorrow}}},
           petExams: {where: {requesteData: {gte: today,
               lt: tomorrow}}},
-          petSurgeries: {where:{scheduledDate: {gte: date, lt: tomorrow} }}
+          petSurgeries: {where:{scheduledDate: {gte: date, lt: tomorrow}}
+        },
+
         }}}
       })
       
-      const data = {
-        petsProcedures
-      }
+      let procedures: any = []
+       procedures = procedures.concat(petsProcedures?.medicineRecords?.petVaccines.flatMap((vaccine) => vaccine),
+       petsProcedures?.medicineRecords?.petExams.flatMap((exams) => exams),
+       petsProcedures?.medicineRecords?.petSurgeries.flatMap((surgeries) => surgeries))
+
+
+       const data = { 
+        petName: petsProcedures?.name,
+        customerName: petsProcedures?.customer.name,
+        procedures
+       }
 
       reply.send(data)
     } catch (error) {

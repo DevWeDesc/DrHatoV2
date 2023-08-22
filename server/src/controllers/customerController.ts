@@ -70,16 +70,10 @@ export const customerController = {
   findUserById: async (request: FastifyRequest, reply: FastifyReply) => {
     const { id }: any = (request.params)
     const customer = await prisma.customer.findUnique({ where: { id: parseInt(id) }, include:{pets: {
-      include: {medicineRecords: {include: {petQueues: true}}}
+      include: {medicineRecords: {include: {petQueues: {include: {medicine: {include: {pet: {select: {id: true, name: true}}}}}}}}}
     }, transaction: true, customerAccount: {include: {installments: true}}} })
 
-   customer?.transaction.reduce( (acc ,transaction) => {
-      //@ts-ignore
-      customer.balance += transaction.amount
-      return acc
-    }, 0)
-  
-    
+
     reply.send(customer)
   }
 
