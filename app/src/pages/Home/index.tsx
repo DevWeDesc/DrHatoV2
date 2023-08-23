@@ -25,7 +25,8 @@ export function Home() {
       <Header />
       <HomeContainer>
         <div className="section-1">
-          <AsideMenu /> <Reminder />
+          <AsideMenu />
+          {/* <Reminder /> */}
         </div>
         <div className="section-2">
           <div className="cards">

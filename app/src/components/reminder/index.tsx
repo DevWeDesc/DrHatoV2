@@ -1,30 +1,12 @@
-import React from "react";
 import {
   Alert,
   AlertIcon,
   AlertTitle,
   AlertDescription,
 } from "@chakra-ui/react";
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-} from "@chakra-ui/react";
 import { Text } from "@chakra-ui/react";
-import {
-  List,
-  ListItem,
-  ListIcon,
-  OrderedList,
-  UnorderedList,
-} from "@chakra-ui/react";
-import { MdCheckCircle, MdSettings, MdWarning } from "react-icons/md";
+import { List, ListItem, ListIcon } from "@chakra-ui/react";
+import { MdWarning } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 export const Reminder = () => {

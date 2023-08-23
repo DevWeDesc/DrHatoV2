@@ -163,9 +163,20 @@ export default function DetailsAdmissions() {
                 <Button
                   //onClick={() => openModal()}
                   height={8}
-                  colorScheme="whatsapp"
+                  colorScheme="twitter"
                   onClick={() => {
                     setUrl(`/Admissions/${petDetails.recordId}`);
+                    navigate(`/Admissions/Procedures/${petDetails.recordId}`);
+                  }}
+                >
+                  Histórico de Procedimentos
+                </Button>
+                <Button
+                  //onClick={() => openModal()}
+                  height={8}
+                  colorScheme="whatsapp"
+                  onClick={() => {
+                    setUrl("");
                     navigate(`/Admissions/Procedures/${petDetails.recordId}`);
                   }}
                 >

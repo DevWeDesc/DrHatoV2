@@ -1,60 +1,37 @@
-import React from "react";
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-} from "@chakra-ui/react";
+import { Flex, ChakraProvider, Text, SimpleGrid } from "@chakra-ui/react";
+import CardsReminder from "../reminder/cards";
 
 export default function DaysReminder() {
   return (
-    <TableContainer w="100%">
-      <Table variant="simple" w="100%">
-        <Thead>
-          <Tr>
-            <Th fontSize="25px" textAlign="center">
-              17
-            </Th>
-            <Th fontSize="25px" textAlign="center">
-              18
-            </Th>
-            <Th fontSize="25px" textAlign="center">
-              19
-            </Th>
-            <Th fontSize="25px" textAlign="center">
-              20
-            </Th>
-            <Th fontSize="25px" textAlign="center">
-              21
-            </Th>
-            <Th fontSize="25px" textAlign="center">
-              22
-            </Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          <Tr>
-            <Td w="100px" bg="orange" rounded="50px" fontWeight="bold">
-              Vinicius: Data 15/08/2023: Retorno consulta especial
-            </Td>
-          </Tr>
-          <Tr>
-            <Td w="100px" bg="blue.300" rounded="50px" fontWeight="bold">
-              Vinicius: Data 15/08/2023: Retorno consulta especial
-            </Td>
-          </Tr>
-          <Tr>
-            <Td w="100px" bg="yellow" rounded="50px" fontWeight="bold">
-              Vinicius: Data 15/08/2023: Retorno consulta especial
-            </Td>
-          </Tr>
-        </Tbody>
-      </Table>
-    </TableContainer>
+    <ChakraProvider>
+      <Flex direction="column" w="70%">
+        <Text textAlign="center" fontSize="28" fontWeight="bold">
+          Listagem de Lembretes
+        </Text>
+        <SimpleGrid
+          mt="10"
+          spacing={4}
+          pl="16"
+          templateColumns="repeat(auto-fill, minmax(250px, 1fr))"
+        >
+          <CardsReminder
+            title="Retorno Consulta Especial 23/08/2023"
+            body={`Cliente: Vinicius Henrique`}
+          />
+          <CardsReminder
+            title="Retorno Consulta Especial 25/08/2023"
+            body={`Cliente: Dilan Lopez`}
+          />
+          <CardsReminder
+            title="Retorno Consulta Especial 26/08/2023"
+            body={`Cliente: Glauco`}
+          />
+          <CardsReminder
+            title="Retorno Consulta Especial 28/08/2023"
+            body={`Cliente: Nicolas`}
+          />
+        </SimpleGrid>
+      </Flex>
+    </ChakraProvider>
   );
 }

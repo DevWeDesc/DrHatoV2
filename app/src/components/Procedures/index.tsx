@@ -101,7 +101,11 @@ export default function ProceduresVets() {
 
   return (
     <>
-      <Flex w="100%" height="45vh" align="center" overflowY="auto">
+      <Flex
+        w="100%"
+        height={url === `/Admissions/${id}` ? "" : "45vh"}
+        align="center"
+      >
         <TableContainer w="100%" height="100%">
           <Table>
             <Thead>

@@ -39,7 +39,7 @@ export default function ProceduresAdmisisonPage() {
               width="100%"
               height="100%"
             >
-              <Flex align="center" gap="2" justify="space-between">
+              <Flex align="center" gap="2" justify="space-between" py="5">
                 <Flex>
                   <Text m="2" fontSize="2xl" fontWeight="bold">
                     Painel Procedimetos de Internação
@@ -66,7 +66,7 @@ export default function ProceduresAdmisisonPage() {
             </Flex>
           </WorkSpaceHeader>
           <Flex w="100%" mx="auto">
-            <Box w="100%" borderRadius={8}>
+            <Box w="100%">
               <ProceduresVets />
             </Box>
           </Flex>

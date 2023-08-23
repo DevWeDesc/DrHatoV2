@@ -6,7 +6,7 @@ import {
   RiUserAddLine,
 } from "react-icons/ri";
 import { TbArrowBack } from "react-icons/tb";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { DbContext } from "../../contexts/DbContext";
 
 interface HeaderProps {
@@ -14,6 +14,7 @@ interface HeaderProps {
   url: string;
 }
 export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
+  const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") as string);
   return (
     <Flex
@@ -64,7 +65,12 @@ export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
           borderRightWidth={1}
           borderColor="gray.700"
         >
-          <Icon as={RiNotificationLine} fontSize="20" />
+          <Icon
+            as={RiNotificationLine}
+            fontSize="20"
+            cursor="pointer"
+            onClick={() => navigate(`/Reminder`)}
+          />
           <Icon as={RiUserAddLine} fontSize="20" />
         </HStack>
 
