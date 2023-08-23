@@ -10,122 +10,117 @@ import {
   Button,
   TableContainer,
   Input,
-  Td,
-} from "@chakra-ui/react";
-import { Header } from "../../../components/admin/Header";
-import { AdminContainer } from "../../AdminDashboard/style";
-import { GenericLink } from "../../../components/Sidebars/GenericLink";
-import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
-import { BsCashCoin } from "react-icons/all";
-import { useEffect, useState, useContext } from "react";
-import { api } from "../../../lib/axios";
-import { useNavigate, useParams } from "react-router-dom";
-import { BsReception4 } from "react-icons/bs";
-import { BiCalendarPlus, AiFillEdit } from "react-icons/all";
-import { ICustomer } from "../../../interfaces";
-import { BoxContext } from "../../../contexts/BoxContext";
+  Td
+} from '@chakra-ui/react'
+import { Header } from '../../../components/admin/Header'
+import { AdminContainer } from '../../AdminDashboard/style'
+import { GenericLink } from '../../../components/Sidebars/GenericLink'
+import { GenericSidebar } from '../../../components/Sidebars/GenericSideBar'
+import { BsCashCoin } from 'react-icons/all'
+import { useEffect, useState, useContext } from 'react'
+import { api } from '../../../lib/axios'
+import { useNavigate, useParams } from 'react-router-dom'
+import { BsReception4 } from 'react-icons/bs'
+import { BiCalendarPlus, AiFillEdit } from 'react-icons/all'
+import { ICustomer } from '../../../interfaces'
+import { BoxContext } from '../../../contexts/BoxContext'
 
 export function BoxPaymentsDetails() {
-  const [client, setClient] = useState({} as ICustomer);
-  const { fatherBox, dailyBox } = useContext(BoxContext);
-  const [typePayment, setTypePayment] = useState(false);
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const [client, setClient] = useState({} as ICustomer)
+  const { fatherBox, dailyBox } = useContext(BoxContext)
+  const [typePayment, setTypePayment] = useState(false)
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
 
   async function getCustomers() {
-    const customer = await api.get(`/customers/${id}`);
-    setClient(customer.data);
+    const customer = await api.get(`/customers/${id}`)
+    setClient(customer.data)
   }
 
   useEffect(() => {
-    getCustomers();
-  }, []);
+    getCustomers()
+  }, [])
 
-  let typePaymentShow;
-  switch(true) {
-    case typePayment === false: 
-    typePaymentShow = (
-      <>
-      {
-        client?.customerAccount?.installments.length >= 1 ? client?.customerAccount?.installments.map((installment) => (
-           <Tr key={installment.id} >
-               <Td>
-                 {new Intl.DateTimeFormat('pt-BR', {
-                   day: '2-digit',
-                   month: '2-digit',
-                   year: '2-digit',
-                   hour: '2-digit',
-                   minute: '2-digit'
-                 }).format(new Date(installment?.paymentDate))}
-               </Td>
-               <Td>
-                 Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
-               </Td>
-               <Td>
-                 0
-               </Td>
-               <Td border="2px" bgColor='green.100'>
-                 {new Intl.NumberFormat('pt-BR', {
-                   currency: 'BRL',
-                   style: 'currency'
-                 }).format(installment.totalDebit)}
-               </Td>
-               <Td>
-                 {installment.paymentType}
-               </Td>
-               <Td>
-                 {client.customerAccount?.debits}
-               </Td>
-           </Tr>
-        )) : (
-         <Tr>
+  let typePaymentShow
+  switch (true) {
+    case typePayment === false:
+      typePaymentShow = (
+        <>
+          {client?.customerAccount?.installments.length >= 1 ? (
+            client?.customerAccount?.installments.map(installment => (
+              <Tr key={installment.id}>
+                <Td>
+                  Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
+                </Td>
+                <Td>
+                  {new Intl.DateTimeFormat('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  }).format(new Date(installment?.paymentDate))}
+                </Td>
 
-         </Tr>
-        )
-       }
-       </>
-    )
-    break;
-    case typePayment === true: 
-    typePaymentShow = (
-      <>
-        {
-          client ? client?.pets.map(
-            (pet) => (
-                <>
-                  {
-                    pet?.medicineRecords?.petQueues.map((queue) => (
-                      <Tr key={pet.id}>
-                      <Td>{new Intl.DateTimeFormat('pt-BR', {
+                <Td>0</Td>
+                <Td border="2px" bgColor="green.100">
+                  {new Intl.NumberFormat('pt-BR', {
+                    currency: 'BRL',
+                    style: 'currency'
+                  }).format(installment.totalDebit)}
+                </Td>
+                <Td>{installment.paymentType}</Td>
+                <Td>{client.customerAccount?.debits}</Td>
+              </Tr>
+            ))
+          ) : (
+            <Tr></Tr>
+          )}
+        </>
+      )
+      break
+    case typePayment === true:
+      typePaymentShow = (
+        <>
+          {client ? (
+            client?.pets.map(pet => (
+              <>
+                {pet?.medicineRecords?.petQueues.map(queue => (
+                  <Tr key={queue.id}>
+                    <Td>
+                      <Button colorScheme="whatsapp" onClick={() => navigate(`/Recepcao/Caixa/PagamentoCliente/${queue?.medicine?.pet?.id}/${queue?.queueEntry.toString()}/${client.id}`)}>
+                      {`${queue.queryType} Cod: ${queue.id} Animal: ${queue?.petName}`}
+                      </Button>
+                    </Td>
+                    <Td>
+                      {new Intl.DateTimeFormat('pt-BR', {
                         day: '2-digit',
                         month: '2-digit',
                         year: '2-digit',
                         hour: '2-digit',
                         minute: '2-digit'
-                      }).format(new Date(queue?.queueExit))}</Td>
-                      <Td>
-                        {`${queue.queryType} Cod: ${queue.id} Animal: ${queue?.petName}`}
-                      </Td>
-                      <Td border="2px" bgColor='red.100'>
-                    {new Intl.NumberFormat('pt-BR', {
-                      currency: 'BRL',
-                      style: 'currency'
-                    }).format(queue.debitOnThisQuery)}
-                     </Td>
-                     <Td>0</Td>
-                     <Td>Entrada</Td>
-                     <Td>{client.customerAccount.credits}</Td>
-                     </Tr>
-                    ))
-                  }
-            </>
-            )
-          ) : ( <h1>fon</h1>)
-        }
-        
-       </>
-    )
-    break;
+                      }).format(new Date(queue?.queueExit))}
+                    </Td>
+
+                    <Td border="2px" bgColor="red.100">
+                      {new Intl.NumberFormat('pt-BR', {
+                        currency: 'BRL',
+                        style: 'currency'
+                      }).format(queue.debitOnThisQuery)}
+                    </Td>
+                    <Td>0</Td>
+                    <Td>Entrada</Td>
+                    <Td>{client.customerAccount.credits}</Td>
+                  </Tr>
+                ))}
+              </>
+            ))
+          ) : (
+            <h1>fon</h1>
+          )}
+        </>
+      )
+      break
   }
 
   return (
@@ -312,7 +307,7 @@ export function BoxPaymentsDetails() {
                             borderColor="black"
                             rounded="0"
                             defaultValue={
-                              client.cep === null ? "Sem CEP" : client.cep
+                              client.cep === null ? 'Sem CEP' : client.cep
                             }
                           />
                         </Td>
@@ -432,7 +427,7 @@ export function BoxPaymentsDetails() {
                         bg="blue.100"
                         borderBottom="1px solid black"
                       >
-                        Exibindo todos os lançamentos:{" "}
+                        Exibindo todos os lançamentos:{' '}
                         <Button
                           colorScheme="whatsapp"
                           onClick={() => setTypePayment(false)}
@@ -501,5 +496,5 @@ export function BoxPaymentsDetails() {
         </Flex>
       </AdminContainer>
     </ChakraProvider>
-  );
+  )
 }

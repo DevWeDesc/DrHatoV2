@@ -309,10 +309,10 @@ export function Router() {
                 element={<BoxPaymentsDetails />}
               />
 
-              {/*  <Route
-              path="/Recepcao/Caixa/PagamentoCliente/:id"
+             <Route
+              path="/Recepcao/Caixa/PagamentoCliente/:petId/:date/:clientId"
               element={<BoxNewPaymentsClient />}
-            />  */}
+            />  
 
               <Route
                 path="/Recepcao/Caixa/NovoPagamento/:id"

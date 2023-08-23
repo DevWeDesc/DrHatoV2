@@ -146,6 +146,10 @@ export interface SugeriesProps {
   completedDate?: Date;
 }
 
+type QueuePetOn = {
+  name: string;
+  id: number;
+}
 type QueueProps = {
   id: string | number;
   moreInfos: string;
@@ -154,6 +158,7 @@ type QueueProps = {
   queueEntry: Date;
   queryType: string;
   petIsInQueue: boolean;
+
 };
 
 type totalAccProps = {
@@ -200,6 +205,7 @@ type PetQueueProps = {
   queryType: String
   debitOnThisQuery: number;
   responsibleVeterinarian: string;
+  pet: QueuePetOn
 }
 type MedicineRecordsProps = {
   petQueues: PetQueueProps[]

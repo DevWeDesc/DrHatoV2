@@ -8,110 +8,55 @@ import {
   Thead,
   Tbody,
   Th,
-  Button,
   TableContainer,
   Input,
-  Textarea,
-  TableCaption,
-  Tfoot,
-  border,
 } from "@chakra-ui/react";
-
 import { Header } from "../../../components/admin/Header";
-
 import { AdminContainer } from "../../AdminDashboard/style";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
-import { PaymentsSearch } from "../../../components/Search/paymentsSearch";
 import { BiHome, BsCashCoin } from "react-icons/all";
-
 import { useEffect, useState } from "react";
 import { api } from "../../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { LoadingSpinner } from "../../../components/Loading";
+
+
+type ProceduresProps = {
+	id: number;
+	name: string;
+	price: number;
+}
+
+interface ConsultDetailsProps {
+  petName: string;
+  customerName: string;
+  procedures: ProceduresProps[]
+}
+
 
 export function BoxNewPaymentsClient() {
-  const [client, setClient] = useState([]);
-  const { id } = useParams<{ id: string }>();
-  const [cash, setCash] = useState<number | string>("");
-  const navigate = useNavigate();
+  const { petId, date, clientId } = useParams<{ petId: string, date: any, clientId: string }>();
+  const [consultDetails, setConsultDetails] = useState({} as ConsultDetailsProps)
 
-  /*async function getCustomers() {
-    const response = await api.get(`http://localhost:5000/customers/${id}`);
-    setCostumers(response.data);
-  }*/
-
-  const clientes = [
-    {
-      id: 1,
-      name: "Junior Ferreira Campos",
-      animal: "Mel",
-      date: "24/07/23",
-      our: "10:04",
-      balance: "-90,00",
-      state: "Campinas",
-      cep: "13051-207",
-      bairro: "Jardim Santa Cruz",
-      adress: "Avenida Maria Clara Machado",
-      phone: "(11) 98379-0437",
-      vet: "Henrique Magoga",
-    },
-    {
-      id: 2,
-      name: "Junior Ferreira Campos Teste 2",
-      animal: "Mel",
-      date: "24/07/23",
-      our: "10:04",
-      balance: "-90,00",
-      state: "Campinas",
-      cep: "13051-207",
-      bairro: "Jardim Santa Cruz",
-      adress: "Avenida Maria Clara Machado",
-      phone: "(11) 98379-0437",
-    },
-  ];
-
-  const consults = [
-    {
-      qtd: 1,
-      protocols: "Consulta ",
-      table: "130,00",
-      discount: "0%",
-      value: "130,00",
-    },
-    {
-      qtd: 1,
-      protocols: "Hemograma Canino Adulto  ",
-      table: "49,00",
-      discount: "0%",
-      value: "49,00",
-    },
-    {
-      qtd: 1,
-      protocols: "Bioquimico Pre-cirurgico  ",
-      table: "109,00",
-      discount: "0%",
-      value: "109,00",
-    },
-  ];
-
-  useEffect(() => {
-    const clientesFilter: any = clientes.filter((user: any) => user.id == id);
-    setClient(clientesFilter);
-  }, []);
-
-  console.log(cash);
-
-  function BgInput(cash: string | number) {
-    if (cash === "") {
-      return "white";
-    } else if (cash >= 0) {
-      return "green.100";
-    } else if (cash < 0) {
-      return "red.100";
-    } else {
-      return "white";
+  async function getConsultDetails () {
+    try {
+      const response = await api.get(`/queuedebits/${petId}/${date}`)
+      setConsultDetails(response.data)
+    } catch (error) {
+      console.log(error)
     }
   }
+
+  useEffect(() => {
+    getConsultDetails ()
+  
+  }, [])
+
+
+
+
+  const totalToPay = consultDetails?.procedures?.reduce((acc, procedure) => acc + Number(procedure?.price), 0)
 
   return (
     <ChakraProvider>
@@ -119,7 +64,7 @@ export function BoxNewPaymentsClient() {
         <Flex direction="column" h="100vh">
           <Header
             title="Painel de Pagamentos por Cliente"
-            url={`/Recepcao/Caixa/Pagamentos/${id}`}
+            url={`/Recepcao/Caixa/Pagamentos/${clientId}`}
           />
           <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
             <GenericSidebar>
@@ -131,7 +76,7 @@ export function BoxNewPaymentsClient() {
               <GenericLink
                 name="Pagamentos Consultas"
                 icon={BsCashCoin}
-                path={`/Recepcao/Caixa/Pagamentos/${id}`}
+                path={`/Recepcao/Caixa/Pagamentos/${clientId}`}
               />
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
@@ -146,11 +91,10 @@ export function BoxNewPaymentsClient() {
                         bg="blue.100"
                         colSpan={5}
                       >
-                        Visualização de Consulta
+                        Visualização de Consulta - Data : {new Intl.DateTimeFormat('pt-BR').format(new Date(date))}
                       </Th>
                     </Tr>
-                    {client.map((user: any) => (
-                      <>
+            
                         {" "}
                         <Tr>
                           <Th px="0" pl="5" fontSize="18" color="black">
@@ -160,7 +104,7 @@ export function BoxNewPaymentsClient() {
                             <Input
                               bg="white"
                               borderColor="black"
-                              value={user.name}
+                              defaultValue={consultDetails?.customerName}
                             />
                           </Th>
                           <Th px="0" pl="5" fontSize="18" color="black">
@@ -170,34 +114,10 @@ export function BoxNewPaymentsClient() {
                             <Input
                               bg="white"
                               borderColor="black"
-                              value={user.animal}
+                              defaultValue={consultDetails?.petName}
                             />
                           </Th>
                         </Tr>
-                        <Tr>
-                          <Th px="0" pl="5" fontSize="18" color="black">
-                            Data da Consulta
-                          </Th>
-                          <Th px="0" colSpan={2}>
-                            <Input
-                              bg="white"
-                              borderColor="black"
-                              value={`${user.date}  às ${user.our}`}
-                            />
-                          </Th>
-                          <Th px="0" pl="5" fontSize="18" color="black">
-                            Veterinário
-                          </Th>
-                          <Th colSpan={1}>
-                            <Input
-                              bg="white"
-                              borderColor="black"
-                              value={user.vet}
-                            />
-                          </Th>
-                        </Tr>
-                      </>
-                    ))}
                   </Thead>
                   <Tbody>
                     <Tr>
@@ -258,35 +178,42 @@ export function BoxNewPaymentsClient() {
                       </Th>
                     </Tr>
                   </Thead>
-                  {consults.map((cons: any) => {
-                    return (
+                
                       <Tbody>
-                        <Tr bg="white" cursor="pointer" fontWeight="bold">
-                          <Td border="1px solid black">{cons.qtd}</Td>
-                          <Td border="1px solid black"> {cons.protocols}</Td>
-                          <Td
-                            border="1px solid black"
-                            isNumeric
-                            fontWeight="bold"
-                          >
-                            R$ {cons.table}
-                          </Td>
-                          <Td border="1px solid black" isNumeric>
-                            {cons.discount}
-                          </Td>
-                          <Td border="1px solid black" isNumeric>
-                            R$ {cons.value}
-                          </Td>
-                        </Tr>
+
+                        {
+                          consultDetails.procedures  ? consultDetails?.procedures.map((procedure) => (
+                            <Tr key={procedure.id} bg="white" fontWeight="bold">
+                            <Td border="1px solid black">1</Td>
+                            <Td border="1px solid black">{procedure?.name} </Td>
+                            <Td
+                              border="1px solid black"
+                              isNumeric
+                              fontWeight="bold"
+                            >
+                              R$  {procedure?.price}
+                            </Td>
+                            <Td border="1px solid black" isNumeric>
+                            0
+                            </Td>
+                            <Td border="1px solid black" isNumeric>
+                              R$ {procedure?.price}
+                            </Td>
+                          </Tr>
+                          )) : (<LoadingSpinner/>)
+                        }
+
                       </Tbody>
-                    );
-                  })}
+             
                   <Tr bg="white" cursor="pointer" fontWeight="bold">
                     <Td colSpan={4} border="1px solid black" isNumeric>
                       Total
                     </Td>
                     <Td border="1px solid black" isNumeric>
-                      R$ 288,00
+                     {new Intl.NumberFormat('pt-BR', {
+                      currency: 'BRL',
+                      style: 'currency'
+                     }).format(totalToPay)}
                     </Td>
                   </Tr>
                 </Table>
@@ -297,4 +224,5 @@ export function BoxNewPaymentsClient() {
       </AdminContainer>
     </ChakraProvider>
   );
+
 }
