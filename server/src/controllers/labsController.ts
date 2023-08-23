@@ -1,5 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../interface/PrismaInstance";
+import { labService } from "../services/labsService";
 
 
 
@@ -106,5 +107,26 @@ export const labsController = {
     } catch (error) {
       reply.status(200).send({message: error})
     }
+  },  
+
+  reportAnExam: async (request:FastifyRequest, reply: FastifyReply) => {
+    try {
+      const {
+       jsonString
+      }: any = request.body
+
+      let data = {
+        jsonString
+      }
+
+    await labService.reportExam(2, data)
+
+    } catch (error) {
+      console.log(error)
+    }
   }
+
+
+
+  
 }

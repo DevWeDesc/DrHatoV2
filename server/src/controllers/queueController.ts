@@ -38,8 +38,6 @@ export const queueController = {
         petContract.clearErrors()
         return
       } 
-
-
       
         await prisma.customer.update({
           where: {id: parseInt(customerId)},data : {
@@ -47,6 +45,7 @@ export const queueController = {
           }
         })
   
+
           await  prisma.pets.update({
               where: { id: parseInt(petId)},data: {priceAccumulator: {update: {accumulator: 0}}}
           })

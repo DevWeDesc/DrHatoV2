@@ -137,8 +137,19 @@ model ExamsForPet {
   responsibleForExam String?
   doneExame          Boolean?       @default(false)
   medicine_id        Int
+  reportExams        ReportForExams[]
   medicine           MedicineRecord @relation(fields: [medicine_id], references: [id])
   examsType          String[]       @default(["lab"])
+}
+
+
+model ReportForExams {
+  id                 Int            @id @default(autoincrement())
+  report             Json
+  createdAt          DateTime @default(now())
+  examsId            Int
+  examsForPet        ExamsForPet @relation(fields: [examsId], references: [id])
+  
 }
 
 model Sectors {

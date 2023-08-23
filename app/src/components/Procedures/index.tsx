@@ -12,19 +12,14 @@ import {
   Button,
   Checkbox,
   HStack,
-  Text,
-  Select,
 } from "@chakra-ui/react";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { BiHome } from "react-icons/bi";
-import { TbArrowBack } from "react-icons/tb";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 import { PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
-import exams from "../Admission/exams";
 import { UrlContext } from "../../contexts/UrlContext";
 
 interface ProceduresProps {
@@ -199,9 +194,16 @@ export default function ProceduresVets() {
                         {/* {new Intl.DateTimeFormat().format(procedure.requestedDate)} */}
                       </Td>
                       <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        {surgeries.scheduledDate != null
-                          ? surgeries.scheduledDate
-                          : "21/08/2023"}
+                        {new Intl.DateTimeFormat("pt-BR", {
+                          month: "2-digit",
+                          day: "2-digit",
+                        }).format(
+                          new Date(
+                            surgeries.scheduledDate != null
+                              ? surgeries.scheduledDate
+                              : "21/08/2023"
+                          )
+                        )}
                       </Td>
                       <Td border="2px" fontSize="1xl" fontWeight="bold">
                         --
