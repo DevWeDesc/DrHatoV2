@@ -54,11 +54,13 @@ export const customerController = {
         }
 
       const customer =  await prisma.customer.create({
-          data: {name, adress, phone, email, cpf, birthday, balance, cep, district, howKnowUs, rg, tell, kindPerson, neighbour, state, customerAccount: {create: {
+          data: {name, adress, phone, email, cpf, birthday, balance, cep, district, howKnowUs, rg, tell, kindPerson, neighbour, state, 
+            customerAccount:
+             {create: {
             accountNumber: randomNumberAccount(100, 100000),
             credits: 0,
             debits: 0
-          }} }
+          }}}
         })
 
         reply.send(customer.id)
