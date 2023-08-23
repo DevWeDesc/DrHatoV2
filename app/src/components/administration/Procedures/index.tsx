@@ -155,7 +155,7 @@ export default function ListProcedures() {
                   <ConfirmationDialog
                     disabled={false}
                     icon={<BsFillTrashFill fill="white" size={16} />}
-                    buttonTitle="Deletar Exame"
+                    buttonTitle="Deletar Procedimento"
                     whatIsConfirmerd="Tem certeza que deseja Excluir esse Procedimento?"
                     describreConfirm="Excluir o Procedimento é uma ação irreversivel, tem certeza que deseja excluir?"
                     callbackFn={() => handleDeleteProcedure(proceds.id)}

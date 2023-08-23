@@ -144,7 +144,7 @@ export function Hospitalization() {
                   leftIcon={<Icon as={RiAddLine} />}
                   onClick={() => openModal()}
                 >
-                  Cadastrar novo Leitos de internação
+                  Cadastrar novo Leito de internação
                 </Button>
               </Flex>
 

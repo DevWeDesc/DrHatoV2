@@ -130,7 +130,7 @@ export function ReceptionCreateNewConsultForm() {
     try {
       await api
         .post("/customers", data)
-        .then((res) => navigate(`/Recepcao/Consultas/Clientes/${res.data.id}`));
+        .then((res) => navigate(`/Recepcao/Consultas/Clientes/${res.data}`));
       toast.success("Usuário cadastrado");
       console.log(data);
     } catch (error) {
