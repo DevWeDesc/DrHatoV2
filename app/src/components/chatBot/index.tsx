@@ -21,10 +21,10 @@ import { AiOutlineQuestionCircle, AiOutlineSetting } from "react-icons/ai";
 
 export default function ChatBot() {
   return (
-    <Box position="fixed" bottom="5" right="5">
+    <Box zIndex="10" position="fixed" bottom="5" right="5">
       <Popover placement="top-start">
         <PopoverTrigger>
-          <Button h="70px" w="70px" rounded="full">
+          <Button h="70px" w="70px" border="2px" rounded="full">
             <FaRobot size="sm" />
           </Button>
         </PopoverTrigger>

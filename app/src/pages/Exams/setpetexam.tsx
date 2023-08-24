@@ -25,6 +25,7 @@ import {
 import { HemoTable } from "../../components/ProceduresTable/HemoTable";
 import { Header } from "../../components/admin/Header";
 import { api } from "../../lib/axios";
+import FileUpload from "../../components/FileUpload";
 
 export function SetPetExam() {
   const { id } = useParams<{ id: string }>();
@@ -90,18 +91,13 @@ export function SetPetExam() {
                     justifyContent={"space-between"}
                     marginBottom={"10px"}
                   >
-                    <Box>
+                    <Flex  align="center" m="4" w="100%" justify="space-between">
                       <Text fontSize="3xl">
                         <strong>Dados do Exame</strong>
                       </Text>
-                    </Box>
-                    <Button
-                      colorScheme="twitter"
-                      padding={"20px 0px"}
-                      width={"30%"}
-                    >
-                      Laudar com PDF
-                    </Button>
+                      <FileUpload examId={`${id}`} />
+                    </Flex>
+                   
                   </Flex>
                   <Flex
                     direction={"column"}

@@ -4,6 +4,7 @@ import { labService } from "../services/labsService";
 
 
 
+
 export const labsController = {
   getOpenExamsInLab: async (request:FastifyRequest, reply: FastifyReply) => {
     try {
@@ -124,9 +125,48 @@ export const labsController = {
     } catch (error) {
       console.log(error)
     }
+  },
+
+  reportWithPdf: async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) => {
+  try {
+    const {examId} = request.params
+   const files  = request.files()
+
+   const paths = await labService.saveExamPdfs(files)
+
+
+   if(!paths || paths.length <= 0) return
+
+   await prisma.examsForPet.update({
+    where: {id: parseInt(examId)},data: {
+      reportExams: {create: {
+        internalReport: paths
+      }}
+    }
+  })
+
+    
+  } catch (error) {
+    reply.send({message: error})
+    console.log(error)
+  }
+  },
+
+  showExamsFiles: async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) => {
+    const {examId} = request.params
+    try {
+        // Definir o tipo de conteúdo como application/pdf
+       // reply.type('application/pdf');
+        // Ler o arquivo PDF usando fs.createReadStream() 
+        reply.header('Content-Disposition', `attachment; filename="${examId}"`);
+
+        const data  = await labService.returnExamFile(examId)
+
+        reply.send(data)
+    } catch (error) {
+      console.log(error)
+    } 
+         
   }
 
-
-
-  
 }
