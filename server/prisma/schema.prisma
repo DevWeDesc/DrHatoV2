@@ -129,27 +129,28 @@ model Exams {
 }
 
 model ExamsForPet {
-  id                 Int            @id @default(autoincrement())
+  id                 Int              @id @default(autoincrement())
   name               String
   price              Decimal
   requesteData       DateTime?
   requestedFor       String?
   responsibleForExam String?
-  doneExame          Boolean?       @default(false)
+  doneExame          Boolean?         @default(false)
   medicine_id        Int
   reportExams        ReportForExams[]
-  medicine           MedicineRecord @relation(fields: [medicine_id], references: [id])
-  examsType          String[]       @default(["lab"])
+  medicine           MedicineRecord   @relation(fields: [medicine_id], references: [id])
+  examsType          String[]         @default(["lab"])
 }
 
-
 model ReportForExams {
-  id                 Int            @id @default(autoincrement())
-  report             Json
-  createdAt          DateTime @default(now())
-  examsId            Int
-  examsForPet        ExamsForPet @relation(fields: [examsId], references: [id])
-  
+  id             Int         @id @default(autoincrement())
+  report         Json?
+  internalReport String[]
+  externalReport String[]
+  imageReport    String[]
+  createdAt      DateTime    @default(now())
+  examsId        Int
+  examsForPet    ExamsForPet @relation(fields: [examsId], references: [id])
 }
 
 model Sectors {
@@ -226,7 +227,7 @@ model QueuesForPet {
   queryType               String?
   debitOnThisQuery        Decimal?
   responsibleVeterinarian String?
-  petName                String?
+  petName                 String?
   medicine_id             Int
   medicine                MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
@@ -256,12 +257,12 @@ model Bed {
 }
 
 model BedsForPet {
-  id                     Int            @id @default(autoincrement())
-  entryOur               DateTime?
-  exitOur                DateTime?
-  mustFasting            Boolean?       @default(false)
-  totalDebt              Decimal?
-  isCompleted            Boolean?       @default(false)
+  id          Int       @id @default(autoincrement())
+  entryOur    DateTime?
+  exitOur     DateTime?
+  mustFasting Boolean?  @default(false)
+  totalDebt   Decimal?
+  isCompleted Boolean?  @default(false)
 
   admissionsObservations Json?
   medicine_id            Int

@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^8.2.1",
+    "@fastify/multipart": "^7.7.3",
     "@prisma/client": "^4.11.0",
     "@types/node": "^18.15.5",
     "bcrypt": "^5.1.0",
