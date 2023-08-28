@@ -268,8 +268,20 @@ export interface PetDetaisl {
   admissions: AdmissionsProps[];
   vetPreference: string;
   customer: { name: string };
+  queueHistory: QueueHistoryProps[]
 }
-
+type QueueHistoryProps = {
+  id: number
+	queueEntry: Date
+	queueExit: Date
+	queryType: Date
+	debitOnThisQuery: number
+	responsibleVeterinarian: string
+	petName: string
+	petWeight: string
+	observations: string
+	medicine_id: number
+}
 type AccountProps = {
   id: number;
   accountNumber: number;

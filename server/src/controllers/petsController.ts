@@ -233,5 +233,21 @@ petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
   } catch (error) {
     reply.status(404).send(error)
   }
+},
+
+changePetWeight: async (request: FastifyRequest<{Params: {petId: string; weight: string;}}>, reply: FastifyReply) => {
+    try {
+      const {petId, weight} = request.params
+
+      await prisma.pets.update({
+        where:{ id: parseInt(petId)}, data: {
+          weigth: weight
+        }
+      })
+
+    } catch (error) {
+      reply.send(error)
+      console.log(error)
+    }
 }
 }
