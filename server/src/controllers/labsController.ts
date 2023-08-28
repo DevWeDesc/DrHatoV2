@@ -167,6 +167,21 @@ export const labsController = {
       console.log(error)
     } 
          
+  },
+
+  getReportExamById:async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) => {
+    try {
+      const {examId} = request.params
+    const examDetails =  await prisma.examsForPet.findUnique({
+          where: {id: parseInt(examId)}, include: {reportExams: true, medicine:{include: {pet: true}}}
+        })
+
+      reply.send(examDetails).status(200)
+
+    } catch (error) {
+        console.log(error)
+        reply.send(error)
+    }
   }
 
 }

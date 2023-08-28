@@ -12,53 +12,54 @@ import {
   TableContainer,
   Input,
   Textarea,
-} from "@chakra-ui/react";
-import { BiHome, TbArrowBack } from "react-icons/all";
-import { useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { api } from "../../lib/axios";
-import { MedicineContainer } from "./style";
-import { PetDetaisl } from "../../interfaces";
+  HStack
+} from '@chakra-ui/react'
+import { BiHome, TbArrowBack } from 'react-icons/all'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { api } from '../../lib/axios'
+import { MedicineContainer } from './style'
+import { PetDetaisl } from '../../interfaces'
 
 interface Customer {
-  id: string | number;
-  name: string;
+  id: string | number
+  name: string
 }
 
 interface PetProps {
-  id: number;
-  name: string;
-  especie: string;
-  corPet: string;
-  observations: string;
-  race: string;
-  rga: number;
-  sizePet: string;
-  weigth: string;
-  sexo: string;
-  status: string;
-  bornDate: string;
-  customerName: string;
-  codPet: string;
+  id: number
+  name: string
+  especie: string
+  corPet: string
+  observations: string
+  race: string
+  rga: number
+  sizePet: string
+  weigth: string
+  sexo: string
+  status: string
+  bornDate: string
+  customerName: string
+  codPet: string
 }
 
 export function MedicineRecords() {
-  const { id } = useParams<{ id: string }>();
-  const [pets, setPets] = useState({} as PetDetaisl);
-  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>()
+  const [pets, setPets] = useState({} as PetDetaisl)
+  const navigate = useNavigate()
 
   async function getPet() {
     try {
-      const response = await api.get(`/pets/${id}`);
-      setPets(response.data);
+      const response = await api.get(`/pets/${id}`)
+      setPets(response.data)
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   }
 
   useEffect(() => {
-    getPet();
-  }, []);
+    getPet()
+  }, [])
 
   return (
     <ChakraProvider>
@@ -71,7 +72,7 @@ export function MedicineRecords() {
             <Button
               colorScheme="teal"
               leftIcon={<BiHome size={24} />}
-              onClick={() => navigate("/Home")}
+              onClick={() => navigate('/Home')}
             >
               Home
             </Button>
@@ -174,272 +175,55 @@ export function MedicineRecords() {
                   Outra Unidade
                 </Button>
               </Flex>
-              <Flex h="100%" w="100%" overflow="auto">
-                <TableContainer w="100%" overflowY="auto">
-                  <Table variant="simple" overflow="auto">
-                    <Tbody overflow="auto">
-                      <Tr>
-                        <Th
-                          colSpan={2}
-                          fontSize="16"
-                          borderColor="black"
-                          borderTop="1px solid black"
-                          bg="gray.300"
-                        >
-                          19/17/23 - Das 14:36 até 14:46 - Retorno - Dr.(a) José
-                          Ricardo Fusaro Serra
-                        </Th>
-                      </Tr>
-                      <Tr>
-                        <Th
-                          fontSize="16"
-                          bg="gray.300"
-                          borderColor="black"
-                          w="30px"
-                          borderRight="1px solid black"
-                        >
-                          Peso à Época
-                        </Th>
-                        <Th fontSize="16" borderColor="black">
-                          3,45Kgs.
-                        </Th>
-                      </Tr>
-                      <Tr p="0">
-                        <Th
-                          fontSize="16"
-                          bg="gray.300"
-                          borderColor="black"
-                          w="30px"
-                        >
-                          Sintomas
-                        </Th>
-                        <Th p="0">
-                          <Textarea
-                            minH="110px"
-                            h="100%"
-                            bg="white"
-                            borderColor="black"
-                            rounded="0"
-                            value="Retorno
 
-Veio retirar resultado de exames com várias alterações, porém não trouxe paciente, irá retornar para aplicação de convênia e receita (estava com duas crianças que não a deixavam conversar)"
-                          ></Textarea>
-                        </Th>
-                      </Tr>
-                    </Tbody>
-                    <Tbody>
-                      <Tr>
-                        <Th
-                          colSpan={2}
-                          fontSize="16"
-                          borderColor="black"
-                          borderTop="1px solid black"
-                          bg="gray.300"
-                        >
-                          13/07/23 - Das 13:38 até : 15:21 - Telefone - Dr.(a)
-                          José Ricardo Fusaro Serra
-                        </Th>
-                      </Tr>
-                      <Tr>
-                        <Th
-                          fontSize="16"
-                          bg="gray.300"
-                          borderColor="black"
-                          w="30px"
-                          borderRight="1px solid black"
-                        >
-                          Peso à Época
-                        </Th>
-                        <Th fontSize="16" borderColor="black">
-                          3,45Kgs.
-                        </Th>
-                      </Tr>
-                      <Tr p="0">
-                        <Th
-                          fontSize="16"
-                          bg="gray.300"
-                          borderColor="black"
-                          w="30px"
-                        >
-                          Sintomas
-                        </Th>
-                        <Th p="0">
-                          <Textarea
-                            minH="110px"
-                            h="100%"
-                            bg="white"
-                            borderColor="black"
-                            rounded="0"
-                            value="Conversado com tutora sobre resultado de exames."
-                          ></Textarea>
-                        </Th>
-                      </Tr>
-                    </Tbody>
-                    <Tbody>
-                      <Tr>
-                        <Th
-                          colSpan={2}
-                          fontSize="16"
-                          borderColor="black"
-                          borderTop="1px solid black"
-                          bg="gray.300"
-                        >
-                          12/07/23 - Das 11:39 até : 12:14 - Retorno - Dr.(a)
-                          Henrique Magoga
-                        </Th>
-                      </Tr>
-                      <Tr>
-                        <Th
-                          fontSize="16"
-                          bg="gray.300"
-                          borderColor="black"
-                          w="30px"
-                          borderRight="1px solid black"
-                        >
-                          Peso à Época
-                        </Th>
-                        <Th fontSize="16" borderColor="black">
-                          3,45Kgs.
-                        </Th>
-                      </Tr>
-                      <Tr p="0">
-                        <Th
-                          fontSize="16"
-                          bg="gray.300"
-                          borderColor="black"
-                          w="30px"
-                        >
-                          Sintomas
-                        </Th>
-                        <Th p="0">
-                          <Textarea
-                            minH="550px"
-                            borderBottom="2px solid black"
-                            bg="white"
-                            borderColor="black"
-                            rounded="0"
-                            value="Retorno
-
-Relata que apresentou diarreia de ontem para hoje.
-Não apresentou emese.
-Refere que depois da fluido o animal ficou mais esperto, se alimentou.
-Animal tinha acesso a rua, há 6 meses esta confinado.
-                            
-TUTORA MUITO CONFUSA, NAO PARA DE ME CORTAR ENQUANTO EU FALO !!
-                            
-Passado resultado de ultrassom - ínfima quantidade de liquido livre;
-Inflamação em alças intestinais;
-Figado toxemico;
-Pancreatopatia
-Linfonodos jejunais aumentados.
-                            
-Conversado sobre possibilidade aumento de linfonodos / liquido livre ser devido ao processo inflamatório intenso, mas não descartando a possibilidade de linfoma primário ou secundário a felv (já que o animal tinha acesso a rua).
-                            
-Enquanto eu falava tutora ficou pedindo para passar antibiótico que o animal iria ficar bem
-                            
-Recoletado hemograma. 
-                            
-Ligar amanha para resultado do hg .. retornar em 10d ou antes se necessario"
-                          ></Textarea>
-                        </Th>
-                      </Tr>
-                      <Tr p="0">
-                        <Th
-                          fontSize="16"
-                          bg="gray.300"
-                          borderColor="black"
-                          w="30px"
-                        >
-                          Prescrição
-                        </Th>
-                        <Th p="0">
-                          <Textarea
-                            minH="330px"
-                            borderBottom="2px solid black"
-                            bg="white"
-                            borderColor="black"
-                            rounded="0"
-                            value="USO ORAL
-
-GAVIZ 10 (VETERINARIO) ________________________ CX
-ADMINISTRAR 1/2 (MEIO) COMPRIMIDO A CADA 12H DURANTE 10 DIAS
-* 30 MINUTOS ANTES DAS OUTRAS MEDICACOES
-                            
-METRONIDAZOL 250 (HUMANO) ___________________CX
-ADMINISTRAR 1/4 (UM QUARTO) DO COMPRIMIDO A CADA 12H DURANTE 10 DIAS
-                            
-PREDINISOLONA 5MG (HUMANO) __________________CX
-ADMINISTRAR 3/4 (TRES QUARTOS) DO COMPRIMIDO A CADA 24H DURANTE 10 DIAS
-                            
-- LIGAR EM 24H PARA RESULTADO DO HEMOGRAMA
-- RETORNAR EM 10 DIAS OU ANTES SE NECESSARIO"
-                          ></Textarea>
-                        </Th>
-                      </Tr>
-                    </Tbody>
-                    <Tbody>
-                      <Tr>
-                        <Th
-                          colSpan={2}
-                          fontSize="16"
-                          borderColor="black"
-                          borderTop="1px solid black"
-                          bg="gray.300"
-                        >
-                          11/07/23 - Das 12:24 até : 12:56 - Consulta - Dr.(a)
-                          José Ricardo Fusaro Serra
-                        </Th>
-                      </Tr>
-                      <Tr>
-                        <Th
-                          fontSize="16"
-                          bg="gray.300"
-                          borderColor="black"
-                          w="30px"
-                          borderRight="1px solid black"
-                        >
-                          Peso à Época
-                        </Th>
-                        <Th fontSize="16" borderColor="black">
-                          3,45Kgs.
-                        </Th>
-                      </Tr>
-                      <Tr p="0">
-                        <Th
-                          fontSize="16"
-                          bg="gray.300"
-                          borderColor="black"
-                          w="30px"
-                        >
-                          Sintomas
-                        </Th>
-                        <Th p="0">
-                          <Textarea
-                            minH="330px"
-                            h="100%"
-                            borderBottom="2px solid black"
-                            bg="white"
-                            borderColor="black"
-                            rounded="0"
-                            value="Alega paciente apresentar êmese algumas vezes após se alimentar.
-Alega paciente estar se alimentando normalmente
-Alega Fezes e urina normais
-Alega paciente com vacinas em dia porem não apresentou carteira de vacinação.
-                            
-                            
-EF.: Paciente apresentou parâmetros normais, alerta e responsivo, eupineico, normocorado, não apresentou dor abdominal a palpação, apresenta desidratação moderada.
-                            
-Coletados Hemograma e bioquímico
-                            
-Aplicado R/L, Acetil e CB
-                            
-Solicirado Ultrassom Abdominal"
-                          ></Textarea>
-                        </Th>
-                      </Tr>
-                    </Tbody>
-                  </Table>
-                </TableContainer>
+              <Flex w="100%" h="100%" overflowY="auto">
+                  <Flex direction="column"  w="100%" h="100%">
+                  {
+                    pets.queueHistory ? pets?.queueHistory.map((queue) => (
+                      <Flex  textAlign="center"  direction="column" w="100%" key={queue.id}>
+                      <Text border="2px" fontSize="lg" color="black" fontWeight="bold">{`Entrada: ${new Intl.DateTimeFormat('pt-BR',{
+                        day: '2-digit',
+                        month: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      } ).format(new Date(queue.queueEntry))} 
+                      - 
+                      Saida: ${new Intl.DateTimeFormat('pt-BR',{
+                        day: '2-digit',
+                        month: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      } ).format(new Date(queue.queueExit))}
+                      -
+                      ${queue.queryType} - ${queue.responsibleVeterinarian}`}</Text>
+                      <Flex m="2" align="center" textAlign="center" gap="2">
+                      <Text border="2px"  fontWeight="bold"  fontSize="lg"  bgColor="gray.300" h="38px" w="20%"> Peso</Text>
+                      <Text  border="2px"  fontWeight="black" fontSize="lg" bgColor="white"  h="38px" w="80%"> {queue.petWeight}Kgs</Text>
+                      </Flex>
+               
+                        <Flex align="center" gap="2">
+                        <Text  border="2px"  fontWeight="bold"  fontSize="lg"  bgColor="gray.300" h="38px" w="20%" > Observações</Text>
+                        <Textarea bgColor="white"  fontSize="md" fontWeight="bold"  border="2px"  w="90%" defaultValue={queue.observations} />
+                        </Flex>
+                     
+                     
+                      </Flex>
+                    )) : (
+                      <Flex direction="column" w="100%">
+                      <Text>Void</Text>
+                      <HStack>
+                      <Text>Void</Text>
+                      <Text>Void</Text>
+                      </HStack>
+                      <HStack>
+                        <Text>Void</Text>
+                        <Textarea />
+                      </HStack>
+                      </Flex>
+                    )
+                  }
+                  
+                  </Flex>
               </Flex>
             </Flex>
           </Flex>
@@ -560,7 +344,7 @@ Solicirado Ultrassom Abdominal"
                 width="100%"
                 overflowY="auto"
               >
-                {pets.exams?.map((exam) => (
+                {pets.exams?.map(exam => (
                   <Flex
                     key={exam.id}
                     borderY="1px"
@@ -582,7 +366,9 @@ Solicirado Ultrassom Abdominal"
                       </Text>
                     )}
                     <Text fontWeight="bold" fontSize="lg">
-                      {exam.requestedData}
+                      {new Intl.DateTimeFormat('pt-BR').format(
+                        new Date(exam.requestedData)
+                      )}
                     </Text>
                   </Flex>
                 ))}
@@ -632,5 +418,5 @@ Solicirado Ultrassom Abdominal"
         </MedicineContainer>
       </Flex>
     </ChakraProvider>
-  );
+  )
 }

@@ -48,6 +48,7 @@ export function WorkSpaceVet() {
   const navigate = useNavigate();
   const [pet, setPet] = useState({} as PetDetaisl);
   const [handleViewComponent, setHandleViewComponent] = useState("");
+  const [petWeigth, setPetWeigth] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAutorizationModalOpen, setAutorizationModalOpen] = useState(false);
   const [reloadData, setReloadData] = useState(false);
@@ -56,6 +57,7 @@ export function WorkSpaceVet() {
   const [PdfPrescrition, setPdfPrescrition] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [modalWeigthPet, setModalWeigthPet] = useState(false);
+  const [petObservations, setPetObservations] = useState("")
 
   function handleCreateInstruction(text: string) {
     const docDefinition: TDocumentDefinitions = {
@@ -83,6 +85,16 @@ export function WorkSpaceVet() {
     navigate(`/Vets/Workspace/${newPetId}`);
     setReloadData(true);
   };
+  const handleChangePetWeight = async (weigth: string) => {
+    try {
+      await api.put(`/pet/${id}/${weigth}`)
+      setReloadData(true);
+      toast.success("Peso editado com sucesso")
+    } catch (error) {
+      console.log(error)
+      toast.error("Falha ao editar peso do animal!")
+    }
+  }
   async function getPetDetails() {
     const response = await api.get(`/pets/${id}`);
     setPet(response.data);
@@ -106,7 +118,9 @@ export function WorkSpaceVet() {
         queueExit: new Date(),
         debitOnThisQuery: Number(pet.totalAcc.price),
         responsibleVeterinarian: user.username,
-        petName: pet.name
+        petName: pet.name,
+        petWeight: pet.weigth,
+        observations: petObservations
       };
 
       await api.put(
@@ -145,7 +159,19 @@ export function WorkSpaceVet() {
           onChange={(e) => setPdfPrescrition(e.target.value)}
         />
       );
+
       break;
+      case viewComponentPrint == "Solicitar Exame":
+        ComponentPrint = (
+          <Textarea
+            minW="45.7rem"
+            minH="12.5rem"
+          defaultValue={'Observações nesta consulta'}
+            onChange={(e) => setPetObservations(e.target.value)}
+          />
+        );
+        
+        break;
     default:
       ComponentPrint = <Text>Nenhuma informação a ser exibida</Text>;
       break;
@@ -368,17 +394,6 @@ export function WorkSpaceVet() {
                 callbackFn={handleCloseQuery}
               />
 
-              <Button
-                height={8}
-                leftIcon={<MdAttachMoney fill="white" size={24} />}
-                colorScheme="whatsapp"
-              >
-                Total nessa consulta:{" "}
-                {new Intl.NumberFormat("pt-BR", {
-                  currency: "BRL",
-                  style: "currency",
-                }).format(Number(pet.totalAcc?.price))}
-              </Button>
             </Flex>
           </Flex>
         </WorkSpaceHeader>
@@ -457,7 +472,7 @@ export function WorkSpaceVet() {
                   {new Intl.NumberFormat("pt-BR", {
                     currency: "BRL",
                     style: "currency",
-                  }).format(pet.balance)}
+                  }).format(pet.totalAcc?.price)} Nesta Consulta
                 </Text>
                 <Text
                   width="100%"
@@ -586,13 +601,13 @@ export function WorkSpaceVet() {
                   >
                     <>
                       {exam.doneExam === true ? (
-                        <Text color="green.400" fontWeight="bold">
+                        <Button onClick={() => navigate(`/WorkSpace/ExamsDetails/${exam.id}`)} colorScheme="whatsapp" fontWeight="bold">
                           {exam.name}
-                        </Text>
+                        </Button>
                       ) : (
-                        <Text color="red.400" fontWeight="bold">
+                        <Button colorScheme="red" fontWeight="bold">
                           {exam.name}
-                        </Text>
+                        </Button>
                       )}
                     </>
                     <Text>{exam.requestedData}</Text>
@@ -622,8 +637,8 @@ export function WorkSpaceVet() {
               <Button w="25%" colorScheme="whatsapp">
                 Sintomas
               </Button>
-              <Button w="25%" colorScheme="whatsapp">
-                Solicitar Exame
+              <Button  onClick={() => setViewComponentPrint("Solicitar Exame")} w="25%" colorScheme="whatsapp">
+               Observações
               </Button>
             </HStack>
             <Flex>{ComponentPrint}</Flex>
@@ -725,8 +740,8 @@ export function WorkSpaceVet() {
         </Text>
         <Flex direction="column" gap="15">
           <Text>Insira o peso do animal</Text>
-          <Input focusBorderColor="green" />
-          <Button colorScheme="yellow">Editar</Button>
+          <Input focusBorderColor="green" onChange={(ev) => setPetWeigth(ev.target.value)} />
+          <Button onClick={() => handleChangePetWeight(petWeigth)}  colorScheme="yellow">Editar</Button>
         </Flex>
       </GenericModal>
 
