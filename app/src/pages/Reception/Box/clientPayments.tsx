@@ -16,7 +16,7 @@ import { AdminContainer } from "../../AdminDashboard/style";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
 import { BiHome, BsCashCoin } from "react-icons/all";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "../../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { LoadingSpinner } from "../../../components/Loading";
@@ -25,7 +25,9 @@ import { LoadingSpinner } from "../../../components/Loading";
 type ProceduresProps = {
 	id: number;
 	name: string;
-	price: number;
+	price: any;
+  entryOur: Date | string;
+  totalDebt: any;
 }
 
 interface ConsultDetailsProps {
@@ -50,13 +52,17 @@ export function BoxNewPaymentsClient() {
 
   useEffect(() => {
     getConsultDetails ()
-  
   }, [])
 
 
+  const totalCost = consultDetails?.procedures?.reduce((accumulator, procedure) => {
+    const price = parseFloat(procedure?.price) || 0;
+    const totalDebt = parseFloat(procedure?.totalDebt) || 0;
+    return accumulator + price + totalDebt;
+  }, 0);
+  
 
-
-  const totalToPay = consultDetails?.procedures?.reduce((acc, procedure) => acc + Number(procedure?.price), 0)
+ 
 
   return (
     <ChakraProvider>
@@ -185,19 +191,19 @@ export function BoxNewPaymentsClient() {
                           consultDetails.procedures  ? consultDetails?.procedures.map((procedure) => (
                             <Tr key={procedure.id} bg="white" fontWeight="bold">
                             <Td border="1px solid black">1</Td>
-                            <Td border="1px solid black">{procedure?.name} </Td>
+                            <Td border="1px solid black">{procedure?.name ? procedure?.name : `Internação ${procedure.entryOur}` } </Td>
                             <Td
                               border="1px solid black"
                               isNumeric
                               fontWeight="bold"
                             >
-                              R$  {procedure?.price}
+                              R$  {procedure?.price ? procedure?.price : procedure.totalDebt}
                             </Td>
                             <Td border="1px solid black" isNumeric>
                             0
                             </Td>
                             <Td border="1px solid black" isNumeric>
-                              R$ {procedure?.price}
+                              R$  {procedure?.price ? procedure?.price : procedure.totalDebt}
                             </Td>
                           </Tr>
                           )) : (<LoadingSpinner/>)
@@ -213,7 +219,7 @@ export function BoxNewPaymentsClient() {
                      {new Intl.NumberFormat('pt-BR', {
                       currency: 'BRL',
                       style: 'currency'
-                     }).format(totalToPay)}
+                     }).format(totalCost)}
                     </Td>
                   </Tr>
                 </Table>

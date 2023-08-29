@@ -1,27 +1,15 @@
 import {
   ChakraProvider,
   Flex,
-  Table,
-  Tr,
-  Td,
-  Th,
-  Thead,
-  Tbody,
-  TableContainer,
   Button,
-  Checkbox,
-  HStack,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+
 import { BiHome } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-import { Input } from "../../../components/admin/Input";
+
 import { ExamsVet } from "../../../components/Exams";
-import { ExamsProps, PetDetaisl } from "../../../interfaces";
-import { api } from "../../../lib/axios";
 
 export function VetExams() {
   const { id } = useParams<{ id: string }>();

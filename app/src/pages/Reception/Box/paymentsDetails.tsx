@@ -113,6 +113,38 @@ export function BoxPaymentsDetails() {
                     <Td>{client.customerAccount.credits}</Td>
                   </Tr>
                 ))}
+                {
+                  pet?.medicineRecords?.petBeds.map(admission => (
+                    <Tr key={admission.id}>
+                        <Td>
+                          <Button
+                          onClick={() => navigate(`/Recepcao/Caixa/PagamentoCliente/${admission?.medicine?.pet?.id}/${admission?.entryOur.toString()}/${client.id}`)}
+                          colorScheme="whatsapp"
+                          >{`Internação Iniciada:${new Intl.DateTimeFormat('pt-BR').format(new Date(admission.entryOur))}
+                          Cod: ${admission.id} Animal ${admission?.medicine.pet?.name}
+                          `}</Button>
+                        </Td>
+                        <Td>
+                          {`Finalizado: ${new Intl.DateTimeFormat('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          }).format(new Date(admission.exitOur))}`}
+                        </Td>
+                        <Td border="2px" bgColor="red.100">
+                      {new Intl.NumberFormat('pt-BR', {
+                        currency: 'BRL',
+                        style: 'currency'
+                      }).format(admission.totalDebt)}
+                    </Td>
+                    <Td>0</Td>
+                    <Td>Entrada</Td>
+                    <Td>{client.customerAccount.credits}</Td>
+
+                    </Tr>
+                  ))
+                }
               </>
             ))
           ) : (
@@ -415,8 +447,8 @@ export function BoxPaymentsDetails() {
                   </Tbody>
                 </Table>
               </TableContainer>
-              <TableContainer>
-                <Table variant="simple">
+              <TableContainer  height="400px" overflowY="auto">
+                <Table  variant="simple">
                   <Thead>
                     <Tr>
                       <Th
