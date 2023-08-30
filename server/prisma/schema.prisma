@@ -228,6 +228,8 @@ model QueuesForPet {
   debitOnThisQuery        Decimal?
   responsibleVeterinarian String?
   petName                 String?
+  petWeight               String?
+  observations            String?
   medicine_id             Int
   medicine                MedicineRecord @relation(fields: [medicine_id], references: [id])
 }

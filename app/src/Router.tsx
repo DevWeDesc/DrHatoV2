@@ -106,6 +106,7 @@ import { AuthContextProvider } from "./contexts/AuthContext";
 import { Reminder } from "./components/reminder";
 import ReminderPage from "./pages/ReminderPage";
 import { UrlContextProvider } from "./contexts/UrlContext";
+import { ExamsDetails } from "./pages/Vets/WorkSpaceVets/examsDetails";
 
 export function Router() {
   return (
@@ -228,6 +229,7 @@ export function Router() {
                 path="/WorkSpace/Surgeries/:id"
                 element={<VetsSurgeries />}
               />
+              <Route  path="/WorkSpace/ExamsDetails/:examId" element={<ExamsDetails/>}  />
 
               {/* VETS WORKSPACE PATHS END */}
 

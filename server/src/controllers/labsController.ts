@@ -166,24 +166,18 @@ export const labsController = {
          
   },
 
-  getExamToReport: async (request:FastifyRequest<{Params: {examId: string, petId: string}}>, reply: FastifyReply) => {
-    const {examId, petId} = request.params
-    try { 
-      const petexam = await prisma.pets.findUnique({
-          where: {id: parseInt(petId)},include: {medicineRecords: {include: {petExams: {where: {id: parseInt(examId)}}}}, customer: {select: {name: true, id: true}}},
+  getReportExamById:async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) => {
+    try {
+      const {examId} = request.params
+    const examDetails =  await prisma.examsForPet.findUnique({
+          where: {id: parseInt(examId)}, include: {reportExams: true, medicine:{include: {pet: true}}}
         })
 
-        const data = {
-          name: petexam?.name,
-          customerName: petexam?.customer.name,
-          customerId: petexam?.customer.id,
-          
+      reply.send(examDetails).status(200)
 
-        }
-
-        reply.send(petexam)
     } catch (error) {
-      console.log(error)
+        console.log(error)
+        reply.send(error)
     }
   }
 

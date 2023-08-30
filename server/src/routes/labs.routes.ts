@@ -14,5 +14,5 @@ export async function labsRoutes(app: FastifyInstance) {
   app.post('/labreportexam', labsController.reportAnExam)
   app.put('/labimport/:examId', labsController.reportWithPdf)
   app.get('/labfile/:examId', labsController.showExamsFiles)
-  app.get('/labpetexam/:examId/:petId', labsController.getExamToReport)
+  app.get('/labexam/:examId', labsController.getReportExamById)
 }
