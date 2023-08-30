@@ -33,7 +33,7 @@ export const queueController = {
     } = QueueSchema.parse(request.body)
     try { 
 
-      await petContract.verifyIfIsPossibleEndQueue(recordId, 'Exame em aberto, não possivel é encerrar consulta.')
+     // await petContract.verifyIfIsPossibleEndQueue(recordId, 'Exame em aberto, não possivel é encerrar consulta.')
 
       if(petContract.hadError()){
         reply.status(400).send(petContract.showErrors()[0])
@@ -84,9 +84,11 @@ export const queueController = {
       const petsProcedures =  await prisma.pets.findUnique({
         where: {id: parseInt(petId)},include: {customer: {select: {name: true}},medicineRecords: {include:{
           petVaccines: {where: {requestedDate: {gte: date, lt: tomorrow}}},
+          petBeds: { where: {entryOur: {gte: date, lt: tomorrow}} },
           petExams: {where: {requesteData: {gte: today,
               lt: tomorrow}}},
-          petSurgeries: {where:{scheduledDate: {gte: date, lt: tomorrow}}
+          petSurgeries: {where:{scheduledDate: {gte: date, lt: tomorrow}},
+          
         },
 
         }}}
@@ -95,7 +97,9 @@ export const queueController = {
       let procedures: any = []
        procedures = procedures.concat(petsProcedures?.medicineRecords?.petVaccines.flatMap((vaccine) => vaccine),
        petsProcedures?.medicineRecords?.petExams.flatMap((exams) => exams),
-       petsProcedures?.medicineRecords?.petSurgeries.flatMap((surgeries) => surgeries))
+       petsProcedures?.medicineRecords?.petSurgeries.flatMap((surgeries) => surgeries),
+       petsProcedures?.medicineRecords?.petBeds.flatMap((beds) => beds)
+       )
 
 
        const data = { 

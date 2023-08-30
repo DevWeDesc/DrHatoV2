@@ -24,7 +24,7 @@ function getDiferrenceBetweenOurs(entryOur, exitOur, dailyRate) {
       totalToPay = 0;
     }
 
-    return totalToPay;
+    return Number(totalToPay);
   } catch (error) {
     console.log(error);
   }

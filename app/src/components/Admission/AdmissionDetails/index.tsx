@@ -99,6 +99,7 @@ export default function DetailsAdmissions() {
           petId: Number(id),
           bedId: petDetails?.bedInfos?.id,
           admissionId: petDetails?.admissions[0].id,
+          totalInAdmission: Number(petDetails.totalAcc?.price)
         };
         await api.put("endadmission", data);
         toast.success("Internação finalizada com Sucesso!");

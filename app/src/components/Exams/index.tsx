@@ -131,6 +131,7 @@ export function ExamsVet() {
                   <Td border="2px" fontSize="1xl" fontWeight="bold">
                     <Button
                       colorScheme="red"
+                      isDisabled={exam.doneExam}
                       onClick={() => deleteExam(exam.id, exam.price)}
                     >
                       EXCLUIR ?
