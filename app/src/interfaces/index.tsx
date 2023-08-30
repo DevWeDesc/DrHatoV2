@@ -207,8 +207,20 @@ type PetQueueProps = {
   responsibleVeterinarian: string;
   pet: QueuePetOn
 }
+type PetBedsProps = {
+  id: number
+	entryOur: Date
+	exitOur:Date 
+	mustFasting: boolean
+	totalDebt: number
+	isCompleted: boolean
+	admissionsObservations: string
+	medicine_id: number
+  medicine: {id: number, observations: string[], pet: {id: number, name: string}}
+}
 type MedicineRecordsProps = {
   petQueues: PetQueueProps[]
+  petBeds: PetBedsProps[]
 }
 
 

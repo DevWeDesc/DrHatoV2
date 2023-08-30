@@ -127,8 +127,9 @@ export const admissionsController = {
       petId: z.number().optional(),
       bedId: z.number().optional(),
       admissionId: z.number().optional(),
+      totalInAdmission: z.number().optional(),
     });
-    const { petId, bedId, admissionId } = FinishAdmissionSchema.parse(
+    const { petId, bedId, admissionId, totalInAdmission } = FinishAdmissionSchema.parse(
       request.body
     );
     const actualDate = new Date();
@@ -141,7 +142,7 @@ export const admissionsController = {
 
     const totalToPay = await getDiferrenceBetweenOurs(bedDetails.entryOur,actualDate, bedDetails.dailyRate
     );
-    
+    const totalFinal = Number(totalToPay) + Number(totalInAdmission)
     try {
       await prisma.bed.update({
         where: { id: bedId }, data: {
@@ -154,15 +155,20 @@ export const admissionsController = {
       await prisma.pets.update({
         where: { id: petId },
         data: {
-          debits: {increment: Number(totalToPay)},
-        },
-      });
+          customer: {update: {
+            customerAccount: {update: {
+              debits: {increment: totalFinal }
+            }}
+          }}
+            },
+        }),
+      
 
       await prisma.bedsForPet.update({
         where: { id: admissionId },
         data: {
           exitOur: actualDate,
-          totalDebt: Number(totalToPay),
+          totalDebt:  Number(totalToPay),
           isCompleted: true,
         },
       });
@@ -178,6 +184,10 @@ export const admissionsController = {
           hospitalizedDays: null,
         },
       });
+
+      await  prisma.pets.update({
+        where: { id: petId},data: {priceAccumulator: {update: {accumulator: 0}}}
+    })
 
       reply.send("Internação Encerrada com sucesso").status(202);
     } catch (error) {
