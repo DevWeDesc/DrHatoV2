@@ -14,7 +14,6 @@ export const CustomerSchema = z.object({
   transactions: z.any(),
 });
 
-
 export const petSchema = z.object({
   name: z.string(),
   especie: z.string(),
@@ -64,8 +63,6 @@ export const VaccineSchema = z.object({
   price: z.number(),
   description: z.string()
 })
-
-
 
 
 export const AdmissionSchema = z.object({
@@ -122,8 +119,6 @@ export const ExamSchema = z.object({
   ageRange: z.string().array().optional(),
   doneExame: z.boolean().optional().default(false)
 })
-
-
 
 
 export const GroupSchema = z.object({

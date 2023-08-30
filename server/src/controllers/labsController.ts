@@ -2,9 +2,6 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../interface/PrismaInstance";
 import { labService } from "../services/labsService";
 
-
-
-
 export const labsController = {
   getOpenExamsInLab: async (request:FastifyRequest, reply: FastifyReply) => {
     try {
@@ -14,7 +11,7 @@ export const labsController = {
         },
         orderBy: {requesteData: 'asc'},
         include: {
-          medicine: {select: {pet: { select: {name: true}}}}
+          medicine: {select: {pet: { select: {name: true, id: true}}}}
         }
 
       })
@@ -167,6 +164,27 @@ export const labsController = {
       console.log(error)
     } 
          
+  },
+
+  getExamToReport: async (request:FastifyRequest<{Params: {examId: string, petId: string}}>, reply: FastifyReply) => {
+    const {examId, petId} = request.params
+    try { 
+      const petexam = await prisma.pets.findUnique({
+          where: {id: parseInt(petId)},include: {medicineRecords: {include: {petExams: {where: {id: parseInt(examId)}}}}, customer: {select: {name: true, id: true}}},
+        })
+
+        const data = {
+          name: petexam?.name,
+          customerName: petexam?.customer.name,
+          customerId: petexam?.customer.id,
+          
+
+        }
+
+        reply.send(petexam)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 }

@@ -1,19 +1,13 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   ChakraProvider,
   Flex,
   Box,
-  Button,
   Text,
-  Table,
-  Tr,
-  Td,
-  Thead,
-  Tbody,
   Input,
+  Button,
 } from "@chakra-ui/react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import {
@@ -22,31 +16,20 @@ import {
   IoIosFlask,
   BsImages,
 } from "react-icons/all";
-import { HemoTable } from "../../components/ProceduresTable/HemoTable";
 import { Header } from "../../components/admin/Header";
 import { api } from "../../lib/axios";
 import FileUpload from "../../components/FileUpload";
 
 export function SetPetExam() {
-  const { id } = useParams<{ id: string }>();
-  const [option, setOption] = useState<null | object>([]);
-  const [pet, setPet] = useState([]);
-  const [petFilter, setPetFilter] = useState([]);
-
+  const { id, petId } = useParams<{ id: string, petId: string }>();
+  const [pet, setPet] = useState({} as any);
+  async function Pets() {
+    let pets = await api.get(`/labpetexam/${id}/${petId}`);
+    setPet(pets.data);
+  }
   useEffect(() => {
-    async function Pets() {
-      let pets = await api.get("http://localhost:5000/labs");
-      setPet(pets.data);
-    }
     Pets();
   }, []);
-
-  useEffect(() => {
-    const petFiltered = pet.filter((pet: any) => pet.id == id);
-    setPetFilter(petFiltered);
-  }, [petFilter]);
-
-  //console.log(petFilter);
 
   return (
     <ChakraProvider>
@@ -68,7 +51,7 @@ export function SetPetExam() {
             />
           </GenericSidebar>
           <Box
-            height={option != null ? "auto" : "55vh"}
+            height="auto"
             w="88%"
             borderRadius={8}
             bg="gray.200"
@@ -95,6 +78,13 @@ export function SetPetExam() {
                       <Text fontSize="3xl">
                         <strong>Dados do Exame</strong>
                       </Text>
+                      <Flex   w="600px" wrap="wrap" height="120px" m="2" gap="2" >
+                        <Button colorScheme="whatsapp">Tabela Hemograma Completo </Button>
+                        <Button colorScheme="whatsapp">Tabela Biquimico </Button>
+                        <Button colorScheme="whatsapp">Hemograma Canino </Button>
+                        <Button colorScheme="whatsapp">Hemograma Felino </Button>
+                        <Button colorScheme="whatsapp"> Laudo Livre com Texto </Button>
+                      </Flex>
                       <FileUpload examId={`${id}`} />
                     </Flex>
                    
@@ -104,9 +94,7 @@ export function SetPetExam() {
                     w="94.5%"
                     border={"1px solid black"}
                   >
-                    {petFilter.map((pet: any) => {
-                      return (
-                        <>
+                
                           <Flex
                             alignItems={"center"}
                             borderBottom={"1px solid black"}
@@ -125,7 +113,8 @@ export function SetPetExam() {
                               borderColor={"black"}
                               bgColor="white"
                               w="100%"
-                              value={pet.id}
+                              defaultValue={pet?.customer?.name}
+                             
                             ></Input>
                           </Flex>
                           <Flex
@@ -146,7 +135,7 @@ export function SetPetExam() {
                               borderBottom={"0"}
                               borderRadius={"0"}
                               borderColor={"black"}
-                              value={pet.medicine.pet.name}
+                              defaultValue={pet.name}
                               w="100%"
                             ></Input>
                           </Flex>
@@ -168,7 +157,7 @@ export function SetPetExam() {
                               borderBottom={"0"}
                               borderRadius={"0"}
                               borderColor={"black"}
-                              value={pet.name}
+                        
                               w="50%"
                             ></Input>
                             <Text
@@ -206,7 +195,7 @@ export function SetPetExam() {
                               borderRadius={"0"}
                               borderColor={"black"}
                               w="50%"
-                              value={pet.requesteData}
+                             
                             ></Input>
                             <Text
                               border={"1px solid black"}
@@ -223,9 +212,9 @@ export function SetPetExam() {
                               w="30%"
                             ></Input>
                           </Flex>
-                        </>
-                      );
-                    })}
+                 
+                      
+                
                   </Flex>
                   {/*<Button
                     marginTop={"20px"}
@@ -237,7 +226,6 @@ export function SetPetExam() {
                 </Box>
               </Flex>
             </Flex>
-            <HemoTable Option={petFilter} CloseOption={() => setOption(null)} />
           </Box>
         </Flex>
       </Flex>
