@@ -7,10 +7,10 @@ import util from 'util';
 const pump = util.promisify(pipeline)
 
 export const labService = {
-    reportExam: async (examId: any, data: Object) => {
+    reportExam: async (examId: any, data: any) => {
         const jsonData = JSON.stringify(data)
         await prisma.reportForExams.create({
-            data: {report: jsonData, examsForPet: {connect: {id: parseInt(examId)}}},
+            data: {textReport: jsonData, examsForPet: {connect: {id: parseInt(examId)}}},
         })
     },
 

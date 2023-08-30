@@ -6,6 +6,7 @@ import {
   Text,
   Input,
   Button,
+  Textarea,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
@@ -19,18 +20,59 @@ import {
 import { Header } from "../../components/admin/Header";
 import { api } from "../../lib/axios";
 import FileUpload from "../../components/FileUpload";
+import { TableHemogramaFelino } from "../../components/TablesLab/HemogramaFelino";
+import { toast } from "react-toastify";
+
 
 export function SetPetExam() {
+
   const { id, petId } = useParams<{ id: string, petId: string }>();
+  const user = JSON.parse(localStorage.getItem("user") as string);
   const [pet, setPet] = useState({} as any);
+  const [typeView, setTypeView] = useState(0);
+  const [textReport, setTextReport] = useState("")
+
   async function Pets() {
-    let pets = await api.get(`/labpetexam/${id}/${petId}`);
+    const pets = await api.get(`/labexam/${id}`);
     setPet(pets.data);
   }
   useEffect(() => {
     Pets();
   }, []);
 
+
+  const handleSetTextReport = async () => {
+    try {
+      const data = {
+        jsonString: textReport,
+        responsible: user.username
+      }
+      await api.post(`/labreportexam/${id}`,data)
+      toast.success("Exame laudado com sucesso!")
+    } catch (error) {
+      toast.error("Falha ao laudar com texto!")
+    }
+  }
+
+  let tableView;
+  switch(true) {
+   case typeView === 1:
+    tableView = (
+      <TableHemogramaFelino />
+    )
+    break;
+    case typeView === 2:
+      tableView = (
+        <Flex direction="column" align="center" m="4">
+          <Text>LAUDO LIVRE</Text>
+        <Textarea onChange={(ev) => setTextReport(ev.target.value)}  border="2px" bgColor="white" minWidth={600} minHeight={800} />
+        <Button onClick={handleSetTextReport} colorScheme="whatsapp" mt="4">GRAVAR</Button>
+        </Flex>
+      
+      )
+    break;
+  }
+ 
   return (
     <ChakraProvider>
       <Flex direction="column" h="100vh">
@@ -82,8 +124,8 @@ export function SetPetExam() {
                         <Button colorScheme="whatsapp">Tabela Hemograma Completo </Button>
                         <Button colorScheme="whatsapp">Tabela Biquimico </Button>
                         <Button colorScheme="whatsapp">Hemograma Canino </Button>
-                        <Button colorScheme="whatsapp">Hemograma Felino </Button>
-                        <Button colorScheme="whatsapp"> Laudo Livre com Texto </Button>
+                        <Button onClick={() => setTypeView(1)} colorScheme="whatsapp">Hemograma Felino </Button>
+                        <Button onClick={() => setTypeView(2)}colorScheme="whatsapp"> Laudo Livre com Texto </Button>
                       </Flex>
                       <FileUpload examId={`${id}`} />
                     </Flex>
@@ -113,7 +155,7 @@ export function SetPetExam() {
                               borderColor={"black"}
                               bgColor="white"
                               w="100%"
-                              defaultValue={pet?.customer?.name}
+                              defaultValue={pet?.medicine?.pet?.customer?.name}
                              
                             ></Input>
                           </Flex>
@@ -135,7 +177,7 @@ export function SetPetExam() {
                               borderBottom={"0"}
                               borderRadius={"0"}
                               borderColor={"black"}
-                              defaultValue={pet.name}
+                              defaultValue={pet?.name}
                               w="100%"
                             ></Input>
                           </Flex>
@@ -157,7 +199,7 @@ export function SetPetExam() {
                               borderBottom={"0"}
                               borderRadius={"0"}
                               borderColor={"black"}
-                        
+                          defaultValue={pet?.medicine?.pet.name}
                               w="50%"
                             ></Input>
                             <Text
@@ -172,8 +214,8 @@ export function SetPetExam() {
                               borderBottom={"0"}
                               borderRadius={"0"}
                               borderColor={"black"}
-                              value="Não definido"
                               w="30%"
+                              defaultValue={pet.responsibleForExam ? pet.responsibleForExam : "Não definido"}
                             ></Input>
                           </Flex>
                           <Flex
@@ -190,13 +232,13 @@ export function SetPetExam() {
                             >
                               <strong> Data</strong>
                             </Text>
-                            <Input
+                            <Text
                               bgColor="white"
                               borderRadius={"0"}
                               borderColor={"black"}
                               w="50%"
-                             
-                            ></Input>
+                           
+                            >{ new Intl.DateTimeFormat('pt-BR').format(new Date(pet.requesteData ? pet.requesteData : Date.now() )) }</Text>
                             <Text
                               border={"1px solid black"}
                               padding={"7px 73px"}
@@ -208,21 +250,12 @@ export function SetPetExam() {
                               bgColor="white"
                               borderRadius={"0"}
                               borderColor={"black"}
-                              value="Não definido"
+                              defaultValue="Não definido"
                               w="30%"
                             ></Input>
                           </Flex>
-                 
-                      
-                
+                        {tableView}
                   </Flex>
-                  {/*<Button
-                    marginTop={"20px"}
-                    width={"28%"}
-                    colorScheme="whatsapp"
-                  >
-                    Gravar
-  </Button>*/}
                 </Box>
               </Flex>
             </Flex>

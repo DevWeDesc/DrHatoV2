@@ -144,10 +144,9 @@ model ExamsForPet {
 
 model ReportForExams {
   id             Int         @id @default(autoincrement())
+  textReport String?
   report         Json?
   internalReport String[]
-  externalReport String[]
-  imageReport    String[]
   createdAt      DateTime    @default(now())
   examsId        Int
   examsForPet    ExamsForPet @relation(fields: [examsId], references: [id])
