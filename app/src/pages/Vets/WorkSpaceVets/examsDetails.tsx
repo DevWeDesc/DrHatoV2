@@ -10,7 +10,8 @@ import {
   Tr,
   Th,
   Td,
-  Link
+  Link,
+  Textarea
 } from '@chakra-ui/react'
 import { useState, ElementType, FunctionComponent, useEffect } from 'react'
 import { BiHome } from 'react-icons/bi'
@@ -100,14 +101,18 @@ export function ExamsDetails() {
                             <Text>
                               Data de Laudo {new Intl.DateTimeFormat('pt-BR').format(new Date(exam.createdAt))}
                             </Text>
+
+                              
                               {
-                                exam.internalReport.map((arq: any) => (
+                                exam.internalReport.length >= 1 ?   exam.internalReport.map((arq: any) => (
                                   <Link bgColor="green.200" border='2px' rounded="full" w="auto" h="auto" 
                                   m="4" 
                                   p="4" 
                                  justifyContent="center"
                                   target="_blank" href={`http://localhost:5000/labfile/${arq}`}>{arq}</Link>
-                                ))
+                                )) : (
+                                  <h1>Sem arquivos disponiveis verifique outras opções!</h1>
+                                )
                               }
                             </Flex>
                           )) : (<h1>SEM ARQUIVOS DISPONIVEIS</h1>)
@@ -117,7 +122,67 @@ export function ExamsDetails() {
       )
       break
     case typeReport === 2:
-      typeReportInExibition = <></>
+      typeReportInExibition = (
+        <Flex w="100vw" h="100vh" overflowY="auto" align="center" direction="column">
+        <Text mb="4" fontWeight="bold" fontSize="2xl">
+          LISTAGEM DE ARQUIVOS PARA DOWLOAD NESTE EXAME
+        </Text>
+        <Flex h="78px" w="100%" align="center" justify="center" >
+          <TableContainer fontWeight="bold" fontSize="1xl">
+            <Table>
+              <Thead>
+                <Tr>
+                  <Th>Nome do Exame</Th>
+                  <Th>Data Solicitada</Th>
+                  <Th>Responsável pelo Exame</Th>
+                  <Th>Animal</Th>
+                  <Th>Peso</Th>
+                  <Th>Sexo</Th>
+                  <Th>Especie</Th>
+                  <Th>Raça</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                <Tr>
+                  <Td>{examDetails.name}</Td>
+                  <Td>
+                    {new Intl.DateTimeFormat('pt-BR').format(
+                      new Date(examDetails.requesteData)
+                    )}
+                  </Td>
+                  <Td>
+                    {examDetails.responsibleForExam
+                      ? examDetails.responsibleForExam
+                      : 'Não Definido'}
+                  </Td>
+                  <Td>{examDetails?.medicine?.pet?.name}</Td>
+                  <Td>{examDetails?.medicine?.pet?.weigth}</Td>
+                  <Td>{examDetails?.medicine?.pet?.sexo}</Td>
+                  <Td>{examDetails?.medicine?.pet?.especie}</Td>
+                  <Td>{examDetails?.medicine?.pet?.race}</Td>
+                </Tr>
+              </Tbody>
+            </Table>
+          </TableContainer>
+        </Flex>
+        <Flex  align="center"  justify="center" flex="1" w="100%" gap='8' direction='column'>
+                      {
+                        examDetails ? examDetails.reportExams.map((exam: any) => (
+                          <Flex align="center" h="100%"   direction="column" key={exam.id}>
+                          <Text>
+                            Data de Laudo {new Intl.DateTimeFormat('pt-BR').format(new Date(exam.createdAt))}
+                          </Text>
+
+                            {
+                              exam.textReport ? <Textarea minHeight={600} minWidth={800}  border="2px" defaultValue={exam.textReport} /> : <h1>Esse laudo não foi por texto verifique as outras opções!</h1>
+                            }
+                              
+                          </Flex>
+                        )) : (<h1>SEM ARQUIVOS DISPONIVEIS</h1>)
+                      }
+        </Flex>
+      </Flex>
+      )
       break
   }
 
@@ -146,7 +211,7 @@ export function ExamsDetails() {
           </Flex>
         </Flex>
 
-        <Flex border="2px" direction="column" h="90%" w="100%">
+        <Flex  direction="column" h="90%" overflowY="auto" w="100%">
           {typeReportInExibition}
         </Flex>
       </Flex>
