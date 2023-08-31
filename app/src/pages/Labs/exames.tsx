@@ -53,7 +53,7 @@ export function LabExames() {
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [totalInQueue, setTotalInQueue] = useState(0 as any);
   const navigate = useNavigate();
-  const [namePet, setNamePet] = useState("");
+
 
   useEffect(() => {
     async function getQueue() {
@@ -74,16 +74,7 @@ export function LabExames() {
     }
     navigate(`/Labs/Set/${procedure}`);
   };
-  //console.log(labs.medicine.pet.name);
-  // console.log("PET RESPONSE", dataPet);
 
-  /*const petz: any = labs.map((pet: any) => {
-    return pet.id === 3 ? console.log(pet) : console.log("erro");
-  });*/
-
-  //const DataCust = dataCustomer;
-
-  //console.log(labs);
 
   let typeTable: ReactNode;
   switch (true) {
@@ -157,37 +148,7 @@ export function LabExames() {
                   >
                     {customer.name}
                   </Button>
-                  {/* <Menu>
-                    <MenuButton border="1px" as={Button} rightIcon={<Burger />}>
-                      <StyledBox>
-                        <Text>pets</Text>
-                      </StyledBox>
-                    </MenuButton>
-                    <MenuList bg="green.100">
-                      {customer.pets?.map((pets: any) => (
-                        <Flex
-                          direction="column"
-                          align="center"
-                          p="2px"
-                          gap="2"
-                          key={pets.id}
-                        >
-                          <RadioGroup
-                            onClick={() => setNamePet(pets.name)}
-                            onChange={setPetValue}
-                            value={petValue}
-                          >
-                            <Radio
-                              bgColor={petValue == pets.id ? "green" : "red"}
-                              value={pets.id as any}
-                            >
-                              {pets.name}
-                            </Radio>
-                          </RadioGroup>
-                        </Flex>
-                      ))}
-                    </MenuList>
-                  </Menu> */}
+    
                 </Td>
 
                 <Td>92487</Td>
@@ -222,31 +183,24 @@ export function LabExames() {
             </Thead>
 
             <Tbody>
-              {labs.map((pet: any) => (
+              {labs.map((exam: any) => (
                 <>
-                  {pet.doneExame === false && (
+                  {exam.doneExame === false && (
                     <Tr
-                      key={pet.id}
+                      key={exam.id}
                       cursor="pointer"
-                      onClick={() => navigate(`/Labs/Set/${pet.id}`)}
+                      onClick={() => navigate(`/Labs/Set/${exam.id}/${exam?.medicine?.pet.id}`)}
                     >
-                      <Td>
-                        {/*<Button
-                      colorScheme="whatsapp"
-                      onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
-              >*/}
-                        {pet.requesteData}
-                        {/*</Button>*/}
-                      </Td>
+                      <Td>{new Intl.DateTimeFormat('pt-BR').format(new Date(exam?.requesteData))} </Td>
 
-                      <Td>{pet.medicine.pet.name}</Td>
+                      <Td>{exam.medicine?.pet.name}</Td>
 
-                      <Td>{pet.name}</Td>
+                      <Td>{exam.name}</Td>
 
                       <Td>
-                        {pet.responsibleForExam === null
+                        {exam.responsibleForExam === null
                           ? "Não Adicionado"
-                          : pet.responsibleForExam}
+                          : exam.responsibleForExam}
                       </Td>
                       <Td>À Fazer</Td>
                       <Th>Não Adicionado</Th>
@@ -261,8 +215,6 @@ export function LabExames() {
       break;
   }
 
-  console.log("DATA RESPONSE", dataCustomer);
-  console.log("Data Pet", dataPet);
   return (
     <ChakraProvider>
       <AdminContainer>
