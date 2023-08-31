@@ -1,19 +1,14 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   ChakraProvider,
   Flex,
   Box,
-  Button,
   Text,
-  Table,
-  Tr,
-  Td,
-  Thead,
-  Tbody,
   Input,
+  Button,
+  Textarea,
 } from "@chakra-ui/react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import {
@@ -22,17 +17,25 @@ import {
   IoIosFlask,
   BsImages,
 } from "react-icons/all";
-import { HemoTable } from "../../components/ProceduresTable/HemoTable";
 import { Header } from "../../components/admin/Header";
 import { api } from "../../lib/axios";
 import FileUpload from "../../components/FileUpload";
+import { TableHemogramaFelino } from "../../components/TablesLab/HemogramaFelino";
+import { toast } from "react-toastify";
+
 
 export function SetPetExam() {
-  const { id } = useParams<{ id: string }>();
-  const [option, setOption] = useState<null | object>([]);
-  const [pet, setPet] = useState([]);
-  const [petFilter, setPetFilter] = useState([]);
 
+  const { id, petId } = useParams<{ id: string, petId: string }>();
+  const user = JSON.parse(localStorage.getItem("user") as string);
+  const [pet, setPet] = useState({} as any);
+  const [typeView, setTypeView] = useState(0);
+  const [textReport, setTextReport] = useState("")
+
+  async function Pets() {
+    const pets = await api.get(`/labexam/${id}`);
+    setPet(pets.data);
+  }
   useEffect(() => {
     async function Pets() {
       let pets = await api.get("/labs");
@@ -41,13 +44,39 @@ export function SetPetExam() {
     Pets();
   }, []);
 
-  useEffect(() => {
-    const petFiltered = pet.filter((pet: any) => pet.id == id);
-    setPetFilter(petFiltered);
-  }, [petFilter]);
 
-  //console.log(petFilter);
+  const handleSetTextReport = async () => {
+    try {
+      const data = {
+        jsonString: textReport,
+        responsible: user.username
+      }
+      await api.post(`/labreportexam/${id}`,data)
+      toast.success("Exame laudado com sucesso!")
+    } catch (error) {
+      toast.error("Falha ao laudar com texto!")
+    }
+  }
 
+  let tableView;
+  switch(true) {
+   case typeView === 1:
+    tableView = (
+      <TableHemogramaFelino />
+    )
+    break;
+    case typeView === 2:
+      tableView = (
+        <Flex direction="column" align="center" m="4">
+          <Text>LAUDO LIVRE</Text>
+        <Textarea onChange={(ev) => setTextReport(ev.target.value)}  border="2px" bgColor="white" minWidth={600} minHeight={800} />
+        <Button onClick={handleSetTextReport} colorScheme="whatsapp" mt="4">GRAVAR</Button>
+        </Flex>
+      
+      )
+    break;
+  }
+ 
   return (
     <ChakraProvider>
       <Flex direction="column" h="100vh">
@@ -68,7 +97,7 @@ export function SetPetExam() {
             />
           </GenericSidebar>
           <Box
-            height={option != null ? "auto" : "55vh"}
+            height="auto"
             w="88%"
             borderRadius={8}
             bg="gray.200"
@@ -95,6 +124,13 @@ export function SetPetExam() {
                       <Text fontSize="3xl">
                         <strong>Dados do Exame</strong>
                       </Text>
+                      <Flex   w="600px" wrap="wrap" height="120px" m="2" gap="2" >
+                        <Button colorScheme="whatsapp">Tabela Hemograma Completo </Button>
+                        <Button colorScheme="whatsapp">Tabela Biquimico </Button>
+                        <Button colorScheme="whatsapp">Hemograma Canino </Button>
+                        <Button onClick={() => setTypeView(1)} colorScheme="whatsapp">Hemograma Felino </Button>
+                        <Button onClick={() => setTypeView(2)}colorScheme="whatsapp"> Laudo Livre com Texto </Button>
+                      </Flex>
                       <FileUpload examId={`${id}`} />
                     </Flex>
                    
@@ -104,9 +140,7 @@ export function SetPetExam() {
                     w="94.5%"
                     border={"1px solid black"}
                   >
-                    {petFilter.map((pet: any) => {
-                      return (
-                        <>
+                
                           <Flex
                             alignItems={"center"}
                             borderBottom={"1px solid black"}
@@ -125,7 +159,8 @@ export function SetPetExam() {
                               borderColor={"black"}
                               bgColor="white"
                               w="100%"
-                              value={pet.id}
+                              defaultValue={pet?.medicine?.pet?.customer?.name}
+                             
                             ></Input>
                           </Flex>
                           <Flex
@@ -146,7 +181,7 @@ export function SetPetExam() {
                               borderBottom={"0"}
                               borderRadius={"0"}
                               borderColor={"black"}
-                              value={pet.medicine.pet.name}
+                              defaultValue={pet?.name}
                               w="100%"
                             ></Input>
                           </Flex>
@@ -168,7 +203,7 @@ export function SetPetExam() {
                               borderBottom={"0"}
                               borderRadius={"0"}
                               borderColor={"black"}
-                              value={pet.name}
+                          defaultValue={pet?.medicine?.pet.name}
                               w="50%"
                             ></Input>
                             <Text
@@ -183,8 +218,8 @@ export function SetPetExam() {
                               borderBottom={"0"}
                               borderRadius={"0"}
                               borderColor={"black"}
-                              value="Não definido"
                               w="30%"
+                              defaultValue={pet.responsibleForExam ? pet.responsibleForExam : "Não definido"}
                             ></Input>
                           </Flex>
                           <Flex
@@ -201,13 +236,13 @@ export function SetPetExam() {
                             >
                               <strong> Data</strong>
                             </Text>
-                            <Input
+                            <Text
                               bgColor="white"
                               borderRadius={"0"}
                               borderColor={"black"}
                               w="50%"
-                              value={pet.requesteData}
-                            ></Input>
+                           
+                            >{ new Intl.DateTimeFormat('pt-BR').format(new Date(pet.requesteData ? pet.requesteData : Date.now() )) }</Text>
                             <Text
                               border={"1px solid black"}
                               padding={"7px 73px"}
@@ -219,25 +254,15 @@ export function SetPetExam() {
                               bgColor="white"
                               borderRadius={"0"}
                               borderColor={"black"}
-                              value="Não definido"
+                              defaultValue="Não definido"
                               w="30%"
                             ></Input>
                           </Flex>
-                        </>
-                      );
-                    })}
+                        {tableView}
                   </Flex>
-                  {/*<Button
-                    marginTop={"20px"}
-                    width={"28%"}
-                    colorScheme="whatsapp"
-                  >
-                    Gravar
-  </Button>*/}
                 </Box>
               </Flex>
             </Flex>
-            <HemoTable Option={petFilter} CloseOption={() => setOption(null)} />
           </Box>
         </Flex>
       </Flex>

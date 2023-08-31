@@ -2,9 +2,6 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../interface/PrismaInstance";
 import { labService } from "../services/labsService";
 
-
-
-
 export const labsController = {
   getOpenExamsInLab: async (request:FastifyRequest, reply: FastifyReply) => {
     try {
@@ -14,7 +11,7 @@ export const labsController = {
         },
         orderBy: {requesteData: 'asc'},
         include: {
-          medicine: {select: {pet: { select: {name: true}}}}
+          medicine: {select: {pet: { select: {name: true, id: true}}}}
         }
 
       })
@@ -110,17 +107,23 @@ export const labsController = {
     }
   },  
 
-  reportAnExam: async (request:FastifyRequest, reply: FastifyReply) => {
+  reportAnExam: async (request:FastifyRequest<{Params: {examId: string}}>, reply: FastifyReply) => {
+    const { examId } = request.params
     try {
       const {
-       jsonString
+       jsonString,
+       responsible
       }: any = request.body
 
-      let data = {
-        jsonString
-      }
+      
+    await labService.reportExam(examId, jsonString)
 
-    await labService.reportExam(2, data)
+    await prisma.examsForPet.update({
+      where:{id: parseInt(examId)}, data: {
+        doneExame: true,
+        responsibleForExam: responsible,
+      }
+    })
 
     } catch (error) {
       console.log(error)
@@ -173,7 +176,7 @@ export const labsController = {
     try {
       const {examId} = request.params
     const examDetails =  await prisma.examsForPet.findUnique({
-          where: {id: parseInt(examId)}, include: {reportExams: true, medicine:{include: {pet: true}}}
+          where: {id: parseInt(examId)}, include: {reportExams: true, medicine:{include: {pet: {include: {customer: {select: {name: true}}}}}}}
         })
 
       reply.send(examDetails).status(200)
