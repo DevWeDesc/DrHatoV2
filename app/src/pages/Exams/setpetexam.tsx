@@ -35,7 +35,7 @@ export function SetPetExam() {
 
   useEffect(() => {
     async function Pets() {
-      let pets = await api.get("http://localhost:5000/labs");
+      let pets = await api.get("/labs");
       setPet(pets.data);
     }
     Pets();
