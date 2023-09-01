@@ -8,9 +8,8 @@ const pump = util.promisify(pipeline)
 
 export const labService = {
     reportExam: async (examId: any, data: any) => {
-        const jsonData = JSON.stringify(data)
         await prisma.reportForExams.create({
-            data: {textReport: jsonData, examsForPet: {connect: {id: parseInt(examId)}}},
+            data: {textReport: data, examsForPet: {connect: {id: parseInt(examId)}}},
         })
     },
 

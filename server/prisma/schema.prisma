@@ -144,7 +144,7 @@ model ExamsForPet {
 
 model ReportForExams {
   id             Int         @id @default(autoincrement())
-  textReport String?
+  textReport     String?
   report         Json?
   internalReport String[]
   createdAt      DateTime    @default(now())
