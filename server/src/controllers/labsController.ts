@@ -112,9 +112,8 @@ export const labsController = {
     try {
       const {
        jsonString,
-       responsible
+       responsible,
       }: any = request.body
-
       
     await labService.reportExam(examId, jsonString)
 
@@ -127,6 +126,21 @@ export const labsController = {
 
     } catch (error) {
       console.log(error)
+    }
+  },
+
+  reportTableExam: async (request:FastifyRequest<{Params: {examId: string}}>, reply: FastifyReply) => {
+    try {
+      const {examId} = request.params
+      const data: any  = request.body
+      await prisma.reportForExams.create({
+        data: {report: data,examsForPet: {connect: {id: parseInt(examId)}}}
+      })
+
+      reply.send("Exame laudado")
+    } catch (error) {
+      console.log(error)
+      reply.send({message: error})
     }
   },
 
