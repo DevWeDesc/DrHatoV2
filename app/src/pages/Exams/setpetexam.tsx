@@ -22,6 +22,10 @@ import { api } from "../../lib/axios";
 import FileUpload from "../../components/FileUpload";
 import { TableHemogramaFelino } from "../../components/TablesLab/HemogramaFelino";
 import { toast } from "react-toastify";
+import { HemogramaCaninoAdulto } from "../../components/TablesLab/HemogramaCaninoAdulto";
+import { TableBioquimicoCompleto } from "../../components/TablesLab/BioquimicoCompleto";
+import { TableBioquimicaSerica } from "../../components/TablesLab/BioquimicaSerica";
+
 
 
 export function SetPetExam() {
@@ -68,9 +72,24 @@ export function SetPetExam() {
         <Textarea onChange={(ev) => setTextReport(ev.target.value)}  border="2px" bgColor="white" minWidth={600} minHeight={800} />
         <Button onClick={handleSetTextReport} colorScheme="whatsapp" mt="4">GRAVAR</Button>
         </Flex>
-      
       )
     break;
+    case typeView === 3:
+      tableView = (
+        <HemogramaCaninoAdulto examId={id}/>
+      )
+      break;
+    case typeView === 4:
+        tableView = (
+          <TableBioquimicoCompleto examId={id} />
+        )
+
+      break;
+     case typeView === 5: 
+     tableView = (
+      <TableBioquimicaSerica />
+     )
+     break; 
   }
  
   return (
@@ -121,9 +140,9 @@ export function SetPetExam() {
                         <strong>Dados do Exame</strong>
                       </Text>
                       <Flex   w="600px" wrap="wrap" height="120px" m="2" gap="2" >
-                        <Button colorScheme="whatsapp">Tabela Hemograma Completo </Button>
-                        <Button colorScheme="whatsapp">Tabela Biquimico </Button>
-                        <Button colorScheme="whatsapp">Hemograma Canino </Button>
+                        <Button  onClick={() => setTypeView(4)} colorScheme="whatsapp">Tabela Hemograma Completo </Button>
+                        <Button onClick={() => setTypeView(5)}colorScheme="whatsapp">Tabela Bioquimico </Button>
+                        <Button onClick={() => setTypeView(3)} colorScheme="whatsapp">Hemograma Canino </Button>
                         <Button onClick={() => setTypeView(1)} colorScheme="whatsapp">Hemograma Felino </Button>
                         <Button onClick={() => setTypeView(2)}colorScheme="whatsapp"> Laudo Livre com Texto </Button>
                       </Flex>

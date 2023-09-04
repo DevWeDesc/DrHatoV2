@@ -146,6 +146,8 @@ model ReportForExams {
   id             Int         @id @default(autoincrement())
   textReport     String?
   report         Json?
+  hasTable       Boolean? @default(false)
+  tableName       String?
   internalReport String[]
   createdAt      DateTime    @default(now())
   examsId        Int
