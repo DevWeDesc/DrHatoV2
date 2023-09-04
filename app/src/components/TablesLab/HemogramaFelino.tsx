@@ -7,13 +7,98 @@ import {
   TableContainer,
   Th,
   Textarea,
+  Button,
+  FormControl,
 } from "@chakra-ui/react";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { api } from "../../lib/axios";
+import { Input } from "../admin/Input";
+interface FelineBlodCount {
+  hemaciasabs: string | number;
+  hemoglobinaabs: string | number;
+  hematocritoabs: string | number;
+  vcmabs: string | number;
+  hcmabs: string | number;
+  chcmabs: string | number;
+  proteinasabs: string | number;
+  eritroabs: string | number;
+  obseritograma: string | number;
+  leucocitoabs: string | number;
+  leucocitorel: string | number;
+  metamielocitoabs: string | number;
+  metamielocitorel: string | number;
+  bastonetestabs: string | number;
+  bastonetestorel: string | number;
+  segmentadosabs: string | number;
+  segmentadosrel: string | number;
+  eosinofilosabs: string | number;
+  eosinofilosrel: string | number;
+  basofilosabs: string | number;
+  basofilosrel: string | number;
+  linfocitostipicosabs: string | number;
+  linfocitostipicosrel: string | number;
+  linfocitosatipicosabs: string | number;
+  linfocitosatipicosrel: string | number;
+  monocitosbs: string | number;
+  monocitosrel: string | number;
+  obsleucograma: string | number;
+}
 
-export function TableHemogramaFelino() {
+interface TableHemogramaProps {
+  examId: any;
+}
+export function TableHemogramaFelino({examId}: TableHemogramaProps) {
+  const { register, handleSubmit } = useForm();
+  const handleReportHemogramFeline: SubmitHandler<FelineBlodCount> = async (
+    values
+  ) => {
+    const data = {
+      hemaciasabs: values.hemaciasabs,
+      hemoglobinaabs: values.hemoglobinaabs,
+      hematocritoabs: values.hematocritoabs,
+      vcmabs: values.vcmabs,
+      hcmabs: values.hcmabs,
+      chcmabs: values.chcmabs,
+      proteinasabs: values.proteinasabs,
+      eritroblastosabs: values.eritroabs,
+      obseritograma: values.obseritograma,
+      leucocitoabs: values.leucocitoabs,
+      leucocitorel: values.leucocitorel,
+      metamielocitoabs: values.metamielocitoabs,
+      metamielocitorel: values.metamielocitorel,
+      bastonetestabs: values.bastonetestabs,
+      bastonetestorel: values.bastonetestorel,
+      segmentadosabs: values.segmentadosabs,
+      segmentadosrel: values.segmentadosrel,
+      eosinofilosabs: values.eosinofilosabs,
+      eosinofilosrel: values.eosinofilosrel,
+      basofiloabs: values.basofilosabs,
+      basofilorel: values.basofilosrel,
+      linfocitostipicosabs: values.linfocitostipicosabs,
+      linfocitostipicosrel: values.linfocitostipicosrel,
+      linfocitosatipicosabs: values.linfocitosatipicosabs,
+      linfocitosatipicosrel: values.linfocitosatipicosrel,
+      monocitosbs: values.monocitosbs,
+      monocitosrel: values.monocitosrel,
+      obsleucograma: values.obsleucograma,
+    };
+    
+    try {
+      console.log(data)
+      await api.post(`/labtableexam/${examId}`, data )
+      toast.success("Exame laudado com sucesso!")
+    } catch (error) {
+      toast.error("Falha ao laudar!")
+      console.log(error)
+    }
+
+  };
   return (
     <>
-      <TableContainer>
-        <Table>
+    <FormControl as="form" onSubmit={handleSubmit(handleReportHemogramFeline as SubmitHandler<FieldValues>)}>
+      <TableContainer >
+        <Table >
           <Thead>
             <Tr>
               <Th
@@ -53,9 +138,9 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Hemácias</Td>
               <Td border="1px solid black" bg="white">
-                11,8
+                <Input  {...register('hemaciasabs')}  name="hemaciasabs"/>
               </Td>
-              <Td border="1px solid black" bg="white"></Td>
+              <Td border="1px solid black" bg="gray.400"></Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
                 milhões/mm3
@@ -72,9 +157,9 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Hemoglobina</Td>
               <Td border="1px solid black" bg="white">
-                16,8
+                  <Input {...register("hemoglobinaabs")} name="hemoglobinaabs" />
               </Td>
-              <Td border="1px solid black" bg="white"></Td>
+              <Td border="1px solid black" bg="gray.400"></Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
                 g/dl
@@ -91,9 +176,9 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Hematócrito</Td>
               <Td border="1px solid black" bg="white">
-                53,7
+               <Input  {...register('hematocritoabs')} name="hematocritoabs" />
               </Td>
-              <Td border="1px solid black" bg="white"></Td>
+              <Td border="1px solid black" bg="gray.400"></Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
                 %
@@ -110,9 +195,9 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">V.C.M.</Td>
               <Td border="1px solid black" bg="white">
-                45,5
+                <Input {...register('vcmabs')} name="vcmabs" />
               </Td>
-              <Td border="1px solid black" bg="white"></Td>
+              <Td border="1px solid black" bg="gray.400"></Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
                 u3
@@ -129,9 +214,9 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">H.C.M.</Td>
               <Td border="1px solid black" bg="white">
-                14,2
+                <Input {...register('hcmabs')} name="hcmabs" />
               </Td>
-              <Td border="1px solid black" bg="white"></Td>
+              <Td border="1px solid black" bg="gray.400"></Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
                 Uug
@@ -148,9 +233,9 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">C.H.C.M.</Td>
               <Td border="1px solid black" bg="white">
-                31,3
+                <Input {...register('chcmabs')} name="chcmabs" />
               </Td>
-              <Td border="1px solid black" bg="white"></Td>
+              <Td border="1px solid black" bg="gray.400"></Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
                 %
@@ -167,9 +252,9 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Proteínas totais</Td>
               <Td border="1px solid black" bg="white">
-                7,8
+                <Input  {...register('proteinasabs')} name="proteinasabs" />
               </Td>
-              <Td border="1px solid black" bg="white"></Td>
+              <Td border="1px solid black" bg="gray.400"></Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
                 g/dl
@@ -186,9 +271,9 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Eritroblastos</Td>
               <Td border="1px solid black" bg="white">
-                0
+               <Input {...register('eritroabs')} name="eritroabs" />
               </Td>
-              <Td border="1px solid black" bg="white"></Td>
+              <Td border="1px solid black" bg="gray.400"></Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
                 100%
@@ -209,9 +294,11 @@ export function TableHemogramaFelino() {
               <Td colSpan={8} p="0">
                 <Textarea
                   bg="white"
+                  {...register('obseritograma')}
+                  name="obseritograma"
                   rounded="0"
                   borderColor="black"
-                  value=" Discreta anisocitose."
+                  defaultValue=""
                 />
               </Td>
             </Tr>
@@ -257,10 +344,10 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Leucócitos Totais</Td>
               <Td border="1px solid black" bg="white">
-                8600
+                <Input {...register('leucocitoabs')} name="leucocitoabs" />
               </Td>
               <Td border="1px solid black" bg="white">
-                100
+              <Input {...register('leucocitorel')} name="leucocitorel" />
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
@@ -278,10 +365,10 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Metamielócitos</Td>
               <Td border="1px solid black" bg="white">
-                0
+                  <Input {...register('metamielocitoabs')} name="metamielocitoabs" />
               </Td>
               <Td border="1px solid black" bg="white">
-                0
+              <Input {...register('metamielocitorel')} name="metamielocitorel" />
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
@@ -303,10 +390,10 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Bastonetes</Td>
               <Td border="1px solid black" bg="white">
-                86
+              <Input {...register('bastonetestabs')} name="bastonetestabs" />
               </Td>
               <Td border="1px solid black" bg="white">
-                1
+              <Input {...register('bastonetestorel')} name="bastonetestorel" />
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
@@ -328,10 +415,10 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Segmentados</Td>
               <Td border="1px solid black" bg="white">
-                7568
+               <Input {...register('segmentadosabs')} name="segmentadosabs" />
               </Td>
               <Td border="1px solid black" bg="white">
-                88
+              <Input {...register('segmentadosrel')} name="segmentadosrel" />
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
@@ -353,10 +440,10 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Eosinófilos</Td>
               <Td border="1px solid black" bg="white">
-                172
+                <Input {...register('eosinofilosabs')} name="eosinofilosabs" /> 
               </Td>
               <Td border="1px solid black" bg="white">
-                2
+              <Input {...register('eosinofilosrel')} name="eosinofilosrel" /> 
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
@@ -378,10 +465,10 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Basófilos</Td>
               <Td border="1px solid black" bg="white">
-                0
+                <Input {...register('basofilosabs')} name="basofilosabs" />
               </Td>
               <Td border="1px solid black" bg="white">
-                0
+              <Input {...register('basofilosrel')} name="basofilosrel" />
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
@@ -403,10 +490,10 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Linfócitos Tipicos</Td>
               <Td border="1px solid black" bg="white">
-                516
+                <Input {...register('linfocitostipicosabs')} name="linfocitostipicosabs" />
               </Td>
               <Td border="1px solid black" bg="white">
-                6
+              <Input  {...register('linfocitostipicosrel')} name="linfocitostipicosrel" />
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
@@ -428,10 +515,10 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Linfócitos Atípicos</Td>
               <Td border="1px solid black" bg="white">
-                0
+              <Input {...register('linfocitosatipicosabs')} name="linfocitosatipicosabs" />
               </Td>
               <Td border="1px solid black" bg="white">
-                0
+              <Input {...register('linfocitosatipicosrel')} name="linfocitosatipicosrel" />
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
@@ -453,10 +540,10 @@ export function TableHemogramaFelino() {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Monócitos</Td>
               <Td border="1px solid black" bg="white">
-                258
+               <Input {...register('monocitosbs')} name="monocitosbs" />
               </Td>
               <Td border="1px solid black" bg="white">
-                3
+              <Input {...register('monocitosrel')} name="monocitosrel" />
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white">
@@ -483,18 +570,20 @@ export function TableHemogramaFelino() {
                 <Textarea
                   bg="white"
                   rounded="0"
+                  {...register('obsleucograma')}
+                  name="obsleucograma"
                   borderColor="black"
                   h="7rem"
-                  value="Diversos neutrófilos tóxicos. Presença de corpúsculo de Döhle.
-Plaquetas: 665.000 (300.000 a 800.000/mm³). Presença de agregação plaquetária.
-Pesquisa de hemoparasita: Negativa.
-Nota: Amostra recebida 4/4 de sangue total."
+                  defaultValue=""
                 />
               </Td>
             </Tr>
           </Tbody>
         </Table>
+    
       </TableContainer>
+      <Button w="100%" mt="4" type="submit" colorScheme="whatsapp" >GRAVAR</Button>
+      </FormControl>
     </>
   );
 }
