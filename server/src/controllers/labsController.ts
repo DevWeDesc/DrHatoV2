@@ -132,11 +132,16 @@ export const labsController = {
   reportTableExam: async (request:FastifyRequest<{Params: {examId: string}}>, reply: FastifyReply) => {
     try {
       const {examId} = request.params
-      const data: any  = request.body
+      const {jsonData, hasTable, tableName }: any  = request.body
       await prisma.reportForExams.create({
-        data: {report: data,examsForPet: {connect: {id: parseInt(examId)}}}
+        data: {report: jsonData, tableName,  hasTable, examsForPet: {connect: {id: parseInt(examId)}}}
       })
 
+      await prisma.examsForPet.update({
+        where:{id: parseInt(examId)}, data: {
+          doneExame: true,
+        }
+      })
       reply.send("Exame laudado")
     } catch (error) {
       console.log(error)

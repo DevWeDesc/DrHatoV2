@@ -13,11 +13,12 @@ import {
   Link,
   Textarea
 } from '@chakra-ui/react'
-import { useState, ElementType, FunctionComponent, useEffect } from 'react'
+import { useState, ElementType, FunctionComponent, useEffect, Suspense } from 'react'
 import { BiHome } from 'react-icons/bi'
 import { TbArrowBack } from 'react-icons/tb'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { LoadingSpinner } from '../../../components/Loading'
 import { api } from '../../../lib/axios'
 
 export function ExamsDetails() {
@@ -186,6 +187,8 @@ export function ExamsDetails() {
       break
   }
 
+  
+ 
   return (
     <ChakraProvider>
       <Flex width="100vw" height="100vh" bgColor="white" direction="column">
@@ -208,6 +211,19 @@ export function ExamsDetails() {
             <Button onClick={() => setTypeReport(2)} colorScheme="whatsapp">
               Exibir Laudos por texto
             </Button>
+             
+
+             <Suspense fallback={<LoadingSpinner />}>
+             {
+              
+              examDetails ? examDetails?.reportExams?.filter((report: any) => report?.hasTable === true).map((table: any) => (
+                <Button colorScheme="whatsapp" key={table.id}>{table?.tableName}</Button>
+              )) : (
+                <Button >SEM TABELA</Button>
+              )
+             }
+             </Suspense>
+          
           </Flex>
         </Flex>
 
