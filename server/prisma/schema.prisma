@@ -225,6 +225,7 @@ model QueuesForPet {
   id                      Int            @id @default(autoincrement())
   queueEntry              DateTime?
   queueExit               DateTime?
+  queueIsDone              Boolean? @default(false)
   queryType               String?
   debitOnThisQuery        Decimal?
   responsibleVeterinarian String?

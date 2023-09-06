@@ -49,5 +49,5 @@ app.listen({ port: 5000 }, (err, address) => {
     console.error(err)
     process.exit(1)
   }
-  console.log("Server Running at v2")
+  console.log(`Servidor iniciado porta ${address}`)
 })
