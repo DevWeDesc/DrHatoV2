@@ -76,7 +76,7 @@ export function SetPetExam() {
     break;
     case typeView === 3:
       tableView = (
-        <HemogramaCaninoAdulto examId={id}/>
+        <HemogramaCaninoAdulto  examId={id}/>
       )
       break;
     case typeView === 4:

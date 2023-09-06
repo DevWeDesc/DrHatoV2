@@ -15,6 +15,10 @@ import {
   MenuButton,
   MenuList,
   Button,
+  HStack,
+  VStack,
+  Checkbox,
+  FormLabel,
 } from "@chakra-ui/react";
 import { ReactNode, useContext, useEffect, useState } from "react";
 import { Header } from "../../components/admin/Header";
@@ -32,6 +36,7 @@ import { LoadingSpinner } from "../../components/Loading";
 import { api } from "../../lib/axios";
 import { Queue } from "phosphor-react";
 import { VetsSearch } from "../../components/Search/vetsSearch";
+import { Input } from "../../components/admin/Input";
 
 interface QueueProps {
   response: [];
@@ -39,25 +44,22 @@ interface QueueProps {
 }
 
 export function MenuVet() {
-  let { dataCustomer, dataPet } = useContext(DbContext);
   const [petValue, setPetValue] = useState("");
   const [petTotal, setPetTotal] = useState([]);
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [totalInQueue, setTotalInQueue] = useState(0 as any);
   const navigate = useNavigate();
+
   useEffect(() => {
     async function getQueue() {
       const response = await api.get("/pets/queue");
       const total = await api.get("/pets/queue");
-      const Pets = await api.get("/pets");
       setTotalInQueue(total.data);
       setInQueue(response.data.response);
       setPetTotal(total.data.response);
     }
     getQueue();
   }, [inQueue.length]);
-
-
 
   const handleNavigateWorkSpace = () => {
     if (!petValue) {
@@ -66,125 +68,9 @@ export function MenuVet() {
     }
     navigate(`/Vets/Workspace/${petValue}`);
   };
-  //console.log("PET RESPONSE", dataPet);
 
   let typeTable: ReactNode;
   switch (true) {
-    case dataCustomer.length >= 1:
-      typeTable = (
-        <Table colorScheme="blackAlpha">
-          <Thead>
-            <Tr>
-              <Th>CPF</Th>
-              <Th>Cliente</Th>
-              <Th>Animal</Th>
-              <Th>Código</Th>
-              <Th>Data</Th>
-              <Th>Hora</Th>
-              <Th>Preferência</Th>
-              <Th>Especialidade</Th>
-            </Tr>
-          </Thead>
-
-          <Tbody>
-            {dataCustomer.map((customer: any) => (
-              <Tr key={customer.id}>
-                <Td>{customer.cpf}</Td>
-
-                <Td>
-                  <Button
-                    colorScheme="whatsapp"
-                    onClick={() => handleNavigateWorkSpace()}
-                  >
-                    {customer.name}
-                  </Button>
-                </Td>
-
-                <Td>
-                  <Menu>
-                    <MenuButton border="1px" as={Button} rightIcon={<Burger />}>
-                      <StyledBox>
-                        <Text>pets</Text>
-                      </StyledBox>
-                    </MenuButton>
-                    <MenuList bg="green.100">
-                      {customer.pets?.map((pets: any) => (
-                        <Flex
-                          direction="column"
-                          align="center"
-                          p="2px"
-                          gap="2"
-                          key={pets.id}
-                        >
-                          <RadioGroup onChange={setPetValue} value={petValue}>
-                            <Radio
-                              bgColor={petValue == pets.id ? "green" : "red"}
-                              value={pets.id as any}
-                            >
-                              {pets.name}
-                            </Radio>
-                          </RadioGroup>
-                        </Flex>
-                      ))}
-                    </MenuList>
-                  </Menu>
-                </Td>
-                <Td>92487</Td>
-                <Td>04/04/2023</Td>
-
-                <Td>25:53</Td>
-                <Td>
-                  {customer.vetPreference
-                    ? customer.vetPreference
-                    : "Sem Preferência"}
-                </Td>
-                <Td>0</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      );
-      break;
-    case dataPet.length >= 1:
-      typeTable = (
-        <Table colorScheme="blackAlpha">
-          <Thead>
-            <Tr>
-              <Th>Nome</Th>
-
-              <Th>Código</Th>
-              <Th>Nascimento</Th>
-              <Th>Preferência</Th>
-              <Th>Especialidade</Th>
-            </Tr>
-          </Thead>
-
-          <Tbody>
-            {dataPet.map((pet: any) => (
-              <Tr key={pet.id}>
-                <Td>
-                  <Button
-                    colorScheme="whatsapp"
-                    onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
-                  >
-                    {pet.name}
-                  </Button>
-                </Td>
-
-                <Td>{pet.codPet}</Td>
-
-                <Td>{pet.bornDate}</Td>
-
-                <Td>
-                  {pet.vetPreference ? pet.vetPreference : "Sem Preferência"}
-                </Td>
-                <Td>0</Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      );
-      break;
     default:
       typeTable = (
         <>
@@ -251,7 +137,31 @@ export function MenuVet() {
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
-                <VetsSearch path="filtredquery" />
+                <Flex direction="column">
+                  <Flex align="center" justify="center" gap="8">        
+                    <HStack spacing={8}>
+                    <Input name="initialData" label="data inicial" type="date" />
+                    <Input name="finalData" label="data final" type="date" />
+                    <VStack>
+                      <FormLabel>Finalizados</FormLabel>
+                      <Checkbox border="2px" size="lg"  />
+                      <FormLabel>Internados</FormLabel>
+                      <Checkbox  border="2px" size="lg"  />
+                    </VStack>
+                  </HStack>
+                    
+                  </Flex>
+          
+                  <HStack mt="4" w="100%">
+                   
+                    <Input name="codPet" label="Código do Animal" />
+                    <Input name="petName" label="Nome do Animal" />
+                    <Input name="customerName" label="Nome do Cliente" />
+                    
+                    
+                  </HStack>
+                  <Button mt="4" colorScheme="whatsapp">FILTRAR</Button>
+                </Flex>
                 <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
                   <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
                 </Button>

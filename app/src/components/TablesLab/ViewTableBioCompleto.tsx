@@ -7,13 +7,8 @@ import {
   TableContainer,
   Th,
   Textarea,
-  FormControl,
   Button,
 } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
-import { FieldValues, SubmitHandler } from "react-hook-form/dist/types";
-import { toast } from "react-toastify";
-import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
 
 
@@ -36,7 +31,7 @@ interface FullBioProps {
   bilirrubinaindireta: string | number;
   amilase: string | number;
   lipase: string | number;
-  colesteroltotal: string | number;
+  colsteroltotal: string | number;
   triglicerides: string | number;
   vldl: string | number;
   glicose: string | number;
@@ -44,56 +39,12 @@ interface FullBioProps {
 }
 
 interface TableHemogramaProps {
-  examId?: any;
   data?: FullBioProps
 }
-export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
-  const { register, handleSubmit } = useForm();
-  const handleSubmitFullBioExam: SubmitHandler<FullBioProps> = async (values) => {
-        try {
-          const json = {
-            ureia: values.ureia,
-            creatinina: values.creatinina,
-            fosforo: values.fosforo,
-            calcio: values.calcio,
-            fosfatasealcalina: values.fosfatasealcalina,
-            alt: values.alt,
-            ast: values.ast,
-            ggt: values.ggt,
-            proteinastotais: values.proteinastotais,
-            albumina: values.albumina,
-            globulina: values.globulina,
-            ralbuminaglobulina: values.ralbuminaglobulina,
-            frutosamina: values.frutosamina,
-            bilirrubinatotal: values.bilirrubinatotal,
-            bilirrubinadireta: values.bilirrubinadireta,
-            bilirrubinaindireta: values.bilirrubinaindireta,
-            amilase: values.amilase,
-            lipase: values.lipase,
-            colsteroltotal: values.colesteroltotal,
-            triglicerides: values.triglicerides,
-            vldl: values.vldl,
-            glicose: values.glicose,
-            observacoes: values.observacoes
-
-          }
-
-          const fullData = {
-            jsonData: json,
-            tableNumber: 3,
-            hasTable: true
-          }
-          
-      await api.post(`/labtableexam/${examId}`, fullData )
-      toast.success("Exame laudado com sucesso!")
-        } catch (error) {
-          console.log(error)
-        }
-  }
-
+export function ViewTableBioCompleto({data}: TableHemogramaProps) {
   return (
       <TableContainer w="100%" h="100%">
-        <FormControl as="form" onSubmit={handleSubmit(handleSubmitFullBioExam as SubmitHandler<FieldValues>)}>
+    
         <Table>
           <Thead>
             <Tr>
@@ -134,7 +85,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Ureia</Td>
               <Td border="1px solid black" bg="white">
-               <Input  {...register('ureia')} name="ureia" defaultValue={data?.ureia ? data.ureia : ''} />
+               <Input name="ureia" defaultValue={data?.ureia ? data.ureia : ''} />
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -153,7 +104,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Creatinina</Td>
               <Td border="1px solid black" bg="white">
-                <Input {...register('creatinina')} name="creatinina" />
+                <Input  defaultValue={data?.creatinina ? data.creatinina : ''} name="creatinina" />
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -172,7 +123,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Fósforo</Td>
               <Td border="1px solid black" bg="white">
-               <Input {...register("fosforo")} name="fosforo" />
+               <Input  defaultValue={data?.fosforo ? data.fosforo : ''}  name="fosforo" />
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -191,7 +142,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Calcio</Td>
               <Td border="1px solid black" bg="white">
-                <Input {...register("calcio")} name="calcio"/>
+                <Input  defaultValue={data?.calcio ? data.calcio : ''} name="calcio"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -210,7 +161,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Fosfatase alcalina</Td>
               <Td border="1px solid black" bg="white">
-                <Input {...register('fosfatasealcalina')}  name="fosfatasealcalina"/>
+                <Input  defaultValue={data?.fosfatasealcalina ? data.fosfatasealcalina : ''}  name="fosfatasealcalina"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -229,7 +180,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">ALT</Td>
               <Td border="1px solid black" bg="white">
-                <Input  {...register('alt')} name="alt"/>
+                <Input  defaultValue={data?.alt ? data.alt : ''}  name="alt"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -248,7 +199,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">AST</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('ast')} name="ast"/>
+              <Input  defaultValue={data?.ast ? data.ast : ''}  name="ast"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -267,7 +218,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">GGT</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('ggt')} name="ggt"/>
+              <Input  defaultValue={data?.ggt ? data.ggt : ''}   name="ggt"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -286,7 +237,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Proteínas totais</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('proteinastotais')} name="proteinastotais"/>
+              <Input  defaultValue={data?.proteinastotais ? data.proteinastotais : ''}  name="proteinastotais"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -305,7 +256,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Albumina</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('albumina')} name="albumina"/>
+              <Input  defaultValue={data?.albumina ? data.albumina : ''}  name="albumina"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -324,7 +275,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Globulina</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('globulina')} name="globulina"/>
+              <Input  defaultValue={data?.globulina ? data.globulina : ''} name="globulina"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -343,7 +294,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Relação Albumina:Globulina</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('ralbuminaglobulina')} name="ralbuminaglobulina"/>
+              <Input   defaultValue={data?.ralbuminaglobulina ? data.ralbuminaglobulina : ''} name="ralbuminaglobulina"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -360,7 +311,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Frutosamina</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('frutosamina')} name="frutosamina"/>
+              <Input  defaultValue={data?.frutosamina ? data.frutosamina : ''} name="frutosamina"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -379,7 +330,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Bilirrubina total</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('bilirrubinatotal')} name="bilirrubinatotal"/>
+              <Input  defaultValue={data?.bilirrubinatotal ? data.bilirrubinatotal : ''}  name="bilirrubinatotal"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -398,7 +349,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Bilirrubina direta</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('bilirrubinadireta')} name="bilirrubinadireta"/>
+              <Input defaultValue={data?.bilirrubinadireta ? data.bilirrubinadireta : ''}   name="bilirrubinadireta"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -417,7 +368,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Bilirrubina indireta</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('bilirrubinaindireta')} name="bilirrubinaindireta"/>
+              <Input  defaultValue={data?.bilirrubinaindireta ? data.bilirrubinaindireta : ''} name="bilirrubinaindireta"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -436,7 +387,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Amilase</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('amilase')} name="amilase"/>
+              <Input  defaultValue={data?.amilase ? data.amilase : ''}  name="amilase"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -455,7 +406,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Lipase</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('lipase')} name="lipase"/>
+              <Input  defaultValue={data?.lipase ? data.lipase : ''}  name="lipase"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -474,7 +425,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Colesterol total</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('colesteroltotal')} name="colesteroltotal"/>
+              <Input  defaultValue={data?.colsteroltotal ? data.colsteroltotal : ''}  name="colesteroltotal"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -493,7 +444,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Triglicérides</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('triglicerides')} name="triglicerides"/>
+              <Input  defaultValue={data?.triglicerides ? data.triglicerides : ''} name="triglicerides"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -512,7 +463,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">VLDL</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('vldl')} name="vldl"/>
+              <Input  defaultValue={data?.vldl ? data.vldl : ''}  name="vldl"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -531,7 +482,7 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
             <Tr fontWeight="bold">
               <Td border="1px solid black">Glicose</Td>
               <Td border="1px solid black" bg="white">
-              <Input  {...register('glicose')} name="glicose"/>
+              <Input  defaultValue={data?.glicose ? data.glicose : ''}  name="glicose"/>
               </Td>
               <Td border="1px solid black" bg="white"></Td>
               <Td border="1px solid black" bg="white"></Td>
@@ -554,19 +505,17 @@ export function TableBioquimicoCompleto({examId, data}: TableHemogramaProps) {
               </Td>
               <Td colSpan={8} p="0">
                 <Textarea
-                {...register('observacoes')}
+                defaultValue={data?.observacoes ? data.observacoes : ''}
                   name="observacoes"
                   bg="white"
                   rounded="0"
                   borderColor="black"
-                 defaultValue=""
+             
                 />
               </Td>
             </Tr>
           </Tbody>
         </Table>
-        <Button mt="4" w="100%" colorScheme="whatsapp" type="submit" >GRAVAR</Button>
-        </FormControl>
       </TableContainer>
   );
 }

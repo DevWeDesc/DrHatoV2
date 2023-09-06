@@ -132,9 +132,9 @@ export const labsController = {
   reportTableExam: async (request:FastifyRequest<{Params: {examId: string}}>, reply: FastifyReply) => {
     try {
       const {examId} = request.params
-      const {jsonData, hasTable, tableName }: any  = request.body
+      const {jsonData, hasTable, tableNumber }: any  = request.body
       await prisma.reportForExams.create({
-        data: {report: jsonData, tableName,  hasTable, examsForPet: {connect: {id: parseInt(examId)}}}
+        data: {report: jsonData, tableNumber,  hasTable, examsForPet: {connect: {id: parseInt(examId)}}}
       })
 
       await prisma.examsForPet.update({
@@ -203,6 +203,27 @@ export const labsController = {
     } catch (error) {
         console.log(error)
         reply.send(error)
+    }
+  },
+
+  getTableExamsView: async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) => {
+    try {
+      const {examId} = request.params
+      const table = await prisma.examsForPet.findUnique({
+        where:{id: parseInt(examId)},select: {reportExams: {where: {hasTable: true}}}
+      })
+      const data = table?.reportExams.flatMap((data) => data)
+
+      if(!data) {
+        reply.status(404)
+        return
+      } else {
+        reply.send(data[0].report)
+      }
+
+    } catch (error) {
+      reply.send({message: error})
+      console.log(error)
     }
   }
 

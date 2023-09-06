@@ -19,12 +19,15 @@ import { TbArrowBack } from 'react-icons/tb'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { LoadingSpinner } from '../../../components/Loading'
+import { TableBioquimicoCompleto } from '../../../components/TablesLab/BioquimicoCompleto'
+import { ViewTableBioCompleto } from '../../../components/TablesLab/ViewTableBioCompleto'
 import { api } from '../../../lib/axios'
 
 export function ExamsDetails() {
   const [typeReport, setTypeReport] = useState(0)
   const { examId } = useParams<{ examId: string }>()
   const [examDetails, setExamDetails] = useState({} as any)
+  const [typeTable, setTypeTable] = useState({} as any)
   const navigate = useNavigate()
 
   async function getExamDetails() {
@@ -35,20 +38,20 @@ export function ExamsDetails() {
       console.log(error)
     }
   }
-  useEffect(() => {
-    getExamDetails()
-  }, [])
-
-  const handleDowloadArqs = async (arqPath: string) => {
+  async function getTableDetails() {
     try {
-        await api.get(`/labfile/${arqPath}`)
-
+      const table = await api.get(`/labtable/${examId}`)
+      setTypeTable(table.data)
     } catch (error) {
-      toast.error("Falha ao realizar dowload!!")
-      console.log(error)
+      
     }
   }
 
+  useEffect(() => {
+    getTableDetails() 
+    getExamDetails()
+  }, [typeReport])
+ 
   let typeReportInExibition
   switch (true) {
     case typeReport === 1:
@@ -185,9 +188,22 @@ export function ExamsDetails() {
       </Flex>
       )
       break
+    case typeReport === 3:
+        typeReportInExibition = (
+         
+          <Suspense fallback={<LoadingSpinner />} >
+           <Flex w="100%" h="auto" m="4">
+             <ViewTableBioCompleto  data={typeTable} />
+             </Flex>
+          </Suspense>
+          
+         
+        )
+      break;
+
   }
 
-  
+  console.log("MAS QUE CARALHO TEM NESSE ESTADO", typeTable)
  
   return (
     <ChakraProvider>
@@ -204,11 +220,11 @@ export function ExamsDetails() {
               Voltar
             </Button>
 
-            <Button onClick={() => setTypeReport(1)} colorScheme="whatsapp">
+            <Button onClick={() => {setTypeReport(1);setTypeTable("")}} colorScheme="whatsapp">
               Exibir Laudos por arquivos
             </Button>
 
-            <Button onClick={() => setTypeReport(2)} colorScheme="whatsapp">
+            <Button onClick={() => {setTypeReport(2);setTypeTable("")}} colorScheme="whatsapp">
               Exibir Laudos por texto
             </Button>
              
@@ -217,7 +233,7 @@ export function ExamsDetails() {
              {
               
               examDetails ? examDetails?.reportExams?.filter((report: any) => report?.hasTable === true).map((table: any) => (
-                <Button colorScheme="whatsapp" key={table.id}>{table?.tableName}</Button>
+                <Button onClick={() => setTypeReport(table.tableNumber)} colorScheme="whatsapp" key={table.id}>Tabela {table.tableNumber}</Button>
               )) : (
                 <Button >SEM TABELA</Button>
               )
