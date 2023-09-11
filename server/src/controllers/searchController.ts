@@ -39,10 +39,12 @@ export const searchController = {
         const response = await searchEngine({customerName,petName, codPet, finalDate, initialDate, isFinished,isHospitalized})
      
         if(!response || response == null || response == undefined) {
-          reply.send("Falha na busca ou parâmetro não encontrado").status(404)
+          reply.status(404)
+        } else {
+          reply.send(response).status(200)
         }
         
-          reply.send(response).status(200)
+    
     } catch (error) {
       reply.status(400).send({ message: error})
       console.log()

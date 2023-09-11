@@ -115,17 +115,18 @@ model MedicineRecord {
 }
 
 model Exams {
-  id               Int       @id @default(autoincrement())
+  id               Int                   @id @default(autoincrement())
   name             String
   price            Decimal
-  available        Boolean?  @default(false)
-  doneExame        Boolean?  @default(false)
+  available        Boolean?              @default(false)
+  doneExame        Boolean?              @default(false)
   subName          String?
   description      String?
   examsType        String[]
   ageRange         String[]
   applicableGender String[]
   Sectors          Sectors[]
+  characteristics  ExamCharacteristics[]
 }
 
 model ExamsForPet {
@@ -225,7 +226,7 @@ model QueuesForPet {
   id                      Int            @id @default(autoincrement())
   queueEntry              DateTime?
   queueExit               DateTime?
-  queueIsDone              Boolean? @default(false)
+  queueIsDone             Boolean?       @default(false)
   queryType               String?
   debitOnThisQuery        Decimal?
   responsibleVeterinarian String?
@@ -357,4 +358,12 @@ model InstallmentsDebts {
   customerAccount    CustomerAccount @relation(fields: [customerId], references: [id])
   boxHistoryId       Int
   boxHistory         HospBoxHistory  @relation(fields: [boxHistoryId], references: [id])
+}
+
+model ExamCharacteristics {
+  id      Int     @id @default(autoincrement())
+  name    String?
+  especie Json?
+  Exams   Exams?  @relation(fields: [examsId], references: [id])
+  examsId Int?
 }

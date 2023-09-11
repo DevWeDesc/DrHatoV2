@@ -1,5 +1,4 @@
 import { prisma } from "../interface/PrismaInstance";
-import { SearchSchema } from "../schemas/schemasValidator"
 interface SearchEngineProps {
         customerName?: string;
          initialDate?: Date; 
@@ -11,7 +10,7 @@ interface SearchEngineProps {
 }
 export async function searchEngine({customerName,petName,codPet,finalDate,initialDate,isFinished,isHospitalized} : SearchEngineProps) {
     let responseArray: any = [];
-    switch(true) {
+    switch(true) {                                               
         case !!customerName && !!petName: 
         const customerAndPetsResults = await prisma.customer.findMany(
             {where: {AND: [
@@ -22,17 +21,17 @@ export async function searchEngine({customerName,petName,codPet,finalDate,initia
         break;
 
         case !!customerName: 
-        const customerResults =  await prisma.customer.findMany({where: {name: { startsWith: customerName}}})
+        const customerResults =  await prisma.pets.findMany({where: {customer :{name :{startsWith: customerName}}}, include: {customer: true}})
         responseArray = responseArray.concat(customerResults)
         break;
 
         case !!petName:
-        const petResults = await prisma.pets.findMany({where: {name: {startsWith: petName}}})
+        const petResults = await prisma.pets.findMany({where: {name: {startsWith: petName}}, include:{ customer: true}})
         responseArray = responseArray.concat(petResults)
         break; 
 
         case !!codPet: 
-        const codPetResulst = await prisma.pets.findFirst({where: {codPet: {startsWith: codPet} }})
+        const codPetResulst = await prisma.pets.findFirst({where: {codPet: {startsWith: codPet}},include:{ customer: true}})
         responseArray = responseArray.concat(codPetResulst)
         break;
 
