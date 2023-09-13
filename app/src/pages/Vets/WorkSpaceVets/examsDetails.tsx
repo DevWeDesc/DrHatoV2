@@ -220,11 +220,11 @@ export function ExamsDetails() {
               Voltar
             </Button>
 
-            <Button onClick={() => {setTypeReport(1);setTypeTable("")}} colorScheme="whatsapp">
+            <Button onClick={() => setTypeReport(1)} colorScheme="whatsapp">
               Exibir Laudos por arquivos
             </Button>
 
-            <Button onClick={() => {setTypeReport(2);setTypeTable("")}} colorScheme="whatsapp">
+            <Button onClick={() => setTypeReport(2)} colorScheme="whatsapp">
               Exibir Laudos por texto
             </Button>
              

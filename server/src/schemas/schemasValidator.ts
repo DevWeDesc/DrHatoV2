@@ -138,3 +138,13 @@ export const ProcedureSchema = z.object({
   group_id: z.number(),
   sector_id: z.number()
 })
+
+export const SearchSchema = z.object({
+          initialDate: z.date().optional(),
+          finalDate: z.date().optional(),
+          customerName: z.string().optional(),
+          codPet: z.string().optional(),
+          petName: z.string().optional(),
+          isHospitalized: z.string().optional(),
+          isFinished: z.string().optional(),
+        })

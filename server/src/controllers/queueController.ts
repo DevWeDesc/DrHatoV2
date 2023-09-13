@@ -53,7 +53,7 @@ export const queueController = {
           })
   
           await prisma.queuesForPet.create({
-              data: {queryType, queueEntry,observations,petWeight, queueExit, debitOnThisQuery,petName, responsibleVeterinarian, medicine:{ connect: {id: parseInt(recordId)}}}
+              data: {queryType, queueEntry,observations,petWeight, queueExit, queueIsDone: true,debitOnThisQuery,petName, responsibleVeterinarian, medicine:{ connect: {id: parseInt(recordId)}}}
           })
           
           await prisma.queues.update({

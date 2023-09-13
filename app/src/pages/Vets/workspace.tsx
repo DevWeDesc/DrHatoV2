@@ -501,7 +501,7 @@ export function WorkSpaceVet() {
                   justifyContent="space-between"
                 >
                   <Text w="6rem"></Text>
-                  <Text> {`${pet.sexo}, ${pet.weigth}Kgs`} </Text>{" "}
+                  <Text> {`${pet.sexo}, ${pet.weigth}`} </Text>{" "}
                   <Button
                     size="sm"
                     colorScheme="yellow"

@@ -154,6 +154,58 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
     } catch (error) {
         console.log(error)
     }
+ },
+
+ createExamCharacteristics: async (request: FastifyRequest<{ Params: { id: string;}}>, reply: FastifyReply) => {
+    try {
+        const { name}: any = request.body
+            const jsonData: any = [
+                {
+                    name: "Felina",
+                    refIdades: [
+                        {
+                        maxAge: 0.7,
+				        relativo: 1,
+				        absoluto: 2,
+                        },
+                        {
+                            maxAge: 1.7,
+                            relativo: 14,
+                            absoluto: 20,
+                            }
+
+                    ]
+
+                },
+                {
+                    name: "Canina",
+                    refIdades: [
+                        {
+                        maxAge: 0.7,
+				        relativo: 1,
+				        absoluto: 2,
+                        },
+                        {
+                            maxAge: 1.7,
+                            relativo: 14,
+                            absoluto: 20,
+                            }
+
+                    ]
+
+                }
+            ]
+                
+            
+          const res = await prisma.examCharacteristics.create({
+            data: {name, especie: jsonData}
+           })
+
+           reply.send(res)
+    } catch (error) {
+        console.log(error)
+        reply.send({message: error})
+    }
  }
 
 }
