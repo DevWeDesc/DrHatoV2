@@ -28,20 +28,26 @@ import { toast } from "react-toastify";
 import { Input } from "../../../components/admin/Input";
 import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
+import { NewCharacteristics } from "./newCharacteristics";
 
 export function ListExams() {
-  const { refresh, setRefresh } = useContext(DbContext);
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const [exams, setExams] = useState([]);
-
   function openModal() {
     setIsModalOpen(true);
   }
   function closeModal() {
     setIsModalOpen(false);
+  }
+
+  function openModalTwo() {
+    setIsModalOpenTwo(true);
+  }
+  function closeModalTwo() {
+    setIsModalOpenTwo(false);
   }
 
   const getExamesListData = async () => {
@@ -108,6 +114,17 @@ export function ListExams() {
           onClick={() => openModal()}
         >
           Cadastrar novo Exame
+        </Button>
+        <Button
+        mt="4"
+          w="100%"
+          py="8"
+          fontSize="20"
+          colorScheme="whatsapp"
+          leftIcon={<Icon as={RiAddLine} />}
+          onClick={() => openModalTwo()}
+        >
+          Cadastrar nova Característica
         </Button>
       </Flex>
 
@@ -231,6 +248,9 @@ export function ListExams() {
             </Button>
           </Flex>
         </FormControl>
+      </GenericModal>
+      <GenericModal isOpen={isModalOpenTwo} onRequestClose={closeModalTwo} >
+            <NewCharacteristics />
       </GenericModal>
     </Box>
   );

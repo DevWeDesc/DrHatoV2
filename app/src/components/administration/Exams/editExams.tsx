@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -23,6 +23,7 @@ import { Input } from "../../../components/admin/Input";
 
 export function EditExams() {
   const { register, handleSubmit } = useForm();
+  const [characters, setCharacters] = useState([])
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -46,6 +47,20 @@ export function EditExams() {
       toast.error("Falha ao criar novo Exame");
     }
   };
+
+
+  async function getCharacteristics() {
+    try {
+      const res = await api.get("/examcharac")
+      setCharacters(res.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    getCharacteristics()
+  },[])
 
   return (
     <Box flex="1" borderRadius={8} bg="gray.100" p="8">
@@ -136,11 +151,12 @@ export function EditExams() {
               bg="white"
               p="10"
               rounded="4"
-              w="30%"
+              w="40%"
               fontSize="25"
               fontWeight="bold"
-              height="100%"
+              height="900px"
               shadow="0px 0px 10px rgba(0, 0, 0, 0.5)"
+              overflowY="auto"
             >
               <Text>Diponibilidade</Text>
               <Flex gap="4">
@@ -210,6 +226,21 @@ export function EditExams() {
                   <label htmlFor="">Macho</label>
                 </Flex>
               </CheckboxGroup>
+
+              <Flex height="auto" direction="column">
+                <Text>Caractéristicas desse exame</Text>
+                <Flex wrap="wrap" gap={4}>
+                    {
+                      characters && characters.map((char: any) => {
+                        return (<>
+
+                        <label>{char.name}</label>
+                        <Checkbox size="lg" borderColor="black" />
+                        </>)
+                      })
+                    }
+                </Flex>
+              </Flex>
             </Flex>
           </Flex>
 

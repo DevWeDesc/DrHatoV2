@@ -48,12 +48,15 @@ getExams: async (request: FastifyRequest, reply: FastifyReply) => {
 
 editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyReply) => {
     const {id }= request.params
-    const {name, price, examsType, available, applicableGender, description, subName, ageRange} = ExamSchema.parse(request.body)
+    const {name, price, examsType, available, applicableGender, description, subName, ageRange,characters
+    } = ExamSchema.parse(request.body)
 
     try {
         await prisma.exams.update({
             where: {id: parseInt(id)},
-            data: {name, price, examsType, available, applicableGender, description, subName, ageRange}
+            data: {name, price, examsType, available, applicableGender, description, subName, ageRange
+            ,characteristics: {}
+            }
         })
         reply.status(200).send("Exame editado com sucesso!")
     } catch (error) {
@@ -158,54 +161,39 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
 
  createExamCharacteristics: async (request: FastifyRequest<{ Params: { id: string;}}>, reply: FastifyReply) => {
     try {
-        const { name}: any = request.body
-            const jsonData: any = [
-                {
-                    name: "Felina",
-                    refIdades: [
-                        {
-                        maxAge: 0.7,
-				        relativo: 1,
-				        absoluto: 2,
-                        },
-                        {
-                            maxAge: 1.7,
-                            relativo: 14,
-                            absoluto: 20,
-                            }
-
-                    ]
-
-                },
-                {
-                    name: "Canina",
-                    refIdades: [
-                        {
-                        maxAge: 0.7,
-				        relativo: 1,
-				        absoluto: 2,
-                        },
-                        {
-                            maxAge: 1.7,
-                            relativo: 14,
-                            absoluto: 20,
-                            }
-
-                    ]
-
-                }
-            ]
-                
+        const { name, jsonData}: any = request.body
             
-          const res = await prisma.examCharacteristics.create({
+            
+         await prisma.examCharacteristics.create({
             data: {name, especie: jsonData}
            })
 
-           reply.send(res)
+           reply.send("Cadastrado com sucesso!").status(201)
     } catch (error) {
         console.log(error)
         reply.send({message: error})
     }
+ },
+
+
+ getExamsCharacteristics: async (request: FastifyRequest<{ Params: { id: string;}}>, reply: FastifyReply) => {
+try {
+    const res = await prisma.examCharacteristics.findMany()
+
+    const data = res.map((charac) => {
+        let data = {
+            name: charac.name,
+            id: charac.id
+        }
+
+        return data
+    })
+
+    reply.send(data)
+} catch (error) {
+    reply.status(404)
+    console.log(error)
+}
  }
 
 }

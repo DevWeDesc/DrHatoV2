@@ -91,7 +91,6 @@ export function CreatePetsForm({ reloadPets, onRequestClose }: Props) {
         </Select>
       );
       break;
-
     case especieState === "Canina":
       selectRaces = (
         <Select {...register("race")} name="race" borderColor="gray.900">
@@ -297,7 +296,6 @@ export function CreatePetsForm({ reloadPets, onRequestClose }: Props) {
       ) {
         await api.post(`/pets/${id}`, data);
         reloadPets();
-        onRequestClose();
         toast.success("pet cadastrado com sucesso");
         console.log(values.especie);
       } else {
