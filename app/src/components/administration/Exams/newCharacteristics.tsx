@@ -2,6 +2,8 @@ import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPane
 import { useEffect, useState } from "react"
 import {useForm} from 'react-hook-form'
 import { FieldValues, SubmitHandler } from "react-hook-form/dist/types";
+import { toast } from "react-toastify";
+import { api } from "../../../lib/axios";
 import { Input } from "../../admin/Input";
 
 interface RefIdadeProps {
@@ -26,10 +28,7 @@ export function NewCharacteristics() {
   ];
 
   const handleNewCharacter: SubmitHandler<FieldValues> = async (values) => {
-    const data = {
-      name: characName,
-      especie: [
-        especiesArray.map((especie: any) => {
+    const especie = especiesArray.flatMap((especie: any) => {
           let data = {
             name: especie,
             refIdades: [
@@ -38,14 +37,40 @@ export function NewCharacteristics() {
               relativo: values[`rel5${especie}`],
               absoluto: values[`abs5${especie}`],
              },
+             {
+              maxAge: 1,
+              relativo: values[`rel10${especie}`],
+              absoluto: values[`abs10${especie}`],
+             },
+             {
+              maxAge: 2,
+              relativo: values[`rel20${especie}`],
+              absoluto: values[`abs20${especie}`],
+             },
              
             ]
           }
           return data
         })
-      ]
+      
+    
+    try {
+      if(!especie) {
+        toast.error('Falha ao cadastrar nova característica')
+        return 
+      } else {
+        const fullData = {
+          name: characName,
+          jsonData: especie
+        }
+        await api.post('examcharac', fullData)
+
+        toast.success("Cadastro efetuado com sucesso!")
+      }
+    } catch (error) {
+      toast.error("Falha no cadastro!")
+      console.log(error)
     }
-    console.log(data)
     setCharacName("")
   }
 
@@ -71,6 +96,23 @@ export function NewCharacteristics() {
         <HStack>
         <Input  {...register(`rel5${especie}`)}  maxWidth={320} label="relativo" name={`rel5${especie}`} />
         <Input   {...register(`abs5${especie}`)} maxWidth={320} label="absoluto" name={`abs5${especie}`} />
+        
+        </HStack>
+        </Flex>
+        <Flex  align="center" direction="column" w="100%">
+        <Text fontWeight="bold" fontSize="lg">Até 1 ano</Text>
+        <HStack>
+        <Input  {...register(`rel10${especie}`)}  maxWidth={320} label="relativo" name={`rel10${especie}`} />
+        <Input   {...register(`abs10${especie}`)} maxWidth={320} label="absoluto" name={`abs10${especie}`} />
+        
+        </HStack>
+        </Flex>
+        <Flex  align="center" direction="column" w="100%">
+        <Text fontWeight="bold" fontSize="lg">Até 2 anos +</Text>
+        <HStack>
+        <Input  {...register(`rel20${especie}`)}  maxWidth={320} label="relativo" name={`rel20${especie}`} />
+        <Input   {...register(`abs20${especie}`)} maxWidth={320} label="absoluto" name={`abs20${especie}`} />
+        
         </HStack>
         </Flex>
       

@@ -119,7 +119,8 @@ export const ExamSchema = z.object({
   subName: z.string().optional(),
   description: z.string().optional(),
   ageRange: z.string().array().optional(),
-  doneExame: z.boolean().optional().default(false)
+  doneExame: z.boolean().optional().default(false),
+  characters: z.any().optional()
 })
 
 
