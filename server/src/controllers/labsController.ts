@@ -15,7 +15,14 @@ export const labsController = {
         }
 
       })
-      reply.status(200).send(exams)
+
+      const allExams = await prisma.exams.findMany({
+        select: {id: true, name: true}
+      })
+
+ 
+
+      reply.status(200).send({exams, allExams})
     } catch (error) {
       reply.send({message: {error}}).status(400)
       console.log(error)

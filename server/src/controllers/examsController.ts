@@ -49,19 +49,31 @@ getExams: async (request: FastifyRequest, reply: FastifyReply) => {
 editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyReply) => {
     const {id }= request.params
     const {name, price, examsType, available, applicableGender, description, subName, ageRange,characters
-    } = ExamSchema.parse(request.body)
+    }: any = request.body
 
     try {
         await prisma.exams.update({
             where: {id: parseInt(id)},
-            data: {name, price, examsType, available, applicableGender, description, subName, ageRange
-            ,characteristics: {}
-            }
+            data: {name, price, examsType, available, applicableGender, description, subName, ageRange }
         })
+
+        if(characters.length >= 1) {
+            for (const cIds of characters) {
+                await prisma.exams.update({
+                    where: {id: parseInt(id)}, data: {characteristics: { 
+                        connect: {id: parseInt(cIds)}
+                    }}
+                })
+            }
+        }
+           
+        
         reply.status(200).send("Exame editado com sucesso!")
     } catch (error) {
-        console.log(error)
         reply.status(400).send({message: error})
+        console.clear()
+        console.error(error)
+        
     }
  },
 
@@ -82,8 +94,8 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
  getById: async(request: FastifyRequest<{Params: params }>, reply: FastifyReply) => {
     const {id }= request.params
     try {
-        const exam = await prisma.exams.findFirst({
-            where: {id: parseInt(id)},
+        const exam = await prisma.exams.findUnique({
+            where: {id: parseInt(id)},include: {characteristics: true}
         })
 
         reply.status(200).send(exam)

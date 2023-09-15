@@ -25,23 +25,51 @@ import { toast } from "react-toastify";
 import { HemogramaCaninoAdulto } from "../../components/TablesLab/HemogramaCaninoAdulto";
 import { TableBioquimicoCompleto } from "../../components/TablesLab/BioquimicoCompleto";
 import { TableBioquimicaSerica } from "../../components/TablesLab/BioquimicaSerica";
+import { LoadingSpinner } from "../../components/Loading";
 
 
-
+interface ExamProps {
+  id: number;
+  name: string;
+  price: string;
+  available: boolean;
+  doneExam: boolean;
+  characteristics: Array<{
+    id: number;
+    name:string;
+    especie: Array<{
+      name: string;
+      refIdades: Array<{
+        maxAge: number;
+        absoluto: string;
+        relativo: string;
+      }>
+    }>
+  }>
+}
 export function SetPetExam() {
 
-  const { id, petId } = useParams<{ id: string, petId: string }>();
+  const { id, examId } = useParams<{ id: string, examId: string }>();
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [pet, setPet] = useState({} as any);
   const [typeView, setTypeView] = useState(0);
   const [textReport, setTextReport] = useState("")
+  const [exam, setExam] = useState({} as ExamProps)
 
   async function Pets() {
     const pets = await api.get(`/labexam/${id}`);
     setPet(pets.data);
   }
+
+  async function Exam() {
+    const exam = await api.get(`/exams/${examId}`);
+    setExam(exam.data)
+  }
+
+
   useEffect(() => {
     Pets();
+    Exam();
   }, []);
 
 
@@ -273,7 +301,16 @@ export function SetPetExam() {
                               w="30%"
                             ></Input>
                           </Flex>
-                        {tableView}
+                        {exam ? exam?.characteristics?.map((charac) => {
+                            
+                            const table = charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
+                            console.log("TABLE", table)
+                            return (
+                              <>
+                                <h1>{charac.name}</h1>
+                              </>
+                            )
+                          }) : (<LoadingSpinner />) }
                   </Flex>
                 </Box>
               </Flex>

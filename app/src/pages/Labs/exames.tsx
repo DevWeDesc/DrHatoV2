@@ -47,12 +47,13 @@ interface QueueProps {
 
 export function LabExames() {
   let { dataCustomer, dataPet } = useContext(DbContext);
-  const [petValue, setPetValue] = useState("");
-  const [labs, setLabs] = useState([]);
-  const [procedure, setProcedure] = useState("");
+  const [labs, setLabs] = useState([] as any);
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [totalInQueue, setTotalInQueue] = useState(0 as any);
+  const [exams, setExams] = useState([] as any)
   const navigate = useNavigate();
+
+
 
 
   useEffect(() => {
@@ -61,21 +62,19 @@ export function LabExames() {
       const total = await api.get("/pets/queue");
       const labs = await api.get("/labs");
       // const total = await api.get("/pets/queue");
-      setLabs(labs.data);
+      setLabs(labs.data.exams);
+      setExams(labs.data.allExams)
       setTotalInQueue(total.data);
       setInQueue(response.data.response);
     }
     getQueue();
   }, [inQueue.length]);
-  const handleNavigateWorkSpace = () => {
-    if (!petValue) {
-      toast.error("Selecione um PET");
-      return;
-    }
-    navigate(`/Labs/Set/${procedure}`);
-  };
 
 
+   
+
+
+   
   let typeTable: ReactNode;
   switch (true) {
     case Object.keys(dataPet).length >= 1:
@@ -183,13 +182,15 @@ export function LabExames() {
             </Thead>
 
             <Tbody>
-              {labs.map((exam: any) => (
-                <>
-                  {exam.doneExame === false && (
+              {labs.map((exam: any) => {
+                return ( 
+                  <>
+                  	{
+                  exam.doneExame === false && (
                     <Tr
                       key={exam.id}
                       cursor="pointer"
-                      onClick={() => navigate(`/Labs/Set/${exam.id}/${exam?.medicine?.pet.id}`)}
+                      onClick={() => navigate(`/Labs/Set/${exam.id}/${exams.find((data: any) => data.name === exam.name).id}`)}
                     >
                       <Td>{new Intl.DateTimeFormat('pt-BR').format(new Date(exam?.requesteData))} </Td>
 
@@ -206,8 +207,10 @@ export function LabExames() {
                       <Th>Não Adicionado</Th>
                     </Tr>
                   )}
-                </>
-              ))}
+
+                  </>
+                )
+              })}
             </Tbody>
           </Table>
         </>

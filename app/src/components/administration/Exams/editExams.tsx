@@ -21,9 +21,15 @@ import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../../components/admin/Input";
 
+interface ExamProps {
+  name: string;
+  price: string;
+}
 export function EditExams() {
   const { register, handleSubmit } = useForm();
   const [characters, setCharacters] = useState([])
+  const [characIdArray, setCharacIdArray] = useState([] as any)
+  const [examsData, setExamsData] = useState({} as ExamProps)
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -31,18 +37,20 @@ export function EditExams() {
     let rangeAges = [values.minAge, values.maxAge];
     try {
       const data = {
-        name: values.name,
-        price: parseInt(values.price),
+        name: values.name ? values.name : examsData.name,
+        price:  values.price ? parseInt(values.price) : parseInt(examsData.price),
         available: values.available,
         examsType: values.examsType,
         applicableGender: values.applicableGender,
         subName: values.subName,
         description: values.description,
         ageRange: rangeAges,
+        characters: characIdArray
       };
+     
       await api.put(`exams/${id}`, data);
       toast.success("Exame configurado com sucesso");
-      navigate(0);
+     // navigate(0);
     } catch (error) {
       toast.error("Falha ao criar novo Exame");
     }
@@ -57,10 +65,33 @@ export function EditExams() {
       console.error(error)
     }
   }
+  
+  async function getExamsData() {
+    try {
+      const response = await api.get(`/exams/${id}`)
+      setExamsData(response.data)
+    } catch (error) {
+        console.log(error)
+    }
+  }
+
+
+  
+  function removeIds(itemToRemove: string ) {
+    const indice = characIdArray.indexOf(itemToRemove);
+    if (indice !== -1) {
+      characIdArray.splice(indice, 1);
+    }
+    }
 
   useEffect(() => {
+    getExamsData() 
     getCharacteristics()
   },[])
+
+  useEffect(() => {
+    console.log(characIdArray)
+  },[characIdArray])
 
   return (
     <Box flex="1" borderRadius={8} bg="gray.100" p="8">
@@ -86,11 +117,11 @@ export function EditExams() {
               fontWeight="bold"
             >
               <label htmlFor="">Nome do Exame</label>
-              <Input {...register("name")} name="name" />
+              <Input defaultValue={examsData ? examsData.name : ""} {...register("name")} name="name" />
               <label htmlFor="" style={{ marginTop: "20px" }}>
                 Preço
               </label>
-              <Input {...register("price")} name="price" />
+              <Input defaultValue={examsData ? examsData.price : 0} {...register("price")} name="price" />
               <label htmlFor="" style={{ marginTop: "20px" }}>
                 Titulo
               </label>
@@ -167,7 +198,7 @@ export function EditExams() {
                   name="available"
                   type="checkbox"
                   borderColor="gray.800"
-                  _checked={{ background: "#FF0000" }}
+                
                 />
                 <label htmlFor="available">Disponível</label>
               </Flex>
@@ -235,7 +266,13 @@ export function EditExams() {
                         return (<>
 
                         <label>{char.name}</label>
-                        <Checkbox size="lg" borderColor="black" />
+                        <Checkbox
+                          onChange={(ev) =>
+                            ev.target.checked === true
+                              ? setCharacIdArray([...characIdArray, char.id])
+                              :   removeIds(char.id)
+                          }
+                         defaultValue={`${char.id}`}  size="lg" borderColor="black" />
                         </>)
                       })
                     }
