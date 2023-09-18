@@ -7,6 +7,13 @@ import {
   Input,
   Button,
   Textarea,
+  TableContainer,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
@@ -20,11 +27,7 @@ import {
 import { Header } from "../../components/admin/Header";
 import { api } from "../../lib/axios";
 import FileUpload from "../../components/FileUpload";
-import { TableHemogramaFelino } from "../../components/TablesLab/HemogramaFelino";
 import { toast } from "react-toastify";
-import { HemogramaCaninoAdulto } from "../../components/TablesLab/HemogramaCaninoAdulto";
-import { TableBioquimicoCompleto } from "../../components/TablesLab/BioquimicoCompleto";
-import { TableBioquimicaSerica } from "../../components/TablesLab/BioquimicaSerica";
 import { LoadingSpinner } from "../../components/Loading";
 
 
@@ -48,7 +51,6 @@ interface ExamProps {
   }>
 }
 export function SetPetExam() {
-
   const { id, examId } = useParams<{ id: string, examId: string }>();
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [pet, setPet] = useState({} as any);
@@ -86,39 +88,14 @@ export function SetPetExam() {
     }
   }
 
-  let tableView;
-  switch(true) {
-   case typeView === 1:
-    tableView = (
-      <TableHemogramaFelino examId={id} />
-    )
-    break;
-    case typeView === 2:
-      tableView = (
-        <Flex direction="column" align="center" m="4">
-          <Text>LAUDO LIVRE</Text>
-        <Textarea onChange={(ev) => setTextReport(ev.target.value)}  border="2px" bgColor="white" minWidth={600} minHeight={800} />
-        <Button onClick={handleSetTextReport} colorScheme="whatsapp" mt="4">GRAVAR</Button>
-        </Flex>
-      )
-    break;
-    case typeView === 3:
-      tableView = (
-        <HemogramaCaninoAdulto  examId={id}/>
-      )
-      break;
-    case typeView === 4:
-        tableView = (
-          <TableBioquimicoCompleto examId={id} />
-        )
+  const tableView = (
+    <Flex direction="column" align="center" m="4">
+      <Text>LAUDO LIVRE</Text>
+    <Textarea onChange={(ev) => setTextReport(ev.target.value)}  border="2px" bgColor="white" minWidth={600} minHeight={800} />
+    <Button onClick={handleSetTextReport} colorScheme="whatsapp" mt="4">GRAVAR</Button>
+    </Flex>
+  )
 
-      break;
-     case typeView === 5: 
-     tableView = (
-      <TableBioquimicaSerica />
-     )
-     break; 
-  }
  
   return (
     <ChakraProvider>
@@ -167,13 +144,9 @@ export function SetPetExam() {
                       <Text fontSize="3xl">
                         <strong>Dados do Exame</strong>
                       </Text>
-                      <Flex   w="600px" wrap="wrap" height="120px" m="2" gap="2" >
-                        <Button  onClick={() => setTypeView(4)} colorScheme="whatsapp">Tabela Hemograma Completo </Button>
-                        <Button onClick={() => setTypeView(5)}colorScheme="whatsapp">Tabela Bioquimico </Button>
-                        <Button onClick={() => setTypeView(3)} colorScheme="whatsapp">Hemograma Canino </Button>
-                        <Button onClick={() => setTypeView(1)} colorScheme="whatsapp">Hemograma Felino </Button>
+                     
                         <Button onClick={() => setTypeView(2)}colorScheme="whatsapp"> Laudo Livre com Texto </Button>
-                      </Flex>
+                
                       <FileUpload examId={`${id}`} />
                     </Flex>
                    
@@ -224,7 +197,7 @@ export function SetPetExam() {
                               borderBottom={"0"}
                               borderRadius={"0"}
                               borderColor={"black"}
-                              defaultValue={pet?.name}
+                              defaultValue={pet?.medicine?.pet.name}
                               w="100%"
                             ></Input>
                           </Flex>
@@ -246,7 +219,8 @@ export function SetPetExam() {
                               borderBottom={"0"}
                               borderRadius={"0"}
                               borderColor={"black"}
-                          defaultValue={pet?.medicine?.pet.name}
+                              defaultValue={pet?.name}
+                        
                               w="50%"
                             ></Input>
                             <Text
@@ -301,17 +275,83 @@ export function SetPetExam() {
                               w="30%"
                             ></Input>
                           </Flex>
-                        {exam ? exam?.characteristics?.map((charac) => {
-                            
+                          <TableContainer >
+                                  <Table>
+                                    <Thead>
+                                    <Tr>
+                                      <Th   fontSize="15"
+                                    border="1px solid black"
+                                    bg="blue.400"
+                                    color="white">{pet?.name}</Th>
+                                      <Th colSpan={2} border="1px solid black">Resultado</Th>
+                                      <Th colSpan={2} border="1px solid black">Unidades</Th>
+                                      {exam ? exam?.characteristics?.map((charac) => {
                             const table = charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
-                            console.log("TABLE", table)
-                            return (
-                              <>
-                                <h1>{charac.name}</h1>
-                              </>
-                            )
-                          }) : (<LoadingSpinner />) }
+                            {
+                             return table?.refIdades.map((ref) => <Th  colSpan={2}  border="1px solid black" key={`${table?.name}${ref.maxAge}`}>{`@VAL. REF ${table?.name} ${ref.maxAge}`}</Th>)
+                            }
+      
+                                }) : (<LoadingSpinner />) }
+                                    </Tr>
+                                    </Thead>
+                                    <Tbody>
+                                    <Tr fontWeight="bold">
+                                    <Td border="1px solid black">Característica</Td>
+                                    <Td border="1px solid black">Absoluto</Td>
+                                    <Td border="1px solid black">Relativo</Td>
+                                    <Td border="1px solid black">Un. Abs.</Td>
+                                    <Td border="1px solid black">Un. Rel.</Td>
+                                    {exam ? exam?.characteristics?.map((charac) => {
+                                       const table = charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
+                                      {
+                                       return table?.refIdades.map((ref) => (<>
+                                       <Td key={ref.absoluto} border="1px solid black">Absoluto</Td>
+                                      <Td key={ref.relativo} border="1px solid black">Relativo</Td>
+                                       </>))
+                                      }
+                 
+                                  }) : (<LoadingSpinner />) }
+                                    </Tr>
+
+                                    {exam ? exam?.characteristics?.map((charac) => {
+                                  const table = charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
+                                  return (
+                                    <Tr key={charac.id} fontWeight="bold">
+                                    <Td border="1px solid black">{charac.name}</Td>
+                                    <Td border="1px solid black" bg="white">
+                                     <Input />
+                                    </Td>
+                                    <Td border="1px solid black" bg="white">
+                                    <Input />
+                                    </Td>
+                                    <Td border="1px solid black" bg="white"></Td>
+                                    <Td border="1px solid black" bg="white">
+                                      mg/dl
+                                    </Td>
+                                    {
+                                      table?.refIdades.map((ref) => (
+                                        <> 
+                                        <Td key={ref.absoluto} border="1px solid black" bg="white">
+                                        {ref.absoluto}
+                                        </Td>
+                                        <Td key={ref.relativo} border="1px solid black" bg="white">
+                                        {ref.relativo}
+                                        </Td>
+                                    
+                                          </>
+                                     
+                                      ))
+                                    }
+                                  </Tr>
+                                         )
+                                  }) : (<LoadingSpinner />) }
+                                      
+                                    </Tbody>
+                                  </Table>
+                                </TableContainer>
+                                <Button mt="4" colorScheme="whatsapp">GRAVAR</Button>
                   </Flex>
+                 
                 </Box>
               </Flex>
             </Flex>
