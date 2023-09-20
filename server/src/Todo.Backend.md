@@ -50,7 +50,7 @@
 [x] - Encerrar atendimentos deve ser lançado débito para o cliente dono do animal
 [X] - Deve ser Possivel configurar valores na internação
 [x] - Internação tem divisão por dois periodos de 12 horas e cobrar meio periodo a cada 12 horas
-[] - Configurar Exames com caractéristicas 
+[X] - Configurar Exames com caractéristicas 
 [] - Configurar Exames com quantidades de tabelas 
 [] - Laboratório mostrar tabela conforme o exame e suas referências
 [] - Laboratório deve concluir exames
