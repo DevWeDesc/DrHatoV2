@@ -21,12 +21,10 @@ import { api } from "../../lib/axios";
 export function ExamsVet() {
   const { id } = useParams<{ id: string }>();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
+  const [mergedExams, setMergedExams] = useState([])
   const [exams, setExams] = useState([]);
-  const [examId, setExamId] = useState(0);
   const [reloadData, setReloadData] = useState(false);
-  const navigate = useNavigate();
-
-  console.log(petDetails);
+  const user = JSON.parse(localStorage.getItem("user") as string);
 
   async function getPetExams() {
     const response = await api.get(`/pets/${id}`);
@@ -34,17 +32,39 @@ export function ExamsVet() {
 
     const exams = await api.get("/exams");
     setExams(exams.data);
+
+
+    const mergedExams = await api.get('mergedexams')
+    setMergedExams(mergedExams.data)
+    
   }
 
-  async function setExamInPet() {
+
+  
+  async function setExamInPet(examId: number) {
     try {
-      await api.post(`/setexam/${examId}/${petDetails.recordId}/${petDetails.totalAcc.id}`);
-      setReloadData(true);
-      toast.success("Exame criado com Sucesso");
+
+        await api.post(`/setexam/${examId}/${petDetails.recordId}/${petDetails.totalAcc.id}`);
+        setReloadData(true);
+        toast.success("Exame criado com Sucesso");
     } catch (error) {
       toast.error("Falha ao cadastrar exame!");
     }
   }
+  
+  async function setMergedExamId(examId: number) {
+    try {
+      const data = {
+        requestedFor: user.username
+      }
+      await api.post(`/setmergedexam/${examId}/${petDetails.recordId}/${petDetails.totalAcc.id}`, data);
+      setReloadData(true);
+      toast.success("Exame criado com Sucesso");
+  } catch (error) {
+    toast.error("Falha ao cadastrar exame!");
+  }
+  }
+
 
   async function deleteExam(examId: string | number, examPrice: string | number) {
     try {
@@ -122,7 +142,7 @@ export function ExamsVet() {
                     {exam.coleted != null ? exam.coleted : "Sem coleta"}
                   </Td>
                   <Td border="2px" fontSize="1xl" fontWeight="bold">
-                    {exam.requestedData}
+                    {new Intl.DateTimeFormat('pt-BR').format(new Date(exam.requestedData ? exam.requestedData : new Date()))}
                   </Td>
                   <Td border="2px" fontSize="1xl" fontWeight="bold">
                     {exam.doneExam === true ? "SIM" : "NÃO"}
@@ -142,6 +162,7 @@ export function ExamsVet() {
                   </Td>
                 </Tr>
               ))}
+              
             </Tbody>
           </Table>
         </TableContainer>
@@ -166,42 +187,39 @@ export function ExamsVet() {
             )}
             <Input height="38px" name="filter" />
           </HStack>
-          <Button onClick={setExamInPet} colorScheme="whatsapp">
-            INCLUIR NOVO EXAME
+          <Button colorScheme="teal">
+          Filtrar
           </Button>
         </Flex>
         <TableContainer w="100%" height="100%" overflowY="auto">
           <Table>
             <Thead>
               <Tr>
-                <Th color="black" fontSize="1xl" border="2px" w="100px">
-                  SELECIONADO
-                </Th>
-                <Th color="black" fontSize="1xl" border="2px">
+                
+                <Th color="black" fontSize="1xl" border="2px"  w="40%">
                   NOME
                 </Th>
-                <Th color="black" fontSize="1xl" border="2px" w="200px">
+                <Th color="black" fontSize="1xl" border="2px" w="40%">
                   VALOR
+                </Th>
+                <Th color="black" fontSize="1xl" border="2px">
+                  INCLUIR EXAME
                 </Th>
               </Tr>
             </Thead>
             <Tbody>
               {exams.map((exam: ExamsProps) => (
                 <Tr key={exam.id}>
-                  <Td border="2px">
-                    <Checkbox
-                      onChange={(ev) =>
-                        ev.target.checked === true
-                          ? setExamId(exam.id)
-                          : setExamId(0)
-                      }
-                      value={exam.id}
-                      borderColor="black"
-                      size="lg"
-                    />
-                  </Td>
                   <Td border="2px">{exam.name}</Td>
                   <Td border="2px">R$ {exam.price}</Td>
+                  <Td border="2px" ><Button w="100%" onClick={() => setExamInPet(exam.id)} colorScheme="whatsapp">INCLUIR EXAME</Button></Td>
+                </Tr>
+              ))}
+              {mergedExams.map((exam: ExamsProps) => (
+                <Tr key={exam.id}>
+                  <Td border="2px">{exam.name}</Td>
+                  <Td border="2px">R$ {exam.price}</Td>
+                  <Td border="2px" ><Button w="100%" onClick={() => setMergedExamId(exam.id)} colorScheme="whatsapp">INCLUIR EXAME</Button></Td>
                 </Tr>
               ))}
             </Tbody>

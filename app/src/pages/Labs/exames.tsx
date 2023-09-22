@@ -73,7 +73,7 @@ export function LabExames() {
 
    
 
-
+console.log('a',labs)
    
   let typeTable: ReactNode;
   switch (true) {

@@ -331,16 +331,21 @@ model Exams {
   examsType        String[]
   ageRange         String[]
   applicableGender String[]
+  isMultiPart      Boolean?              @default(false)
+  multiparts       Exams[]               @relation("MultiParts")
+  Exams            Exams?                @relation("MultiParts", fields: [multipartId], references: [id])
+  multipartId      Int?
   Sectors          Sectors[]
   characteristics  ExamCharacteristics[]
-  MergedExams      MergedExams?          @relation(fields: [mergedExamsId], references: [id])
-  mergedExamsId    Int?
+
+  MergedExams   MergedExams? @relation(fields: [mergedExamsId], references: [id])
+  mergedExamsId Int?
 }
 
 model MergedExams {
-  id    Int      @id @default(autoincrement())
-  name  String?
-  price Decimal?
+  id    Int     @id @default(autoincrement())
+  name  String
+  price Decimal
   exams Exams[]
 }
 

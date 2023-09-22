@@ -57,21 +57,22 @@ export function SetPetExam() {
   const [typeView, setTypeView] = useState(0);
   const [textReport, setTextReport] = useState("")
   const [exam, setExam] = useState({} as ExamProps)
-
-  async function Pets() {
+ 
+   async function Pets() {
     const pets = await api.get(`/labexam/${id}`);
     setPet(pets.data);
   }
-
   async function Exam() {
     const exam = await api.get(`/exams/${examId}`);
     setExam(exam.data)
   }
 
 
+
   useEffect(() => {
     Pets();
     Exam();
+
   }, []);
 
 
@@ -94,8 +95,98 @@ export function SetPetExam() {
     <Textarea onChange={(ev) => setTextReport(ev.target.value)}  border="2px" bgColor="white" minWidth={600} minHeight={800} />
     <Button onClick={handleSetTextReport} colorScheme="whatsapp" mt="4">GRAVAR</Button>
     </Flex>
-  )
+  ) 
 
+
+   const tableRefs:any = exam.characteristics ?  exam.characteristics.map((charac) => {
+    return charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
+   }) : null
+
+
+   let typeTableView;
+   switch(true) {
+    case Number(exam.id) === Number(examId): 
+    typeTableView = (
+      <TableContainer >
+      <Table>
+        <Thead>
+        <Tr>
+          <Th   fontSize="15"
+        border="1px solid black"
+        bg="blue.400"
+        color="white">{pet?.name}</Th>
+          <Th colSpan={2} border="1px solid black">Resultado</Th>
+          <Th colSpan={2} border="1px solid black">Unidades</Th>
+      
+        {
+          tableRefs ?  tableRefs[0]?.refIdades.map((ref: any) => <Th  colSpan={2}  border="1px solid black" key={`${tableRefs[0]?.name ? tableRefs[0]?.name : ""}${ref.maxAge ? ref.maxAge: "1"}`}>{`@VAL. REF ${tableRefs[0]?.name ? tableRefs[0]?.name : ""} ${ref.maxAge ? ref.maxAge: "1"}`}</Th>)  : 
+          (<LoadingSpinner />)
+        }
+       
+        
+
+
+        </Tr>
+        </Thead>
+        <Tbody>
+        <Tr fontWeight="bold">
+        <Td border="1px solid black">Característica</Td>
+        <Td border="1px solid black">Absoluto</Td>
+        <Td border="1px solid black">Relativo</Td>
+        <Td border="1px solid black">Un. Abs.</Td>
+        <Td border="1px solid black">Un. Rel.</Td>
+     
+          {
+            tableRefs ?  tableRefs[0]?.refIdades.map((ref: any) => <>
+            <Td key={ref?.absoluto} border="1px solid black">Absoluto</Td>
+           <Td key={ref?.relativo} border="1px solid black">Relativo</Td>
+            </>)  : 
+            (<LoadingSpinner />)
+          }
+
+      
+        </Tr>
+
+        {exam ? exam?.characteristics?.map((charac) => {
+      const table = charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
+      return (
+        <Tr key={charac.id} fontWeight="bold">
+        <Td border="1px solid black">{charac.name}</Td>
+        <Td border="1px solid black" bg="white">
+         <Input />
+        </Td>
+        <Td border="1px solid black" bg="white">
+        <Input />
+        </Td>
+        <Td border="1px solid black" bg="white"></Td>
+        <Td border="1px solid black" bg="white">
+          mg/dl
+        </Td>
+        {
+          table?.refIdades.map((ref) => (
+            <> 
+            <Td key={ref.absoluto} border="1px solid black" bg="white">
+            {ref.absoluto}
+            </Td>
+            <Td key={ref.relativo} border="1px solid black" bg="white">
+            {ref.relativo}
+            </Td>
+        
+              </>
+         
+          ))
+        }
+      </Tr>
+             )
+      }) : (<LoadingSpinner />) }
+          
+        </Tbody>
+      </Table>
+    </TableContainer>
+      
+    )
+    break;
+   }
  
   return (
     <ChakraProvider>
@@ -275,82 +366,9 @@ export function SetPetExam() {
                               w="30%"
                             ></Input>
                           </Flex>
-                          <TableContainer >
-                                  <Table>
-                                    <Thead>
-                                    <Tr>
-                                      <Th   fontSize="15"
-                                    border="1px solid black"
-                                    bg="blue.400"
-                                    color="white">{pet?.name}</Th>
-                                      <Th colSpan={2} border="1px solid black">Resultado</Th>
-                                      <Th colSpan={2} border="1px solid black">Unidades</Th>
-                                      {exam ? exam?.characteristics?.map((charac) => {
-                            const table = charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
-                            {
-                             return table?.refIdades.map((ref) => <Th  colSpan={2}  border="1px solid black" key={`${table?.name}${ref.maxAge}`}>{`@VAL. REF ${table?.name} ${ref.maxAge}`}</Th>)
-                            }
-      
-                                }) : (<LoadingSpinner />) }
-                                    </Tr>
-                                    </Thead>
-                                    <Tbody>
-                                    <Tr fontWeight="bold">
-                                    <Td border="1px solid black">Característica</Td>
-                                    <Td border="1px solid black">Absoluto</Td>
-                                    <Td border="1px solid black">Relativo</Td>
-                                    <Td border="1px solid black">Un. Abs.</Td>
-                                    <Td border="1px solid black">Un. Rel.</Td>
-                                    {exam ? exam?.characteristics?.map((charac) => {
-                                       const table = charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
-                                      {
-                                       return table?.refIdades.map((ref) => (<>
-                                       <Td key={ref.absoluto} border="1px solid black">Absoluto</Td>
-                                      <Td key={ref.relativo} border="1px solid black">Relativo</Td>
-                                       </>))
-                                      }
-                 
-                                  }) : (<LoadingSpinner />) }
-                                    </Tr>
-
-                                    {exam ? exam?.characteristics?.map((charac) => {
-                                  const table = charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
-                                  return (
-                                    <Tr key={charac.id} fontWeight="bold">
-                                    <Td border="1px solid black">{charac.name}</Td>
-                                    <Td border="1px solid black" bg="white">
-                                     <Input />
-                                    </Td>
-                                    <Td border="1px solid black" bg="white">
-                                    <Input />
-                                    </Td>
-                                    <Td border="1px solid black" bg="white"></Td>
-                                    <Td border="1px solid black" bg="white">
-                                      mg/dl
-                                    </Td>
-                                    {
-                                      table?.refIdades.map((ref) => (
-                                        <> 
-                                        <Td key={ref.absoluto} border="1px solid black" bg="white">
-                                        {ref.absoluto}
-                                        </Td>
-                                        <Td key={ref.relativo} border="1px solid black" bg="white">
-                                        {ref.relativo}
-                                        </Td>
-                                    
-                                          </>
-                                     
-                                      ))
-                                    }
-                                  </Tr>
-                                         )
-                                  }) : (<LoadingSpinner />) }
-                                      
-                                    </Tbody>
-                                  </Table>
-                                </TableContainer>
+                                    {typeTableView}
                                 <Button mt="4" colorScheme="whatsapp">GRAVAR</Button>
-                  </Flex>
+                        </Flex>
                  
                 </Box>
               </Flex>

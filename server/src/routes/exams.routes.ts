@@ -4,6 +4,7 @@ import { examsController } from '../controllers/examsController'
 export async function examsRoutes(app: FastifyInstance) {
     app.post('/exams', examsController.createExam)
     app.post('/setexam/:id/:recordId/:accId', examsController.setExamInPet)
+    app.post('/setmergedexam/:id/:recordId/:accId', examsController.setMergedExamInPet)
     app.post('/examcharac', examsController.createExamCharacteristics)
     app.post('/mergedexams', examsController.createMergedExams)
     app.get('/mergedexams', examsController.getMergedExams)

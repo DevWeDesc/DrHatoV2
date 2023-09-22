@@ -16,9 +16,18 @@ export const labsController = {
 
       })
 
-      const allExams = await prisma.exams.findMany({
+      const examsdefault = await prisma.exams.findMany({
         select: {id: true, name: true}
       })
+
+      const examsmerged = await prisma.mergedExams.findMany({
+        select: {id: true, name: true}
+      })
+
+
+
+
+      const allExams = examsdefault.concat(examsmerged)
 
  
 
