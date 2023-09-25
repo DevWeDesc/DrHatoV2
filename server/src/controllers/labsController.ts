@@ -15,7 +15,23 @@ export const labsController = {
         }
 
       })
-      reply.status(200).send(exams)
+
+      const examsdefault = await prisma.exams.findMany({
+        select: {id: true, name: true}
+      })
+
+      const examsmerged = await prisma.mergedExams.findMany({
+        select: {id: true, name: true}
+      })
+
+
+
+
+      const allExams = examsdefault.concat(examsmerged)
+
+ 
+
+      reply.status(200).send({exams, allExams})
     } catch (error) {
       reply.send({message: {error}}).status(400)
       console.log(error)

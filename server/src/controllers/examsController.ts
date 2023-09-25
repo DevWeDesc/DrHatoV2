@@ -4,16 +4,14 @@ import {  ExamSchema  } from "../schemas/schemasValidator";
 import { accumulatorService } from "../services/accumulatorService";
 import { prisma } from "../interface/PrismaInstance";
 
-
-
 type params = {
     id: string;
     recordId: string;
     accId: string;
+    title: string;
   }
 
 export const examsController = {
-
    
 createExam: async (request: FastifyRequest, reply: FastifyReply) => {
     const {name, price, examsType, available,applicableGender, description, subName } = ExamSchema.parse(request.body)
@@ -48,20 +46,30 @@ getExams: async (request: FastifyRequest, reply: FastifyReply) => {
 
 editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyReply) => {
     const {id }= request.params
-    const {name, price, examsType, available, applicableGender, description, subName, ageRange,characters
-    } = ExamSchema.parse(request.body)
+    const {name, price, examsType, available, applicableGender, description, subName, ageRange,characters, isMultiPart,
+        exams
+    }: any = request.body
 
     try {
         await prisma.exams.update({
             where: {id: parseInt(id)},
-            data: {name, price, examsType, available, applicableGender, description, subName, ageRange
-            ,characteristics: {}
-            }
+            data: {name, price, examsType, available, applicableGender, description, subName, ageRange ,isMultiPart }
         })
-        reply.status(200).send("Exame editado com sucesso!")
+
+   
+    
+    if(exams) { for (const ids of exams) { await prisma.exams.update({where: {id: parseInt(id)}, data: {multiparts: {connect: {id: parseInt(ids)}}}})}}
+    if(characters) {for (const cIds of characters) {await prisma.exams.update({where: {id: parseInt(id)}, data: {characteristics: { connect: {id: parseInt(cIds)}}}})}}
+   
+    
+
+         reply.status(200).send("Exame editado com sucesso!")
+
     } catch (error) {
-        console.log(error)
-        reply.status(400).send({message: error})
+        reply.status(400).send(error)
+        console.clear()
+        console.error(error)
+        
     }
  },
 
@@ -82,8 +90,8 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
  getById: async(request: FastifyRequest<{Params: params }>, reply: FastifyReply) => {
     const {id }= request.params
     try {
-        const exam = await prisma.exams.findFirst({
-            where: {id: parseInt(id)},
+        const exam = await prisma.exams.findUnique({
+            where: {id: parseInt(id)},include: {characteristics: true, multiparts: true}
         })
 
         reply.status(200).send(exam)
@@ -92,6 +100,7 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
         reply.status(400).send({message: error})
     }
  },
+
 
  setExamInPet: async (request: FastifyRequest<{Params: params, Body: { requestedFor: string} }>, reply: FastifyReply) => {
     const { id, recordId, accId} = request.params
@@ -106,7 +115,7 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
        await prisma.examsForPet.create({data: {
         name: getExame.name, 
         price: getExame.price,
-        doneExame: getExame.doneExame,
+        doneExame: getExame.doneExame ?? false,
         requesteData: processData,
         requestedFor: requestedFor,
         examsType: getExame.examsType,
@@ -125,6 +134,44 @@ editExams: async (request: FastifyRequest<{Params: params }>, reply: FastifyRepl
        
     }
  },
+
+ setMergedExamInPet: async (request: FastifyRequest<{Params: params, Body: { requestedFor: string} }>, reply: FastifyReply) => {
+    const { id, recordId, accId} = request.params
+    const {requestedFor} = request.body
+     const getExame = await prisma.mergedExams.findUnique({where: {id: parseInt(id)}})
+    const processData = new Date()
+    try {
+
+        if(!getExame) {
+            reply.status(400).send("Exame não disponivel/Falha ao criar exame")
+            return
+        }
+
+       await prisma.examsForPet.create({data: {
+        name: getExame.name,  
+        price: getExame.price,
+        doneExame: false,
+        requesteData: processData,
+        requestedFor: requestedFor,
+        examsType: ['lab'],
+        medicine: {connect: {id: parseInt(recordId)}} }})
+
+
+        await accumulatorService.addPriceToAccum(getExame.price, accId)
+
+        reply.status(201)
+
+
+
+    } catch (error) {
+        console.log(error)
+        reply.status(400).send({message: error})
+       
+    }
+ },
+
+
+ 
 
  removePetExam: async (request: FastifyRequest<{ Params: { id: string; accId: string; examPrice: string;}}>, reply: FastifyReply) => {
     const {id, accId, examPrice} = request.params
@@ -194,6 +241,64 @@ try {
     reply.status(404)
     console.log(error)
 }
- }
+ },
+
+ createMergedExams: async (request: FastifyRequest<{ Params: { id: string;}, Body: {examsIds: Array<number>, name: string, price: string}}>, reply: FastifyReply) => {
+    try {
+        const {examsIds, name, price} = request.body 
+         
+       const mergedExam = await prisma.mergedExams.create({
+            data: {
+                name,
+                price
+            }
+        }).then(async (res) => {
+            for (const ids of examsIds) {
+               await prisma.mergedExams.update({
+                    where: {id: res.id}, 
+                    data: {exams: {connect: { id: ids}} }
+                })
+            }  
+        })
+
+        reply.send(mergedExam).status(201)
+    } catch (error) {
+        console.log(error)
+        reply.send({
+            message: error
+        })
+    }
+ },
+
+ getMergedExams: async (request: FastifyRequest<{ Params: { id: string;}}>, reply: FastifyReply) => {
+        try {
+            const exams =  await prisma.mergedExams.findMany({
+                include: {exams: {include: {characteristics: true}}}
+            }) 
+            reply.send(exams)
+        } catch (error) {
+            console.log(error)  
+            reply.send({
+                message: error
+            })
+        }
+ },
+
+ getMergedExamsById: async (request: FastifyRequest<{ Params: { id: string;}}>, reply: FastifyReply) => {
+    try {
+        const { id} = request.params
+        const exams =  await prisma.mergedExams.findUnique({
+            where: {id: parseInt(id)},
+            include: {exams: { include: {characteristics: true}}}
+        }) 
+
+        reply.send(exams)
+    } catch (error) {
+        console.log(error)  
+        reply.send({
+            message: error
+        })
+    }
+}
 
 }

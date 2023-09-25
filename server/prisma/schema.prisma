@@ -114,47 +114,6 @@ model MedicineRecord {
   petQueues     QueuesForPet[]
 }
 
-model Exams {
-  id               Int                   @id @default(autoincrement())
-  name             String
-  price            Decimal
-  available        Boolean?              @default(false)
-  doneExame        Boolean?              @default(false)
-  subName          String?
-  description      String?
-  examsType        String[]
-  ageRange         String[]
-  applicableGender String[]
-  Sectors          Sectors[]
-  characteristics  ExamCharacteristics[]
-}
-
-model ExamsForPet {
-  id                 Int              @id @default(autoincrement())
-  name               String
-  price              Decimal
-  requesteData       DateTime?
-  requestedFor       String?
-  responsibleForExam String?
-  doneExame          Boolean?         @default(false)
-  medicine_id        Int
-  reportExams        ReportForExams[]
-  medicine           MedicineRecord   @relation(fields: [medicine_id], references: [id])
-  examsType          String[]         @default(["lab"])
-}
-
-model ReportForExams {
-  id             Int         @id @default(autoincrement())
-  textReport     String?
-  report         Json?
-  hasTable       Boolean?    @default(false)
-  tableNumber    Int?
-  internalReport String[]
-  createdAt      DateTime    @default(now())
-  examsId        Int
-  examsForPet    ExamsForPet @relation(fields: [examsId], references: [id])
-}
-
 model Sectors {
   id        Int          @id @default(autoincrement())
   name      String
@@ -360,6 +319,50 @@ model InstallmentsDebts {
   boxHistory         HospBoxHistory  @relation(fields: [boxHistoryId], references: [id])
 }
 
+// -------------- EXAMES ----------------- //
+model Exams {
+  id               Int                   @id @default(autoincrement())
+  name             String
+  price            Decimal
+  available        Boolean?              @default(false)
+  doneExame        Boolean?              @default(false)
+  subName          String?
+  description      String?
+  examsType        String[]
+  ageRange         String[]
+  applicableGender String[]
+  isMultiPart      Boolean?              @default(false)
+  multiparts       Exams[]               @relation("MultiParts")
+  Exams            Exams?                @relation("MultiParts", fields: [multipartId], references: [id])
+  multipartId      Int?
+  Sectors          Sectors[]
+  characteristics  ExamCharacteristics[]
+
+  MergedExams   MergedExams? @relation(fields: [mergedExamsId], references: [id])
+  mergedExamsId Int?
+}
+
+model MergedExams {
+  id    Int     @id @default(autoincrement())
+  name  String
+  price Decimal
+  exams Exams[]
+}
+
+model ExamsForPet {
+  id                 Int              @id @default(autoincrement())
+  name               String
+  price              Decimal
+  requesteData       DateTime?
+  requestedFor       String?
+  responsibleForExam String?
+  doneExame          Boolean?         @default(false)
+  medicine_id        Int
+  reportExams        ReportForExams[]
+  medicine           MedicineRecord   @relation(fields: [medicine_id], references: [id])
+  examsType          String[]         @default(["lab"])
+}
+
 model ExamCharacteristics {
   id      Int     @id @default(autoincrement())
   name    String?
@@ -367,3 +370,17 @@ model ExamCharacteristics {
   Exams   Exams?  @relation(fields: [examsId], references: [id])
   examsId Int?
 }
+
+model ReportForExams {
+  id             Int         @id @default(autoincrement())
+  textReport     String?
+  report         Json?
+  hasTable       Boolean?    @default(false)
+  tableNumber    Int?
+  internalReport String[]
+  createdAt      DateTime    @default(now())
+  examsId        Int
+  examsForPet    ExamsForPet @relation(fields: [examsId], references: [id])
+}
+
+// -------------- EXAMES ----------------- //

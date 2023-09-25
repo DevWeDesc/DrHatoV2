@@ -136,13 +136,14 @@ export function EditUser() {
                       {...register("email")}
                       name="email"
                       label="Novo email de usuário"
-                      defaultValue={customer.username}
+                      defaultValue={customer.email}
+                     
                     />
                     <Input
                       {...register("username")}
                       name="username"
                       label="Novo nome de usuário"
-                      defaultValue={customer.email}
+                      defaultValue={customer.username}
                     />
                     <Input
                       {...register("password")}
