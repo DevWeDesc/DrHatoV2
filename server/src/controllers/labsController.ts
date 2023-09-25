@@ -20,14 +20,9 @@ export const labsController = {
         select: {id: true, name: true}
       })
 
-      const examsmerged = await prisma.mergedExams.findMany({
-        select: {id: true, name: true}
-      })
 
 
-
-
-      const allExams = examsdefault.concat(examsmerged)
+      const allExams = examsdefault
 
  
 
@@ -148,9 +143,9 @@ export const labsController = {
   reportTableExam: async (request:FastifyRequest<{Params: {examId: string}}>, reply: FastifyReply) => {
     try {
       const {examId} = request.params
-      const {jsonData, hasTable, tableNumber }: any  = request.body
+      const {jsonData, isOnePart , isMultiPart, isReportByText }: any  = request.body
       await prisma.reportForExams.create({
-        data: {report: jsonData, tableNumber,  hasTable, examsForPet: {connect: {id: parseInt(examId)}}}
+        data: {report: jsonData, isOnePart, isMultiPart, isReportByText, examsForPet: {connect: {id: parseInt(examId)}}}
       })
 
       await prisma.examsForPet.update({
@@ -222,25 +217,6 @@ export const labsController = {
     }
   },
 
-  getTableExamsView: async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) => {
-    try {
-      const {examId} = request.params
-      const table = await prisma.examsForPet.findUnique({
-        where:{id: parseInt(examId)},select: {reportExams: {where: {hasTable: true}}}
-      })
-      const data = table?.reportExams.flatMap((data) => data)
 
-      if(!data) {
-        reply.status(404)
-        return
-      } else {
-        reply.send(data[0].report)
-      }
-
-    } catch (error) {
-      reply.send({message: error})
-      console.log(error)
-    }
-  }
 
 }
