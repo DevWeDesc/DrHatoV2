@@ -21,17 +21,26 @@ import {  useParams } from "react-router-dom";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../../components/admin/Input";
+import { LoadingSpinner } from "../../Loading";
 
 interface ExamProps {
   name: string;
   price: string;
 }
+interface CharacProps {
+  data: Array<{
+    id: number;
+    name: string
+  }>
+}
 export function EditExams() {
   const { register, handleSubmit } = useForm();
-  const [characters, setCharacters] = useState([])
+  const [characters, setCharacters] = useState({} as CharacProps)
   const [characIdArray, setCharacIdArray] = useState([] as any)
   const [examsIdArray, setExamsIdArray] = useState([] as any)
   const [isMultiPart, setIsMultiPart] = useState(false)
+  const [isReportByText, setisReportByText] = useState(false)
+  const [isOnePart, setisOnePart] = useState(false)
   const [examsData, setExamsData] = useState({} as ExamProps)
   const [allExams, setAllExams] = useState([])
   const { id } = useParams<{ id: string }>();
@@ -51,7 +60,9 @@ export function EditExams() {
         ageRange: rangeAges,
         characters: characIdArray,
         isMultiPart,
-        exams: examsIdArray
+        exams: examsIdArray,
+        isReportByText,
+        isOnePart
       };
      
       await api.put(`exams/${id}`, data);
@@ -83,7 +94,7 @@ export function EditExams() {
     }
   }
 
-
+  console.log("CHARACS", characters)
   
   function removeIds(itemToRemove: string ) {
     const indice = characIdArray.indexOf(itemToRemove);
@@ -193,19 +204,24 @@ export function EditExams() {
                 <Text fontSize="md" color="gray.800">O Exame herdara os subexames e suas caracteristicas </Text>
                 <Flex wrap="wrap" gap="4">
                 {
-                      isMultiPart === true ? allExams.map((exam: any) => (
-                        <HStack key={exam.id}>
+                      isMultiPart === true ? allExams.map((exam: any) => {
+
+                        const isSameExam = examsData.name === exam.name ? true : false;
+
+                        return <HStack key={exam.id}>
                       
-                          <label>{exam.name}</label>
-                          <Checkbox
-                            onChange={(ev) =>
-                              ev.target.checked === true
-                                ? setExamsIdArray([...examsIdArray, exam.id])
-                                :   removeExamsIds(exam.id)
-                            }
-                           defaultValue={`${exam.id}`}  size="lg" borderColor="black" />
-                          </HStack>
-                        )) : (<></>)
+                        <label>{exam.name}</label>
+                        <Checkbox
+                        disabled={isSameExam}
+                       
+                          onChange={(ev) =>
+                            ev.target.checked === true
+                              ? setExamsIdArray([...examsIdArray, exam.id])
+                              :   removeExamsIds(exam.id)
+                          }
+                         defaultValue={`${exam.id}`}  size="lg" borderColor="black" />
+                        </HStack>
+                      }) : (<></>)
                     }
                 </Flex>
                   
@@ -240,7 +256,34 @@ export function EditExams() {
               </Flex>
               <Flex gap="4">
                 <Checkbox
+                disabled={isMultiPart || isOnePart}
+                  onChange={(ev) => setisReportByText(ev.target.checked)}
+                  size="lg"
+                  id="available"
+                  name="available"
+                  type="checkbox"
+                  borderColor="gray.800"
+                
+                />
+                <label htmlFor="available">Laudado por texto?</label>
+              </Flex>
+              <Flex gap="4">
+                <Checkbox
+                disabled={isMultiPart || isReportByText}
+                  onChange={(ev) => setisOnePart(ev.target.checked)}
+                  size="lg"
+                  id="available"
+                  name="available"
+                  type="checkbox"
+                  borderColor="gray.800"
+                
+                />
+                <label htmlFor="available">Exame e único?</label>
+              </Flex>
+              <Flex gap="4">
+                <Checkbox
                   onChange={(ev) => setIsMultiPart(ev.target.checked)}
+                  disabled={isReportByText || isOnePart}
                   size="lg"
                   id="available"
                   name="available"
@@ -310,19 +353,20 @@ export function EditExams() {
                 <Text>Caractéristicas desse exame</Text>
                 <Flex wrap="wrap" gap={4}>
                     {
-                      characters && characters.map((char: any) => {
+                     characters ? characters.data?.map((char: any) => {
                         return (<>
 
-                        <label>{char.name}</label>
+                        <label>{char?.name}</label>
                         <Checkbox
+                        disabled={isMultiPart || isReportByText}
                           onChange={(ev) =>
                             ev.target.checked === true
-                              ? setCharacIdArray([...characIdArray, char.id])
-                              :   removeIds(char.id)
+                              ? setCharacIdArray([...characIdArray, char?.id])
+                              :   removeIds(char?.id)
                           }
-                         defaultValue={`${char.id}`}  size="lg" borderColor="black" />
+                         defaultValue={`${char?.id}`}  size="lg" borderColor="black" />
                         </>)
-                      })
+                      }): (<LoadingSpinner/>)
                     }
                 </Flex>
               </Flex>

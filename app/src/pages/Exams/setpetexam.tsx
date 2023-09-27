@@ -15,7 +15,7 @@ import {
   Tbody,
   Td,
 } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import {
@@ -29,6 +29,8 @@ import { api } from "../../lib/axios";
 import FileUpload from "../../components/FileUpload";
 import { toast } from "react-toastify";
 import { LoadingSpinner } from "../../components/Loading";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+
 
 
 interface ExamProps {
@@ -37,6 +39,25 @@ interface ExamProps {
   price: string;
   available: boolean;
   doneExam: boolean;
+  isMultiPart: boolean;
+  isReportByText: boolean;
+  isOnePart: boolean;
+  multiparts: Array<{
+    id: number;
+    name: string;
+    characteristics: Array<{
+      id: number;
+      name:string;
+      especie: Array<{
+        name: string;
+        refIdades: Array<{
+          maxAge: number;
+          absoluto: string;
+          relativo: string;
+        }>
+      }>
+    }>
+  }>
   characteristics: Array<{
     id: number;
     name:string;
@@ -54,10 +75,10 @@ export function SetPetExam() {
   const { id, examId } = useParams<{ id: string, examId: string }>();
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [pet, setPet] = useState({} as any);
-  const [typeView, setTypeView] = useState(0);
   const [textReport, setTextReport] = useState("")
   const [exam, setExam] = useState({} as ExamProps)
- 
+  const {register, handleSubmit} = useForm()
+ const navigate = useNavigate()
    async function Pets() {
     const pets = await api.get(`/labexam/${id}`);
     setPet(pets.data);
@@ -67,12 +88,9 @@ export function SetPetExam() {
     setExam(exam.data)
   }
 
-
-
   useEffect(() => {
     Pets();
     Exam();
-
   }, []);
 
 
@@ -89,13 +107,33 @@ export function SetPetExam() {
     }
   }
 
-  const tableView = (
-    <Flex direction="column" align="center" m="4">
-      <Text>LAUDO LIVRE</Text>
-    <Textarea onChange={(ev) => setTextReport(ev.target.value)}  border="2px" bgColor="white" minWidth={600} minHeight={800} />
-    <Button onClick={handleSetTextReport} colorScheme="whatsapp" mt="4">GRAVAR</Button>
-    </Flex>
-  ) 
+  const handleSetTableReport:  SubmitHandler<FieldValues>  = async (values) => {
+   
+    const refs = exam.characteristics.flatMap((charac) => {
+      let data = {
+        charac: charac.name,
+        abs: values[`abs${charac.name}`],
+        rel: values[`rel${charac.name}`]
+      }
+      return data
+    })
+
+  
+    const data = {
+      jsonData: refs,
+      isOnePart: exam.isOnePart, 
+      isMultiPart: exam.isMultiPart ,
+      isReportByText: exam.isReportByText 
+    }
+
+    try {
+      console.log(data)
+      await api.post(`/labreportexam/${id}`,data)
+      toast.success("Exame laudado com sucesso!")
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
 
    const tableRefs:any = exam.characteristics ?  exam.characteristics.map((charac) => {
@@ -105,9 +143,122 @@ export function SetPetExam() {
 
    let typeTableView;
    switch(true) {
-    case Number(exam.id) === Number(examId): 
+    case exam.isMultiPart === true:
     typeTableView = (
-      <TableContainer >
+      <>
+        {exam ? (
+          exam.multiparts.map(table => (
+            <TableContainer key={table.id}>
+              <Table>
+                <Thead>
+                  <Tr>
+                    <Th
+                      fontSize="15"
+                      border="1px solid black"
+                      bg="blue.400"
+                      color="white"
+                    >
+                      {table?.name}
+                    </Th>
+                    <Th colSpan={2} border="1px solid black">
+                      Resultado
+                    </Th>
+                    <Th colSpan={2} border="1px solid black">
+                      Unidades
+                    </Th>
+                    {
+                      table.characteristics.map((data) => {
+                        const ref = data.especie.filter((esp) => esp.name === pet?.medicine?.pet?.especie)
+
+                        return ref[0].refIdades.map((ref) => <Th key={`${ref.maxAge}${ref.absoluto}`} colSpan={2}  border="1px solid black">{`@Val Ref ${pet?.medicine?.pet?.especie} ${ref.maxAge}`}</Th>)
+
+                      })
+                    }
+                 
+
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Tr fontWeight="bold">
+                    <Td border="1px solid black">Característica</Td>
+                    <Td border="1px solid black">Absoluto</Td>
+                    <Td border="1px solid black">Relativo</Td>
+                    <Td border="1px solid black">Un. Abs.</Td>
+                    <Td border="1px solid black">Un. Rel.</Td>
+
+                    {
+                      table.characteristics.map((data) => {
+                        const ref = data.especie.filter((esp) => esp.name === pet?.medicine?.pet?.especie)
+
+                        return ref[0].refIdades.map((ref) => <>
+                          <Td key={ref?.absoluto} border="1px solid black">
+                            Absoluto
+                          </Td>
+                          <Td key={ref?.relativo} border="1px solid black">
+                            Relativo
+                          </Td>
+                        </>) 
+                      })
+                    }
+
+             
+                  </Tr>
+
+                  {table ? (
+                    table?.characteristics?.map(charac => {
+                      const table = charac?.especie.find(
+                        (data: any) => data.name === pet?.medicine?.pet?.especie
+                      )
+                      return (
+                        <Tr key={charac.id} fontWeight="bold">
+                          <Td border="1px solid black">{charac.name}</Td>
+                          <Td border="1px solid black" bg="white">
+                            <Input />
+                          </Td>
+                          <Td border="1px solid black" bg="white">
+                            <Input />
+                          </Td>
+                          <Td border="1px solid black" bg="white"></Td>
+                          <Td border="1px solid black" bg="white">
+                            mg/dl
+                          </Td>
+                          {table?.refIdades.map(ref => (
+                            <>
+                              <Td
+                                key={ref.absoluto}
+                                border="1px solid black"
+                                bg="white"
+                              >
+                                {ref.absoluto}
+                              </Td>
+                              <Td
+                                key={ref.relativo}
+                                border="1px solid black"
+                                bg="white"
+                              >
+                                {ref.relativo}
+                              </Td>
+                            </>
+                          ))}
+                        </Tr>
+                      )
+                    })
+                  ) : (
+                    <LoadingSpinner />
+                  )}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          ))
+        ) : (
+          <LoadingSpinner />
+        )}
+      </>
+    )
+    break;
+    case exam.isOnePart === true: 
+    typeTableView = (
+      <TableContainer as="form" onSubmit={handleSubmit(handleSetTableReport)} >
       <Table>
         <Thead>
         <Tr>
@@ -147,16 +298,16 @@ export function SetPetExam() {
       
         </Tr>
 
-        {exam ? exam?.characteristics?.map((charac) => {
+        {exam ? exam?.characteristics?.map((charac, index) => {
       const table = charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
       return (
         <Tr key={charac.id} fontWeight="bold">
         <Td border="1px solid black">{charac.name}</Td>
         <Td border="1px solid black" bg="white">
-         <Input />
+         <Input {...register(`abs${charac.name}`)} name={`abs${charac.name}`}   />
         </Td>
         <Td border="1px solid black" bg="white">
-        <Input />
+        <Input {...register(`rel${charac.name}`)} name={`rel${charac.name}`}  />
         </Td>
         <Td border="1px solid black" bg="white"></Td>
         <Td border="1px solid black" bg="white">
@@ -182,11 +333,35 @@ export function SetPetExam() {
           
         </Tbody>
       </Table>
+      <Button type="submit" w="100%"  mt="4" colorScheme="whatsapp">GRAVAR</Button>
     </TableContainer>
       
     )
     break;
+    case exam.isReportByText === true: 
+    typeTableView = (
+      <Flex direction="column" align="center" m="4">
+      <Text>LAUDO LIVRE</Text>
+    <Textarea onChange={(ev) => setTextReport(ev.target.value)}  border="2px" bgColor="white" minWidth={600} minHeight={800} />
+    <Button onClick={handleSetTextReport} colorScheme="whatsapp" mt="4">GRAVAR</Button>
+    </Flex>
+    )
+    break;
+    default:
+      typeTableView = (
+        <Flex align="center" justify="center" w="100%" h="100%">
+            <Text>OPS.... Parece que houve uma fala na renderização desse exame,
+              verifique as configurações dele!
+            </Text>
+            <Button colorScheme="yellow" onClick={() => navigate(`/Admin/Exams/${exam.id}`)}>Ir até configuraões</Button>
+        </Flex>
+      ) 
+    break;
+
    }
+
+
+
  
   return (
     <ChakraProvider>
@@ -235,8 +410,7 @@ export function SetPetExam() {
                       <Text fontSize="3xl">
                         <strong>Dados do Exame</strong>
                       </Text>
-                     
-                        <Button onClick={() => setTypeView(2)}colorScheme="whatsapp"> Laudo Livre com Texto </Button>
+                    
                 
                       <FileUpload examId={`${id}`} />
                     </Flex>
@@ -365,9 +539,11 @@ export function SetPetExam() {
                               defaultValue="Não definido"
                               w="30%"
                             ></Input>
-                          </Flex>
+                                </Flex>
                                     {typeTableView}
-                                <Button mt="4" colorScheme="whatsapp">GRAVAR</Button>
+                              
+                            
+                               
                         </Flex>
                  
                 </Box>

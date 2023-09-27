@@ -12,7 +12,7 @@ export function ExamesList() {
           <Header title="Exames" url="/Admin/" />
           <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
             <Sidebar />
-            <ListExams></ListExams>
+            <ListExams />
           </Flex>
         </Flex>
       </AdminContainer>

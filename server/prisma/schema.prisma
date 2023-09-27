@@ -332,21 +332,13 @@ model Exams {
   ageRange         String[]
   applicableGender String[]
   isMultiPart      Boolean?              @default(false)
+  isReportByText   Boolean?              @default(false)
+  isOnePart        Boolean?              @default(false)
   multiparts       Exams[]               @relation("MultiParts")
   Exams            Exams?                @relation("MultiParts", fields: [multipartId], references: [id])
   multipartId      Int?
   Sectors          Sectors[]
   characteristics  ExamCharacteristics[]
-
-  MergedExams   MergedExams? @relation(fields: [mergedExamsId], references: [id])
-  mergedExamsId Int?
-}
-
-model MergedExams {
-  id    Int     @id @default(autoincrement())
-  name  String
-  price Decimal
-  exams Exams[]
 }
 
 model ExamsForPet {
@@ -361,22 +353,23 @@ model ExamsForPet {
   reportExams        ReportForExams[]
   medicine           MedicineRecord   @relation(fields: [medicine_id], references: [id])
   examsType          String[]         @default(["lab"])
+  updatedAt          DateTime         @updatedAt
 }
 
 model ExamCharacteristics {
   id      Int     @id @default(autoincrement())
   name    String?
   especie Json?
-  Exams   Exams?  @relation(fields: [examsId], references: [id])
-  examsId Int?
+  Exams   Exams[]
 }
 
 model ReportForExams {
   id             Int         @id @default(autoincrement())
   textReport     String?
   report         Json?
-  hasTable       Boolean?    @default(false)
-  tableNumber    Int?
+  isOnePart      Boolean?    @default(false)
+  isMultiPart    Boolean?    @default(false)
+  isReportByText Boolean?    @default(false)
   internalReport String[]
   createdAt      DateTime    @default(now())
   examsId        Int

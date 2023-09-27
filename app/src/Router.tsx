@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
 import { AdminCharts } from "./pages/AdminDashboard/charts";
@@ -67,7 +67,7 @@ import { Hospitalization } from "./pages/AdminDashboard/hospitalization";
 import { Reports } from "./pages/Reports/index";
 import { AdminSurgery } from "./pages/AdminDashboard/surgeryes";
 import { UsersList } from "./pages/Users";
-import { AnimatePresence } from "framer-motion";
+
 import { QueueLabs } from "./queue/Labs";
 import ReportsComission from "./pages/Reports/comissions";
 import ReportsCashFlow from "./pages/Reports/cashflow";
@@ -103,7 +103,6 @@ import { HealthInsurance } from "./pages/AdminDashboard/healthInsurance";
 import { HealthInsuranceDetails } from "./pages/AdminDashboard/HealthInsuranceDetails";
 import AdminBoxs from "./pages/AdminDashboard/box";
 import { AuthContextProvider } from "./contexts/AuthContext";
-import { Reminder } from "./components/reminder";
 import ReminderPage from "./pages/ReminderPage";
 import { UrlContextProvider } from "./contexts/UrlContext";
 import { ExamsDetails } from "./pages/Vets/WorkSpaceVets/examsDetails";

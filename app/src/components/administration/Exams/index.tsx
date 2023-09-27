@@ -36,7 +36,6 @@ export function ListExams() {
   const [isModalOpenThree, setIsModalOpenThree] = useState(false);
   const [loading, setLoading] = useState(false);
   const [exams, setExams] = useState([] as any);
-  const [examsMerged, setExamsMerged] = useState([] as any);
   const [examsIds, setExamsIds] = useState<number[]>([])
   const [mergedExamName, setMergedExamName] = useState("")
   const [mergedExamPrice, setMergedExamPrice] = useState(0)
@@ -56,45 +55,11 @@ export function ListExams() {
     setIsModalOpenTwo(false);
   }
 
-  function openModalThree() {
-    setIsModalOpenThree(true);
-  }
-  function closeModalThree() {
-    setIsModalOpenThree(false);
-  }
-
-
-
-  const handleCreateNewMergedExam = async () => {
-    try {
-      const data = {
-        name: mergedExamName,
-        price: mergedExamPrice,
-        examsIds: examsIds
-      }
-
-      await api.post('/mergedexams', data)
-      setLoading(true);
-      toast.success("Exame criado com sucesso")
-    } catch (error) {
-      toast.error('Falha ao criar novo exame mesclado')
-      console.log(error)
-    }
-  }
-  
-  function removeEspecie(itemToRemove: number ) {
-    const indice = examsIds.indexOf(itemToRemove);
-    if (indice !== -1) {
-      examsIds.splice(indice, 1);
-    }
-    }
-  
 
   const getExamesListData = async () => {
     const exams = await api.get("exams");
-    const mergedExams = await api.get("/mergedexams")
     setExams(exams.data);
-    setExamsMerged(mergedExams.data)
+  
   };
   useEffect(() => {
     getExamesListData();
@@ -157,17 +122,7 @@ export function ListExams() {
         >
           Cadastrar novo Exame
         </Button>
-        <Button
-          w="100%"
-          py="8"
-          fontSize="20"
-          colorScheme="whatsapp"
-          mt="4"
-          leftIcon={<Icon as={RiAddLine} />}
-          onClick={() => openModalThree()}
-        >
-          Cadastrar novo Exame Mesclado
-        </Button>
+    
         <Button
         mt="4"
           w="100%"
@@ -255,62 +210,6 @@ export function ListExams() {
           ) : (
             <LoadingSpinner />
           )}
-          {
-            examsMerged ? examsMerged.map((mexam: any) => (
-              <Tr key={mexam.id} fontSize="18">
-              <Td borderColor="black">
-                <Box>
-                  <Link to={`/Admin/Exams/Details/${mexam.id}`}>
-                    <Text
-                      fontWeight="bold"
-                      color="gray.800"
-                      borderColor="black"
-                    >
-                      {mexam.name}
-                    </Text>
-                  </Link>
-                </Box>
-              </Td>
-              <Td borderColor="black">
-                <Text fontWeight="bold" color="gray.800">
-                  {new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(mexam.price)}
-                </Text>
-              </Td>
-              <Td borderColor="black">
-                Sim
-              </Td>
-              <Td borderColor="black">
-                {" "}
-                <ConfirmationDialog
-                  disabled={true}
-                  icon={<BsFillTrashFill fill="white" size={16} />}
-                  buttonTitle="Deletar Exame"
-                  whatIsConfirmerd="Tem certeza que deseja Excluir esse Exame?"
-                  describreConfirm="Excluir a Exame é uma ação irreversivel, tem certeza que deseja excluir?"
-                  callbackFn={() => DeleteExam(mexam.id)}
-                />
-              </Td>
-              <Td borderColor="black">
-                <Link to={`/Admin/Exams/${mexam.id}`}>
-                  <Button
-                    as="a"
-                    size="sm"
-                    fontSize="sm"
-                    colorScheme="yellow"
-                    leftIcon={<Icon as={RiPencilLine} />}
-                   
-                    isDisabled={true}
-                  >
-                    Configurar
-                  </Button>
-                </Link>
-              </Td>
-            </Tr>
-            )): (<LoadingSpinner />)
-          }
         </Tbody>
       </Table>
       <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
@@ -361,38 +260,7 @@ export function ListExams() {
       <GenericModal isOpen={isModalOpenTwo} onRequestClose={closeModalTwo} >
             <NewCharacteristics />
       </GenericModal>
-      <GenericModal isOpen={isModalOpenThree} onRequestClose={closeModalThree} >
-          <Flex w="900px" h="600px" direction="column">
-            <Input label="Nome do Exame"  name="nameMerged" value={mergedExamName} onChange={(ev) => setMergedExamName(ev.target.value)} />
-            <Input label="Preço do Exame" name="priceMerged" value={mergedExamPrice} onChange={(ev) => setMergedExamPrice(Number(ev.target.value))} />
 
-            <Flex w="100%" h="100%" overflowY="auto" direction="column" >
-              <Flex w="100%" h="90%" wrap="wrap" overflowY="auto">
-              {
-                exams && exams.map((exam: {id:number, name: string}) => (
-                <Flex key={exam.id} gap="2" m="4" align="center"  w="auto" h="48px" border="2px" 
-                rounded={12} borderColor="cyan.300"
-                p="2">
-                  <Checkbox size="lg" borderColor="black"
-                  onChange={(ev) =>
-                    ev.target.checked === true
-                      ? setExamsIds([...examsIds, exam.id])
-                      :   removeEspecie(exam.id)
-                  }
-                  />
-                  <Text>{exam.name}</Text>
-                
-                </Flex>
-                ))
-              }
-              </Flex>
-              
-                <Button colorScheme="whatsapp" onClick={handleCreateNewMergedExam} >GRAVAR</Button>
-           </Flex>
-            
-
-          </Flex>
-      </GenericModal>
     </Box>
   );
 }
