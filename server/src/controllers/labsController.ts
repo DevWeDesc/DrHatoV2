@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../interface/PrismaInstance";
 import { labService } from "../services/labsService";
+import { Prisma } from "@prisma/client";
 
 export const labsController = {
   getOpenExamsInLab: async (request:FastifyRequest, reply: FastifyReply) => {
@@ -140,19 +141,22 @@ export const labsController = {
     }
   },
 
-  reportTableExam: async (request:FastifyRequest<{Params: {examId: string}}>, reply: FastifyReply) => {
+  reportTableExam: async (request:FastifyRequest<{Params: {examId: string}, Body: {requestedFor: string} & Prisma.ReportForExamsCreateInput }>, reply: FastifyReply) => {
+    const {examId} = request.params
+    const {report, isOnePart , isMultiPart, isReportByText, requestedFor } = request.body
     try {
-      const {examId} = request.params
-      const {jsonData, isOnePart , isMultiPart, isReportByText }: any  = request.body
-      await prisma.reportForExams.create({
-        data: {report: jsonData, isOnePart, isMultiPart, isReportByText, examsForPet: {connect: {id: parseInt(examId)}}}
-      })
-
+     
       await prisma.examsForPet.update({
         where:{id: parseInt(examId)}, data: {
-          doneExame: true,
+          doneExame: true,isMultiPart,isOnePart,requestedFor,isReportByText
         }
       })
+
+      await prisma.reportForExams.create({
+        data: { isOnePart, isMultiPart, isReportByText, report, examsForPet: {connect: {id: parseInt(examId)}}}
+      })
+
+
       reply.send("Exame laudado")
     } catch (error) {
       console.log(error)
@@ -209,7 +213,17 @@ export const labsController = {
           where: {id: parseInt(examId)}, include: {reportExams: true, medicine:{include: {pet: {include: {customer: {select: {name: true}}}}}}}
         })
 
-      reply.send(examDetails).status(200)
+
+      if(!examDetails){
+        return
+      }
+
+     const examRefs =  await prisma.exams.findFirst({
+      where: {name: {contains: examDetails.name}},include: {multiparts: {select: {characteristics: true}}, characteristics: true}
+     }) 
+     
+     
+      reply.send({examDetails, examRefs}).status(200)
 
     } catch (error) {
         console.log(error)
