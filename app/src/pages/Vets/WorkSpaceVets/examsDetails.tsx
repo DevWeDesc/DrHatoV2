@@ -48,6 +48,8 @@ interface ExamDetailsProps {
 }
 
 interface CharacProps {
+  name:string;
+  id: number;
 multiparts: Array<{
   characteristics: Array<{
     id: number
@@ -87,17 +89,27 @@ export function ExamsDetails() {
   }, [typeReport]);
 
 
-  const characsByEspecie = examCharacs.multiparts ? examCharacs.multiparts?.flatMap((charac) => {
-    return charac.characteristics?.flatMap((refs) => refs.especie?.filter(e => e.name === examDetails?.medicine?.pet?.especie))
+
+
+  const characsMapped: any = examCharacs.multiparts ? examCharacs.multiparts.flatMap((ch) => {
+    return ch.characteristics.map((chs) => {
+      return {
+        id: chs.id,
+        name: chs.name,
+        refs: chs.especie.filter((e) => e.name === examDetails.medicine.pet.especie)
+      }
+    })
   }) : null
 
-  console.log("WTFFFF ", characsByEspecie)
+
+  console.log("CH", characsMapped)
+
   let typeReportInExibition;
   switch (true) {
     case examDetails?.isMultiPart === true:
       typeReportInExibition = (
         <Flex width="full" h="full">
-          <TableContainer w="100%" h="100%">
+          <TableContainer w="50%" h="100%">
             {examDetails.reportExams[0].report.map((data: { name: string, refs: Array<{abs: string, rel: string, charac: string}> }) => (
               <Table>
                 <Thead>
@@ -113,7 +125,8 @@ export function ExamsDetails() {
                     <Th colSpan={2} border="1px solid black">
                       Resultado
                     </Th>
-                    <Td>@Val</Td>
+                   
+                
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -127,16 +140,52 @@ export function ExamsDetails() {
                   </Tr>
                   {
                     data.refs.map((ref) => (
-                      <Tr>
+                      <Tr key={ref.charac}>
                         <Td  border="1px solid black" fontWeight="bold">{ref.charac}</Td>
                         <Td  border="1px solid black" fontWeight="bold">{ref.abs}</Td>
                         <Td  border="1px solid black" fontWeight="bold">{ref.rel}</Td>
+
+                  
+                       
                       </Tr>
                     ))
                   }
+                
+                  
                 </Tbody>
               </Table>
             ))}
+          </TableContainer>
+          <TableContainer  w="50%" h="100%">
+            <Text>Exame realizado {examCharacs?.name}</Text>
+                  <Table>
+                    <Thead>
+                    
+                      <Tr>
+
+                      <Th>Característica</Th>
+
+                        <Th>{`@Val Ref ${examDetails.medicine.pet.especie} 0.5`}</Th>
+                        <Th>{`@Val Ref ${examDetails.medicine.pet.especie} 1`}</Th>
+                        <Th>{`@Val Ref ${examDetails.medicine.pet.especie} 2`}</Th>
+                        
+                    
+                      
+                   
+           
+                       </Tr>
+                       <Tbody>
+                        {
+                          characsMapped?.map((ref: any) => (
+                            <Tr>
+                              <Td>{ref.name}</Td>
+                            </Tr>
+                          ))
+                        }
+
+                       </Tbody>
+                    </Thead>
+                  </Table>
           </TableContainer>
         </Flex>
       );

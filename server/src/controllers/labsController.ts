@@ -221,8 +221,7 @@ export const labsController = {
      const examRefs =  await prisma.exams.findFirst({
       where: {name: {contains: examDetails.name}},include: {multiparts: {select: {characteristics: true}}, characteristics: true}
      }) 
-     
-     
+  
       reply.send({examDetails, examRefs}).status(200)
 
     } catch (error) {
