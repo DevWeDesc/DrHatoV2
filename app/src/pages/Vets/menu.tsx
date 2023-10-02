@@ -206,22 +206,23 @@ export function MenuVet() {
 
 
   async function searchDataVet() {
-    let typeSearch;
     switch(true) {
       case petName.length >= 1:
-        typeSearch  = await api.get(`filtredquery?petName=${petName}`)
+      await api.get(`vetmenusearch?petName=${petName}`).then((res) => {setPetData(res.data)})
       break;
       case codPet.length >= 1:
-        typeSearch  = await api.get(`filtredquery?codPet=${codPet}`)
+      await api.get(`vetmenusearch?petCode=${codPet}`).then((res) => {setPetData(res.data)})
       break;
       case customerName.length >= 1:
-        typeSearch  = await api.get(`filtredquery?customerName=${customerName}`)
+      await api.get(`vetmenusearch?customerName=${customerName}`).then((res) => {setPetData(res.data)})
+      break;
+      case isFinishied === true: 
+      await api.get(`vetmenusearch?isFinished=true`).then((res) => {setPetData(res.data)})
       break;
     }
-
-    if(typeSearch === null || typeSearch === undefined) return
-    setPetData(typeSearch.data)
   }
+
+  
   async function handleSearchData () {
     try {
       if(isFinishied === true) {
@@ -239,7 +240,7 @@ export function MenuVet() {
   useEffect(() => {
     searchDataVet() 
     
-  },[petName, codPet, customerName])
+  },[petName, codPet, customerName, isFinishied])
 
   
 
@@ -281,9 +282,9 @@ export function MenuVet() {
           
                   <HStack mt="4" w="100%">
                    
-                    <Input name="codPet" defaultValue="" onChange={(ev) => setCodPet(ev.target.value)} label="Código do Animal" />
-                    <Input name="petName"  defaultValue="" onChange={(ev) => setPetName(ev.target.value) }  label="Nome do Animal" />
-                    <Input name="customerName"  defaultValue="" onChange={(ev) => setCustomerName(ev.target.value)} label="Nome do Cliente" />
+                    <Input name="codPet" value={codPet} onChange={(ev) => setCodPet(ev.target.value)} label="Código do Animal" />
+                    <Input name="petName"  value={petName} onChange={(ev) => setPetName(ev.target.value) }  label="Nome do Animal" />
+                    <Input name="customerName"  value={customerName} onChange={(ev) => setCustomerName(ev.target.value)} label="Nome do Cliente" />
                     
                     
                   </HStack>

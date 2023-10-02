@@ -133,6 +133,7 @@ export const labsController = {
       where:{id: parseInt(examId)}, data: {
         doneExame: true,
         responsibleForExam: responsible,
+        isReportByText: true
       }
     })
 

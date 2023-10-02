@@ -3,6 +3,7 @@ import { prisma } from "../interface/PrismaInstance";
 import { z } from "zod";
 import { SearchSchema } from "../schemas/schemasValidator";
 import { searchEngine } from "../engines/searchEngine";
+import {  VetsMenuSearch } from "../engines/vets.menu.search";
 export const searchController = {
  getAll: async (request: FastifyRequest<{
     Querystring: { name?: string; cpf?: string; adress?: string };
@@ -48,6 +49,29 @@ export const searchController = {
     } catch (error) {
       reply.status(400).send({ message: error})
       console.log()
+      console.log(error)
+    }
+  },
+
+  searchVetMenu: async(request: FastifyRequest,  reply: FastifyReply) => {
+    try {
+
+      const {petName, customerName, petCode, isAddmited, isFinished, finalDate,initialDate }: any = request.query
+
+
+
+      const vetsMenuSearch = new VetsMenuSearch()
+
+     const  {data} = await vetsMenuSearch.getParams({petName, customerName, petCode, isAddmited, isFinished, finalDate,initialDate })
+
+      if(isFinished && (initialDate || finalDate)) {
+        const {data} = await vetsMenuSearch.getParamsWithDate({petName, customerName, petCode, isAddmited, isFinished, finalDate,initialDate})
+        reply.send(data)
+      }
+
+
+      reply.send(data)
+    } catch (error) {
       console.log(error)
     }
   }

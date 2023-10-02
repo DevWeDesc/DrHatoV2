@@ -1,7 +1,6 @@
-import { ChakraProvider } from "@chakra-ui/react";
-import React from "react";
+
 import InputMask, { Props } from "react-input-mask";
-import { string } from "yup";
+
 import { PropsInputs } from "./CEPInput";
 
 export function WeightPetInput({ value, onChange, name, id }: PropsInputs) {
@@ -24,7 +23,7 @@ export function WeightPetInput({ value, onChange, name, id }: PropsInputs) {
         (e.target.style.backgroundColor = "white"),
           (e.target.style.borderColor = "black");
       }}
-      mask="9.9kg"
+      mask="99.99kg"
       value={value}
       onChange={onChange}
       placeholder="Peso do Animal"

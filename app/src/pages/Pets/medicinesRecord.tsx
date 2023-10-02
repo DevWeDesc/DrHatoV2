@@ -127,7 +127,7 @@ export function MedicineRecords() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={`Nome: ${pets.name}, Raça: ${pets.race}, Peso: ${pets.weigth}Kg's,  Sexo ${pets.sexo}, Cor: ${pets.corPet} `}
+                          value={`Nome: ${pets.name}, Raça: ${pets.race}, Peso: ${pets.weigth},  Sexo ${pets.sexo}, Cor: ${pets.corPet} `}
                         />
                       </Td>
                     </Tr>
