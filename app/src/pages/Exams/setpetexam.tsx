@@ -75,13 +75,14 @@ export function SetPetExam() {
   const { id, examId } = useParams<{ id: string, examId: string }>();
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [pet, setPet] = useState({} as any);
+  const [disableRequest, setDisableRequest] = useState(false)
   const [textReport, setTextReport] = useState("")
   const [exam, setExam] = useState({} as ExamProps)
   const {register, handleSubmit} = useForm()
  const navigate = useNavigate()
    async function Pets() {
     const pets = await api.get(`/labexam/${id}`);
-    setPet(pets.data);
+    setPet(pets.data.examDetails);
   }
   async function Exam() {
     const exam = await api.get(`/exams/${examId}`);
@@ -106,10 +107,9 @@ export function SetPetExam() {
       toast.error("Falha ao laudar com texto!")
     }
   }
-
+//One Part
   const handleSetTableReport:  SubmitHandler<FieldValues>  = async (values) => {
-   
-    const refs = exam.characteristics.flatMap((charac) => {
+    const refs = exam.characteristics.map((charac) => {
       let data = {
         charac: charac.name,
         abs: values[`abs${charac.name}`],
@@ -118,37 +118,77 @@ export function SetPetExam() {
       return data
     })
 
-  
     const data = {
-      jsonData: refs,
+      report: refs,
       isOnePart: exam.isOnePart, 
       isMultiPart: exam.isMultiPart ,
-      isReportByText: exam.isReportByText 
+      isReportByText: exam.isReportByText,
+      requestedFor: user.username 
     }
 
+
     try {
-      console.log(data)
-      await api.post(`/labreportexam/${id}`,data)
+      await api.patch(`/reportexam/${id}`,data)
       toast.success("Exame laudado com sucesso!")
     } catch (error) {
       console.log(error)
     }
   }
 
+ //Multi Part 
+ const handleSetMultTableReport: SubmitHandler<FieldValues> = async (values) => {
+  try {
+    const refs = exam.multiparts.map((charac) => {
+      return {
+        name: charac.name,
+        refs: charac.characteristics.map((charac) => {
+          let data = {
+            charac: charac.name,
+            abs: values[`abs${charac.name}`],
+            rel: values[`rel${charac.name}`]
+          }
+          return data
+        })
+      }
+  0
+    })
+
+    const data = {
+      report: refs,
+      isOnePart: exam.isOnePart, 
+      isMultiPart: exam.isMultiPart ,
+      isReportByText: exam.isReportByText,
+      requestedFor: user.username  
+    }
+ 
+    await api.patch(`/reportexam/${id}`,data)
+    setDisableRequest(true)
+    toast.success("Exame laudado com sucesso!")
+  } catch (error) {
+    console.log(error)
+  }
+ }
 
    const tableRefs:any = exam.characteristics ?  exam.characteristics.map((charac) => {
     return charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
    }) : null
+
+   const multRefs: any = exam.multiparts ? exam.multiparts.map((data) => {
+    return data.characteristics.map((refs) => refs.especie.filter((esp) => esp.name === pet?.medicine?.pet?.especie))
+ }) : null
 
 
    let typeTableView;
    switch(true) {
     case exam.isMultiPart === true:
     typeTableView = (
-      <>
+      <Flex as="form" direction="column" onSubmit={handleSubmit(handleSetMultTableReport)}>
         {exam ? (
           exam.multiparts.map(table => (
-            <TableContainer key={table.id}>
+            
+
+            
+            <TableContainer  key={table.id}>
               <Table>
                 <Thead>
                   <Tr>
@@ -166,14 +206,16 @@ export function SetPetExam() {
                     <Th colSpan={2} border="1px solid black">
                       Unidades
                     </Th>
+
+
                     {
-                      table.characteristics.map((data) => {
-                        const ref = data.especie.filter((esp) => esp.name === pet?.medicine?.pet?.especie)
-
-                        return ref[0].refIdades.map((ref) => <Th key={`${ref.maxAge}${ref.absoluto}`} colSpan={2}  border="1px solid black">{`@Val Ref ${pet?.medicine?.pet?.especie} ${ref.maxAge}`}</Th>)
-
-                      })
+                      multRefs[0][0][0]?.refIdades?.flatMap((ref: any) => (
+                     <Th key={`${ref.maxAge}${ref.absoluto}`} colSpan={2}  border="1px solid black">{`@Val Ref ${pet?.medicine?.pet?.especie} ${ref.maxAge}`}</Th>                
+                      ))
+     
                     }
+                    
+           
                  
 
                   </Tr>
@@ -186,21 +228,20 @@ export function SetPetExam() {
                     <Td border="1px solid black">Un. Abs.</Td>
                     <Td border="1px solid black">Un. Rel.</Td>
 
+
                     {
-                      table.characteristics.map((data) => {
-                        const ref = data.especie.filter((esp) => esp.name === pet?.medicine?.pet?.especie)
-
-                        return ref[0].refIdades.map((ref) => <>
-                          <Td key={ref?.absoluto} border="1px solid black">
-                            Absoluto
-                          </Td>
-                          <Td key={ref?.relativo} border="1px solid black">
-                            Relativo
-                          </Td>
-                        </>) 
-                      })
+                      multRefs[0][0][0]?.refIdades?.flatMap((ref: any) => (
+                        <>
+                        <Td key={ref?.absoluto} border="1px solid black">
+                          Absoluto
+                        </Td>
+                        <Td key={ref?.relativo} border="1px solid black">
+                          Relativo
+                        </Td>
+                      </>                
+                      ))
+     
                     }
-
              
                   </Tr>
 
@@ -213,10 +254,10 @@ export function SetPetExam() {
                         <Tr key={charac.id} fontWeight="bold">
                           <Td border="1px solid black">{charac.name}</Td>
                           <Td border="1px solid black" bg="white">
-                            <Input />
+                            <Input {...register(`abs${charac.name}`)} name={`abs${charac.name}`}  />
                           </Td>
                           <Td border="1px solid black" bg="white">
-                            <Input />
+                            <Input  {...register(`rel${charac.name}`)} name={`rel${charac.name}`}  />
                           </Td>
                           <Td border="1px solid black" bg="white"></Td>
                           <Td border="1px solid black" bg="white">
@@ -248,12 +289,17 @@ export function SetPetExam() {
                   )}
                 </Tbody>
               </Table>
+             
             </TableContainer>
+          
+           
+            
           ))
         ) : (
           <LoadingSpinner />
         )}
-      </>
+          <Button isDisabled={disableRequest} type="submit" colorScheme="whatsapp">Gravar</Button>
+       </Flex>
     )
     break;
     case exam.isOnePart === true: 
@@ -333,7 +379,7 @@ export function SetPetExam() {
           
         </Tbody>
       </Table>
-      <Button type="submit" w="100%"  mt="4" colorScheme="whatsapp">GRAVAR</Button>
+      <Button isDisabled={disableRequest} type="submit" w="100%"  mt="4" colorScheme="whatsapp">GRAVAR</Button>
     </TableContainer>
       
     )
@@ -350,10 +396,10 @@ export function SetPetExam() {
     default:
       typeTableView = (
         <Flex align="center" justify="center" w="100%" h="100%">
-            <Text>OPS.... Parece que houve uma fala na renderização desse exame,
+            <Text>OPS.... Parece que houve uma falha na renderização desse exame,
               verifique as configurações dele!
             </Text>
-            <Button colorScheme="yellow" onClick={() => navigate(`/Admin/Exams/${exam.id}`)}>Ir até configuraões</Button>
+            <Button colorScheme="yellow" onClick={() => navigate(`/Admin/Exams/${exam.id}`)}>Ir até configuração</Button>
         </Flex>
       ) 
     break;

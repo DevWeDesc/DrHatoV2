@@ -4,11 +4,11 @@ import InputMask from "react-input-mask";
 import { string } from "yup";
 
 export interface PropsInputs {
-  value: string;
-  onChange: any;
-  onBlur: any;
-  id: string;
-  name: string;
+  value?: string;
+  onChange?: any;
+  onBlur?: any;
+  id?: string;
+  name?: string;
 }
 
 export function CEPInput({ value, onChange, onBlur, id, name }: PropsInputs) {

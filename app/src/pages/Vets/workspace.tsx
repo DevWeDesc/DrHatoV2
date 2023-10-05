@@ -31,7 +31,7 @@ import {
   MdAttachMoney,
 } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
@@ -42,6 +42,7 @@ import { Textarea } from "@chakra-ui/react";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
+import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
 
 export function WorkSpaceVet() {
   const { id } = useParams<{ id: string }>();
@@ -610,7 +611,7 @@ export function WorkSpaceVet() {
                         </Button>
                       )}
                     </>
-                    <Text>{exam.requestedData}</Text>
+                    <Text>{new Intl.DateTimeFormat('pt-BR').format(new Date(exam.requestedData ? exam.requestedData : Date.now()))}</Text>
                   </Flex>
                 ))
               ) : (
@@ -740,7 +741,7 @@ export function WorkSpaceVet() {
         </Text>
         <Flex direction="column" gap="15">
           <Text>Insira o peso do animal</Text>
-          <Input focusBorderColor="green" onChange={(ev) => setPetWeigth(ev.target.value)} />
+          <WeightPetInput onChange={(ev: ChangeEvent<HTMLInputElement> ) => setPetWeigth(ev.target.value)} />
           <Button onClick={() => handleChangePetWeight(petWeigth)}  colorScheme="yellow">Editar</Button>
         </Flex>
       </GenericModal>
