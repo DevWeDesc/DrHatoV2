@@ -10,24 +10,34 @@ export interface VetsMenuProps {
     finalDate: Date | string;
 }
 export class VetsMenuSearch {
-    async getParams({customerName, petName, petCode, initialDate, finalDate, isAddmited, isFinished}: VetsMenuProps) {
+    async getParams({customerName, petName, petCode, isAddmited, isFinished}: VetsMenuProps) {
         let data;
-
-
-        if(customerName || petName || petCode) {
-             data = await prisma.pets.findMany({
+        switch(true) {
+            case !!customerName:
+                data = await prisma.pets.findMany({
+                    where: {
+                        customer: {name: {startsWith: customerName}}},
+                    include: {customer: true}
+                 })
+                break;
+            case !!petName: 
+              data = await prisma.pets.findMany({
                 where: {
-                    OR: [
-                        {customer: {name: {contains: customerName}}},
-                        {name: {contains: petName}},
-                        {codPet: {contains: petCode}}
-                        ]},
+                    name: {startsWith: petName}    
+                },
                 include: {customer: true}
              })
-        }
-
-        if(isFinished) {
-            data = await prisma.queuesForPet.findMany({
+            break;
+            case !!petCode: 
+              data = await prisma.pets.findMany({
+                where: {
+                    codPet: {startsWith: petCode}    
+                },
+                include: {customer: true}
+             })
+            break;
+            case !!isFinished:
+            const res = await prisma.queuesForPet.findMany({
                 where: {queueIsDone: true, medicine
                 :{ pet: {OR:
                     [
@@ -35,20 +45,62 @@ export class VetsMenuSearch {
                         {customer: {name: {contains: customerName}}},
                         {codPet: {contains: petCode}}
                     ]
-                }}}, include:{medicine: {include: {pet: {select: {name: true, id: true, customer: {select: {name: true, cpf: true}}}}}}}
-            })     
-        }
+                }}}, include:{medicine: {include: {pet: {select: {name: true, id: true, weigth: true ,codPet: true ,customer: {select: {name: true, cpf: true}}}}}}}
+            }) 
+            
+            data = res.map((res) => {
+                let data = {
+                    id: res.medicine.pet.id,
+                    name: res.petName,
+                    codPet: res.medicine.pet.codPet,
+                    finished: res.queueExit,
+                    customer: {
+                        name: res.medicine.pet.customer.name,
+                        cpf:res.medicine.pet.customer.cpf
+                    },
+                    responsible: res.responsibleVeterinarian
+                }
+                return data
+            })
 
-
-        if(isAddmited) {
-            data = await prisma.bed.findMany({
+            break;
+            case !!isAddmited: 
+            const beds = await prisma.bed.findMany({
                 where: {isBusy: true, pet: {OR: [
                     {name: {contains: petName}},
                     {customer: {name: {contains: customerName}}},
                     {codPet: {contains: petCode}}
-                ]}}
+                ]}},include: { pet: {include: {customer: true, }}}
+            })
+
+            data = beds.map((data) => {
+                let res = {
+                    isBusy: data.isBusy,
+                    id: data.petId,
+                    name: data.pet?.name,
+                    codPet: data.pet?.codPet,
+                    weigth: data.pet?.weigth,
+                    customer: {
+                        name: data.pet?.customer.name,
+                        cpf: data.pet?.customer.cpf,
+                        vetPreference: data.pet?.customer.vetPreference
+                    }
+                }
+                return res
+            })
+            break;
+            default: 
+            data = await prisma.pets.findMany({
+                where: {
+                    OR: [
+                        {name: {contains: petName}},
+                        {customer: {name: {contains: customerName}}},
+                        {codPet: {contains: petCode}}
+                    ]
+                }
             })
         }
+
 
         return {
             data
@@ -71,7 +123,7 @@ export class VetsMenuSearch {
 
 
         if(isFinished && (initialDate || finalDate)) {
-            data = await prisma.queuesForPet.findMany({
+            const res = await prisma.queuesForPet.findMany({
                 where: {queueIsDone: true, medicine
                 :{ pet: {OR:
                     [
@@ -79,10 +131,31 @@ export class VetsMenuSearch {
                         {customer: {name: {contains: customerName?? ""}}},
                         {codPet: {contains: petCode ?? ""}}
                     ]
-                }},  queueEntry: {gte: today, lte: endDay}}, include:{medicine: {include: {pet: {select: {name: true, id: true, customer: {select: {name: true, cpf: true}}}}}}}
+                }},  queueEntry: {gte: today, lte: endDay}}, include:{medicine: {include: {pet: {select: 
+                    {name: true, id: true,  codPet: true,customer: {select: {name: true, cpf: true}}}}}}}
             })     
+
+            data = res.map((res) => {
+                let data = {
+                    id: res.medicine.pet.id,
+                    name: res.petName,
+                    codPet: res.medicine.pet.codPet,
+                    finished: res.queueExit,
+                    customer: {
+                        name: res.medicine.pet.customer.name,
+                        cpf:res.medicine.pet.customer.cpf
+                    },
+                    responsible: res.responsibleVeterinarian
+                }
+                return data
+            })
+
+            
         }
 
+        if(isAddmited && (initialDate || finalDate)) {
+
+        }
 
         return {
          data
