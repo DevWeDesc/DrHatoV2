@@ -67,7 +67,11 @@ export const searchController = {
 
       if(isFinished && (initialDate || finalDate)) {
         const {data} = await vetsMenuSearch.getParamsWithDate({petName, customerName, petCode, isAddmited, isFinished, finalDate,initialDate})
-        console.log('CAIU AQ')
+        reply.send(data)
+      }
+
+      if(isAddmited && (initialDate || finalDate)) {
+        const {data} = await vetsMenuSearch.getParamsWithDate({petName, customerName, petCode, isAddmited, isFinished, finalDate,initialDate})
         reply.send(data)
       }
 
