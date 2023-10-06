@@ -21,10 +21,11 @@
 [] - Cadastro de tipos de pagamentos (CRUD)
 [] - Cadastro de especies (CRUD)
 [] - Cadastro de raças (CRUD)
-[] - Cadastro de Exames com Números de Tabelas (CRUD)
+[X] - Cadastro de Exames com Números de Tabelas (CRUD)
 [X] - Sistema Internação
 [X] - Sistema de Filas 
 [] - Sistema Etiquetas 
+
 
 
 ### Regras de negócio ####
@@ -51,10 +52,12 @@
 [X] - Deve ser Possivel configurar valores na internação
 [x] - Internação tem divisão por dois periodos de 12 horas e cobrar meio periodo a cada 12 horas
 [X] - Configurar Exames com caractéristicas 
-[] - Configurar Exames com quantidades de tabelas 
-[] - Laboratório mostrar tabela conforme o exame e suas referências
-[] - Laboratório deve concluir exames
+[X] - Configurar Exames com quantidades de tabelas 
+[X] - Laboratório mostrar tabela conforme o exame e suas referências
+[X] - Laboratório deve concluir exames
 [] - Conclusão de cirurgias com laudo técnico
+[] - Configuração de Eventos do Sistema para painel Administrativo
+
 
 
 
@@ -63,17 +66,22 @@
 [X] - Senhas encriptadas
 [X] - Autenticação por JWT
 [X] - Motor de Busca Veterinários
-[] - Motor de Busca laboratório
-[] - Motor de Busca internação
+[] - Motor de Busca Laboratório
+[] - Motor de Busca Internação
+[X] - Motor de Busca Veterinários
 [] - Solicitado por/Concluido por em todas finalizações com valores
 [X] - Dados devem ser persistidos em banco Postgres
-
+[] - Implementação de Refresh Token
+[] - Autorização por RBCA
+ 
 
 
 ### MELHORIAS ###
 [] - Sistema de Notificações
 [] - Sistema de Lembretes
 [] - Sistema de Agenda de trabalho
+[] - Sistema HelpDesk Interno
+
 
 
 ### ARQUITETURA INTERNA ### 
@@ -84,5 +92,5 @@
 
 
 #### BUGS e Correções  ####
-[] - Tabela exames duplicando
-[] - Ajustar cadastro de pets campo idade
+[X] - Tabela exames duplicando
+[X] - Ajustar cadastro de pets campo idade

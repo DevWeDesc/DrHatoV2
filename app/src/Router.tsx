@@ -106,6 +106,7 @@ import { AuthContextProvider } from "./contexts/AuthContext";
 import ReminderPage from "./pages/ReminderPage";
 import { UrlContextProvider } from "./contexts/UrlContext";
 import { ExamsDetails } from "./pages/Vets/WorkSpaceVets/examsDetails";
+import { AdminCadEspecies } from "./pages/AdminDashboard/cadEspecies";
 
 export function Router() {
   return (
@@ -193,6 +194,7 @@ export function Router() {
                 element={<Hospitalization />}
               />
               <Route path="/Admin/OptionSistem" element={<OptionSistem />} />
+              <Route path="/Admin/Especies" element={<AdminCadEspecies/>} /> 
 
               <Route
                 path="/Autorizations"

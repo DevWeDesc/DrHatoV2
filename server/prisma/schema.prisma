@@ -381,3 +381,19 @@ model ReportForExams {
 }
 
 // -------------- EXAMES ----------------- //
+
+// -------------- Especies/Raças ----------------- //
+model Especies {
+  id   Int     @id @default(autoincrement())
+  name String
+  race Races[]
+}
+
+model Races {
+  id         Int       @id @default(autoincrement())
+  name       String
+  Especies   Especies? @relation(fields: [especiesId], references: [id])
+  especiesId Int?
+}
+
+// -------------- Especies/Raças End ----------------- //

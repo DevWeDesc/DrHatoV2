@@ -11,4 +11,11 @@ export async function petRoutes(app: FastifyInstance) {
   app.get('/pets/queue', petsController.petsInQueue)
   app.put('/pet/:petId/:weight', petsController.changePetWeight)
 
+
+  app.post('/pets/especie', petsController.createEspecie)
+  app.get('/pets/especie', petsController.getEspecies)
+
+
+  app.post('/pets/races', petsController.createRaces)
+
 }

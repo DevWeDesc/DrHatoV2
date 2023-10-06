@@ -318,5 +318,54 @@ export const petsController = {
       console.log(error)
       reply.send(error)
     }
+  },
+
+  createEspecie: async (request: FastifyRequest<{ Body: {name: string}}>, reply: FastifyReply) => {
+    try {
+        const {name} = request.body
+
+        await prisma.especies.create({
+          data: {name}
+        })
+        reply.status(201).send("Created successfully")
+    } catch (error) {
+      console.error(error)
+      reply.send(error)
+    }
+  },
+
+  getEspecies: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const especies = await prisma.especies.findMany({
+        include: {race: true}
+      })
+
+      reply.send(especies)
+    } catch (error) {
+      console.log(error)
+      reply.send(error)
+    }
+  },
+
+  createRaces: async (request: FastifyRequest<{
+    Body: { name: string, espId: number}
+  }>, reply: FastifyReply) => {
+    try {
+
+      const { name, espId } = request.body
+      
+      await prisma.races.create({
+        data: {name, Especies: {
+          connect: { id: espId}
+        }}
+      })
+
+      reply.status(201).send('Race created successfully')
+    } catch (error) {
+      console.log(error)
+      reply.send(error)
+    }
   }
+
+
 }
