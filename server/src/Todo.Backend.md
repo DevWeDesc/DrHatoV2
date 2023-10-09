@@ -19,12 +19,14 @@
 [X] - Histórico do Caixa
 [X] - Prontuário completo do Pet
 [] - Cadastro de tipos de pagamentos (CRUD)
-[] - Cadastro de especies (CRUD)
-[] - Cadastro de raças (CRUD)
+[X] - Cadastro de especies (CRUD)
+[X] - Cadastro de raças (CRUD)
 [X] - Cadastro de Exames com Números de Tabelas (CRUD)
 [X] - Sistema Internação
 [X] - Sistema de Filas 
 [] - Sistema Etiquetas 
+[] - Impressão do exame concluido via PDF
+
 
 
 
@@ -57,6 +59,7 @@
 [X] - Laboratório deve concluir exames
 [] - Conclusão de cirurgias com laudo técnico
 [] - Configuração de Eventos do Sistema para painel Administrativo
+[] - Edição livre de referências do Exame
 
 
 
@@ -94,3 +97,4 @@
 #### BUGS e Correções  ####
 [X] - Tabela exames duplicando
 [X] - Ajustar cadastro de pets campo idade
+[] - Valores já prédefinidos dos exames que já existem

@@ -61,6 +61,8 @@ export function WorkSpaceVet() {
   const [petObservations, setPetObservations] = useState("")
 
   function handleCreateInstruction(text: string) {
+
+
     const docDefinition: TDocumentDefinitions = {
       content: [`${text}`],
       pageMargins: [50, 50],

@@ -15,17 +15,17 @@ export function NewCharacteristics() {
   const { register, handleSubmit } = useForm();
   const [especiesArray, setEspeciesArray] = useState([] as any)
   const [characName, setCharacName] = useState("")
-  const especies = [
-    "Felina",
-    "Canina",
-    "Cave",
-    "Roedor",
-    "Silvestre",
-    "Primata",
-    "Reptil",
-    "Quelonio",
-    "Peixe"
-  ];
+  const [allEspeciesArray, setAllEspeciesArray] = useState([])
+
+  useEffect(() => {
+    getAllEspecies() 
+  }, [])
+
+  async function getAllEspecies() {
+    const res = await api.get('/pets/especie')
+    setAllEspeciesArray(res.data)
+  }
+
 
   const handleNewCharacter: SubmitHandler<FieldValues> = async (values) => {
     const especie = especiesArray.flatMap((especie: any) => {
@@ -136,11 +136,11 @@ export function NewCharacteristics() {
     <AccordionPanel>
         <Flex wrap="wrap" gap="2">
          {
-          especies.map((especie, index) => <Checkbox onChange={(ev) =>
+          allEspeciesArray?.map((especie: {name: string, id: number;}) => <Checkbox onChange={(ev) =>
             ev.target.checked === true
-              ? setEspeciesArray([...especiesArray, especie])
-              :   removeEspecie(especie)
-          } borderColor="black" size="lg" key={index}>{especie}</Checkbox> )
+              ? setEspeciesArray([...especiesArray, especie.name])
+              :   removeEspecie(especie.name)
+          } borderColor="black" size="lg" key={especie.id}>{especie.name}</Checkbox> )
          }
         </Flex>
     </AccordionPanel>

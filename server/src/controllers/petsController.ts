@@ -365,6 +365,26 @@ export const petsController = {
       console.log(error)
       reply.send(error)
     }
+  },
+
+  getEspeciesById: async (request: FastifyRequest<{Params: {espId: string}}>, reply: FastifyReply) => {
+      try {
+
+        const {espId} = request.params
+
+       const esp =  await prisma.especies.findUnique({
+          where: {id: parseInt(espId)},
+          include: {race: true}
+        })
+
+
+        reply.send({
+          esp
+        })
+      } catch (error) {
+        console.log(error)
+        reply.send({message: error})
+      }
   }
 
 

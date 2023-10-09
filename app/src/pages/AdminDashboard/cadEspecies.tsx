@@ -1,43 +1,35 @@
 import {
-    Text,
-    Box,
-    Button,
-    ChakraProvider,
-    Flex,
-    Heading,
-    Icon,
-    Table,
-    Tbody,
-    Td,
-    Th,
-    Thead,
-    Tr,
-    FormControl,
-    HStack,
-    CheckboxGroup,
-    Checkbox,
-  } from "@chakra-ui/react";
-  import { useContext, useEffect, useState } from "react";
-  import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-  import { RiAddLine, RiPencilLine } from "react-icons/ri";
-  import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-  import { Header } from "../../components/admin/Header";
-  import { Paginaton } from "../../components/admin/Pagination";
-  import { Sidebar } from "../../components/admin/Sidebar";
-  import { LoadingSpinner } from "../../components/Loading";
-  import { DbContext } from "../../contexts/DbContext";
-  import { GenericModal } from "../../components/Modal/GenericModal";
-  import { AdminContainer } from "../AdminDashboard/style";
-  import { api } from "../../lib/axios";
-  import { toast } from "react-toastify";
-  import { Input } from "../../components/admin/Input";
-  import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
-  import { BsFillTrashFill } from "react-icons/bs";
+  Text,
+  Box,
+  Button,
+  ChakraProvider,
+  Flex,
+  Heading,
+  Icon,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  FormControl
+} from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { RiAddLine, RiPencilLine } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
+import { Header } from "../../components/admin/Header";
+import { Sidebar } from "../../components/admin/Sidebar";
+import { LoadingSpinner } from "../../components/Loading";
+import { GenericModal } from "../../components/Modal/GenericModal";
+import { AdminContainer } from "../AdminDashboard/style";
+import { api } from "../../lib/axios";
+import { Input } from "../../components/admin/Input";
   
   export function AdminCadEspecies() {
     const { register, handleSubmit } = useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
+
     const [especies, setEspecies] = useState([]);
     const [reloadData, setReloadData] = useState<boolean>(false);
   
@@ -48,13 +40,6 @@ import {
     }
     function closeModal() {
       setIsModalOpen(false);
-    }
-  
-    function openModalTwo() {
-      setIsModalOpenTwo(true);
-    }
-    function closeModalTwo() {
-      setIsModalOpenTwo(false);
     }
   
 
@@ -98,7 +83,7 @@ import {
                   align="center"
                 >
                   <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                    Painel de Cirurgia
+                    Painel de Especies
                   </Heading>
   
                   <Button
@@ -113,18 +98,6 @@ import {
                     mb="2"
                   >
                     Cadastrar nova Especie
-                  </Button>
-                  <Button
-                    as="a"
-                    width="100%"
-                    fontSize="20"
-                    py="8"
-                    colorScheme="whatsapp"
-                    cursor="pointer"
-                    leftIcon={<Icon as={RiAddLine} />}
-                    onClick={() => openModal()}
-                  >
-                    Cadastrar nova Raça
                   </Button>
                 </Flex>
   
@@ -158,7 +131,7 @@ import {
                                 fontSize="sm"
                                 colorScheme="yellow"
                                 leftIcon={<Icon as={RiPencilLine} />}
-                                onClick={() => openModalTwo()}
+                                onClick={() => navigate(`/Admin/Races/${esp.id}`)}
                               >
                                 Visualizar especies
                               </Button>
@@ -183,13 +156,11 @@ import {
                     <Input
                       {...register("name")}
                       name="name"
-                      label="Nome da Cirurgia"
+                      label="Nome da Especie"
                       mb="4"
                     />
   
-                  
-
-
+                
   
                     <Button w="100%" type="submit" colorScheme="green" m="2">
                       Cadastrar
@@ -197,43 +168,7 @@ import {
                   </FormControl>
                 </GenericModal>
   
-                <GenericModal
-                  isOpen={isModalOpenTwo}
-                  onRequestClose={closeModalTwo}
-                >
-                  <FormControl
-                    as="form"
-                 
-                    display="flex"
-                    flexDir="column"
-                    alignItems="center"
-                  >
-                    <Text pb="15">Editar Centro cirurgico</Text>
-                    <Input
-                      {...register("id")}
-                      name="id"
-                      label="Id da cirurgia"
-                      mb="4"
-                    />
-                    <Input
-                      {...register("name")}
-                      name="name"
-                      label="Nome da cirurgia"
-                      mb="4"
-                    />
-  
-                    <Input
-                      {...register("id")}
-                      name="id"
-                      label="Preço da cirurgia"
-                      mb="4"
-                    />
-  
-                    <Button w="100%" type="submit" colorScheme="green" m="2">
-                      Cadastrar
-                    </Button>
-                  </FormControl>
-                </GenericModal>
+          
               </Box>
             </Flex>
           </Flex>
