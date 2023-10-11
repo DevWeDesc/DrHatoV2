@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 
 const Quixote = () => (
   <Document>
-    <Page style={styles.body}>
+    <Page  >
       <View style={styles.table}> 
         <View style={styles.tableRow}> 
           <View style={styles.tableCol}> 
