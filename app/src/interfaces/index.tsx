@@ -195,7 +195,11 @@ type AdmissionsProps = {
   exit: Date;
   totalDebit: number | string;
   fasting: boolean;
-  observations: string;
+  observations: Array<{
+    id: number;
+    observations: string;
+    observationDate: Date | string;
+  }>;
 };
 type PetQueueProps = {
   [x: string]: any;

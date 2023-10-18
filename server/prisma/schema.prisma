@@ -23,17 +23,6 @@ model User {
   schedule  Schedule[]
 }
 
-model Transaction {
-  id             Int      @id @default(autoincrement())
-  title          String
-  amount         Int
-  type           String
-  category       String
-  createdAt      String
-  transaction_id Int
-  customer       Customer @relation(fields: [transaction_id], references: [id])
-}
-
 model Customer {
   id              Int              @id @unique @default(autoincrement())
   name            String
@@ -228,9 +217,17 @@ model BedsForPet {
   totalDebt   Decimal?
   isCompleted Boolean?  @default(false)
 
-  admissionsObservations Json?
-  medicine_id            Int
-  medicine               MedicineRecord @relation(fields: [medicine_id], references: [id])
+  hospDiary   HospitalizationDiary[]
+  medicine_id Int
+  medicine    MedicineRecord         @relation(fields: [medicine_id], references: [id])
+}
+
+model HospitalizationDiary {
+  id              Int         @id @default(autoincrement())
+  observations    String
+  observationDate DateTime    @default(now())
+  BedsForPet      BedsForPet? @relation(fields: [bedsForPetId], references: [id])
+  bedsForPetId    Int?
 }
 
 model Vaccines {
@@ -270,6 +267,7 @@ model SurgeriesForPet {
   medicine      MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
 
+// -------------- FINANCES ----------------- //
 model HospVetBox {
   id               Int              @id @default(autoincrement())
   name             String
@@ -318,6 +316,19 @@ model InstallmentsDebts {
   boxHistoryId       Int
   boxHistory         HospBoxHistory  @relation(fields: [boxHistoryId], references: [id])
 }
+
+model Transaction {
+  id             Int      @id @default(autoincrement())
+  title          String
+  amount         Int
+  type           String
+  category       String
+  createdAt      String
+  transaction_id Int
+  customer       Customer @relation(fields: [transaction_id], references: [id])
+}
+
+// -------------- FINANCES ----------------- //
 
 // -------------- EXAMES ----------------- //
 model Exams {

@@ -246,5 +246,24 @@ export const admissionsController = {
       } catch (error) {
         console.log(error)
       }
-  }
+  },
+
+  recordHospDiary: async (request: FastifyRequest<{Params: {bedId: string}, Body: {observations: string}}>, reply: FastifyReply) => {
+    try {
+      const { bedId } = request.params
+      const {observations} = request.body
+
+      await prisma.hospitalizationDiary.create({
+        data: {observations, BedsForPet: {connect: {id: parseInt(bedId)}}}
+      })
+
+      reply.send("Gravação concluida com sucesso!")
+
+    } catch (error) {
+        reply.send(error)
+        console.log(error)
+    }
+  },
+
+ 
 };

@@ -30,6 +30,7 @@
 
 
 
+
 ### Regras de negócio ####
 [X] - Não deve ter cadastros para usuários duplicados
 [X] - Não deve ter cadastros para clientes duplicados
@@ -60,6 +61,7 @@
 [] - Conclusão de cirurgias com laudo técnico
 [] - Configuração de Eventos do Sistema para painel Administrativo
 [] - Edição livre de referências do Exame
+[] - Internação possui diário 
 
 
 

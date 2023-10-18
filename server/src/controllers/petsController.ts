@@ -36,7 +36,7 @@ export const petsController = {
               petVaccines: true,
               petSurgeries: true,
               petProcedures: true,
-              petBeds: { where: { isCompleted: false } }
+              petBeds: { where: { isCompleted: false },include: {hospDiary: true} }
             }
           },
           queue: {
@@ -57,8 +57,10 @@ export const petsController = {
               id: true,
               kennel: { select: { name: true, price: true } },
               dailyRate: true,
-              mustFasting: true
-            }
+              mustFasting: true,
+
+            },
+            
           },
           priceAccumulator: { select: { id: true, accumulator: true } }
         }
@@ -146,7 +148,7 @@ export const petsController = {
             exit: bed.exitOur,
             totalDebit: bed.totalDebt,
             fasting: bed.mustFasting,
-            observations: bed.admissionsObservations
+            observations: bed.hospDiary
           }
           return bedData
         }),
@@ -385,7 +387,25 @@ export const petsController = {
         console.log(error)
         reply.send({message: error})
       }
-  }
+  },
+
+
+  getAllPetHistory: async (request: FastifyRequest<{Params: {petId: string}}>, reply: FastifyReply) => {
+    try {
+      const {petId} = request.params
+
+     const response = await prisma.pets.findUnique({
+        where: {id: parseInt(petId)}, include: {medicineRecords: {select: {petBeds: {include :{hospDiary: true}}, petExams: true, petQueues: true, petSurgeries: true, petVaccines: true}}, customer: true}
+      }) 
+
+      reply.send(response)
+
+    } catch (error) {
+      console.log(error)
+    }
+}
+
+
 
 
 }

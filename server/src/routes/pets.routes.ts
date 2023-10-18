@@ -17,4 +17,7 @@ export async function petRoutes(app: FastifyInstance) {
   app.get('/pets/especie/:espId', petsController.getEspeciesById)
   app.post('/pets/races', petsController.createRaces)
 
+
+  app.get('/pets/history/:petId', petsController.getAllPetHistory)
+
 }

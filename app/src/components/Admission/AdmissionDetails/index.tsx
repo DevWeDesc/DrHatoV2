@@ -14,6 +14,7 @@ import {
   Td,
   Th,
   Textarea,
+  useSafeLayoutEffect,
 } from "@chakra-ui/react";
 import { BiHome, MdPets, TbArrowBack } from "react-icons/all";
 import { AdminContainer } from "../../../pages/AdminDashboard/style";
@@ -28,13 +29,13 @@ import { UrlContext } from "../../../contexts/UrlContext";
 
 export default function DetailsAdmissions() {
   const [admissiondiary, setAdmissionDiary] = useState<number | boolean>(false);
+  const [dailyObservations, setDailyObservations] = useState("")
   const { id } = useParams();
   const navigate = useNavigate();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const entryDate = petDetails.bedInfos?.entry;
   const { setUrl } = useContext(UrlContext);
 
-  console.log(petDetails);
 
   const totalDaily = moment(new Date()).diff(entryDate, "minutes");
 
@@ -114,11 +115,31 @@ export default function DetailsAdmissions() {
     }
   };
 
+  const handleHospDiary = async () => {
+    try {
+
+      const data = {
+        observations: dailyObservations
+      }
+
+      await api.post(`/admissions/diary/${petDetails?.admissions[0].id}`, data)
+
+      toast.success("Gravado com sucesso")
+    } catch (error) {
+      toast.error("Falha ao gravar no diário")
+      console.log(error)
+    }
+  }
+
   const totalSum = useMemo(() => {
     return (
       Number(totalToPayInTimeAdmmited) + Number(petDetails.totalAcc?.price)
     );
   }, [totalToPayInTimeAdmmited, petDetails.totalAcc?.price]);
+
+  useEffect(() => {
+    console.log(dailyObservations)
+  },[dailyObservations])
 
   return (
     <ChakraProvider>
@@ -364,13 +385,14 @@ export default function DetailsAdmissions() {
                         <Textarea
                           pt="6"
                           minH="40"
+                          onChange={(ev) => setDailyObservations(ev.target.value)}
                           defaultValue={`Evolução de quadro clinico:
 Mudanças de Protocolo:
 Metas para as próximas 12h horas:
 Prognóstico: 
 Previsão de alta:`}
                         ></Textarea>
-                        <Button colorScheme="whatsapp">Gravar</Button>
+                        <Button onClick={handleHospDiary} colorScheme="whatsapp">Gravar</Button>
                         <Text
                           fontSize="20"
                           bg="yellow.300"
