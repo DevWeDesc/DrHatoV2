@@ -210,13 +210,12 @@ model Bed {
 }
 
 model BedsForPet {
-  id          Int       @id @default(autoincrement())
+  id          Int                    @id @default(autoincrement())
   entryOur    DateTime?
   exitOur     DateTime?
-  mustFasting Boolean?  @default(false)
+  mustFasting Boolean?               @default(false)
   totalDebt   Decimal?
-  isCompleted Boolean?  @default(false)
-
+  isCompleted Boolean?               @default(false)
   hospDiary   HospitalizationDiary[]
   medicine_id Int
   medicine    MedicineRecord         @relation(fields: [medicine_id], references: [id])
@@ -249,23 +248,40 @@ model VaccinesForPet {
   medicine        MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
 
+// -------------- SURGERIES ----------------- //
 model Surgeries {
   id    Int     @id @default(autoincrement())
   name  String
   price Decimal
 }
 
-model SurgeriesForPet {
-  id            Int            @id @default(autoincrement())
-  name          String
-  price         Decimal
-  scheduledDate DateTime?
-  completeDate  DateTime?
-  status        String?
-  isDone        Boolean?       @default(false)
-  medicine_id   Int
-  medicine      MedicineRecord @relation(fields: [medicine_id], references: [id])
+enum SurgerieStatus {
+  FINISHED
+  STARTED
+  INPROGRESS
 }
+
+model SurgeriesForPet {
+  id              Int                @id @default(autoincrement())
+  name            String
+  price           Decimal
+  scheduledDate   DateTime?
+  completeDate    DateTime?
+  status          SurgerieStatus?    @default(STARTED)
+  sugeriesReoirts SurgeriesReports[]
+  medicine_id     Int
+  medicine        MedicineRecord     @relation(fields: [medicine_id], references: [id])
+}
+
+model SurgeriesReports {
+  id                Int              @id @default(autoincrement())
+  reportedAt        DateTime         @default(now())
+  reportedText      String
+  SurgeriesForPet   SurgeriesForPet? @relation(fields: [surgeriesForPetId], references: [id])
+  surgeriesForPetId Int?
+}
+
+// -------------- SURGERIES ----------------- //
 
 // -------------- FINANCES ----------------- //
 model HospVetBox {

@@ -75,6 +75,12 @@ export const surgeriesController = {
       reply.send({message: error})
       console.log(error)
      }
-  }
+  },
+
+
+  
+
+  
+
 
 }
