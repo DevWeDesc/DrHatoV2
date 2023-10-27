@@ -52,7 +52,7 @@ export const surgeriesController = {
         reply.status(400).send("Falha ao buscar vacina/Falha ao criar vacina")
          return
       }
-      await prisma.surgeriesForPet.create({data: {name: surgerie.name, price: surgerie.price, medicine: {connect: {id:parseInt(recordId)}}}})
+      await prisma.surgeriesForPet.create({data: {name: surgerie.name, status: 'STARTED', price: surgerie.price, medicine: {connect: {id:parseInt(recordId)}}}})
       await accumulatorService.addPriceToAccum(Number(surgerie.price), accId)
       reply.send("Cirurgia adiciona ao pet com sucesso").status(200)
     } catch (error) {
@@ -77,14 +77,25 @@ export const surgeriesController = {
      }
   },
 
-  reportPetSurgerie: async (request: FastifyRequest<{ Params: { surgerieId: string}, Body: {reportedText: string} }>, reply: FastifyReply) => {
+  reportPetSurgerie: async (request: FastifyRequest<{ Params: { surgerieId: string}, Body: {reportedText: string, reportedBy: string, finishReport: boolean} }>, reply: FastifyReply) => {
     try {
       
       const {surgerieId} =  request.params
-      const {reportedText} = request.body
+      const {reportedText, reportedBy,finishReport} = request.body
+      const today = new Date(Date.now())
+
+
+      if(finishReport === true) {
+        await prisma.surgeriesForPet.update({
+          where: {id: parseInt(surgerieId)},
+          data: {completedDate: today, status: 'FINISHED', surgeriesReport: {update: {reportedBy, reportedText}}}
+        })
+
+        return  reply.status(200).send("laudado editado com sucesso!")
+      }
 
       await prisma.surgeriesReports.create({
-        data: {reportedText, SurgeriesForPet: {connect: {id: parseInt(surgerieId)}}}
+        data: {reportedText, reportedBy, SurgeriesForPet: {connect: {id: parseInt(surgerieId)}}}
       })
 
       reply.status(201).send("laudado com sucesso!")
@@ -100,8 +111,10 @@ export const surgeriesController = {
         try {
 
           const{petId} = request.params
-       const response =   await prisma.pets.findUnique({
-            where: {id: parseInt(petId)},include: {medicineRecords: {include: {petSurgeries: {include: {sugeriesReports: true}}}}}
+
+
+          const response =   await prisma.pets.findUnique({
+            where: {id: parseInt(petId)},include: {medicineRecords: {include: {petSurgeries: {include: {surgeriesReport: true}}}}}
           })
 
           reply.send(response)
@@ -109,12 +122,67 @@ export const surgeriesController = {
           console.log(error)
           reply.send(error) 
         }
+  },
+
+  getPetSurgeriesOpened: async(request: FastifyRequest<{ Params: {petId: string} }>, reply: FastifyReply) => {
+      try {
+       const sugeriesOpened =  await prisma.surgeriesForPet.findMany({
+          where: {
+            status: {equals: 'STARTED'}
+          },
+          include: {medicine: {select:{pet: {include: {customer: true}}}}}
+        })
+
+        reply.send(sugeriesOpened)
+      } catch (error) {
+        reply.send(error)
+        console.log(error)
+      }
+  },
+
+  getPetOpenedSugerie: async (request: FastifyRequest<{ Params: {petId: string} }>, reply: FastifyReply) => {
+    try {
+
+      const {petId} = request.params
+
+       const response =  await prisma.pets.findUnique({
+        where:{ id: parseInt(petId)}, include: {medicineRecords: {include: {petSurgeries: {where: {
+          status: 'STARTED'
+        }, include: {surgeriesReport: true}}}}, customer: {select: {name: true, cpf: true}}}
+       })
+
+       if(!response) {
+        return reply.status(404)
+       }
+
+
+       const data = {
+        petId: response.id,
+        petName: response.name,
+        petWeight: response.weigth,
+        petEspecie: response.especie,
+        petRace: response.race,
+        petAge: response.bornDate,
+        customerName: response.customer.name,
+        customerCpf: response.customer.cpf,
+        sugerieId: response.medicineRecords?.petSurgeries[0].id,
+        sugerieName: response.medicineRecords?.petSurgeries[0].name,
+        sugerieReportId: response.medicineRecords?.petSurgeries[0].surgeriesReport?.id,
+        sugerieReport: response.medicineRecords?.petSurgeries[0].surgeriesReport?.reportedText,
+        sugerieReportBy: response.medicineRecords?.petSurgeries[0].surgeriesReport?.reportedBy
+
+       }
+
+
+       reply.send(data)
+
+
+    } catch (error) {
+      
+      reply.send(error)
+      console.log(error)
+
+    }
   }
-
-
-  
-
-  
-
 
 }

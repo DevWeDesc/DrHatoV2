@@ -137,6 +137,13 @@ export interface VacinnesProps {
   requestedDate: Date | string;
 }
 
+
+enum SurgerieStatus {
+  FINISHED,
+  STARTED,
+  INPROGRESS
+}
+
 export interface SugeriesProps {
 
   id: number;
@@ -144,6 +151,7 @@ export interface SugeriesProps {
   price: number;
   scheduledDate?: Date;
   completedDate?: Date;
+  surgerieStatus: string;
 }
 
 type QueuePetOn = {

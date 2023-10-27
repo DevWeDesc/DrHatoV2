@@ -262,23 +262,24 @@ enum SurgerieStatus {
 }
 
 model SurgeriesForPet {
-  id              Int                @id @default(autoincrement())
+  id              Int               @id @default(autoincrement())
   name            String
   price           Decimal
-  scheduledDate   DateTime?
-  completeDate    DateTime?
-  status          SurgerieStatus?    @default(STARTED)
-  sugeriesReports SurgeriesReports[]
+  requestedDate   DateTime          @default(now())
+  completedDate   DateTime?
+  status          SurgerieStatus?   @default(STARTED)
+  surgeriesReport SurgeriesReports?
   medicine_id     Int
-  medicine        MedicineRecord     @relation(fields: [medicine_id], references: [id])
+  medicine        MedicineRecord    @relation(fields: [medicine_id], references: [id])
 }
 
 model SurgeriesReports {
-  id                Int              @id @default(autoincrement())
-  reportedAt        DateTime         @default(now())
+  id                Int             @id @default(autoincrement())
+  reportedAt        DateTime        @default(now())
   reportedText      String
-  SurgeriesForPet   SurgeriesForPet? @relation(fields: [surgeriesForPetId], references: [id])
-  surgeriesForPetId Int?
+  reportedBy        String
+  surgeriesForPetId Int             @unique
+  SurgeriesForPet   SurgeriesForPet @relation(fields: [surgeriesForPetId], references: [id])
 }
 
 // -------------- SURGERIES ----------------- //

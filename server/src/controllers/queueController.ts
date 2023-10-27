@@ -87,7 +87,7 @@ export const queueController = {
           petBeds: { where: {entryOur: {gte: date, lt: tomorrow}} },
           petExams: {where: {requesteData: {gte: today,
               lt: tomorrow}}},
-          petSurgeries: {where:{scheduledDate: {gte: date, lt: tomorrow}},
+          petSurgeries: {where:{requestedDate: {gte: date, lt: tomorrow}},
           
         },
 

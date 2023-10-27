@@ -126,8 +126,9 @@ export const petsController = {
             id: surgerie.id,
             name: surgerie.name,
             price: surgerie.price,
-            scheduledDate: surgerie.scheduledDate,
-            completedDate: surgerie.completeDate
+            requestedDate: surgerie.requestedDate,
+            completedDate: surgerie.completedDate,
+            surgerieStatus: surgerie.status
           }
           return surgeriesData
         }),
