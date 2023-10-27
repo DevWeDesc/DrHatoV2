@@ -33,7 +33,7 @@ export const surgeriesController = {
 
   getSurgeries: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-        const surgeries = await prisma.surgeries.findMany()
+        const surgeries = await prisma.surgeries.findMany({})
 
         reply.send(surgeries).status(200)   
        } catch (error) {
@@ -76,6 +76,40 @@ export const surgeriesController = {
       console.log(error)
      }
   },
+
+  reportPetSurgerie: async (request: FastifyRequest<{ Params: { surgerieId: string}, Body: {reportedText: string} }>, reply: FastifyReply) => {
+    try {
+      
+      const {surgerieId} =  request.params
+      const {reportedText} = request.body
+
+      await prisma.surgeriesReports.create({
+        data: {reportedText, SurgeriesForPet: {connect: {id: parseInt(surgerieId)}}}
+      })
+
+      reply.status(201).send("laudado com sucesso!")
+
+
+    } catch (error) {
+      console.log(error)
+      reply.status(404).send(error)
+    }
+  },
+
+  getPetSurgeriesHistory: async (request: FastifyRequest<{ Params: {petId: string} }>, reply: FastifyReply) => {
+        try {
+
+          const{petId} = request.params
+       const response =   await prisma.pets.findUnique({
+            where: {id: parseInt(petId)},include: {medicineRecords: {include: {petSurgeries: {include: {sugeriesReports: true}}}}}
+          })
+
+          reply.send(response)
+        } catch (error) {
+          console.log(error)
+          reply.send(error) 
+        }
+  }
 
 
   

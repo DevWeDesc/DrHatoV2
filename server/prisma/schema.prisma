@@ -268,7 +268,7 @@ model SurgeriesForPet {
   scheduledDate   DateTime?
   completeDate    DateTime?
   status          SurgerieStatus?    @default(STARTED)
-  sugeriesReoirts SurgeriesReports[]
+  sugeriesReports SurgeriesReports[]
   medicine_id     Int
   medicine        MedicineRecord     @relation(fields: [medicine_id], references: [id])
 }

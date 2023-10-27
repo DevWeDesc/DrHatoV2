@@ -58,10 +58,11 @@
 [X] - Configurar Exames com quantidades de tabelas 
 [X] - Laboratório mostrar tabela conforme o exame e suas referências
 [X] - Laboratório deve concluir exames
-[] - Conclusão de cirurgias com laudo técnico
+[] - Possibilidade de escolher unidade em banco unificado
+[X] - Conclusão de cirurgias com laudo técnico
 [] - Configuração de Eventos do Sistema para painel Administrativo
 [] - Edição livre de referências do Exame
-[] - Internação possui diário 
+[X] - Internação possui diário 
 
 
 

@@ -171,8 +171,7 @@ export class VetsMenuSearch {
                     }
                     return res
                 })
-            
-                console.log(beds)
+        
             }
 
         return {
