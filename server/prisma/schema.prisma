@@ -13,14 +13,13 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  email     String     @unique
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
   username  String?
   password  String
   crmv      Int?
-  userIsVet Boolean?   @default(false)
+  userIsVet Boolean? @default(false)
   userType  String[]
-  schedule  Schedule[]
 }
 
 model Customer {
@@ -69,21 +68,6 @@ model Pets {
   bed              Bed?
 }
 
-model PricesAccumulator {
-  id          Int      @id @default(autoincrement())
-  petId       Int      @unique
-  pets        Pets     @relation(fields: [petId], references: [id])
-  accumulator Decimal?
-}
-
-model Schedule {
-  id        Int      @id @default(autoincrement())
-  plants    String[]
-  plantId   Int
-  plantsOur String[]
-  users     User     @relation(fields: [plantId], references: [id])
-}
-
 model Autorizations {
   id   Int    @id @default(autoincrement())
   name String
@@ -101,6 +85,7 @@ model MedicineRecord {
   petProcedures ProceduresForPet[]
   petBeds       BedsForPet[]
   petQueues     QueuesForPet[]
+  petMedicines  MedicinesForPets[]
 }
 
 model Sectors {
@@ -157,6 +142,8 @@ model Groups {
   proceds Procedures[]
 }
 
+//  ------------- QUEUES -------------   //
+
 model Queues {
   id            Int       @id @default(autoincrement())
   pet_id        Int       @unique
@@ -185,6 +172,9 @@ model QueuesForPet {
   medicine                MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
 
+//  ------------- ADMISSIONS -------------   //
+
+//  ------------- ADMISSIONS -------------   //
 model Kennel {
   id          Int      @id @default(autoincrement())
   name        String?
@@ -229,6 +219,10 @@ model HospitalizationDiary {
   bedsForPetId    Int?
 }
 
+//  ------------- ADMISSIONS -------------   //
+
+//  ------------- VACINES -------------   //
+
 model Vaccines {
   id          Int     @id @default(autoincrement())
   name        String
@@ -247,6 +241,8 @@ model VaccinesForPet {
   medicine_id     Int
   medicine        MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
+
+//  ------------- VACINES -------------  //
 
 // -------------- SURGERIES ----------------- //
 model Surgeries {
@@ -285,6 +281,13 @@ model SurgeriesReports {
 // -------------- SURGERIES ----------------- //
 
 // -------------- FINANCES ----------------- //
+model PricesAccumulator {
+  id          Int      @id @default(autoincrement())
+  petId       Int      @unique
+  pets        Pets     @relation(fields: [petId], references: [id])
+  accumulator Decimal?
+}
+
 model HospVetBox {
   id               Int              @id @default(autoincrement())
   name             String
@@ -425,3 +428,47 @@ model Races {
 }
 
 // -------------- Especies/Raças End ----------------- //
+
+// -------------- Medicines ----------------- //
+
+enum MedicationUnit {
+  CPR
+  CPZ
+  ML
+  MG
+  G
+  GT
+  CT
+  CS
+  UN
+}
+
+model MedicinesGroups {
+  id        Int        @id @default(autoincrement())
+  title     String
+  medicines Medicine[]
+}
+
+model Medicine {
+  id                Int              @id @default(autoincrement())
+  title             String
+  price             Decimal?
+  unitMeasurement   MedicationUnit?
+  dosage            String
+  observations      String?
+  MedicinesGroups   MedicinesGroups? @relation(fields: [medicinesGroupsId], references: [id])
+  medicinesGroupsId Int?
+}
+
+model MedicinesForPets {
+  id                Int             @id @default(autoincrement())
+  title             String
+  dosageApplication String
+  unitMeasurement   MedicationUnit?
+  isPaid            Boolean?
+  applicationDate   DateTime        @default(now())
+  MedicineRecord    MedicineRecord? @relation(fields: [medicineRecordId], references: [id])
+  medicineRecordId  Int?
+}
+
+// -------------- Medicines ----------------- //

@@ -19,6 +19,7 @@ import { vaccinesRoutes } from './routes/vaccines.routes'
 import { surgeriesRoutes } from './routes/surgeries.routes'
 import { boxRoutes } from './routes/box.routes'
 import { accountsRoutes } from './routes/accounts.routes'
+import { medicinesRoutes } from './routes/medicines.routes'
 
 const app = fastify()
 app.register(cors, {origin: true})
@@ -41,6 +42,7 @@ app.register(vaccinesRoutes)
 app.register(surgeriesRoutes)
 app.register(boxRoutes)
 app.register(accountsRoutes)
+app.register(medicinesRoutes)
 
 
 
