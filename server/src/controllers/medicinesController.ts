@@ -99,6 +99,35 @@ export const medicinesController = {
       console.log(error)
 
     }
+  },
+
+  getAllMedicinesGroupsAndMedicines: async(request: FastifyRequest<{Params: {petId: string}}>, reply: FastifyReply) => {
+    try {
+      const medicines = await prisma.medicinesGroups.findMany({
+        include: {medicines: true}
+      })
+
+      reply.send({medicines})
+    } catch (error) {
+      reply.send({message: error})
+      console.log(error)
+    }
+  },
+
+  getMedicineById: async(request: FastifyRequest<{Params: {medicineId: string}}>, reply: FastifyReply) => {
+    try {
+      const { medicineId} = request.params
+
+        const medicine = await prisma.medicine.findUnique({
+          where: {id: parseInt(medicineId)}
+        })
+
+        reply.send(medicine)
+    } catch (error) {
+      
+      reply.send({message: error})
+      console.log(error)
+    }
   }
 
 }

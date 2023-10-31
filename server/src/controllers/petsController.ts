@@ -67,6 +67,7 @@ export const petsController = {
       })
 
       const petData = {
+        id: pet?.id,
         name: pet?.name,
         debits: pet?.debits,
         customerName: pet?.customer.name,

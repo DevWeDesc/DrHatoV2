@@ -260,7 +260,7 @@ export interface BoxProps {
 }
 
 export interface PetDetaisl {
-  id: number | string;
+  id: number;
   more: string;
   name: string;
   balance: number;
