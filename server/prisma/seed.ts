@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import bcrypt from "bcrypt";
 
@@ -338,6 +338,153 @@ async function main() {
     },
   ];
 
+
+  const especiesData = [
+    {
+      "name": "Felina"
+    },
+    {
+      "name": "Canina"
+    },
+    {
+      "name": "Ave"
+    },
+    {
+      "name": "Roedor"
+    },
+    {
+      "name": "Silvestre"
+    },
+    {
+      "name": "Réptil"
+    },
+    {
+      "name": "Peixe"
+    },
+    {
+      "name": "Quelônio"
+    },
+    {
+      "name": "Primata"
+    }
+  ]
+  const racesData = [
+    { "name": "Persa", "espId": 1 },
+    { "name": "British Blue", "espId": 1 },
+    { "name": "Escocês", "espId": 1 },
+    { "name": "Russo Azul", "espId": 1 },
+    { "name": "Himalaio", "espId": 1 },
+    { "name": "Chartrox", "espId": 1 },
+    { "name": "Mestiço", "espId": 1 },
+    { "name": "Pelo Curto Brasileiro", "espId": 1 },
+    { "name": "Himalaio Persa", "espId": 1 },
+    { "name": "Rag Doll", "espId": 1 },
+    { "name": "Angorá Turco", "espId": 1 },
+    { "name": "Comum Européia", "espId": 1 },
+    { "name": "Siamês", "espId": 1 },
+    { "name": "Rajado Brasileiro", "espId": 1 },
+    { "name": "Sagrado da Birmânia", "espId": 1 },
+    { "name": "Sagrado", "espId": 1 },
+    { "name": "Maine Coon", "espId": 1 },
+    { "name": "Bengal", "espId": 1 },
+    { "name": "Househound Pet", "espId": 1 },
+    { "name": "Scottish Straight", "espId": 1 },
+    { "name": "Snowshoe", "espId": 1 },
+    { "name": "Persa Exótica", "espId": 1 },
+    { "name": "Devon Rex", "espId": 1 },
+    { "name": "Cornish Rex", "espId": 1 },
+    { "name": "Sphynx", "espId": 1 },
+    { "name": "Abyssinian", "espId": 1 },
+    { "name": "Siamese Oriental", "espId": 1 },
+    { "name": "Burmesa", "espId": 1 },
+    { "name": "Tonquinês", "espId": 1 },
+    { "name": "Savannah", "espId": 1 },
+    { "name": "Siberiano", "espId": 1 },
+    { "name": "Norueguês da Floresta", "espId": 1 },
+    { "name": "Bobtail Japonês", "espId": 1 },
+    { "name": "Turkish Van", "espId": 1 },
+    { "name": "Manx", "espId": 1 },
+    { "name": "Labrador Retriever", "espId": 2 },
+   { "name": "Golden Retriever", "espId": 2 },
+   { "name": "German Shepherd", "espId": 2 },
+   { "name": "French Bulldog", "espId": 2 },
+   { "name": "Bulldog", "espId": 2 },
+   { "name": "Poodle", "espId": 2 },
+   { "name": "Beagle", "espId": 2 },
+   { "name": "Rottweiler", "espId": 2 },
+   { "name": "Yorkshire Terrier", "espId": 2 },
+   { "name": "Boxer", "espId": 2 },
+   { "name": "Dachshund", "espId": 2 },
+   { "name": "Shih Tzu", "espId": 2 },
+   { "name": "Siberian Husky", "espId": 2 },
+   { "name": "Doberman Pinscher", "espId": 2 },
+   { "name": "Great Dane", "espId": 2 },
+   { "name": "Chihuahua", "espId": 2 },
+   { "name": "Border Collie", "espId": 2 },
+   { "name": "Cocker Spaniel", "espId": 2 },
+   { "name": "Miniature Schnauzer", "espId": 2 },
+   { "name": "Pug", "espId": 2 },
+   { "name": "Australian Shepherd", "espId": 2 },
+   { "name": "Basset Hound", "espId": 2 },
+   { "name": "Pomeranian", "espId": 2 },
+   { "name": "Shiba Inu", "espId": 2 },
+   { "name": "Bichon Frise", "espId": 2 },
+   { "name": "Cavalier King Charles Spaniel", "espId": 2 },
+   { "name": "Papillon", "espId": 2 },
+   { "name": "Bull Terrier", "espId": 2 },
+   { "name": "Alaskan Malamute", "espId": 2 },
+   { "name": "Samoyed", "espId": 2 },
+   { "name": "Pastor Suíço", "espId": 2 },
+   { "name": "Spaniel Japonês", "espId": 2 },
+   { "name": "Springer Spaniel Inglês", "espId": 2 },
+   { "name": "Mastin", "espId": 2 },
+   { "name": "Benese", "espId": 2 },
+   { "name": "Poodle Champ", "espId": 2 },
+   { "name": "Airdale Terrier", "espId": 2 },
+   { "name": "Samoyeda", "espId": 2 },
+   { "name": "Bichon Frisè", "espId": 2 },
+  { "name": "Setter Irlandês", "espId": 2 },
+  { "name": "Mini Shnauzer", "espId": 2 },
+  { "name": "Dobermman", "espId": 2 },
+  { "name": "Starforshire Terrier", "espId": 2 },
+  { "name": "West Highlander White Terrier", "espId": 2 },
+   { "name": "Basset Pelo Longo", "espId": 2 },
+   { "name": "Tenerife", "espId": 2 },
+   { "name": "Pastor de Shettland", "espId": 2 },
+   { "name": "Cani Corso", "espId": 2 },
+   { "name": "Poodle Micro Toy", "espId": 2 },
+   { "name": "Afghan Hound", "espId": 2 },
+   { "name": "Sheep Dog Alemão", "espId": 2 },
+   { "name": "Bull Dog Francês", "espId": 2 },
+   { "name": "Rott Weiller", "espId": 2 },
+   { "name": "American Pit Bull", "espId": 2 },
+   { "name": "Golden", "espId": 2 },
+   { "name": "Dog Agentino", "espId": 2 },
+   { "name": "Pastor de Buceron", "espId": 2 },
+   { "name": "Pequinês Alemão", "espId": 2 },
+   { "name": "Splinter", "espId": 2 },
+   { "name": "Malamute", "espId": 2 },
+   { "name": "Malamute Alaska", "espId": 2 },
+   { "name": "Minie Collie", "espId": 2 },
+   { "name": "York Shire", "espId": 2 },
+   { "name": "Cocker Americano", "espId": 2 },
+   { "name": "Schnauzer", "espId": 2 },
+   { "name": "Bull Dog", "espId": 2 },
+   { "name": "Starforshire Bull Terrier", "espId": 2 },
+   { "name": "Boxer Inglês", "espId": 2 },
+   { "name": "Americano", "espId": 2 },
+   { "name": "Lhasa-Apso", "espId": 2 },
+   { "name": "Dálmata", "espId": 2 },
+   { "name": "Poodle Toy", "espId": 2 },
+   { "name": "Mini Pinscher", "espId": 2 },
+   { "name": "Sheep Dog", "espId": 2 },
+   { "name": "Cairn Terrier", "espId": 2 },
+   { "name": "Cristado Chinês", "espId": 2 },
+   { "name": "Fox Terrier Pelo Curto", "espId": 2 },
+   { "name": "Blue Riller", "espId": 2 }
+  ];
+  
+
   try {
     await prisma.user.createMany({ data: userData });
     await prisma.customer.createMany({ data: customerData });
@@ -345,6 +492,14 @@ async function main() {
     await prisma.vaccines.createMany({ data: vaccinesData });
     await prisma.surgeries.createMany({ data: surgeriesData });
     await prisma.autorizations.createMany({ data: autorizationsData });
+    await prisma.especies.createMany({ data: especiesData })
+  
+    for (const data of racesData) {
+      await prisma.races.create({
+        data: {name: data.name, Especies: {connect: {id: data.espId}}}
+      })
+    }
+    
     console.log("BANCO POPULADO!!");
   } catch (error) {
     console.log(error);

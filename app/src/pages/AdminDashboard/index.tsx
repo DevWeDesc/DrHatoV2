@@ -90,6 +90,11 @@ export function AdminMain() {
                       Cadastro de Caixa
                     </Button>
                   </Link>
+                  <Link to="/Admin/Especies">
+                    <Button colorScheme="whatsapp" w="100%" py="10">
+                      Cadastro de Especies/Raças
+                    </Button>
+                  </Link>
                 </Flex>
               </Flex>
             </SimpleGrid>

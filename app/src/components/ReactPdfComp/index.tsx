@@ -1,7 +1,6 @@
-import React from 'react';
-import ReactPDF, { Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
 import { ChakraProvider, Flex } from '@chakra-ui/react';
-import logo from '../../assets/logoPadronizada.png'
+
 
 
 interface PdfProps {
@@ -23,20 +22,66 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10,
     size: 'A4',
+  },
+  table: { 
+    display: "table", 
+    width: "auto", 
+    borderStyle: "solid", 
+    borderWidth: 1, 
+    borderRightWidth: 0, 
+    borderBottomWidth: 0 
+  }, 
+  tableRow: { 
+    margin: "auto", 
+    flexDirection: "row" 
+  }, 
+  tableCol: { 
+    width: "25%", 
+    borderStyle: "solid", 
+    borderWidth: 1, 
+    borderLeftWidth: 0, 
+    borderTopWidth: 0 
+  }, 
+  tableCell: { 
+    margin: "auto", 
+    marginTop: 5, 
+    fontSize: 10 
   }
 });
 
-// Create Document Component
-const MyDocument = () => (
+
+const Quixote = () => (
   <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.section}>
-        <Image style={{width: '200px'}} src={logo} />
-
-        <Text>{customerName}</Text>
-        <Text>{title}</Text>
-
-        <Text>{description}</Text>
+    <Page  >
+      <View style={styles.table}> 
+        <View style={styles.tableRow}> 
+          <View style={styles.tableCol}> 
+            <Text style={styles.tableCell}>Product</Text> 
+          </View> 
+          <View style={styles.tableCol}> 
+            <Text style={styles.tableCell}>Type</Text> 
+          </View> 
+          <View style={styles.tableCol}> 
+            <Text style={styles.tableCell}>Period</Text> 
+          </View> 
+          <View style={styles.tableCol}> 
+            <Text style={styles.tableCell}>Price</Text> 
+          </View> 
+        </View>
+        <View style={styles.tableRow}> 
+          <View style={styles.tableCol}> 
+            <Text style={styles.tableCell}>React-PDF</Text> 
+          </View> 
+          <View style={styles.tableCol}> 
+            <Text style={styles.tableCell}>3 User </Text> 
+          </View> 
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>2019-02-20 - 2020-02-19</Text> 
+          </View>
+          <View style={styles.tableCol}> 
+            <Text style={styles.tableCell}>5€</Text> 
+          </View> 
+        </View> 
       </View>
     </Page>
   </Document>
@@ -46,8 +91,10 @@ const MyDocument = () => (
   return (
     <ChakraProvider>
       <Flex width="100vw" height="100vh" >
+    
       <PDFViewer style={{width: '100%', height: '100%'}}>
-      <MyDocument />
+      <Quixote />
+      
     </PDFViewer>
       </Flex>
   

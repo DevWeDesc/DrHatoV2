@@ -106,6 +106,9 @@ import { AuthContextProvider } from "./contexts/AuthContext";
 import ReminderPage from "./pages/ReminderPage";
 import { UrlContextProvider } from "./contexts/UrlContext";
 import { ExamsDetails } from "./pages/Vets/WorkSpaceVets/examsDetails";
+import { AdminCadEspecies } from "./pages/AdminDashboard/cadEspecies";
+import { AdminCadRaces } from "./pages/AdminDashboard/cadRaces";
+import { ExamsResultPdfView } from "./pages/Vets/WorkSpaceVets/examsResultPdfsView";
 
 export function Router() {
   return (
@@ -193,6 +196,9 @@ export function Router() {
                 element={<Hospitalization />}
               />
               <Route path="/Admin/OptionSistem" element={<OptionSistem />} />
+              <Route path="/Admin/Especies" element={<AdminCadEspecies/>} /> 
+              <Route path="/Admin/Races/:espId" element={<AdminCadRaces/>} /> 
+
 
               <Route
                 path="/Autorizations"
@@ -229,6 +235,8 @@ export function Router() {
                 element={<VetsSurgeries />}
               />
               <Route  path="/WorkSpace/ExamsDetails/:examId" element={<ExamsDetails/>}  />
+              <Route  path="/WorkSpace/ExamResults/:examId" element={<ExamsResultPdfView/>}  />
+              
 
               {/* VETS WORKSPACE PATHS END */}
 

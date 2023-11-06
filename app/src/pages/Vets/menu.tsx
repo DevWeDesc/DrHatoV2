@@ -30,12 +30,6 @@ interface QueueProps {
   totalInQueue: number
 }
 
-interface SearchProps {
-  isFinished?: boolean
-  initialDate?: Date
-  finalDate?: Date
-}
-
 
 
 export function MenuVet() {
@@ -49,6 +43,9 @@ export function MenuVet() {
   const [inQueue, setInQueue] = useState<QueueProps[]>([])
   const [petData, setPetData] = useState([] as any)
   const [dataByFilter, setDataByFilter] = useState([] as any)
+  const [initialDate, setInitialDate] = useState("");
+  const [finalDate, setFinalDate] = useState("");
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -90,19 +87,37 @@ export function MenuVet() {
         })
         break
         case isAddmited === true:
-          await api.get(`vetmenusearch?isFinished=true`).then(res => {
+          await api.get(`vetmenusearch?isAddmited=true`).then(res => {
             setPetData(res.data)
-            console.log(res.data)
           })
-          break
+        break;
     }
   }
 
+ const handleGetDataWithParams =  async () => {
 
+  switch(true) {
+    case isFinishied === true:
+      await api.get(`vetmenusearch?isFinished=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
+      {  setPetData(res.data)
+      })
+    break
+    case isAddmited === true:
+      await api.get(`vetmenusearch?isAddmited=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
+      {  setPetData(res.data)
+        console.log(res.data)
+      })
+    break
+  }
+      
+  }
 
   useEffect(() => {
     searchDataVet()
   }, [petName, codPet, customerName, isFinishied, isAddmited])
+
+
+ 
 
   return (
     <ChakraProvider>
@@ -123,11 +138,16 @@ export function MenuVet() {
                   <Flex align="center" justify="center" gap="8">
                     <HStack spacing={8}>
                       <Input
-                        name="initialData"
+                        name="initialDate"
+                        onChange={(ev) => setInitialDate(ev.target.value)}
                         label="data inicial"
                         type="date"
                       />
-                      <Input name="finalData" label="data final" type="date" />
+                      <Input 
+                      name="finalDate" 
+                      onChange={(ev) => setFinalDate(ev.target.value)}
+                      label="data final" 
+                      type="date" />
                       <VStack>
                         <FormLabel>Finalizados</FormLabel>
                         <Checkbox
@@ -173,9 +193,10 @@ export function MenuVet() {
                     />
                   </HStack>
                   <Button
-                    onClick={() => console.log(petData)}
+                    onClick={handleGetDataWithParams}
                     mt="4"
                     colorScheme="whatsapp"
+                    
                   >
                     FILTRAR
                   </Button>

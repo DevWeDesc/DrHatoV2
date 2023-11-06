@@ -1,31 +1,82 @@
+import { useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
 import { Text } from "@chakra-ui/layout";
 import { BiHome } from "react-icons/bi";
-import { CgAdd } from "react-icons/cg";
 import { TbArrowBack } from "react-icons/tb";
-import { ListIcon } from "@chakra-ui/layout";
-import { useNavigate, useParams } from "react-router";
-import React, { useEffect, useState } from "react";
-import { Surgierslist } from "../../components/surgeries/surgierslist";
-import { Createsurgeries } from "../../components/surgeries/createsurgeries";
 import { ChakraProvider, Flex, Button } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
 import { api } from "../../lib/axios";
+import { toast } from "react-toastify";
+import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
+import { AiOutlineSend } from "react-icons/ai";
+
+interface SugerieDetailsProps {
+	petId: number,
+	petName: string;
+	petWeight: string;
+	petEspecie: string;
+	petRace: string;
+	petAge: string;
+	customerName: string;
+	customerCpf: string;
+	sugerieId: number;
+	sugerieName: string;
+  sugerieReport: string;
+  sugerieReportBy: string;
+}
 
 export default function SurgeriesDetails() {
-  const [surgeriesDetails, setSurgeriesDetails] = useState([]);
-  const { id } = useParams<{ id: string }>();
+  const [surgeriesDetails, setSurgeriesDetails] = useState({} as SugerieDetailsProps);  const { id } = useParams<{ id: string }>();
+  const [reloadSugeriesData, setReloadSugeriesData] = useState(false)
+  const [endSurgerie, setEndSurgerie] = useState(false)
+  const [reportText, setReportText] = useState("")
+
+  const user = JSON.parse(localStorage.getItem("user") as string);
+
+
   const navigate = useNavigate();
 
   async function getSurgeriesDetails() {
-    const totalSurgeries = await api.get("http://localhost:5000/pets/queue");
-    setSurgeriesDetails(totalSurgeries.data.response);
+    const sugerie = await api.get(`/surgeries/reports/started/${id}`);
+    setSurgeriesDetails(sugerie.data);
+  }
+
+
+  async function reportPetSugerie() {
+    try {
+
+      const data = {
+        reportedText: reportText, 
+        reportedBy: user.username,
+        finishReport: endSurgerie
+      }
+
+   
+      await api.patch(`/surgeries/reports/${surgeriesDetails.sugerieId}`, data)
+
+      if(endSurgerie === true) {
+        toast.success("Cirurgia encerrada com sucesso!")
+      }
+      toast.success("Cirurgia laudada com sucesso!")
+      setReloadSugeriesData(true)
+
+    } catch (error) {
+      toast.error("Falha ao laudar cirurgia!")
+      console.log(error)
+    } finally {
+      setReloadSugeriesData(false)
+    }
   }
 
   useEffect(() => {
     getSurgeriesDetails();
-  }, []);
+  }, [reloadSugeriesData]);
+
+  
+
+
   return (
     <ChakraProvider>
       <Flex width="100vw" height="100vh" bgColor="white" direction="column">
@@ -68,10 +119,8 @@ export default function SurgeriesDetails() {
               {" "}
               Laudo de Cirurgia
             </Text>
-            {surgeriesDetails.map((surgeries: any) => (
-              <>
-                {surgeries.id == id && (
-                  <React.Fragment key={surgeries.id}>
+          
+  
                     <Flex
                       bg="gray.200"
                       border="1px solid black"
@@ -90,8 +139,12 @@ export default function SurgeriesDetails() {
                           Pet
                         </Text>
                         <Input
-                          value={surgeries.name}
+                          defaultValue={surgeriesDetails.petName}
                           borderColor="black"
+                          disabled
+                          _disabled={{
+                            textColor: 'black'
+                          }}
                           rounded="0"
                           bg="white"
                           py="6"
@@ -108,7 +161,11 @@ export default function SurgeriesDetails() {
                           Cliente
                         </Text>
                         <Input
-                          value={surgeries.customerName}
+                          defaultValue={surgeriesDetails.customerName}
+                          disabled
+                          _disabled={{
+                            textColor: 'black'
+                          }}
                           borderColor="black"
                           rounded="0"
                           bg="white"
@@ -129,6 +186,11 @@ export default function SurgeriesDetails() {
                           borderColor="black"
                           rounded="0"
                           bg="white"
+                          disabled
+                          _disabled={{
+                            textColor: 'black'
+                          }}
+                          defaultValue={surgeriesDetails?.sugerieReportBy}
                           w="87.5vw"
                           py="6"
                         />
@@ -139,6 +201,7 @@ export default function SurgeriesDetails() {
                           border="1px solid black"
                         >
                           <Checkbox
+                            onChange={(ev) => ev.target.checked === true ? setEndSurgerie(true) : setEndSurgerie(false) }
                             colorScheme="green"
                             size="lg"
                             py="2"
@@ -150,10 +213,8 @@ export default function SurgeriesDetails() {
                         </Flex>
                       </Flex>
                     </Flex>
-                  </React.Fragment>
-                )}
-              </>
-            ))}
+          
+        
           </Flex>
           <Flex
             direction="column"
@@ -171,16 +232,26 @@ export default function SurgeriesDetails() {
               h="36.6vh"
             >
               <Textarea
+              onChange={(ev) => setReportText(ev.target.value)}
+              defaultValue={surgeriesDetails?.sugerieReport}
                 rounded="0"
                 h="100%"
-                value="Ainda não há um laudo pré cadastrado para este tipo de cirurgia"
                 bg="white"
               />
             </Flex>
           </Flex>
-          <Button py="10" fontSize="20" colorScheme="whatsapp">
-            Gravar Cirurgia
-          </Button>
+
+          {
+            endSurgerie === false ?   <Button
+            onClick={() => reportPetSugerie() }
+            py="10" fontSize="20" colorScheme="whatsapp">
+              Gravar Cirurgia
+            </Button> : <ConfirmationDialog h="72px" buttonTitle="Finalizar cirurgia" whatIsConfirmerd="Você tem certeza que deseja finalizar essa cirurgia?"
+            describreConfirm="O campo de conclusão está marcado, caso ainda não queira encerrar o laudo desmaque-o" callbackFn={() => reportPetSugerie()} disabled={false}
+            icon={<AiOutlineSend />}
+            />
+          }
+        
         </Flex>
       </Flex>
     </ChakraProvider>

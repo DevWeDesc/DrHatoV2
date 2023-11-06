@@ -137,6 +137,13 @@ export interface VacinnesProps {
   requestedDate: Date | string;
 }
 
+
+enum SurgerieStatus {
+  FINISHED,
+  STARTED,
+  INPROGRESS
+}
+
 export interface SugeriesProps {
 
   id: number;
@@ -144,6 +151,7 @@ export interface SugeriesProps {
   price: number;
   scheduledDate?: Date;
   completedDate?: Date;
+  surgerieStatus: string;
 }
 
 type QueuePetOn = {
@@ -195,7 +203,11 @@ type AdmissionsProps = {
   exit: Date;
   totalDebit: number | string;
   fasting: boolean;
-  observations: string;
+  observations: Array<{
+    id: number;
+    observations: string;
+    observationDate: Date | string;
+  }>;
 };
 type PetQueueProps = {
   [x: string]: any;
@@ -248,7 +260,7 @@ export interface BoxProps {
 }
 
 export interface PetDetaisl {
-  id: number | string;
+  id: number;
   more: string;
   name: string;
   balance: number;

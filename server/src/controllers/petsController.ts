@@ -36,7 +36,7 @@ export const petsController = {
               petVaccines: true,
               petSurgeries: true,
               petProcedures: true,
-              petBeds: { where: { isCompleted: false } }
+              petBeds: { where: { isCompleted: false },include: {hospDiary: true} }
             }
           },
           queue: {
@@ -57,14 +57,17 @@ export const petsController = {
               id: true,
               kennel: { select: { name: true, price: true } },
               dailyRate: true,
-              mustFasting: true
-            }
+              mustFasting: true,
+
+            },
+            
           },
           priceAccumulator: { select: { id: true, accumulator: true } }
         }
       })
 
       const petData = {
+        id: pet?.id,
         name: pet?.name,
         debits: pet?.debits,
         customerName: pet?.customer.name,
@@ -124,8 +127,9 @@ export const petsController = {
             id: surgerie.id,
             name: surgerie.name,
             price: surgerie.price,
-            scheduledDate: surgerie.scheduledDate,
-            completedDate: surgerie.completeDate
+            requestedDate: surgerie.requestedDate,
+            completedDate: surgerie.completedDate,
+            surgerieStatus: surgerie.status
           }
           return surgeriesData
         }),
@@ -146,7 +150,7 @@ export const petsController = {
             exit: bed.exitOur,
             totalDebit: bed.totalDebt,
             fasting: bed.mustFasting,
-            observations: bed.admissionsObservations
+            observations: bed.hospDiary
           }
           return bedData
         }),
@@ -318,5 +322,92 @@ export const petsController = {
       console.log(error)
       reply.send(error)
     }
-  }
+  },
+
+  createEspecie: async (request: FastifyRequest<{ Body: {name: string}}>, reply: FastifyReply) => {
+    try {
+        const {name} = request.body
+
+        await prisma.especies.create({
+          data: {name}
+        })
+        reply.status(201).send("Created successfully")
+    } catch (error) {
+      console.error(error)
+      reply.send(error)
+    }
+  },
+
+  getEspecies: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const especies = await prisma.especies.findMany({
+        include: {race: true}
+      })
+
+      reply.send(especies)
+    } catch (error) {
+      console.log(error)
+      reply.send(error)
+    }
+  },
+
+  createRaces: async (request: FastifyRequest<{
+    Body: { name: string, espId: number}
+  }>, reply: FastifyReply) => {
+    try {
+
+      const { name, espId } = request.body
+      
+      await prisma.races.create({
+        data: {name, Especies: {
+          connect: { id: espId}
+        }}
+      })
+
+      reply.status(201).send('Race created successfully')
+    } catch (error) {
+      console.log(error)
+      reply.send(error)
+    }
+  },
+
+  getEspeciesById: async (request: FastifyRequest<{Params: {espId: string}}>, reply: FastifyReply) => {
+      try {
+
+        const {espId} = request.params
+
+       const esp =  await prisma.especies.findUnique({
+          where: {id: parseInt(espId)},
+          include: {race: true}
+        })
+
+
+        reply.send({
+          esp
+        })
+      } catch (error) {
+        console.log(error)
+        reply.send({message: error})
+      }
+  },
+
+
+  getAllPetHistory: async (request: FastifyRequest<{Params: {petId: string}}>, reply: FastifyReply) => {
+    try {
+      const {petId} = request.params
+
+     const response = await prisma.pets.findUnique({
+        where: {id: parseInt(petId)}, include: {medicineRecords: {select: {petBeds: {include :{hospDiary: true}}, petExams: true, petQueues: true, petSurgeries: true, petVaccines: true}}, customer: true}
+      }) 
+
+      reply.send(response)
+
+    } catch (error) {
+      console.log(error)
+    }
+}
+
+
+
+
 }

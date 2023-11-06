@@ -8,10 +8,11 @@ import {
   AlertDialogCloseButton,
   useDisclosure,
   Button,
+  ButtonProps
 } from "@chakra-ui/react";
 import React, { JSXElementConstructor, ReactElement } from "react";
 
-interface ConfirmationDialogProps {
+interface ConfirmationDialogProps extends ButtonProps {
   buttonTitle: string;
   icon: ReactElement<any, string | JSXElementConstructor<any>>;
   whatIsConfirmerd: string;
@@ -26,7 +27,7 @@ export function ConfirmationDialog({
   whatIsConfirmerd,
   describreConfirm,
   callbackFn,
-  disabled,
+  disabled, ...rest
 }: ConfirmationDialogProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef();
@@ -39,6 +40,7 @@ export function ConfirmationDialog({
         height={8}
         colorScheme="red"
         onClick={onOpen}
+        {...rest}
       >
         {buttonTitle}
       </Button>

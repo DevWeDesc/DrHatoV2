@@ -128,11 +128,13 @@ export function Createsurgeries() {
                   </Thead>
                   <Tbody>
           {
-            petDetails.surgeries?.map((sugerie) => (
-                    <Tr key={sugerie.id}>
-                      <Td>{sugerie.name}</Td>
-                      <Td>{sugerie.price}</Td>
-                      <Td><Button colorScheme="red" onClick={() => handleDeleteSugerie(sugerie.id, sugerie.price)} >EXCLUIR</Button></Td>
+            petDetails.surgeries?.map((surgerie) => (
+                    <Tr key={surgerie.id}>
+                      <Td>{surgerie.name}</Td>
+                      <Td>{surgerie.price}</Td>
+                      <Td><Button colorScheme="red" 
+                      isDisabled={surgerie.surgerieStatus === "FINISHED"}
+                      onClick={() => handleDeleteSugerie(surgerie.id, surgerie.price)} >EXCLUIR</Button></Td>
                     </Tr>
             ) )
           }

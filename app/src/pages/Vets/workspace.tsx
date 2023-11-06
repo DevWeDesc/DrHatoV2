@@ -29,6 +29,7 @@ import {
   TbMedicalCrossFilled,
   CiStethoscope,
   MdAttachMoney,
+  GiMedicines,
 } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -43,6 +44,7 @@ import { TDocumentDefinitions } from "pdfmake/interfaces";
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
+import { SetMedicineInPet } from "../../components/Medicine/SetMedicineInPet";
 
 export function WorkSpaceVet() {
   const { id } = useParams<{ id: string }>();
@@ -52,6 +54,7 @@ export function WorkSpaceVet() {
   const [petWeigth, setPetWeigth] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAutorizationModalOpen, setAutorizationModalOpen] = useState(false);
+  const [isMedicineModalOpen, setMedicineModalOpen] = useState(false);
   const [reloadData, setReloadData] = useState(false);
   const [viewComponentPrint, setViewComponentPrint] = useState("");
   const [PdfDiagnostic, setPdfDiagnostic] = useState("");
@@ -61,6 +64,8 @@ export function WorkSpaceVet() {
   const [petObservations, setPetObservations] = useState("")
 
   function handleCreateInstruction(text: string) {
+
+
     const docDefinition: TDocumentDefinitions = {
       content: [`${text}`],
       pageMargins: [50, 50],
@@ -81,6 +86,15 @@ export function WorkSpaceVet() {
   function closeAutorizationModal() {
     setAutorizationModalOpen(false);
   }
+
+  function openMedicineModal() {
+      setMedicineModalOpen(true);
+  }
+
+  function closeMedicineModal() {
+    setMedicineModalOpen(false);
+  }
+
 
   const handleChangePet = async (newPetId: number) => {
     navigate(`/Vets/Workspace/${newPetId}`);
@@ -375,6 +389,16 @@ export function WorkSpaceVet() {
                 onClick={() => navigate(`/WorkSpace/Admissions/${id}`)}
               >
                 INTERNAR
+              </Button>
+              <Button
+              leftIcon={<GiMedicines color="black" size={24}/>}
+                isDisabled={pet.isBusy}
+                height={8}
+                gap={2}
+                colorScheme="whatsapp"
+                onClick={() => openMedicineModal()}
+              >
+                Medicar Animal
               </Button>
 
               <Button
@@ -732,6 +756,7 @@ export function WorkSpaceVet() {
           <Button colorScheme="whatsapp">FICHA DE MEDICAÇÃO</Button>
         </Flex>
       </GenericModal>
+
       <GenericModal
         isOpen={modalWeigthPet}
         onRequestClose={() => setModalWeigthPet(false)}
@@ -765,6 +790,13 @@ export function WorkSpaceVet() {
           </Select>
           <WorkVetAutorization />
         </Flex>
+      </GenericModal>
+
+      <GenericModal 
+       isOpen={isMedicineModalOpen}
+       onRequestClose={closeMedicineModal}
+      >
+         <SetMedicineInPet petId={pet?.id} accId={pet?.totalAcc?.id} />
       </GenericModal>
     </ChakraProvider>
   );

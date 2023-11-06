@@ -145,15 +145,13 @@ export function EditExams() {
                 Preço
               </label>
               <Input defaultValue={examsData ? examsData.price : 0} {...register("price")} name="price" />
-              <label htmlFor="" style={{ marginTop: "20px" }}>
-                Titulo
-              </label>
-              <Input {...register("subName")} name="subName" />
+    
+       
 
               <label htmlFor="" style={{ marginTop: "20px" }}>
                 Idade Minima
               </label>
-              <NumberInput size="xs" name="minAge" maxW={"100%"} w="100%">
+              <NumberInput size="xs" name="minAge" maxW={"100%"} w="100%" >
                 <NumberInputField
                   py="5"
                   rounded="md"
@@ -163,6 +161,7 @@ export function EditExams() {
                   w="100%"
                   {...register("minAge")}
                   name="minAge"
+                  
                 />
                 <NumberInputStepper>
                   <NumberIncrementStepper />
@@ -183,21 +182,14 @@ export function EditExams() {
                   w="100%"
                   {...register("maxAge")}
                   name="maxAge"
+                 
                 />
                 <NumberInputStepper>
                   <NumberIncrementStepper />
                   <NumberDecrementStepper />
                 </NumberInputStepper>
               </NumberInput>
-              <label style={{ marginTop: "20px" }}>Valor padrão</label>
-              <Textarea
-                {...register("description")}
-                name="description"
-                minHeight={300}
-                minWidth={300}
-                borderColor="gray.900"
-                bg="white"
-              ></Textarea>
+             
               <Flex >
               <Flex direction="column" mt="4" align="center" gap={4}>
                 <Text fontWeight="black">Selecione os exames adicionais que farão parte deste.</Text>

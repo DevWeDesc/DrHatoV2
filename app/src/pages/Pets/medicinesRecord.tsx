@@ -39,18 +39,44 @@ interface PetProps {
   sexo: string
   status: string
   bornDate: string
-  customerName: string
+  customer: {
+    name: string;
+  }
   codPet: string
+
+  medicineRecords: {
+    petBeds: Array<{
+      id: number;
+      entryOur: string;
+    }>
+    petExams: Array<{
+      id: number;
+      name: string;
+      requesteData: string
+      doneExame: boolean
+    }>
+    petQueues: Array<{
+      id: number
+     queueEntry: string
+     queueExit: string
+     queryType: string
+     responsibleVeterinarian: string
+     petWeight: string
+     observations: string
+    }>
+    petSurgeries: Array<{}>
+    petVaccines: Array<{}>
+  }
 }
 
 export function MedicineRecords() {
   const { id } = useParams<{ id: string }>()
-  const [pets, setPets] = useState({} as PetDetaisl)
+  const [pets, setPets] = useState({} as PetProps)
   const navigate = useNavigate()
 
   async function getPet() {
     try {
-      const response = await api.get(`/pets/${id}`)
+      const response = await api.get(`/pets/history/${id}`)
       setPets(response.data)
     } catch (error) {
       console.log(error)
@@ -60,6 +86,9 @@ export function MedicineRecords() {
   useEffect(() => {
     getPet()
   }, [])
+
+
+  console.log(pets)
 
   return (
     <ChakraProvider>
@@ -114,7 +143,7 @@ export function MedicineRecords() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={pets.customerName}
+                          value={pets?.customer?.name}
                         />
                       </Th>
                     </Tr>
@@ -179,7 +208,7 @@ export function MedicineRecords() {
               <Flex w="100%" h="100%" overflowY="auto">
                   <Flex direction="column"  w="100%" h="100%">
                   {
-                    pets.queueHistory ? pets?.queueHistory.map((queue) => (
+                    pets?.medicineRecords?.petQueues.map((queue) => (
                       <Flex  textAlign="center"  direction="column" w="100%" key={queue.id}>
                       <Text border="2px" fontSize="lg" color="black" fontWeight="bold">{`Entrada: ${new Intl.DateTimeFormat('pt-BR',{
                         day: '2-digit',
@@ -198,7 +227,7 @@ export function MedicineRecords() {
                       ${queue.queryType} - ${queue.responsibleVeterinarian}`}</Text>
                       <Flex m="2" align="center" textAlign="center" gap="2">
                       <Text border="2px"  fontWeight="bold"  fontSize="lg"  bgColor="gray.300" h="38px" w="20%"> Peso</Text>
-                      <Text  border="2px"  fontWeight="black" fontSize="lg" bgColor="white"  h="38px" w="80%"> {queue.petWeight}Kgs</Text>
+                      <Text  border="2px"  fontWeight="black" fontSize="lg" bgColor="white"  h="38px" w="80%"> {queue.petWeight}</Text>
                       </Flex>
                
                         <Flex align="center" gap="2">
@@ -208,20 +237,7 @@ export function MedicineRecords() {
                      
                      
                       </Flex>
-                    )) : (
-                      <Flex direction="column" w="100%">
-                      <Text>Void</Text>
-                      <HStack>
-                      <Text>Void</Text>
-                      <Text>Void</Text>
-                      </HStack>
-                      <HStack>
-                        <Text>Void</Text>
-                        <Textarea />
-                      </HStack>
-                      </Flex>
-                    )
-                  }
+                    ))}
                   
                   </Flex>
               </Flex>
@@ -344,7 +360,7 @@ export function MedicineRecords() {
                 width="100%"
                 overflowY="auto"
               >
-                {pets.exams?.map(exam => (
+                {pets.medicineRecords?.petExams?.map(exam => (
                   <Flex
                     key={exam.id}
                     borderY="1px"
@@ -356,7 +372,7 @@ export function MedicineRecords() {
                     pr="6"
                     justify="space-between"
                   >
-                    {exam.doneExam === true ? (
+                    {exam.doneExame === true ? (
                       <Text color="green.400" fontWeight="bold">
                         {exam.name}
                       </Text>
@@ -367,7 +383,7 @@ export function MedicineRecords() {
                     )}
                     <Text fontWeight="bold" fontSize="lg">
                       {new Intl.DateTimeFormat('pt-BR').format(
-                        new Date(exam.requestedData)
+                        new Date(exam.requesteData ? exam.requesteData : Date.now() )
                       )}
                     </Text>
                   </Flex>
@@ -413,6 +429,26 @@ export function MedicineRecords() {
                 <Text fontWeight="bold">TIPOS</Text>
                 <Text fontWeight="bold">DATA</Text>
               </Flex>
+              {
+                pets.medicineRecords?.petBeds?.map((admission) => (
+                  <Flex
+                  key={admission.id}
+                  w="100%"
+                  height="38px"
+                  bgColor="cyan.100"
+                  gap={2}
+                  align="center"
+                  justify="space-evenly"
+                  borderY="1px solid black"
+
+                >
+                  <Text fontWeight="bold">Internação</Text>
+                  <Text fontWeight="bold">{new Intl.DateTimeFormat('pt-BR').format(new Date(admission?.entryOur ? admission.entryOur : Date.now()))}</Text>
+                </Flex>
+                ) )
+              }
+        
+         
             </Flex>
           </Flex>
         </MedicineContainer>

@@ -32,7 +32,7 @@ type PetProps = {
     name: string;
   };
 };
-interface ExamDetailsProps {
+export interface ExamDetailsProps {
   id: number;
   name: string;
   requesteData: Date | string;
@@ -47,7 +47,7 @@ interface ExamDetailsProps {
   };
 }
 
-interface CharacProps {
+export interface CharacProps {
   name:string;
   id: number;
   characteristics: Array<
@@ -222,7 +222,7 @@ export function ExamsDetails() {
           <Th   fontSize="15"
         border="1px solid black"
         bg="blue.400"
-        color="white">{examDetails.medicine.pet.name}</Th>
+        color="white">{examDetails.medicine.pet.name} </Th>
           <Th colSpan={2} border="1px solid black">Resultado</Th>
           <Th colSpan={2} border="1px solid black">Unidades</Th>
       
