@@ -1,16 +1,13 @@
 import { Header } from "../../components/Header";
-import { Button, ChakraProvider, useConst } from "@chakra-ui/react";
+import {  ChakraProvider,  } from "@chakra-ui/react";
 import { HomeContainer } from "./style";
 import { AsideMenu } from "../../components/AsideMenu";
-import { PlantVetTable } from "../../components/Tables/PlantVetTable";
 import { CardsMenu } from "../../components/CardsMenu";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { toast } from "react-toastify";
+
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
-import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
-import { Reminder } from "../../components/reminder";
+
 
 export function Home() {
   const navigate = useNavigate();

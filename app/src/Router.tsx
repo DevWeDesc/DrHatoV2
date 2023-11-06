@@ -109,6 +109,7 @@ import { ExamsDetails } from "./pages/Vets/WorkSpaceVets/examsDetails";
 import { AdminCadEspecies } from "./pages/AdminDashboard/cadEspecies";
 import { AdminCadRaces } from "./pages/AdminDashboard/cadRaces";
 import { ExamsResultPdfView } from "./pages/Vets/WorkSpaceVets/examsResultPdfsView";
+import { CreateMedicineGroup } from "./pages/Medicines/groups";
 
 export function Router() {
   return (
@@ -208,7 +209,7 @@ export function Router() {
               <Route path="/Users" element={<UsersList />} />
               <Route path="/Users/Create" element={<CreateUser />} />
               <Route path="/Users/Edit/:id" element={<EditUser />} />
-
+eateMedicine
               <Route path="/Vets" element={<VetsList />} />
               <Route path="/Vets/Menu" element={<MenuVet />} />
               <Route path="/Vets/Create" element={<CreateVet />} />
@@ -280,6 +281,8 @@ export function Router() {
 
               <Route path="/Medicines" element={<Medicines />} />
               <Route path="/Medicines/Create" element={<CreateMedicine />} />
+              <Route path="/Medicines/Groups" element={<CreateMedicineGroup />} />
+              
 
               <Route path="/Recepcao" element={<Reception />} />
               <Route

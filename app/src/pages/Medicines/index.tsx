@@ -3,17 +3,16 @@ import { Header } from "../../components/admin/Header";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import {
-  MdOutlineListAlt,
-  GiHealthIncrease,
-  BsArrowLeft,
   BsReception4,
   RiLockPasswordFill,
   GiCardDiscard,
   GiMedicines,
+  GiHealthPotion,
+  FaClipboardList,
+  GiHealthIncrease,
 } from "react-icons/all";
 import { AdminContainer } from "../AdminDashboard/style";
 import ListMedicines from "../../components/Lists/ListTypesMedicines";
-import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 export function Medicines() {
@@ -25,6 +24,7 @@ export function Medicines() {
       setOrigem(origemArmazenada);
     }
   }, []);
+
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -36,27 +36,23 @@ export function Medicines() {
           <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
             <GenericSidebar>
               <GenericLink
-                name="Recepção"
-                icon={BsReception4}
-                path={`/Recepcao/`}
+                name="Medicamentos"
+                icon={GiHealthPotion}
+                path={`/Medicines/`}
               />
               <GenericLink
-                name="Trocar Senha"
-                icon={RiLockPasswordFill}
-                path={`/Recepcao/Ferramentas/TrocaDeSenha/${1}`}
+                name="Grupos"
+                icon={FaClipboardList}
+                path={"/Medicines/Groups"}
               />{" "}
-              <GenericLink
-                name="Autorizações"
-                icon={GiCardDiscard}
-                path={`/Recepcao/Ferramentas/Autorizacao`}
+                   <GenericLink
+                name="Criar/Medicamento"
+                icon={GiHealthIncrease}
+                path={`/Medicines/Create`}
               />{" "}
-              <GenericLink
-                name="Tabela de Preços"
-                icon={GiMedicines}
-                path={`/Recepcao/Ferramentas/Tabela`}
-              />{" "}
+        
             </GenericSidebar>
-            <ListMedicines></ListMedicines>
+            <ListMedicines />
           </Flex>
         </Flex>
       </AdminContainer>

@@ -1,139 +1,111 @@
 import {
-  Flex,
-  List,
-  ListIcon,
-  ListItem,
-  Divider,
-  Center,
-  Text,
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
   Box,
 } from "@chakra-ui/react";
 
-import { MdCheckCircle, FcCancel } from "react-icons/all";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FaClipboardList } from "react-icons/fa";
+import { GiHealthPotion } from "react-icons/gi";
+import { api } from "../../lib/axios";
+import { GenericModal } from "../Modal/GenericModal";
 
-const ArrayListMedicines = [
-  {
-    name: "Antibióticos",
-  },
-  {
-    name: "Analgésicos",
-  },
-  {
-    name: "Antimicóticos",
-  },
-  {
-    name: "Comportamental",
-  },
-  {
-    name: "Desinfetantes",
-  },
-  {
-    name: "Insulina",
-  },
-  {
-    name: "Coprofagia",
-  },
-  {
-    name: "Dermatológicos",
-  },
-];
+interface MedicineGroupsProps {
+  id: number;
+  title: string;
+  medicines: Array<{
+    id: number;
+    title: string;
+    price: string;
+    unitMeasurement: string;
+    dosage: string;
+    observation: string;
+    medicinesGroupsId: number;
+  }>
+}
 
-const ArrayMedicinesperType = [
-  {
-    name: "Medicamento antibioticos",
-    type: "Antibióticos",
-  },
-  {
-    name: "Medicamento Analgésicos",
-    type: "Analgésicos",
-  },
-  {
-    name: "Medicamento Antimicóticos",
-    type: "Antimicóticos",
-  },
-  {
-    name: "Medicamento Comportamental",
-    type: "Comportamental",
-  },
-  {
-    name: "Medicamento Desinfetantes",
-    type: "Desinfetantes",
-  },
-  {
-    name: "Medicamento Insulina",
-    type: "Insulina",
-  },
-  {
-    name: "Medicamento antibioticos",
-    type: "Antibióticos",
-  },
-  {
-    name: "Medicamento antibioticos",
-    type: "Antibióticos",
-  },
-];
 
 export default function ListMedicines() {
-  const [typeMedicines, setTypeMedicines] = useState<String | null>(null);
+  const [typeMedicines, setTypeMedicines] = useState<number | null>(null);
+  const [medicinesGroups, setMedicinesGroups] = useState<MedicineGroupsProps[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  function openModal() {
+    setIsModalOpen(true);
+  }
+  function closeModal() {
+    setIsModalOpen(false);
+  }
+
+  async function GetMedicineGroups () {
+    try {
+      const response = await api.get("/medicines/groups")
+      setMedicinesGroups(response.data.medicines)
+    } catch (error) {
+        console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    GetMedicineGroups()
+  }, [])
   return (
-    <Box w="90%" bg="gray.200" p="8" rounded="lg">
-      <TableContainer w="100%" display="flex">
-        <Table variant="simple">
+    <Box w="90%" bg="gray.200" height="800px" p="8" rounded="lg">
+      <TableContainer w="100%"  display="flex">
+        <Table h="100%" overflowY="auto" >
           <Thead>
             <Tr>
-              <Th fontSize="20">Tipos de Medicamentos</Th>
+              <Th  border="2px" bgColor="cyan.100" fontSize="20" display="flex" justifyContent="space-between">Tipos de Medicamentos <FaClipboardList color="gray" size={26}  /></Th>
             </Tr>
           </Thead>
-          <Tbody>
-            {ArrayListMedicines.map((medicine) => (
+          <Tbody  >
+            {medicinesGroups.map((medicine) => (
               <Tr
-                cursor="pointer"
-                transition="0.5s"
-                _hover={{ backgroundColor: "gray.50" }}
-                onClick={() => setTypeMedicines(medicine.name)}
+             
+              cursor="pointer"
+              
+              _hover={{ bgColor: "green.100"}}
+              onClick={() => setTypeMedicines(medicine.id)} 
               >
-                <Td>{medicine.name}</Td>
+                <Td border="2px" maxHeight="20px" >{medicine.title} </Td>
               </Tr>
             ))}
           </Tbody>
         </Table>
-        {!!typeMedicines && (
-          <Table variant="simple">
+ 
+          <Table h="100%" overflowY="auto">
             <Thead>
               <Tr>
-                <Th fontSize="20">Medicamentos</Th>
+                <Th border="2px" bgColor="cyan.100" fontSize="20" display="flex" justifyContent="space-between">Medicamentos <GiHealthPotion color="red" size={28}/></Th>
               </Tr>
             </Thead>
             <Tbody>
-              {!!typeMedicines &&
-                ArrayMedicinesperType.map((medicine) => (
-                  <>
-                    {medicine.type === typeMedicines && (
-                      <Tr
-                        cursor="pointer"
-                        transition="0.5s"
-                        _hover={{ backgroundColor: "gray.50" }}
-                      >
-                        <Td>{medicine.name}</Td>
-                      </Tr>
-                    )}
-                  </>
-                ))}
+              {
+                medicinesGroups.map((groups) => {
+                  const medicines = groups.medicines.filter((group) => group.medicinesGroupsId === typeMedicines)
+
+                 return medicines.map((medicine) => (
+                    <Tr    cursor="pointer"
+              
+                    _hover={{ bgColor: "green.100"}} key={medicine.id}>
+                          <Td   onClick={() => openModal()} border="2px" maxHeight="20px" >{medicine.title}</Td>
+                    </Tr>
+                  ))
+
+                })
+              }
             </Tbody>
           </Table>
-        )}
+
       </TableContainer>
+      <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+
+      </GenericModal>
     </Box>
   );
 }

@@ -8,24 +8,86 @@ import {
   Textarea,
   Select,
 } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useState, useEffect } from 'react'
+import { Field, FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
-interface CreateNewPetProps {
-  name: string;
+
+
+interface CreateMedicineProps {
+  title: string;
+  groupId: string;
+  dosage: string;
+  observations: string;
+  price: string;
+  unitMeasurement: string;
 }
+type MedicineGroupProps = {
+  id: number;
+  title: string;
+}
+
+enum MedicationUnit {
+  CPR = "CPR",
+  CPZ = "CPZ",
+  ML = "ML",
+  MG = "MG",
+  G = "G",
+  GT = "GT",
+  CT = "CT",
+  CS = "CS",
+  UN = "UN",
+}
+
 export function CreateMedicineForm() {
   const { register, handleSubmit } = useForm();
+  const [medicinesGroups, setMedicinesGroups] = useState<MedicineGroupProps[]>([])
+  const MedicationUnitArray: string[] = Object.keys(MedicationUnit);
+  const navigate = useNavigate()
+  async function getMedicinesGroups() {
+    try {
+     const response =  await api.get("/medicines/groups")
+     setMedicinesGroups(response.data.medicines)
+    } catch (error) {
+      
+    }
+  }
 
-  const handleCreateNewMedicine: SubmitHandler<CreateNewPetProps> = async (
+  const handleCreateNewMedicine: SubmitHandler<CreateMedicineProps> = async (
     values
   ) => {
-    console.log(values);
+    try {
+      const data = {
+        title: values.title,
+        price: values.price,
+        dosage: values.dosage,
+        unitMeasurement: values.unitMeasurement,
+        observations: values.observations
+      }
+
+        await api.post(`/medicine/${values.groupId}`, data)
+
+        toast.success("Medicamento Cadastrado com sucesso!")
+
+        navigate("/Medicines")
+    } catch (error) {
+      toast.error("Falha ao cadastrar medicamento!")
+      console.log(error)
+      
+    }
   };
+
+
+  useEffect(() => {
+    getMedicinesGroups()
+  }, [])
   return (
     <ChakraProvider>
-      <FormControl onSubmit={handleSubmit(handleCreateNewMedicine as any)}>
-        <Flex w="100%" p="4" justify="end">
-          <Flex direction="column" gap="4" align="baseline" w="100%">
+      <FormControl as="form" w="100%" onSubmit={handleSubmit(handleCreateNewMedicine as SubmitHandler<FieldValues>)}>
+        <Flex w="100%" h="100%" mt="4" p="4" direction="column" >
+          <Flex direction="column" gap="4" w="100%">
             <Flex w="100%" align="center">
               <FormLabel htmlFor="name" w="10.3rem">
                 <strong> Grupo</strong>
@@ -33,53 +95,87 @@ export function CreateMedicineForm() {
               <Select
                 bgColor="white"
                 border="1px solid black"
-                {...register("name")}
-                id="name"
+                  placeholder="Selecione o Grupo"
+                  
+                {...register("groupId")}
+                name="groupId"
+                id="groupId"
                 w="100%"
-                name="name"
+      
               >
-                <option value="selecione">
-                  Selecione o grupo do medicamento
-                </option>
-                <option value="option1">Amamentação / Desmame</option>
+                {medicinesGroups.map((group) => <option value={group.id} key={group.id}>{group?.title}</option>)}
               </Select>
             </Flex>
+
+            <Flex w="100%" align="center">
+              <FormLabel  w="10.3rem">
+                <strong> Unidade de Medida</strong>
+              </FormLabel>
+              <Select
+                bgColor="white"
+                border="1px solid black"
+                  placeholder="Selecione a Unidade"
+                  
+                {...register("unitMeasurement")}
+                name="unitMeasurement"
+                id="unitMeasurement"
+                w="280px"
+      
+              >
+                {
+                MedicationUnitArray.map((item) => (<option value={item} >{item}</option>))
+                }
+              </Select>
+            </Flex>
+
+
+
             <Flex w="100%" align="center">
               <FormLabel htmlFor="crm" w="10.3rem">
                 <strong> Nome</strong>
               </FormLabel>
               <Input
-                {...register("crm")}
-                id="crm"
+                {...register("title")}
+                id="title"
+                name="title"
                 type="text"
                 w="100%"
-                name="crm"
+   
               />
             </Flex>
+
+
             <VStack w="100%">
               <Flex w="100%">
                 <FormLabel w="10.3rem">
-                  <strong> Substância</strong>
+                  <strong> Preço</strong>
                 </FormLabel>
-                <Textarea
-                  w="100%"
-                  {...register("plant")}
-                  bgColor="green.50"
-                  placeholder="Digite a Substância aqui"
-                />
+                <Input
+                {...register("price")}
+                name="price"
+                id="price"
+                type="text"
+                w="100%"
+           
+              />
+              
               </Flex>
             </VStack>
             <Flex w="100%" align="center">
-              <FormLabel htmlFor="plant" w="10.3rem">
+              <FormLabel htmlFor="observations" w="10.3rem">
                 <strong> Apresentação</strong>
               </FormLabel>
-              <Input
-                {...register("plant")}
-                id="plant"
-                type="text"
+              <Textarea
+              
+                {...register("observations")}
+                name="observations"
+                id="observations"
+                bgColor="green.50"
                 w="100%"
-                name="plant"
+        
+                placeholder="Digite observações ou a apresentação do medicamento aqui"
               />
+              
             </Flex>
 
             <VStack w="100%">
@@ -89,26 +185,27 @@ export function CreateMedicineForm() {
                   <strong>Posologia</strong>
                 </FormLabel>
                 <Textarea
+                minHeight={380}
                   w="100%"
-                  {...register("plant")}
+                  {...register("dosage")}
+                  name="dosage"
+                  id="dosage"
                   bgColor="green.50"
                   placeholder="Digite a posologia aqui"
                 />
               </Flex>
+              
             </VStack>
-            <Flex w="100%" align="center">
-              <FormLabel htmlFor="plant" w="10rem" pr="20px">
-                <strong>Quantidade em Estoque</strong>
-              </FormLabel>
-              <Input id="plant" type="number" w="100%" name="plant" />
-            </Flex>
-            <Flex w="100%" justify="end">
-              <Button maxWidth={320} colorScheme="whatsapp" type="submit">
+         
+            <Button w="100%" mt="4" colorScheme="whatsapp" type="submit">
                 Cadastrar
               </Button>
-            </Flex>
+      
+  
           </Flex>
+         
         </Flex>
+    
       </FormControl>
     </ChakraProvider>
   );

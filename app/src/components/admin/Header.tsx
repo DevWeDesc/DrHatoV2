@@ -11,7 +11,7 @@ import { DbContext } from "../../contexts/DbContext";
 
 interface HeaderProps {
   title: string;
-  url: string;
+  url?: string;
 }
 export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
   const navigate = useNavigate();
@@ -78,7 +78,7 @@ export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
           <Text fontSize="md" fontWeight="bold">
             {user.username}
           </Text>
-          <Link to={url}>
+          <Link to={url ? url : "/Home"}>
             <Button colorScheme="yellow" leftIcon={<TbArrowBack size={24} />}>
               Voltar
             </Button>

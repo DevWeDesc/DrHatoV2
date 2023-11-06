@@ -9,6 +9,7 @@ import {
   Menu,
   MenuButton,
   MenuList,
+  useColorMode,
 } from "@chakra-ui/react";
 import { LoadingSpinner } from "../Loading";
 import { HeaderContainer } from "./style";
@@ -18,11 +19,15 @@ import { useContext } from "react";
 import { DbContext } from "../../contexts/DbContext";
 import Cookies from "js-cookie";
 import { RiNotificationLine } from "react-icons/ri";
+import { CiLight } from "react-icons/ci";
+import { MdOutlineDarkMode } from "react-icons/md";
 
 export function Header() {
   const navigate = useNavigate();
-
   const user = JSON.parse(localStorage.getItem("user") as string);
+  const { colorMode, toggleColorMode } = useColorMode()
+
+
 
   const logOut = () => {
     Cookies.remove("token");
@@ -44,6 +49,9 @@ export function Header() {
             cursor="pointer"
             onClick={() => navigate(`/Reminder`)}
           />
+
+
+        
           <Menu>
             <MenuButton as={Button} rightIcon={<ArrowDown />}>
               {user.username}
