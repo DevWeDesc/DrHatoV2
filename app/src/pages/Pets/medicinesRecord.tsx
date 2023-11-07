@@ -14,17 +14,13 @@ import {
   Textarea,
   HStack
 } from '@chakra-ui/react'
-import { BiHome, TbArrowBack } from 'react-icons/all'
+import { BiHome, GiMedicines, TbArrowBack } from 'react-icons/all'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { api } from '../../lib/axios'
 import { MedicineContainer } from './style'
-import { PetDetaisl } from '../../interfaces'
-
-interface Customer {
-  id: string | number
-  name: string
-}
+import { GenericModal } from '../../components/Modal/GenericModal'
+import { MedicinesHistory } from './MedicinesHistory'
 
 interface PetProps {
   id: number
@@ -64,15 +60,36 @@ interface PetProps {
      petWeight: string
      observations: string
     }>
-    petSurgeries: Array<{}>
-    petVaccines: Array<{}>
+    petSurgeries: Array<{
+      id: number;
+      name: string;
+      requestedDate: Date 
+      completedDate: Date | null
+      status: string;
+    }>
+    petVaccines: Array<{
+      id: number;
+      name: string;
+      requestedDate: Date 
+      applicationDate: Date | null
+      isDone: boolean
+    }>
   }
 }
 
 export function MedicineRecords() {
   const { id } = useParams<{ id: string }>()
+  const [modalIsOpen, setModalIsOpen] = useState(false)
   const [pets, setPets] = useState({} as PetProps)
   const navigate = useNavigate()
+
+  function  openModal() {
+    setModalIsOpen(true)
+  }
+
+  function closeModal() {
+    setModalIsOpen(false)
+  }
 
   async function getPet() {
     try {
@@ -87,8 +104,6 @@ export function MedicineRecords() {
     getPet()
   }, [])
 
-
-  console.log(pets)
 
   return (
     <ChakraProvider>
@@ -113,6 +128,13 @@ export function MedicineRecords() {
             >
               Voltar
             </Button>
+            <Button
+              colorScheme="cyan"
+              leftIcon={<GiMedicines size={24} />}
+              onClick={() => openModal()}
+            >
+              Histórico de medicação
+            </Button>
           </Flex>
         </Flex>
 
@@ -120,7 +142,7 @@ export function MedicineRecords() {
           <Flex
             direction="column"
             shadow="4px 0px 10px -2px rgba(0, 0, 0, 0.2)"
-            zIndex="1"
+        
             w="100%"
           >
             <Flex
@@ -274,18 +296,39 @@ export function MedicineRecords() {
                 <Text fontWeight="bold">TIPOS</Text>
                 <Text fontWeight="bold">DATA</Text>
               </Flex>
-              <Flex direction="row" w="100%" h="100%" overflowY="auto">
-                <Flex
-                  w="100%"
-                  h="38px"
-                  bgColor="cyan.100"
-                  align="center"
-                  borderY="2px"
-                  justify="space-evenly"
-                >
-                  <Text fontWeight="bold">Anti Rabica</Text>
-                  <Text fontWeight="bold">11/04/22</Text>
-                </Flex>
+              <Flex
+                direction="column"
+                height="100%"
+                width="100%"
+                overflowY="auto"
+              >
+                {pets.medicineRecords?.petVaccines?.map(vaccine => (
+                  <Flex
+                    key={vaccine.id}
+                    borderY="1px"
+                    bgColor="cyan.100"
+                    align="center"
+                    height="38px"
+                    width="100%"
+                    p={2}
+                    justify="space-between"
+                  >
+                    {vaccine.isDone === true ? (
+                      <Text fontSize="sm" color="green.400" fontWeight="bold">
+                        {vaccine.name}
+                      </Text>
+                    ) : (
+                      <Text fontSize="sm" color="red.400" fontWeight="bold">
+                        {vaccine.name}
+                      </Text>
+                    )}
+                    <Text fontWeight="bold" fontSize="lg">
+                      {new Intl.DateTimeFormat('pt-BR').format(
+                        new Date(vaccine.requestedDate ? vaccine.requestedDate : Date.now() )
+                      )}
+                    </Text>
+                  </Flex>
+                ))}
               </Flex>
             </Flex>
 
@@ -317,6 +360,42 @@ export function MedicineRecords() {
               >
                 <Text fontWeight="bold">TIPOS</Text>
                 <Text fontWeight="bold">DATA</Text>
+            
+              </Flex>
+
+              <Flex
+                direction="column"
+                height="100%"
+                width="100%"
+                overflowY="auto"
+              >
+                {pets.medicineRecords?.petSurgeries?.map(surgerie => (
+                  <Flex
+                    key={surgerie.id}
+                    borderY="1px"
+                    bgColor="cyan.100"
+                    align="center"
+                    height="38px"
+                    width="100%"
+                    p={2}
+                    justify="space-between"
+                  >
+                    {surgerie.status === "FINISHED" ? (
+                      <Text fontSize="sm" color="green.400" fontWeight="bold">
+                        {surgerie.name}
+                      </Text>
+                    ) : (
+                      <Text fontSize="sm" color="red.400" fontWeight="bold">
+                        {surgerie.name}
+                      </Text>
+                    )}
+                    <Text fontWeight="bold" fontSize="lg">
+                      {new Intl.DateTimeFormat('pt-BR').format(
+                        new Date(surgerie.requestedDate ? surgerie.requestedDate : Date.now() )
+                      )}
+                    </Text>
+                  </Flex>
+                ))}
               </Flex>
             </Flex>
           </Flex>
@@ -452,7 +531,14 @@ export function MedicineRecords() {
             </Flex>
           </Flex>
         </MedicineContainer>
+   
       </Flex>
+      <GenericModal
+      isOpen={modalIsOpen}
+      onRequestClose={closeModal}
+      >
+        <MedicinesHistory/>
+      </GenericModal>
     </ChakraProvider>
   )
 }

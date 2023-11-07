@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { FaClipboardList } from "react-icons/fa";
 import { GiHealthPotion } from "react-icons/gi";
 import { api } from "../../lib/axios";
+import { MedicineDetails } from "../DetailsComponents/MedicineDetails";
 import { GenericModal } from "../Modal/GenericModal";
 
 interface MedicineGroupsProps {
@@ -33,6 +34,7 @@ interface MedicineGroupsProps {
 export default function ListMedicines() {
   const [typeMedicines, setTypeMedicines] = useState<number | null>(null);
   const [medicinesGroups, setMedicinesGroups] = useState<MedicineGroupsProps[]>([])
+  const [medicineId, setMedicineId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   function openModal() {
@@ -93,7 +95,9 @@ export default function ListMedicines() {
                     <Tr    cursor="pointer"
               
                     _hover={{ bgColor: "green.100"}} key={medicine.id}>
-                          <Td   onClick={() => openModal()} border="2px" maxHeight="20px" >{medicine.title}</Td>
+                          <Td   onClick={() => {
+                            setMedicineId(medicine.id);
+                            openModal()}} border="2px" maxHeight="20px" >{medicine.title}</Td>
                     </Tr>
                   ))
 
@@ -104,7 +108,7 @@ export default function ListMedicines() {
 
       </TableContainer>
       <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-
+                <MedicineDetails medicineId={medicineId} />
       </GenericModal>
     </Box>
   );

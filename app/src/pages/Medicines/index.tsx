@@ -3,10 +3,6 @@ import { Header } from "../../components/admin/Header";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import {
-  BsReception4,
-  RiLockPasswordFill,
-  GiCardDiscard,
-  GiMedicines,
   GiHealthPotion,
   FaClipboardList,
   GiHealthIncrease,

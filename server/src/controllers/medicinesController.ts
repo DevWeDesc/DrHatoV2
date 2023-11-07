@@ -90,7 +90,9 @@ export const medicinesController = {
         medicineRecords: {select: {petMedicines: true}}
       }})
 
-      reply.send(petHistory)
+      reply.send({
+        history: petHistory?.medicineRecords?.petMedicines,
+      })
 
       
     } catch (error) {
