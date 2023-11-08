@@ -4,7 +4,7 @@ import { userRoutes } from './routes/users.routes'
 import { transactionRoutes } from './routes/transaction.routes'
 import { customersRoutes } from './routes/customer.routes'
 import { petRoutes } from './routes/pets.routes'
-import {generalRoutes } from './routes/general.routes'
+import {autorizationRoutes } from './routes/autorizations.routes'
 import { examsRoutes } from './routes/exams.routes'
 import { sectorsRoutes } from './routes/sector.routes'
 import { instructionsRoutes } from './routes/intructions.routes'
@@ -27,7 +27,7 @@ app.register(userRoutes)
 app.register(transactionRoutes)
 app.register(customersRoutes)
 app.register(petRoutes)
-app.register(generalRoutes)
+app.register(autorizationRoutes)
 app.register(examsRoutes)
 app.register(sectorsRoutes)
 app.register(instructionsRoutes)

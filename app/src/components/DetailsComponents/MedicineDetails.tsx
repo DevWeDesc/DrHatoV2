@@ -59,7 +59,7 @@ export function MedicineDetails({ medicineId}: MedicineDetailsProps) {
             <FormLabel>Observação/Substância:</FormLabel>
             <Textarea
              defaultValue={medicineDetails ?   medicineDetails.observations : ""}
-            h={200} w={450} />
+            h={200} w={350} />
           </VStack>
           
           <Button isDisabled mt="8" w="100%" h="68px" p={2} colorScheme="yellow">Editar</Button>

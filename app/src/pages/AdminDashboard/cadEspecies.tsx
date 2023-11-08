@@ -15,7 +15,6 @@ import {
   FormControl
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
@@ -25,13 +24,13 @@ import { GenericModal } from "../../components/Modal/GenericModal";
 import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
 import { Input } from "../../components/admin/Input";
+import { toast } from "react-toastify";
   
   export function AdminCadEspecies() {
-    const { register, handleSubmit } = useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
-
     const [especies, setEspecies] = useState([]);
     const [reloadData, setReloadData] = useState<boolean>(false);
+    const [especieName, setEspecieName] = useState("")
   
     const navigate = useNavigate();
   
@@ -47,6 +46,24 @@ import { Input } from "../../components/admin/Input";
     async function getEspecies() {
       const Surgeries = await api.get("/pets/especie");
       setEspecies(Surgeries.data);
+    }
+
+    async function createEspecie() {
+      try {
+        const data = {
+          name: especieName
+        }
+        await api.post('/pets/especie', data)
+
+        setReloadData(true)
+
+        toast.success("Especie cadastrada com sucesso!")
+
+
+      } catch (error) {
+        toast.error("Falha ao cadastrar especie!")
+        console.log(error)
+      }
     }
   
     useEffect(() => {
@@ -154,7 +171,7 @@ import { Input } from "../../components/admin/Input";
                     alignItems="center"
                   >
                     <Input
-                      {...register("name")}
+                     onChange={(ev) => setEspecieName(ev.target.value)}
                       name="name"
                       label="Nome da Especie"
                       mb="4"
@@ -162,7 +179,7 @@ import { Input } from "../../components/admin/Input";
   
                 
   
-                    <Button w="100%" type="submit" colorScheme="green" m="2">
+                    <Button w="100%" onClick={() => createEspecie()} colorScheme="green" m="2">
                       Cadastrar
                     </Button>
                   </FormControl>

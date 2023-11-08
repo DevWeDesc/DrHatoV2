@@ -506,13 +506,13 @@ async function main() {
   }
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-    process.exit(1);
-  })
-  .catch(async (error) => {
-    console.log(error);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+// main()
+//   .then(async () => {
+//     await prisma.$disconnect();
+//     process.exit(1);
+//   })
+//   .catch(async (error) => {
+//     console.log(error);
+//     await prisma.$disconnect();
+//     process.exit(1);
+//   });

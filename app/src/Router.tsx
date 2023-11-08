@@ -110,6 +110,7 @@ import { AdminCadEspecies } from "./pages/AdminDashboard/cadEspecies";
 import { AdminCadRaces } from "./pages/AdminDashboard/cadRaces";
 import { ExamsResultPdfView } from "./pages/Vets/WorkSpaceVets/examsResultPdfsView";
 import { CreateMedicineGroup } from "./pages/Medicines/groups";
+import { AutorizationsPdf } from "./components/ReactPdfComp/AutorizationPdf";
 
 export function Router() {
   return (
@@ -204,6 +205,11 @@ export function Router() {
               <Route
                 path="/Autorizations"
                 element={<GenerateAutorizations />}
+              />
+
+                  <Route
+                path="/Autorizations/Pdf/:id"
+                element={<AutorizationsPdf />}
               />
 
               <Route path="/Users" element={<UsersList />} />

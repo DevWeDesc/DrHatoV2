@@ -1,6 +1,6 @@
-import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
 import { ChakraProvider, Flex } from '@chakra-ui/react';
-
+import logo from '../../assets/logoPadronizada.png'
 
 
 interface PdfProps {
@@ -53,6 +53,8 @@ const styles = StyleSheet.create({
 const Quixote = () => (
   <Document>
     <Page  >
+
+    <Image style={{ width: 150}} source={logo} />
       <View style={styles.table}> 
         <View style={styles.tableRow}> 
           <View style={styles.tableCol}> 
@@ -93,6 +95,7 @@ const Quixote = () => (
       <Flex width="100vw" height="100vh" >
     
       <PDFViewer style={{width: '100%', height: '100%'}}>
+      
       <Quixote />
       
     </PDFViewer>

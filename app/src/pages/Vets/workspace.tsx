@@ -775,21 +775,7 @@ export function WorkSpaceVet() {
         isOpen={isAutorizationModalOpen}
         onRequestClose={closeAutorizationModal}
       >
-        <Flex direction="column" align="center" gap="8">
-          <Text fontWeight="bold" fontSize="2xl">
-            {pet.name}
-          </Text>
-          <Select
-            bgColor="gray.100"
-            borderColor="black"
-            placeholder="Selecione a Autorização"
-          >
-            <option value="option1">Option 1 </option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </Select>
-          <WorkVetAutorization />
-        </Flex>
+        <WorkVetAutorization />
       </GenericModal>
 
       <GenericModal 

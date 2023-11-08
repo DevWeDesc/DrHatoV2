@@ -131,7 +131,7 @@ export function SetMedicineInPet({accId, petId}:MedicineComponentProps ){
               }).format(medicine.price) : ""}</Text>
         </VStack>
      
-              <VStack>
+              <VStack maxWidth={200}>
               <Text fontWeight="black" fontSize="lg">Observação:</Text>
                <Text>{medicine ? medicine.observations : ""}</Text>
               </VStack>

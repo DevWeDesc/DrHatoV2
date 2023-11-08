@@ -9,7 +9,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaClipboardList } from "react-icons/fa";
 import { GiHealthPotion } from "react-icons/gi";
 import { api } from "../../lib/axios";
@@ -29,6 +29,7 @@ interface MedicineGroupsProps {
     medicinesGroupsId: number;
   }>
 }
+
 
 
 export default function ListMedicines() {

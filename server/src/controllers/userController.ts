@@ -17,7 +17,7 @@ createUser: async (request: FastifyRequest, reply: FastifyReply)=> {
 
   let contract = new ValidationContract();
   
-  await contract.userAlreadyExists(email, 'Usuário já existe!')
+  //await contract.userAlreadyExists(email, 'Usuário já existe!')
   await contract.userHasAllToBeCreated({email, password, username}, "Usuário não tem todos campos obrigatórios")
   if(contract.hadError()){
     reply.status(400).send(contract.showErrors())

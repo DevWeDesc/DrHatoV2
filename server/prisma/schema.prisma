@@ -14,7 +14,7 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
+  email     String?  @unique
   username  String?
   password  String
   crmv      Int?
@@ -24,19 +24,20 @@ model User {
 
 model Customer {
   id              Int              @id @unique @default(autoincrement())
+  CodCli          Int?             @unique
   name            String
   adress          String
   district        String?
   cep             String?
   neighbour       String?
   state           String?
-  phone           String           @unique
+  phone           String
   tell            String?
   cpf             String           @unique
   rg              String?
   email           String?
   birthday        String
-  balance         Int?
+  balance         Float?
   kindPerson      String?
   vetPreference   String?
   howKnowUs       String?
@@ -47,6 +48,8 @@ model Customer {
 
 model Pets {
   id               Int                @id @default(autoincrement())
+  CodCli           Int?
+  CodAnimal        Int?
   name             String
   especie          String
   sexo             String
@@ -56,6 +59,7 @@ model Pets {
   corPet           String?
   sizePet          String?            @default("")
   bornDate         String
+  dateAge          String?
   observations     String?
   customer_id      Int
   codPet           String             @unique @default(uuid())
