@@ -111,6 +111,7 @@ import { AdminCadRaces } from "./pages/AdminDashboard/cadRaces";
 import { ExamsResultPdfView } from "./pages/Vets/WorkSpaceVets/examsResultPdfsView";
 import { CreateMedicineGroup } from "./pages/Medicines/groups";
 import { AutorizationsPdf } from "./components/ReactPdfComp/AutorizationPdf";
+import { OnePartExamResultPdf } from "./components/ReactPdfComp/OnePartExamResultPdf";
 
 export function Router() {
   return (
@@ -242,6 +243,8 @@ eateMedicine
                 element={<VetsSurgeries />}
               />
               <Route  path="/WorkSpace/ExamsDetails/:examId" element={<ExamsDetails/>}  />
+              <Route  path="/WorkSpace/ExamResultsOnePart/:examId" element={<OnePartExamResultPdf/>}  />
+              
               <Route  path="/WorkSpace/ExamResults/:examId" element={<ExamsResultPdfView/>}  />
               
 

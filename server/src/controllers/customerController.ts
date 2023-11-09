@@ -6,13 +6,30 @@ import { prisma } from "../interface/PrismaInstance";
 
 
 export const customerController = {
-  showAllUsers: async (request: FastifyRequest, reply: FastifyReply) => {
+  showAllUsers: async (request: FastifyRequest<{Querystring: {page: string}}>, reply: FastifyReply) => {
     try {
+      // Obtenha o número da página atual a partir da solicitação.
+    const currentPage = Number(request.query.page) || 1;
+
+    // Obtenha o número total de usuários.
+    const totalUsers = await prisma.customer.count();
+
+    // Calcule o número de páginas.
+    const totalPages = Math.ceil(totalUsers / 35);
+
+
       const allUser = await prisma.customer.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
         include: { pets: true, transaction: true, customerAccount: {include: {installments: true}}},
       });
 
-      return reply.send(allUser);
+      return reply.send({
+        totalUsers,
+        currentPage,
+        totalPages,
+        users: allUser,
+      });
     } catch (error) {
       return reply.status(404).send({ message: error });
     }

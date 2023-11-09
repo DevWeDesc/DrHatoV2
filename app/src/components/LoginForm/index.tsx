@@ -19,12 +19,12 @@ export function LoginForm() {
   const { setToken } = useContext(AuthContext);
   const navigate = useNavigate();
   interface SignInProps {
-    email: string;
+    username: string;
     password: string;
   }
 
   const SignInSchema = yup.object().shape({
-    email: yup.string().required("E-mail Obrigatório").email(),
+    username: yup.string().required("Campo Obrigatório"),
     password: yup.string().required("Senha Obrigatória"),
   });
 
@@ -40,7 +40,7 @@ export function LoginForm() {
     values: SignInProps
   ) => {
     const data = {
-      email: values.email,
+      username: values.username,
       password: values.password,
     };
 
@@ -58,7 +58,7 @@ export function LoginForm() {
             localStorage.setItem(
               "user",
               JSON.stringify({
-                email: res.data.userData.email,
+                crm: res.data.userData.crmv,
                 username: res.data.userData.username,
               })
             );
@@ -82,12 +82,12 @@ export function LoginForm() {
       <LoginFormContainer onSubmit={handleSubmit(handleLogin)}>
         <Flex className="submitLogin" marginTop="2rem">
           <Flex direction="column">
-            <label htmlFor="email">Insira seu E-mail</label>
+            <label htmlFor="username">Insira seu Login</label>
             <Input
-              id="email"
-              {...register("email")}
-              error={errors.email}
-              name="email"
+              id="username"
+              {...register("username")}
+              error={errors.username}
+              name="username"
               border="4px"
               placeholder="Insira seu e-mail"
               type="text"

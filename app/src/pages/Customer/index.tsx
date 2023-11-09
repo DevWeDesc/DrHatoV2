@@ -47,11 +47,16 @@ interface CustomerProps {
   rg: string;
 }
 
+type VetsProps = {
+  username: string;
+  id: number;
+}
+
 export function CustomerDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { vets } = useContext(DbContext);
   const [petId, setPetId] = useState("");
+  const [userVets, setUserVets] = useState<VetsProps[]>([])
   const [queryType, setQueryType] = useState("");
   const [vetPreference, setVetPreference] = useState("");
   const [moreInfos, setMoreInfos] = useState("");
@@ -76,7 +81,14 @@ export function CustomerDetails() {
     const response = await api.get(`/customers/${id}`);
     setCustomer(response.data);
   }
+
+  async function loadVets() {
+    const response = await api.get(`/users/vets`);
+    setUserVets(response.data.vets);
+  }
+
   useEffect(() => {
+    loadVets()
     loadCustomer();
   }, []);
 
@@ -525,7 +537,7 @@ export function CustomerDetails() {
                   SELECIONAR VETERINÁRIO
                 </Text>
 
-                {vets.map((vet) => (
+                {userVets.map((vet) => (
                   <RadioGroup
                     key={vet.id}
                     onChange={setVetPreference}

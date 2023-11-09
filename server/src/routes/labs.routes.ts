@@ -16,4 +16,7 @@ export async function labsRoutes(app: FastifyInstance) {
   app.put('/labimport/:examId', labsController.reportWithPdf)
   app.get('/labfile/:examId', labsController.showExamsFiles)
   app.get('/labexam/:examId', labsController.getReportExamById)
+
+
+  app.get('/lab/onepart/:examId', labsController.getOnePartExamResultById)
 }

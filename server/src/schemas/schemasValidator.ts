@@ -49,13 +49,18 @@ export const createCustomer = z.object({
 
  })
 
+ enum Roles {
+"ADMIN",
+
+ }
 export const UserSchema = z.object({
   email: z.string().email(),
   username: z.string(),
   password: z.string(),
   userType: z.any(),
   userIsVet: z.boolean().optional(),
-  crmv: z.number().optional()
+  crmv: z.string().optional(),
+  role: z.enum(["ADMIN", "MANAGER","VETERINARIAN", "LABORATORY", "RECEPTIONIST", "UNDEFINED" ]).optional()
 })
  
 export const VaccineSchema = z.object({

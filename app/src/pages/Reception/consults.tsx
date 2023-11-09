@@ -25,7 +25,7 @@ export function ReceptionConsults() {
 
   async function getCustomer() {
     const dataCostumer = await api.get("customers");
-    setDataCostumer(dataCostumer.data);
+    setDataCostumer(dataCostumer.data.users);
   }
   useEffect(() => {
     getCustomer();

@@ -63,7 +63,7 @@ const filteredData = data
         } catch (error) {
           // Registre o erro, mas continue com o próximo pet
           console.error(`Erro ao criar pet: ${pets.name}, Código do Cliente: ${pets.CodCli}`);
-          console.error(error);
+
         }
       }
       console.log("Banco populado");

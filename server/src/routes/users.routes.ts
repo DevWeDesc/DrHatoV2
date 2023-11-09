@@ -10,6 +10,9 @@ app.get('/users', userController.getUsers)
 app.get('/users/:id', userController.getWithId)
 app.put('/users/:id', userController.editUser)
 app.delete('/users/:id' , userController.deleteUser)
+
+
+app.get('/users/vets', userController.getVetUsers)
 }
 
 

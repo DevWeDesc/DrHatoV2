@@ -12,13 +12,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRoles {
+  ADMIN
+  MANAGER
+  VETERINARIAN
+  LABORATORY
+  RECEPTIONIST
+  UNDEFINED
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String?  @unique
-  username  String?
+  id        Int        @id @default(autoincrement())
+  email     String?    @unique
+  username  String?    @unique
   password  String
-  crmv      Int?
-  userIsVet Boolean? @default(false)
+  role      UserRoles?
+  crmv      String?
+  userIsVet Boolean?   @default(false)
   userType  String[]
 }
 

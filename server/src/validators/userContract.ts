@@ -18,9 +18,10 @@ export class ValidationContract {
 
 
 
-    public async checkPassword(value: { email: string, password: string}, message: string) {
-      const user = await prisma.user.findUnique({where: {email: value.email }})
+    public async checkPassword(value: { username: string, password: string}, message: string) {
+      const user = await prisma.user.findFirst({where: {username: value.username, password: value.password }})
       if(!user) return
+      
       const isCorrectPassword = await bcrypt.compare(value.password, user.password)
 
       if(isCorrectPassword === false) {

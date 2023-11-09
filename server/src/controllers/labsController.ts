@@ -232,5 +232,59 @@ export const labsController = {
   },
 
 
+  getOnePartExamResultById:async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) =>  {
+    try {
+      const {examId} = request.params
+    const examDetails =  await prisma.examsForPet.findUnique({
+          where: {id: parseInt(examId)}, include: {reportExams: true, medicine:{include: {pet: {include: {customer: {select: {name: true}}}}}}}
+        })
+
+
+      if(!examDetails){
+        return
+      }
+
+
+
+     const examRefs =  await prisma.exams.findFirst({
+      where: {name: {contains: examDetails.name}},include: {characteristics: true}
+     }) 
+
+
+     const petExamResult = {
+      solicitedBy: examDetails.requestedFor,
+      solicitedCrm: "Todo",
+      examName: examDetails.name,
+      petName: examDetails.medicine.pet.name,
+      petEspecie: examDetails.medicine.pet.especie,
+      petRace: examDetails.medicine.pet.race,
+      petSex: examDetails.medicine.pet.sexo,
+      petCod: examDetails.medicine.pet.CodAnimal,
+      petCustomer: examDetails.medicine.pet.customer.name,
+      result: examDetails.reportExams[0].report
+     }
+
+     const petExamRefs = examRefs?.characteristics
+
+
+     //@ts-ignore
+     const filteredRefIdades = petExamRefs?.map((ch) => {
+      return {
+        id: ch.id,
+        name: ch.name,
+          //@ts-ignore
+        especies:  ch.especie.filter(e => e.name === petExamResult.petEspecie )
+      }
+     })
+
+      reply.send({petExamResult, filteredRefIdades }).status(200)
+
+    } catch (error) {
+        console.log(error)
+        reply.send(error)
+    }
+  }
+
+
 
 }

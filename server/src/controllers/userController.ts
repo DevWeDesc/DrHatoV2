@@ -10,7 +10,7 @@ const secret = process.env.JWT_TOKEN
 
 export const userController = {
 createUser: async (request: FastifyRequest, reply: FastifyReply)=> {
-  const { email, username, password, userType, userIsVet, crmv} = UserSchema.parse(request.body)
+  const { email, username, password, userType, userIsVet, crmv, role} = UserSchema.parse(request.body)
 
   const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -26,17 +26,18 @@ createUser: async (request: FastifyRequest, reply: FastifyReply)=> {
   }
 
   await prisma.user.create({
-      data: { email, username, password: hashedPassword, userType, userIsVet, crmv}
+      data: { email, username, password: hashedPassword, userType, userIsVet, crmv, role}
   })
 },
 
-getUsers: async (request: FastifyRequest, reply: FastifyReply)=> {
+getUsers: async (request: FastifyRequest<{Querystring: {page: string}}>, reply: FastifyReply)=> {
+  const { page} = request.query
   const perPage = 10;
   const users = await prisma.user.findMany();
   const total = Math.ceil(users.length / perPage);
   //@ts-ignore
-  const pag =  1 || request.query.pag
-  const init = (pag - 1) * perPage;
+  const pag =  page ? page : 1
+  const init = (Number(pag) - 1) * perPage;
   const end = Math.min(init + perPage, users.length);
   const paginatedUser = users.slice(init, end);
   
@@ -49,21 +50,29 @@ getUsers: async (request: FastifyRequest, reply: FastifyReply)=> {
 },
 loginUser: async(request: FastifyRequest, reply: FastifyReply)=> {
   const loginSchema = z.object({
-    email: z.string().email(),
+    username: z.string(),
     password: z.string(),
   })
   try {
     let contract = new ValidationContract()
-    const { email, password} = loginSchema.parse(request.body)
-    const user = await prisma.user.findUnique({where: {email}})
+    const { username, password} = loginSchema.parse(request.body)
+    const user = await prisma.user.findUnique({where: {
+          username
+    }})
+
+
+    if (!user) {
+      return reply.send("Usuário não encontrado")
+    }
+
     const userData = {
-      email: user?.email,
+      crm: user?.crmv,
       username: user?.username
     }
     
   
-     await contract.userAlreadyExists(email, "Usuário não encontrado")
-     await contract.checkPassword({email, password}, "Senha incorreta")
+    
+     await contract.checkPassword({username, password}, "Senha incorreta")
     if(contract.hadError()){
       reply.status(400).send(contract.showErrors())
       contract.clearErrors()
@@ -73,7 +82,7 @@ loginUser: async(request: FastifyRequest, reply: FastifyReply)=> {
       return
     } 
 
-
+  
    const token = jwt.sign({userData }, secret, {expiresIn: "01h"})
    reply.send({token: token, userData}).status(200)
     
@@ -133,6 +142,29 @@ findVetUsers: async (request: FastifyRequest, reply: FastifyReply) => {
 
   try {
     reply.send(vetUsers).status(200)
+  } catch (error) {
+    console.error(error)
+    reply.status(400).send({message: error})
+  }
+},
+
+getVetUsers: async (request: FastifyRequest, reply: FastifyReply) => {
+
+  const totalVets = await prisma.user.count({
+    where: {role: 'VETERINARIAN'}
+  })
+
+  const vets = await prisma.user.findMany({
+    where: {
+      role: 'VETERINARIAN'
+    },select: {
+      username: true,
+      id: true,
+    }
+  })
+
+  try {
+    reply.send({totalVets,vets}).status(200)
   } catch (error) {
     console.error(error)
     reply.status(400).send({message: error})
