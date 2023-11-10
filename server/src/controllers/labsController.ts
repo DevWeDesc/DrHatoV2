@@ -253,10 +253,12 @@ export const labsController = {
 
      const petExamResult = {
       solicitedBy: examDetails.requestedFor,
+      solicitedDate: examDetails.requesteData,
       solicitedCrm: "Todo",
       examName: examDetails.name,
       petName: examDetails.medicine.pet.name,
       petEspecie: examDetails.medicine.pet.especie,
+      petAge: examDetails.medicine.pet.bornDate,
       petRace: examDetails.medicine.pet.race,
       petSex: examDetails.medicine.pet.sexo,
       petCod: examDetails.medicine.pet.CodAnimal,
