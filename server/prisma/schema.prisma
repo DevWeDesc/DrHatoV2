@@ -25,6 +25,7 @@ model User {
   id        Int        @id @default(autoincrement())
   email     String?    @unique
   username  String?    @unique
+  name      String?
   password  String
   role      UserRoles?
   crmv      String?
@@ -392,7 +393,9 @@ model ExamsForPet {
   price              Decimal
   requesteData       DateTime?
   requestedFor       String?
+  requestedCrm       String?
   responsibleForExam String?
+  responsibleForCrm  String?
   doneExame          Boolean?         @default(false)
   isMultiPart        Boolean?         @default(false)
   isReportByText     Boolean?         @default(false)

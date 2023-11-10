@@ -20,35 +20,45 @@ interface ExamDetailsDTO {
 		petSex: string;
 		petCod: number;
 		petCustomer: string;
-		result: Array< {
-      abs:  string;
-      rel: string;
-      charac: string;
-    }>
+		result: {
+            id: number;
+            report: Array<{
+                name: string;
+                refs: Array<{
+                    abs: string;
+                    rel: string;
+                    charac: string;
+                }>
+            }>
+        }
 }
 
 interface ExamRefDTO {
       id: number;
-			name: string;
-      especies: Array<{
+	  name: string;
+      characteristics: Array<{
+        id: number;
         name: string;
-        refIdades: Array<{
-              maxAge: number;
-							absoluto: string;
-							relativo: string;
+        refs: Array<{
+            name: string;
+            refIdades: Array<{
+                maxAge: number;
+				absoluto: string;
+				relativo: string;
+            }>
         }>
       }>
 }
 
 
-export function OnePartExamResultPdf () {
+export function MultiPartExamResultPdf () {
     const { examId } = useParams<{ examId: string }>();
     const [examDetails, setExamDetails] = useState({} as ExamDetailsDTO);
     const [examCharacs, setExamCharacs] = useState<ExamRefDTO[]>([])
 
     async function getExamDetails() {
       try {
-        const response = await api.get(`/lab/onepart/${examId}`);
+        const response = await api.get(`/lab/multipart/${examId}`);
         setExamDetails(response.data.petExamResult);
         setExamCharacs(response.data.filteredRefIdades)
       } catch (error) {
@@ -107,8 +117,9 @@ export function OnePartExamResultPdf () {
     
 
 
-
-
+    const resultMultiPart = examDetails.result.report.flatMap((result) => {
+        return result.refs
+    })
 
 const Quixote = () => (
   <Document>
@@ -154,9 +165,11 @@ const Quixote = () => (
 
 
   { /* EXAM RESULT */}
-  <View  style={{ display: 'flex', flexDirection: 'column', width: '100%', borderTop: '1px', borderColor: 'gray' }}>
+    {
+        examCharacs.map((charac) => (
+            <View  key={charac.id} style={{ display: 'flex', flexDirection: 'column', width: '100%', borderTop: '1px', borderColor: 'gray' }}>
     <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '22px', gap: '8px'}}>
-      <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{examDetails.examName}</Text>
+      <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{charac.name}</Text>
       <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '155px' }}>Resultados</Text>
       <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>Unidades</Text>
         <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>Acima de 5 Meses</Text>
@@ -172,16 +185,26 @@ const Quixote = () => (
 
     <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '22px', gap: '8px'}}>
       <View    style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-      {
-        examDetails?.result?.map((charac) =>  
-        <Text key={charac.charac} style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{charac.charac}</Text>)
-      }
+      
+            {
+                charac.characteristics.map((ref) => (
+                    <Text  key={ref.id} style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{ref.name}</Text> 
+                ) )
+            }
+    
+      
       </View>
       <View    style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-      {
-        examDetails?.result?.map((charac) =>  (<View key={charac.charac} style={{display: 'flex', flexDirection: 'row', gap: '12px'}}> <Text key={charac.charac} style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{charac.abs}</Text>
-         <Text  style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{charac.rel}</Text> </View>) )
-      }
+    
+            {
+                resultMultiPart.map((ref) => (
+                    <View    style={{display: 'flex', flexDirection: 'row', gap: '12px'}}>
+                    <Text>{ref.abs}</Text>
+                    <Text>{ref.rel}</Text>
+                    </View>
+                ))
+            }
+
       </View>
   
      <View style={{display: 'flex', flexDirection: 'row', gap: '12px', width: '100px',}}>
@@ -189,19 +212,22 @@ const Quixote = () => (
      <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>-</Text>
      </View>
      <View    style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-      {
-        examCharacs.map((ref) =>  (<View  key={ref.name} style={{display: 'flex', flexDirection: 'row', gap: '12px'}} >
-          <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{ref?.especies[0]?.refIdades[0]?.absoluto}</Text>
-          <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{ref?.especies[0]?.refIdades[0]?.relativo}</Text>
-          </View>))
-      }
+            <View  style={{display: 'flex', flexDirection: 'row', gap: '12px'}} >
+                ?
+          </View>
       </View>
+      <View style={{display: 'flex', flexDirection: 'row', gap: '12px', width: '100px',}}>
+     <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>-</Text>
+     <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>-</Text>
+     </View>
     
         
 
     </View>
 
   </View>
+        ))
+    }
   { /* EXAM END */}
   <View style={{display: 'flex', width: '100%' , flexDirection: "column", marginTop: '24px'}}>
   { /* EXAM FOOTER */}

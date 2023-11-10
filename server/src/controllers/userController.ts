@@ -10,7 +10,7 @@ const secret = process.env.JWT_TOKEN
 
 export const userController = {
 createUser: async (request: FastifyRequest, reply: FastifyReply)=> {
-  const { email, username, password, userType, userIsVet, crmv, role} = UserSchema.parse(request.body)
+  const { email, username, password, userType, userIsVet, crmv, role, name} = UserSchema.parse(request.body)
 
   const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -26,7 +26,7 @@ createUser: async (request: FastifyRequest, reply: FastifyReply)=> {
   }
 
   await prisma.user.create({
-      data: { email, username, password: hashedPassword, userType, userIsVet, crmv, role}
+      data: { email, username, name, password: hashedPassword, userType, userIsVet, crmv, role}
   })
 },
 
@@ -67,7 +67,8 @@ loginUser: async(request: FastifyRequest, reply: FastifyReply)=> {
 
     const userData = {
       crm: user?.crmv,
-      username: user?.username
+      username: user?.username,
+      name: user.name
     }
     
   
@@ -101,7 +102,7 @@ getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
 
 editUser: async (request: FastifyRequest, reply: FastifyReply) => {
   const{ id}: any = request.params
-  const {email, username, password,userIsVet } = UserSchema.parse(request.body) 
+  const {email, username, password,userIsVet, crmv, role } = UserSchema.parse(request.body) 
   const hashedPassword = await bcrypt.hash(password, 10)
   try {
      await prisma.user.update({
@@ -110,7 +111,9 @@ editUser: async (request: FastifyRequest, reply: FastifyReply) => {
            email: email,
            username: username,
            password: hashedPassword,
-           userIsVet: userIsVet
+           userIsVet: userIsVet,
+           crmv, 
+           role
         }
      })
      reply.status(201)

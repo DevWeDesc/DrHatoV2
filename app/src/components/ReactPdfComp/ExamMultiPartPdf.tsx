@@ -15,6 +15,7 @@ type AutorizationProps = {
 export function ExamMultiPartPdf () {
     const { id } = useParams<{ id: string }>();
     const [autorization, setAutorization] = useState({} as AutorizationProps)
+    const user = JSON.parse(localStorage.getItem("user") as string);
     async function getAutorization() {
         const response  = await api.get(`/autorizations/${id}`)
         setAutorization(response.data)

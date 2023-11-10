@@ -43,8 +43,11 @@ export function ExamsVet() {
   
   async function setExamInPet(examId: number) {
     try {
-
-        await api.post(`/setexam/${examId}/${petDetails.recordId}/${petDetails.totalAcc.id}`);
+        const data = {
+          requestedFor: user.name,
+          requestedCrm: user.crm
+        }
+        await api.post(`/setexam/${examId}/${petDetails.recordId}/${petDetails.totalAcc.id}`, data);
         setReloadData(true);
         toast.success("Exame criado com Sucesso");
     } catch (error) {

@@ -161,11 +161,11 @@ export const examsController = {
   },
 
   setExamInPet: async (
-    request: FastifyRequest<{ Params: params; Body: { requestedFor: string } }>,
+    request: FastifyRequest<{ Params: params; Body: { requestedFor: string, requestedCrm: string } }>,
     reply: FastifyReply
   ) => {
     const { id, recordId, accId } = request.params;
-    const requestedFor = null;
+    const {requestedFor, requestedCrm } = request.body
     const getExame = await prisma.exams.findUnique({
       where: { id: parseInt(id) },
     });
@@ -182,6 +182,7 @@ export const examsController = {
           doneExame: getExame.doneExame ?? false,
           requesteData: processData,
           requestedFor: requestedFor,
+          requestedCrm,
           examsType: getExame.examsType,
           medicine: { connect: { id: parseInt(recordId) } },
         },

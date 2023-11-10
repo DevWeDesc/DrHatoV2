@@ -125,6 +125,8 @@ export const labsController = {
       const {
        jsonString,
        responsible,
+       responsibleCrm
+
       }: any = request.body
       
     await labService.reportExam(examId, jsonString)
@@ -133,6 +135,7 @@ export const labsController = {
       where:{id: parseInt(examId)}, data: {
         doneExame: true,
         responsibleForExam: responsible,
+        responsibleForCrm: responsibleCrm,
         isReportByText: true
       }
     })
@@ -142,14 +145,14 @@ export const labsController = {
     }
   },
 
-  reportTableExam: async (request:FastifyRequest<{Params: {examId: string}, Body: {requestedFor: string} & Prisma.ReportForExamsCreateInput }>, reply: FastifyReply) => {
+  reportTableExam: async (request:FastifyRequest<{Params: {examId: string}, Body: {reportedFor: string, reportedForCrm: string} & Prisma.ReportForExamsCreateInput }>, reply: FastifyReply) => {
     const {examId} = request.params
-    const {report, isOnePart , isMultiPart, isReportByText, requestedFor } = request.body
+    const {report, isOnePart , isMultiPart, isReportByText, reportedFor, reportedForCrm } = request.body
     try {
      
       await prisma.examsForPet.update({
         where:{id: parseInt(examId)}, data: {
-          doneExame: true,isMultiPart,isOnePart,requestedFor,isReportByText
+          doneExame: true,isMultiPart,isOnePart, responsibleForExam: reportedFor ,isReportByText, responsibleForCrm: reportedForCrm
         }
       })
 
@@ -254,7 +257,9 @@ export const labsController = {
      const petExamResult = {
       solicitedBy: examDetails.requestedFor,
       solicitedDate: examDetails.requesteData,
-      solicitedCrm: "Todo",
+      solicitedCrm: examDetails.requestedCrm,
+      reportedBy: examDetails.responsibleForExam,
+      reportedByCrm: examDetails.responsibleForCrm,
       examName: examDetails.name,
       petName: examDetails.medicine.pet.name,
       petEspecie: examDetails.medicine.pet.especie,
@@ -278,6 +283,71 @@ export const labsController = {
         especies:  ch.especie.filter(e => e.name === petExamResult.petEspecie )
       }
      })
+
+      reply.send({petExamResult, filteredRefIdades }).status(200)
+
+    } catch (error) {
+        console.log(error)
+        reply.send(error)
+    }
+  },
+
+  getMultiPartExamResultById: async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) =>  {
+    try {
+      const {examId} = request.params
+    const examDetails =  await prisma.examsForPet.findUnique({
+          where: {id: parseInt(examId)}, include: {reportExams: true, medicine:{include: {pet: {include: {customer: {select: {name: true}}}}}}}
+        })
+
+
+      if(!examDetails){
+        return
+      }
+
+
+
+     const examRefs =  await prisma.exams.findFirst({
+      where: {name: {contains: examDetails.name}},include: {multiparts: {include: {characteristics: true}}}
+     }) 
+
+
+     const petExamResult = {
+      solicitedBy: examDetails.requestedFor,
+      solicitedDate: examDetails.requesteData,
+      solicitedCrm: examDetails.requestedCrm,
+      reportedBy: examDetails.responsibleForExam,
+      reportedByCrm: examDetails.responsibleForCrm,
+      examName: examDetails.name,
+      petName: examDetails.medicine.pet.name,
+      petEspecie: examDetails.medicine.pet.especie,
+      petAge: examDetails.medicine.pet.bornDate,
+      petRace: examDetails.medicine.pet.race,
+      petSex: examDetails.medicine.pet.sexo,
+      petCod: examDetails.medicine.pet.CodAnimal,
+      petCustomer: examDetails.medicine.pet.customer.name,
+      result: examDetails.reportExams[0]
+     }
+
+     const petExamRefs = examRefs?.multiparts
+
+         //@ts-ignore
+         const filteredRefIdades = petExamRefs?.map((part) => {
+          return {
+            id: part.id,
+            name: part.name,
+              //@ts-ignore
+            characteristics: part.characteristics.map((ch) => {
+              return {
+                id: ch.id,
+                name: ch.name,
+                 //@ts-ignore
+                refs: ch.especie.filter(e => e.name === petExamResult.petEspecie )
+              }
+            })
+          }
+         })
+
+ 
 
       reply.send({petExamResult, filteredRefIdades }).status(200)
 

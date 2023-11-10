@@ -127,6 +127,12 @@ export interface ExamsProps {
   price: string;
   doneExam: boolean;
   coleted?: number;
+  reports: Array<{
+    isOnePart: boolean;
+    isMultiPart: boolean;
+    isReportedByText: boolean;
+  }>
+
 }
 
 export interface VacinnesProps {

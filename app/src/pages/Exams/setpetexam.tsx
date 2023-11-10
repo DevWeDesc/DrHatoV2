@@ -99,7 +99,8 @@ export function SetPetExam() {
     try {
       const data = {
         jsonString: textReport,
-        responsible: user.username
+        responsible: user.username,
+        responsibleCrm: user.crm
       }
       await api.post(`/labreportexam/${id}`,data)
       toast.success("Exame laudado com sucesso!")
@@ -123,7 +124,9 @@ export function SetPetExam() {
       isOnePart: exam.isOnePart, 
       isMultiPart: exam.isMultiPart ,
       isReportByText: exam.isReportByText,
-      requestedFor: user.username 
+      reportedFor: user.username,
+      reportedForCrm: user.crm
+
     }
 
 
@@ -547,7 +550,7 @@ export function SetPetExam() {
                               borderRadius={"0"}
                               borderColor={"black"}
                               w="30%"
-                              defaultValue={pet.responsibleForExam ? pet.responsibleForExam : "Não definido"}
+                              defaultValue={pet?.requestedFor}
                             ></Input>
                           </Flex>
                           <Flex
@@ -582,7 +585,7 @@ export function SetPetExam() {
                               bgColor="white"
                               borderRadius={"0"}
                               borderColor={"black"}
-                              defaultValue="Não definido"
+                              defaultValue={pet.requestedCrm}
                               w="30%"
                             ></Input>
                                 </Flex>

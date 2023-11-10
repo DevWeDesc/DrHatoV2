@@ -46,6 +46,13 @@ import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
 import { SetMedicineInPet } from "../../components/Medicine/SetMedicineInPet";
 
+type OpenExamProps = {
+  isMultiPart: boolean,
+  isReportByText: boolean,
+  isOnePart: boolean,
+  examId: number
+}
+
 export function WorkSpaceVet() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -95,11 +102,25 @@ export function WorkSpaceVet() {
     setMedicineModalOpen(false);
   }
 
+  function handleOpenResultExams({isOnePart, isMultiPart, isReportByText, examId}: OpenExamProps) {
+    if (isOnePart === true) {
+      window.open(`/WorkSpace/ExamResultsOnePart/${examId}`, '_blank');
+    } 
+
+    if (isMultiPart === true) {
+      window.open(`/WorkSpace/ExamResultsMultiPart/${examId}`, '_blank');
+    } 
+
+    if (isReportByText === true) {
+      window.open(`/WorkSpace/ExamResultsByText/${examId}`, '_blank');
+    } 
+  }
 
   const handleChangePet = async (newPetId: number) => {
     navigate(`/Vets/Workspace/${newPetId}`);
     setReloadData(true);
   };
+
   const handleChangePetWeight = async (weigth: string) => {
     try {
       await api.put(`/pet/${id}/${weigth}`)
@@ -626,7 +647,7 @@ export function WorkSpaceVet() {
                   >
                     <>
                       {exam.doneExam === true ? (
-                        <Button onClick={() => navigate(`/WorkSpace/ExamsDetails/${exam.id}`)} colorScheme="whatsapp" fontWeight="bold">
+                        <Button onClick={() => handleOpenResultExams({isOnePart: exam?.reports[0]?.isOnePart, isMultiPart: exam?.reports[0]?.isMultiPart, isReportByText: exam?.reports[0]?.isReportedByText, examId: exam.id})} colorScheme="whatsapp" fontWeight="bold">
                           {exam.name}
                         </Button>
                       ) : (

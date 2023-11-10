@@ -55,6 +55,7 @@ export const createCustomer = z.object({
  }
 export const UserSchema = z.object({
   email: z.string().email(),
+  name: z.string().optional(),
   username: z.string(),
   password: z.string(),
   userType: z.any(),

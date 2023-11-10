@@ -13,8 +13,6 @@ function randomNumberAccount(min, max){
   )
 }
 
-
-
 const filteredData = data // Filtra linhas com Nome e senha preenchidos
   .map(user => ({
   CodCli: user.CodCli,
