@@ -126,6 +126,7 @@ export interface ExamsProps {
   name: string;
   price: string;
   doneExam: boolean;
+  byText: boolean;
   coleted?: number;
   reports: Array<{
     isOnePart: boolean;

@@ -302,6 +302,8 @@ export function WorkSpaceVet() {
       break;
   }
 
+  console.log("examss", pet.exams)
+
   return (
     <ChakraProvider>
       <WorkSpaceContainer>
@@ -647,7 +649,7 @@ export function WorkSpaceVet() {
                   >
                     <>
                       {exam.doneExam === true ? (
-                        <Button onClick={() => handleOpenResultExams({isOnePart: exam?.reports[0]?.isOnePart, isMultiPart: exam?.reports[0]?.isMultiPart, isReportByText: exam?.reports[0]?.isReportedByText, examId: exam.id})} colorScheme="whatsapp" fontWeight="bold">
+                        <Button onClick={() => handleOpenResultExams({isOnePart: exam?.reports[0]?.isOnePart, isMultiPart: exam?.reports[0]?.isMultiPart, isReportByText: exam.byText, examId: exam.id})} colorScheme="whatsapp" fontWeight="bold">
                           {exam.name}
                         </Button>
                       ) : (

@@ -113,6 +113,7 @@ import { CreateMedicineGroup } from "./pages/Medicines/groups";
 import { AutorizationsPdf } from "./components/ReactPdfComp/AutorizationPdf";
 import { OnePartExamResultPdf } from "./components/ReactPdfComp/OnePartExamResultPdf";
 import { MultiPartExamResultPdf } from "./components/ReactPdfComp/MultiPartExamResultPdf";
+import { ByTextExamResultPdf } from "./components/ReactPdfComp/ByTextExamResultPdf";
 
 export function Router() {
   return (
@@ -246,6 +247,7 @@ eateMedicine
               <Route  path="/WorkSpace/ExamsDetails/:examId" element={<ExamsDetails/>}  />
               <Route  path="/WorkSpace/ExamResultsOnePart/:examId" element={<OnePartExamResultPdf/>}  />
               <Route  path="/WorkSpace/ExamResultsMultiPart/:examId" element={<MultiPartExamResultPdf/>}  />
+              <Route  path="/WorkSpace/ExamResultsByText/:examId" element={<ByTextExamResultPdf/>}  />
               
               <Route  path="/WorkSpace/ExamResults/:examId" element={<ExamsResultPdfView/>}  />
               

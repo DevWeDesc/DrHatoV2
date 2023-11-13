@@ -367,30 +367,34 @@ model Transaction {
 
 // -------------- EXAMES ----------------- //
 model Exams {
-  id               Int                   @id @default(autoincrement())
-  name             String
-  price            Decimal
-  available        Boolean?              @default(false)
-  doneExame        Boolean?              @default(false)
-  subName          String?
-  description      String?
-  examsType        String[]
-  ageRange         String[]
-  applicableGender String[]
-  isMultiPart      Boolean?              @default(false)
-  isReportByText   Boolean?              @default(false)
-  isOnePart        Boolean?              @default(false)
-  multiparts       Exams[]               @relation("MultiParts")
-  Exams            Exams?                @relation("MultiParts", fields: [multipartId], references: [id])
-  multipartId      Int?
-  Sectors          Sectors[]
-  characteristics  ExamCharacteristics[]
+  id                 Int                   @id @default(autoincrement())
+  name               String
+  price              Decimal
+  defaultMethodology String?
+  impressName        String?
+  available          Boolean?              @default(false)
+  doneExame          Boolean?              @default(false)
+  subName            String?
+  description        String?
+  examsType          String[]
+  ageRange           String[]
+  applicableGender   String[]
+  isMultiPart        Boolean?              @default(false)
+  isReportByText     Boolean?              @default(false)
+  isOnePart          Boolean?              @default(false)
+  multiparts         Exams[]               @relation("MultiParts")
+  Exams              Exams?                @relation("MultiParts", fields: [multipartId], references: [id])
+  multipartId        Int?
+  Sectors            Sectors[]
+  characteristics    ExamCharacteristics[]
 }
 
 model ExamsForPet {
   id                 Int              @id @default(autoincrement())
   name               String
   price              Decimal
+  defaultMethodology String?
+  impressName        String?
   requesteData       DateTime?
   requestedFor       String?
   requestedCrm       String?

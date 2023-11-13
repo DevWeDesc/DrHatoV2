@@ -108,7 +108,8 @@ export const petsController = {
             name: exams.name,
             price: exams.price,
             doneExam: exams.doneExame,
-            reports: exams.reportExams
+            reports: exams.reportExams,
+            byText: exams.isReportByText
           }
           return examData
         }),

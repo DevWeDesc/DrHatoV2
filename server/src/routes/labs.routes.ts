@@ -20,4 +20,6 @@ export async function labsRoutes(app: FastifyInstance) {
 
   app.get('/lab/onepart/:examId', labsController.getOnePartExamResultById)
   app.get('/lab/multipart/:examId', labsController.getMultiPartExamResultById)
+  app.get('/lab/bytext/:examId', labsController.getTextExamResultById)
+  
 }

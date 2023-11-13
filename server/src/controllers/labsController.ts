@@ -304,11 +304,14 @@ export const labsController = {
         return
       }
 
-
-
      const examRefs =  await prisma.exams.findFirst({
       where: {name: {contains: examDetails.name}},include: {multiparts: {include: {characteristics: true}}}
      }) 
+
+     const petExamRefs = examRefs?.multiparts
+
+
+
 
 
      const petExamResult = {
@@ -328,28 +331,66 @@ export const labsController = {
       result: examDetails.reportExams[0]
      }
 
-     const petExamRefs = examRefs?.multiparts
-
-         //@ts-ignore
-         const filteredRefIdades = petExamRefs?.map((part) => {
-          return {
-            id: part.id,
-            name: part.name,
-              //@ts-ignore
-            characteristics: part.characteristics.map((ch) => {
-              return {
-                id: ch.id,
-                name: ch.name,
-                 //@ts-ignore
-                refs: ch.especie.filter(e => e.name === petExamResult.petEspecie )
-              }
-            })
-          }
-         })
-
- 
+          //@ts-ignore
+          const filteredRefIdades = petExamRefs?.map((part) => {
+            return {
+              id: part.id,
+              name: part.name,
+                //@ts-ignore
+              characteristics: part.characteristics.map((ch) => {
+                return {
+                  id: ch.id,
+                  name: ch.name,
+                   //@ts-ignore
+                  refs: ch.especie.filter(e => e.name === petExamResult.petEspecie )
+                }
+              })
+            }
+           })
+  
 
       reply.send({petExamResult, filteredRefIdades }).status(200)
+
+    } catch (error) {
+        console.log(error)
+        reply.send(error)
+    }
+  },
+
+  getTextExamResultById: async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) => {
+    try {
+      const {examId} = request.params
+    const examDetails =  await prisma.examsForPet.findUnique({
+          where: {id: parseInt(examId)}, include: {reportExams: {
+          
+          }, medicine:{include: {pet: {include: {customer: {select: {name: true}}}}}}}
+        })
+
+
+      if(!examDetails){
+        return
+      }
+
+
+     const petExamResult = {
+      solicitedBy: examDetails.requestedFor,
+      solicitedDate: examDetails.requesteData,
+      solicitedCrm: examDetails.requestedCrm,
+      reportedBy: examDetails.responsibleForExam,
+      reportedByCrm: examDetails.responsibleForCrm,
+      examName: examDetails.name,
+      petName: examDetails.medicine.pet.name,
+      petEspecie: examDetails.medicine.pet.especie,
+      petAge: examDetails.medicine.pet.bornDate,
+      petRace: examDetails.medicine.pet.race,
+      petSex: examDetails.medicine.pet.sexo,
+      petCod: examDetails.medicine.pet.CodAnimal,
+      petCustomer: examDetails.medicine.pet.customer.name,
+      result: examDetails.reportExams[0].textReport
+     }
+
+  
+      reply.send({petExamResult }).status(200)
 
     } catch (error) {
         console.log(error)
