@@ -163,7 +163,10 @@ getVetUsers: async (request: FastifyRequest, reply: FastifyReply) => {
     },select: {
       username: true,
       id: true,
+      crmv: true,
+      name: true
     }
+
   })
 
   try {

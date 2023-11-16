@@ -53,16 +53,26 @@ export const searchController = {
     }
   },
 
-  searchVetMenu: async(request: FastifyRequest,  reply: FastifyReply) => {
+  searchVetMenu: async(request: FastifyRequest<{
+    Querystring: {petName: string, customerName: string, petCode: string; isAddmited: string
+      isFinished: string, finalDate: string, initialDate: string
+    },
+    Params: { page: string}
+  }>,  reply: FastifyReply) => {
     try {
 
-      const {petName, customerName, petCode, isAddmited, isFinished, finalDate,initialDate }: any = request.query
+      const {petName, customerName, petCode, isAddmited, isFinished, finalDate,initialDate } = request.query
 
 
+      const currentPage = Number(request.params.page) || 1;
 
-      const vetsMenuSearch = new VetsMenuSearch()
 
-     const  {data} = await vetsMenuSearch.getParams({petName, customerName, petCode, isAddmited, isFinished, finalDate,initialDate })
+      const vetsMenuSearch = new VetsMenuSearch();
+
+
+      vetsMenuSearch.currentPage = currentPage;
+
+     const  {data, totalUsers, totalPages} = await vetsMenuSearch.getParams({petName, customerName, petCode, isAddmited, isFinished, finalDate,initialDate })
 
 
       if(isFinished && (initialDate || finalDate)) {
@@ -76,7 +86,7 @@ export const searchController = {
       }
 
 
-      reply.send(data)
+      reply.send({totalUsers, totalPages, currentPage, data})
     } catch (error) {
       console.log(error)
     }

@@ -16,17 +16,37 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { RiAddLine, RiPencilLine, RiUserSearchLine } from "react-icons/all";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Header } from "../../components/admin/Header";
-import { Paginaton } from "../../components/admin/Pagination";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { LoadingSpinner } from "../../components/Loading";
 import { DbContext } from "../../contexts/DbContext";
-
+import { api } from "../../lib/axios";
 import { AdminContainer } from "../AdminDashboard/style";
+
+type VetsListDTO = {
+  name: string;
+  crmv: string;
+  username: string;
+  id: number;
+}
 
 export function VetsList() {
   const { vets } = useContext(DbContext);
+  const [vetslist, setVetslist] = useState<VetsListDTO[]>([])
 
+  async function getVetList(){
+    try { 
+      const response =  await api.get("/users/vets")
+      setVetslist(response.data.vets)
+    } catch (error) {
+      toast.error("Falha na busca por veterinários!")
+    }
+  }
+
+  useEffect(() => {
+    getVetList()
+  }, [])
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -77,17 +97,15 @@ export function VetsList() {
                     <Th borderColor="black" fontSize="18">
                       CRMV
                     </Th>
-                    <Th borderColor="black" fontSize="18">
-                      Especialidade
-                    </Th>
+               
                     <Th width="8" borderColor="black" fontSize="18"></Th>
                     <Th width="8" borderColor="black" fontSize="18"></Th>
                   </Tr>
                 </Thead>
 
                 <Tbody>
-                  {vets ? (
-                    vets.map((vet) => (
+                  {vetslist ? (
+                    vetslist.map((vet) => (
                       <Tr key={vet.id}>
                         <Td px="6" borderColor="black">
                           <Text
@@ -109,12 +127,7 @@ export function VetsList() {
                             </Text>
                           </Box>
                         </Td>
-                        <Td borderColor="black">
-                          <Text fontWeight="bold" color="gray.800">
-                            {vet.speciality ? vet.speciality : "Não definido"}
-                          </Text>
-                        </Td>
-
+                   
                         <Td borderColor="black">
                           <Link to={`/Users/Edit/${vet.id}`}>
                             <Button

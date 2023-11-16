@@ -10,15 +10,27 @@ export interface VetsMenuProps {
     finalDate: Date | string;
 }
 export class VetsMenuSearch {
+          // Obtenha o número da página atual a partir da solicitação.
+          public currentPage = 1;
+
+       
     async getParams({customerName, petName, petCode, isAddmited, isFinished}: VetsMenuProps) {
         let data;
+        let totalUsers;
+       
         switch(true) {
             case !!customerName:
                 data = await prisma.pets.findMany({
+                    skip: (this.currentPage - 1) * 10,
+                    take: 10,
                     where: {
                         customer: {name: {contains: customerName}}},
                     include: {customer: true}
                  })
+                 totalUsers = await prisma.pets.count({
+                    where: {
+                        customer: {name: {contains: customerName}}}
+                });
                 break;
             case !!petName: 
               data = await prisma.pets.findMany({
@@ -101,9 +113,14 @@ export class VetsMenuSearch {
             })
         }
 
+        
+        //@ts-ignore
+        let totalPages = Math.ceil(totalUsers / 10);
 
         return {
-            data
+            data,
+            totalUsers,
+            totalPages
         }
     }
 

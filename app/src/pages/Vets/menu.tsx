@@ -19,7 +19,7 @@ import {  useEffect, useState } from 'react'
 import { Header } from '../../components/admin/Header'
 import { GenericLink } from '../../components/Sidebars/GenericLink'
 import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
-import { AiOutlineSearch } from 'react-icons/all'
+import { AiOutlineSearch, BiLeftArrow, BiRightArrow } from 'react-icons/all'
 import { AdminContainer } from '../AdminDashboard/style'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -38,6 +38,8 @@ export function MenuVet() {
   const [customerName, setCustomerName] = useState('')
   const [isFinishied, setIsFinishied] = useState(false)
   const [isAddmited, setIsAddmited] = useState(false)
+  const [pagination, SetPagination] = useState(1)
+  const [numberOfPages, setNumberOfPages] = useState(0)
   const [totalInQueue, setTotalInQueue] = useState(0 as any)
   const [petTotal, setPetTotal] = useState([])
   const [inQueue, setInQueue] = useState<QueueProps[]>([])
@@ -45,6 +47,15 @@ export function MenuVet() {
   const [dataByFilter, setDataByFilter] = useState([] as any)
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
+
+
+  function incrementPage() {
+    SetPagination(prevCount => pagination < numberOfPages ? prevCount + 1 : numberOfPages);
+  }
+
+  function decrementPage() {
+    SetPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+  }
 
   const navigate = useNavigate()
 
@@ -64,31 +75,34 @@ export function MenuVet() {
   async function searchDataVet() {
     switch (true) {
       case petName?.length >= 1:
-        await api.get(`vetmenusearch?petName=${petName}`).then(res => {
-          setPetData(res.data)
+        await api.get(`vetmenusearch//${pagination}?petName=${petName}`).then(res => {
+          setPetData(res.data.data)
+          setNumberOfPages(res.data.totalPages)
         })
         break
       case codPet?.length >= 1:
-        await api.get(`vetmenusearch?petCode=${codPet}`).then(res => {
-          setPetData(res.data)
+        await api.get(`vetmenusearch?/${pagination}petCode=${codPet}`).then(res => {
+          setPetData(res.data.data)
+          setNumberOfPages(res.data.totalPages)
         })
         break
       case customerName?.length >= 1:
         await api
-          .get(`vetmenusearch?customerName=${customerName}`)
+          .get(`vetmenusearch/${pagination}?customerName=${customerName}`)
           .then(res => {
-            setPetData(res.data)
+            setPetData(res.data.data)
+            setNumberOfPages(res.data.totalPages)
           })
         break
       case isFinishied === true:
         await api.get(`vetmenusearch?isFinished=true`).then(res => {
           setPetData(res.data)
-          console.log(res.data)
+          console.log(res.data.data)
         })
         break
         case isAddmited === true:
           await api.get(`vetmenusearch?isAddmited=true`).then(res => {
-            setPetData(res.data)
+            setPetData(res.data.data)
           })
         break;
     }
@@ -99,13 +113,13 @@ export function MenuVet() {
   switch(true) {
     case isFinishied === true:
       await api.get(`vetmenusearch?isFinished=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
-      {  setPetData(res.data)
+      {  setPetData(res.data.data);
+
       })
     break
     case isAddmited === true:
       await api.get(`vetmenusearch?isAddmited=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
-      {  setPetData(res.data)
-        console.log(res.data)
+      {  setPetData(res.data.data);
       })
     break
   }
@@ -114,7 +128,7 @@ export function MenuVet() {
 
   useEffect(() => {
     searchDataVet()
-  }, [petName, codPet, customerName, isFinishied, isAddmited])
+  }, [petName, codPet, customerName, isFinishied, isAddmited, pagination])
 
 
  
@@ -201,10 +215,27 @@ export function MenuVet() {
                     FILTRAR
                   </Button>
                 </Flex>
+                <Flex gap={8}>
                 <Button colorScheme="teal" onClick={() => navigate('/Queue')}>
                   <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
                 </Button>
-                <Flex textAlign="center" justify="center">
+                <Button colorScheme="whatsapp">
+                  Total Paginas: {numberOfPages}
+                </Button>
+                <Button colorScheme="whatsapp">
+                  Pagina Atual: {pagination}
+                </Button>
+                <Button colorScheme="whatsapp" gap={4} onClick={() => decrementPage()} >
+                  <BiLeftArrow/>
+                  Página Anterior
+                </Button>
+                <Button colorScheme="whatsapp" gap={4} onClick={() => incrementPage()}>
+                  Próxima Página
+                  <BiRightArrow/>
+                </Button>
+                </Flex>
+               
+                <Flex textAlign="center" h={300} justify="center" overflowY="auto">
 
                             
              

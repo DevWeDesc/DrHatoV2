@@ -239,10 +239,11 @@ model HospitalizationDiary {
 //  ------------- VACINES -------------   //
 
 model Vaccines {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   price       Decimal
   description String
+  disponible  Boolean?
 }
 
 model VaccinesForPet {
