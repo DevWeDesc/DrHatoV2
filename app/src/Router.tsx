@@ -114,6 +114,7 @@ import { AutorizationsPdf } from "./components/ReactPdfComp/AutorizationPdf";
 import { OnePartExamResultPdf } from "./components/ReactPdfComp/OnePartExamResultPdf";
 import { MultiPartExamResultPdf } from "./components/ReactPdfComp/MultiPartExamResultPdf";
 import { ByTextExamResultPdf } from "./components/ReactPdfComp/ByTextExamResultPdf";
+import { InstructionsPdf } from "./components/ReactPdfComp/InstructionsPdf";
 
 export function Router() {
   return (
@@ -214,6 +215,11 @@ export function Router() {
                 path="/Autorizations/Pdf/:id"
                 element={<AutorizationsPdf />}
               />
+       <Route
+                path="/Instructions/Pdf/:id"
+                element={<InstructionsPdf />}
+              />
+
 
               <Route path="/Users" element={<UsersList />} />
               <Route path="/Users/Create" element={<CreateUser />} />
@@ -232,10 +238,7 @@ eateMedicine
               />
               <Route path="/WorkSpace/Vaccines/:id" element={<Vaccines />} />
               <Route path="/WorkSpace/Protocols/:id" element={<Protocols />} />
-              <Route
-                path="/WorkSpace/Instructions/:id"
-                element={<VetInstructions />}
-              />
+        
               <Route
                 path="/WorkSpace/Admissions/:id"
                 element={<VetsAdmissions />}

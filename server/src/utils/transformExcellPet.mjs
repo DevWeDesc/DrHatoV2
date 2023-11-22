@@ -29,7 +29,7 @@ const filteredData = data
 
   }));
 
-  async function populeDb() {
+  export async function PopulatePets() {
     try {
       for await (const pets of filteredData) {
         try {
@@ -60,16 +60,17 @@ const filteredData = data
               }
             }
           });
+
+        
         } catch (error) {
           // Registre o erro, mas continue com o próximo pet
-          console.error(`Erro ao criar pet: ${pets.name}, Código do Cliente: ${pets.CodCli}`);
+         // console.error(`Erro ao criar pet: ${pets.name}, Código do Cliente: ${pets.CodCli}`);
 
         }
       }
-      console.log("Banco populado");
+      console.log("Banco populado Pets");
     } catch (error) {
       console.error(error);
     }
   }
   
-  populeDb();

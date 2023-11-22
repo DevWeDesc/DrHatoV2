@@ -27,7 +27,7 @@ const filteredData = data
     role: returnTypeUser(user.crm)
   }));
 
- async function populeDb () {
+ export async function PopulateUsers () {
      try {
 
       const uniqueNames = new Set();
@@ -45,11 +45,11 @@ const filteredData = data
       }
     
       }
-      console.log("Banco populado")
-      console.log(uniqueNames)
+      console.log("Banco populado Users")
+ 
      } catch (error) {
       console.log(error);
      }
  } 
 
- populeDb()
+ 

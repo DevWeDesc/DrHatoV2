@@ -17,7 +17,7 @@ const filteredData = data
     description: ""
   }));
 
- async function populeDb () {
+ export async function PopulateVaccines () {
      try {
 
      for await (const vaccines of filteredData) {
@@ -29,10 +29,9 @@ const filteredData = data
 
       }
       
-    
+      console.log("Banco Populado Vaccines")
      } catch (error) {
       console.log(error);
      }
  } 
 
- populeDb()

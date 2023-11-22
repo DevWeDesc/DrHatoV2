@@ -24,7 +24,7 @@ const filteredData = data
     price: surgeries.Preço1,
   }));
 
- async function populeDb () {
+ export async function PopulateSurgeries () {
      try {
 
      for await (const surgeries of filteredData) {
@@ -35,10 +35,9 @@ const filteredData = data
         console.log(surgeries)
 
       }
-    
+      
+      console.log("Banco Populado Surgeries")
      } catch (error) {
       console.log(error);
      }
  } 
-
- populeDb()

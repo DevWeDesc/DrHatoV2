@@ -75,7 +75,7 @@ export function MenuVet() {
   async function searchDataVet() {
     switch (true) {
       case petName?.length >= 1:
-        await api.get(`vetmenusearch//${pagination}?petName=${petName}`).then(res => {
+        await api.get(`vetmenusearch/${pagination}?petName=${petName}`).then(res => {
           setPetData(res.data.data)
           setNumberOfPages(res.data.totalPages)
         })
@@ -95,13 +95,13 @@ export function MenuVet() {
           })
         break
       case isFinishied === true:
-        await api.get(`vetmenusearch?isFinished=true`).then(res => {
+        await api.get(`vetmenusearch?/${pagination}isFinished=true`).then(res => {
           setPetData(res.data)
           console.log(res.data.data)
         })
         break
         case isAddmited === true:
-          await api.get(`vetmenusearch?isAddmited=true`).then(res => {
+          await api.get(`vetmenusearch/${pagination}?isAddmited=true`).then(res => {
             setPetData(res.data.data)
           })
         break;
@@ -112,13 +112,13 @@ export function MenuVet() {
 
   switch(true) {
     case isFinishied === true:
-      await api.get(`vetmenusearch?isFinished=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
+      await api.get(`vetmenusearch/${pagination}?isFinished=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
       {  setPetData(res.data.data);
 
       })
     break
     case isAddmited === true:
-      await api.get(`vetmenusearch?isAddmited=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
+      await api.get(`vetmenusearch/${pagination}?isAddmited=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
       {  setPetData(res.data.data);
       })
     break

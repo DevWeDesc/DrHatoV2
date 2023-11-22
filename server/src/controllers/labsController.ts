@@ -4,6 +4,8 @@ import { labService } from "../services/labsService";
 import { Prisma } from "@prisma/client";
 
 export const labsController = {
+
+
   getOpenExamsInLab: async (request:FastifyRequest, reply: FastifyReply) => {
     try {
       const exams = await prisma.examsForPet.findMany({
@@ -357,7 +359,7 @@ export const labsController = {
     }
   },
 
-  getTextExamResultById: async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) => {
+  getTextExamResultById: async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) => { 
     try {
       const {examId} = request.params
     const examDetails =  await prisma.examsForPet.findUnique({

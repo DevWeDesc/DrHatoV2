@@ -39,6 +39,10 @@ export class VetsMenuSearch {
                 },
                 include: {customer: true}
              })
+             totalUsers = await prisma.pets.count({
+                where: {
+                    name: {contains: petName}}
+            });
             break;
             case !!petCode: 
               data = await prisma.pets.findMany({

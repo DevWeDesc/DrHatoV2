@@ -45,6 +45,7 @@ import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
 import { SetMedicineInPet } from "../../components/Medicine/SetMedicineInPet";
+import { VetInstructions } from "./WorkSpaceVets/instructions";
 
 type OpenExamProps = {
   isMultiPart: boolean,
@@ -61,6 +62,7 @@ export function WorkSpaceVet() {
   const [petWeigth, setPetWeigth] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAutorizationModalOpen, setAutorizationModalOpen] = useState(false);
+  const [insInstructionsModalOpen, setInstructionModalOpen] = useState(false);
   const [isMedicineModalOpen, setMedicineModalOpen] = useState(false);
   const [reloadData, setReloadData] = useState(false);
   const [viewComponentPrint, setViewComponentPrint] = useState("");
@@ -92,6 +94,13 @@ export function WorkSpaceVet() {
   }
   function closeAutorizationModal() {
     setAutorizationModalOpen(false);
+  }
+
+  function openInstructionModal() {
+    setInstructionModalOpen(true);
+  }
+  function closeInstructionModal() {
+    setInstructionModalOpen(false);
   }
 
   function openMedicineModal() {
@@ -355,7 +364,7 @@ export function WorkSpaceVet() {
               <Button
                 height={8}
                 colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Instructions/${id}`)}
+                onClick={() => openInstructionModal()}
               >
                 INSTRUÇÕES PROPRIETÁRIO
               </Button>
@@ -806,6 +815,12 @@ export function WorkSpaceVet() {
        onRequestClose={closeMedicineModal}
       >
          <SetMedicineInPet petId={pet?.id} accId={pet?.totalAcc?.id} />
+      </GenericModal>
+      <GenericModal 
+       isOpen={insInstructionsModalOpen}
+       onRequestClose={closeInstructionModal}
+      >
+        <VetInstructions />
       </GenericModal>
     </ChakraProvider>
   );

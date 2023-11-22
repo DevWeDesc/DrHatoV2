@@ -56,6 +56,23 @@ export const instructionsController = {
       console.log(error);
       reply.status(400);
     }
+  },
+
+  getInstructionById: async (request: FastifyRequest<{Params: params }>, reply: FastifyReply) => {
+      try {
+        const { id} =request.params
+
+        const instruction = await prisma.instructions.findUnique({
+          where: {
+            id: parseInt(id)
+          }
+        })
+
+        reply.send(instruction)
+
+      } catch (error) {
+        
+      }
   }
 }
 
