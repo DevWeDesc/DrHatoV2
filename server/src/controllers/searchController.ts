@@ -1,6 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../interface/PrismaInstance";
-import { z } from "zod";
 import { SearchSchema } from "../schemas/schemasValidator";
 import { searchEngine } from "../engines/searchEngine";
 import {  VetsMenuSearch } from "../engines/vets.menu.search";
@@ -90,6 +89,25 @@ export const searchController = {
     } catch (error) {
       console.log(error)
     }
+  },
+
+
+  getByCodPet: async (request: FastifyRequest<{
+    Params: { codPet: string}
+  }>, reply: FastifyReply) => {
+    const {codPet} = request.params
+  try {
+      const data = await prisma.pets.findFirst({
+        where: {CodAnimal: Number(codPet)},  include: {customer: true}
+      })
+
+      reply.send([data])
+
+  
+  } catch (error) {
+      reply.send({error})
+      console.log(error)
+  }
   }
 
 

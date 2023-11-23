@@ -130,6 +130,7 @@ export function ReceptionConsults() {
                       ))}
                     </>
                   )}
+            
                 </Table>
               </Flex>
             </Flex>

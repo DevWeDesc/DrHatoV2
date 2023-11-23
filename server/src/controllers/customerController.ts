@@ -42,16 +42,27 @@ export const customerController = {
     }>,
     reply: FastifyReply
   ) => {
-    const {name, cpf, rg} = request.query
+    const {name, cpf, rg, codPet} = request.query
 
     try {
-      let customer = await prisma.customer.findMany({
+      let customer 
+
+      customer = await prisma.customer.findMany({
         where: {
-          OR: [{ name: {startsWith: name} }, { cpf: {startsWith: cpf} }, { rg: {startsWith: rg} }],
+          OR: [{ name: {startsWith: name} }, { cpf: {startsWith: cpf} }, { rg: {startsWith: rg},  
+          }],
         }, include: { pets: true, transaction: true}
       });
 
-      reply.send(customer);
+      if(!!codPet) {
+          customer = []
+          const data =await prisma.customer.findFirst({
+            where: {pets: {some: {CodAnimal: Number(codPet)}}}
+          })
+          customer.push(data)
+      }
+
+       reply.send(customer);
     } catch (error) {
       reply.status(404).send(error);
       console.log(error)

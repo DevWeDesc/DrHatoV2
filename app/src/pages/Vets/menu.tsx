@@ -75,13 +75,7 @@ export function MenuVet() {
   async function searchDataVet() {
     switch (true) {
       case petName?.length >= 1:
-        await api.get(`vetmenusearch//${pagination}?petName=${petName}`).then(res => {
-          setPetData(res.data.data)
-          setNumberOfPages(res.data.totalPages)
-        })
-        break
-      case codPet?.length >= 1:
-        await api.get(`vetmenusearch?/${pagination}petCode=${codPet}`).then(res => {
+        await api.get(`vetmenusearch/${pagination}?petName=${petName}`).then(res => {
           setPetData(res.data.data)
           setNumberOfPages(res.data.totalPages)
         })
@@ -95,13 +89,13 @@ export function MenuVet() {
           })
         break
       case isFinishied === true:
-        await api.get(`vetmenusearch?isFinished=true`).then(res => {
+        await api.get(`vetmenusearch/1?isFinished=true`).then(res => {
           setPetData(res.data)
           console.log(res.data.data)
         })
         break
         case isAddmited === true:
-          await api.get(`vetmenusearch?isAddmited=true`).then(res => {
+          await api.get(`vetmenusearch/1?isAddmited=true`).then(res => {
             setPetData(res.data.data)
           })
         break;
@@ -111,14 +105,19 @@ export function MenuVet() {
  const handleGetDataWithParams =  async () => {
 
   switch(true) {
+    case !!codPet:
+        await api.get(`searchcodpet/${codPet}`).then(res => {
+          setPetData(res.data)
+        })
+        break
     case isFinishied === true:
-      await api.get(`vetmenusearch?isFinished=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
+      await api.get(`vetmenusearch/1?isFinished=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
       {  setPetData(res.data.data);
 
       })
     break
     case isAddmited === true:
-      await api.get(`vetmenusearch?isAddmited=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
+      await api.get(`vetmenusearch/1?isAddmited=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
       {  setPetData(res.data.data);
       })
     break
@@ -260,24 +259,25 @@ export function MenuVet() {
                                         <Tr
                                           key={pet?.id}
                                           cursor="pointer"
+                                          
                                           onClick={() => navigate(`/Vets/Workspace/${pet?.id}`)}
                                         >
                                           <Td>
                                             <Text colorScheme="whatsapp">
-                                              {pet?.customer.cpf}
+                                              {pet?.customer.cpf ? pet.customer.cpf : "Não encontrado"}
                                             </Text>
                                           </Td>
                       
-                                          <Td>{pet?.customer.name}</Td>
+                                          <Td>{pet?.customer.name ? pet.customer.name : "Não encontrado"}</Td>
                       
                                           <Td
-                                            cursor="pointer"
-                                            onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
+                                          
+                                           
                                           >
-                                            {pet?.name}
+                                            {pet?.name ? pet.name : "Não encontrado"}
                                           </Td>
                                           <Td>
-                                            {pet?.codPet}
+                                            {pet?.CodAnimal  ? pet.codAnimal : "Não encontrado"}
                                           </Td>
                                           <Td>{pet?.weigth}</Td>
                                           <Td>{pet?.customer.vetPreference ? pet?.customer.vetPreference : "Sem Preferência"}</Td>

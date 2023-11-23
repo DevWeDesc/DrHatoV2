@@ -10,7 +10,6 @@ export interface VetsMenuProps {
     finalDate: Date | string;
 }
 export class VetsMenuSearch {
-          // Obtenha o número da página atual a partir da solicitação.
           public currentPage = 1;
 
        
@@ -39,11 +38,15 @@ export class VetsMenuSearch {
                 },
                 include: {customer: true}
              })
+             totalUsers = await prisma.pets.count({
+                where: {
+                    name: {contains: petName}}
+            });
             break;
             case !!petCode: 
               data = await prisma.pets.findMany({
                 where: {
-                    codPet: {startsWith: petCode}    
+                    CodAnimal: Number(petCode)
                 },
                 include: {customer: true}
              })

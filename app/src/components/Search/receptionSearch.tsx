@@ -65,6 +65,21 @@ export function RecepetionSearch({ path }: UniversalSearchProps) {
         toast.error("Cliente não encontrado");
       }
     }
+
+
+    if (values.codPet) {
+      try {
+        const responsecodpet = await api.get(`${path}?codPet=${values.codPet}`);
+        setCustomers(responsecodpet.data);
+        if (Object.keys(customer).length == 0) {
+          toast.error("Cliente não encontrado");
+        } else {
+          toast.success("Cliente encontrado");
+        }
+      } catch (error) {
+        toast.error("Cliente não encontrado");
+      }
+    }
   };
 
   return (
@@ -76,7 +91,6 @@ export function RecepetionSearch({ path }: UniversalSearchProps) {
             <Input label="CPF do Cliente" {...register("cpf")} name="cpf" />
             <Input label="R.G do Cliente" {...register("rg")} name="rg" />
             <Input
-              isDisabled
               label="Código do Animal"
               {...register("codPet")}
               name="codPet"
