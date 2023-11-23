@@ -31,6 +31,10 @@ export function NewCharacteristics() {
     const especie = especiesArray.flatMap((especie: any) => {
           let data = {
             name: especie,
+            units: {
+              absoluto: values.unitAbs,
+              relativo: values.unitRel
+            },
             refIdades: [
              {
               maxAge: 0.5,
@@ -88,30 +92,38 @@ export function NewCharacteristics() {
   const RefAges = ({especie, index}: RefIdadeProps) => {
     return (
       <Flex align="center" key={index} direction="column">
-      <h1>Especie:{especie}</h1>
-      <h2>referências por idade:</h2>
+      <Text fontWeight="black" >Especie:{especie}</Text>
+      <Flex align="center" w="100%" justify="space-between" gap={8}>
+      <Text fontWeight="bold" fontSize="lg" >referências por idade:</Text>
+      <Input  maxWidth={220} label="Unidade Absoluta" {...register("unitAbs")}  name="unitAbs" />
+      <Input  maxWidth={220} label="Unidade Relativa" {...register("unitRel")} name="unitRel" />
+      </Flex>
+    
       <Flex align="center" w="100%" gap="2">
         <Flex  align="center" direction="column" w="100%">
         <Text fontWeight="bold" fontSize="lg">Até 5 meses</Text>
         <HStack>
-        <Input  {...register(`rel5${especie}`)}  maxWidth={320} label="relativo" name={`rel5${especie}`} />
         <Input   {...register(`abs5${especie}`)} maxWidth={320} label="absoluto" name={`abs5${especie}`} />
+        <Input  {...register(`rel5${especie}`)}  maxWidth={320} label="relativo" name={`rel5${especie}`} />
+      
         
         </HStack>
         </Flex>
         <Flex  align="center" direction="column" w="100%">
         <Text fontWeight="bold" fontSize="lg">Até 1 ano</Text>
         <HStack>
-        <Input  {...register(`rel10${especie}`)}  maxWidth={320} label="relativo" name={`rel10${especie}`} />
         <Input   {...register(`abs10${especie}`)} maxWidth={320} label="absoluto" name={`abs10${especie}`} />
+        <Input  {...register(`rel10${especie}`)}  maxWidth={320} label="relativo" name={`rel10${especie}`} />
+       
         
         </HStack>
         </Flex>
         <Flex  align="center" direction="column" w="100%">
         <Text fontWeight="bold" fontSize="lg">Até 2 anos +</Text>
         <HStack>
-        <Input  {...register(`rel20${especie}`)}  maxWidth={320} label="relativo" name={`rel20${especie}`} />
         <Input   {...register(`abs20${especie}`)} maxWidth={320} label="absoluto" name={`abs20${especie}`} />
+        <Input  {...register(`rel20${especie}`)}  maxWidth={320} label="relativo" name={`rel20${especie}`} />
+       
         
         </HStack>
         </Flex>

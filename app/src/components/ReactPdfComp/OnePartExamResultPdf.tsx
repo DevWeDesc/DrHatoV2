@@ -1,9 +1,9 @@
 import { useState, useEffect} from 'react'
 import { Page, Text, Document, StyleSheet, PDFViewer, Image, View } from '@react-pdf/renderer';
 import { ChakraProvider, Flex } from '@chakra-ui/react';
-import logo from '../../assets/logoPadronizada.png'
 import { api } from '../../lib/axios';
 import { useParams } from 'react-router-dom';
+import logo from '../../assets/logoResults.jpeg'
 
 
 interface ExamDetailsDTO {
@@ -32,6 +32,10 @@ interface ExamRefDTO {
 			name: string;
       especies: Array<{
         name: string;
+        units: {
+          absoluto: string;
+          relativo: string;
+        }
         refIdades: Array<{
               maxAge: number;
 							absoluto: string;
@@ -114,18 +118,9 @@ const Quixote = () => (
   <Document>
     <Page  style={{display: 'flex', flexDirection: 'column'}} >
       { /* HEADER */}
-  <View style={{display: 'flex', gap: '8px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-  <Image style={{ width: 180}} source={logo} />
-  <View style={{display: 'flex', flexDirection: 'column', gap: '6px'}} >
-      <Text style={{fontSize: '12px'}}>Baeta Neves 24h (11) 4336-7185</Text>
-      <Text style={{fontSize: '12px'}}>Campestre 24h (11) 4428-1222</Text>
-      <Text style={{fontSize: '12px'}}>Vila Alto de Santo André (11) 4428-1222</Text>
-  </View>
+      <View style={{display: 'flex', marginBottom: '8px'}}>
+  <Image style={{ width: '100%', height: '68px'}} source={logo} />
 
-  <View style={{display: 'flex', width: '80px', alignItems: 'center',  justifyContent: 'center',height: '55px',  flexDirection: 'column', flex: '1', border: '1px', borderColor: 'green', borderRadius: '999px'}} >
-    <Text style={{fontSize: '14px', fontWeight: 'bold'}}>Acesse seu exame através</Text>
-      <Text style={{fontSize: '14px', fontWeight: 'bold'}}>do nosso site drhato.com.br</Text>
-  </View>
   </View>
   { /* HEADER END */}
 
@@ -159,38 +154,52 @@ const Quixote = () => (
       <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{examDetails.examName}</Text>
       <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '155px' }}>Resultados</Text>
       <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>Unidades</Text>
-        <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>Acima de 5 Meses</Text>
+        <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '120px' }}>Acima de 5 Meses</Text>
     </View>
     <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '22px', gap: '8px'}}>
       <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>Característica</Text>
       <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '155px' }}>Absoluto   Relativo</Text>
-      <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>Uni. abs.    Uni.rel.</Text>
-      <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '120px' }}>Absoluto.      Relativo.</Text>
+      <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px',justifyContent: 'space-between' }}>Uni. abs.    Uni.rel.</Text>
+      <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '120px',justifyContent: 'space-between' }}>Absoluto.      Relativo.</Text>
         
 
     </View>
 
     <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '22px', gap: '8px'}}>
-      <View    style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+      <View    style={{display: 'flex', flexDirection: 'column', gap: '12px', width: '100px'}}>
       {
         examDetails?.result?.map((charac) =>  
         <Text key={charac.charac} style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{charac.charac}</Text>)
       }
       </View>
-      <View    style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+      <View  style={{display: 'flex', flexDirection: 'column', gap: '12px', width: '155px',}}>
       {
-        examDetails?.result?.map((charac) =>  (<View key={charac.charac} style={{display: 'flex', flexDirection: 'row', gap: '12px'}}> <Text key={charac.charac} style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{charac.abs}</Text>
+        examDetails?.result?.map((charac) =>  (<View key={charac.charac} style={{display: 'flex', flexDirection: 'row', gap: '12px', width: '155px', justifyContent: 'space-between'}}> <Text key={charac.charac} style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{charac.abs}</Text>
          <Text  style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{charac.rel}</Text> </View>) )
       }
       </View>
   
-     <View style={{display: 'flex', flexDirection: 'row', gap: '12px', width: '100px',}}>
-     <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>-</Text>
-     <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>-</Text>
-     </View>
-     <View    style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+     <View style={{display: 'flex', flexDirection: 'column', gap: '12px', width: '100px'}}>
+
       {
-        examCharacs.map((ref) =>  (<View  key={ref.name} style={{display: 'flex', flexDirection: 'row', gap: '12px'}} >
+        examCharacs.map((ref) => {
+          return ref?.especies?.map((ref) => (
+            <View  style={{display: 'flex', flexDirection: 'row', gap: '12px', width: '100px', justifyContent: 'space-between'}}>
+            <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{
+            ref?.units?.absoluto
+            }</Text>
+             <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{ ref?.units?.relativo}</Text>
+         </View>
+          ))
+        })
+      }
+
+    
+     </View>
+     <View    style={{display: 'flex', flexDirection: 'column', gap: '12px', width: '120px'}}>
+      {
+        examCharacs.map((ref) =>  (<View  key={ref.name} style={{display: 'flex', flexDirection: 'row', gap: '12px',justifyContent: 'space-between', width: '120px'
+        }} >
           <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{ref?.especies[0]?.refIdades[0]?.absoluto}</Text>
           <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{ref?.especies[0]?.refIdades[0]?.relativo}</Text>
           </View>))

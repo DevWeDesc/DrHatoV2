@@ -63,6 +63,10 @@ interface ExamProps {
     name:string;
     especie: Array<{
       name: string;
+      units: {
+        absoluto: string
+        relativo: string
+      },
       refIdades: Array<{
         maxAge: number;
         absoluto: string;
@@ -108,13 +112,14 @@ export function SetPetExam() {
       toast.error("Falha ao laudar com texto!")
     }
   }
+
 //One Part
   const handleSetTableReport:  SubmitHandler<FieldValues>  = async (values) => {
     const refs = exam.characteristics.map((charac) => {
       let data = {
-        charac: charac.name,
-        abs: values[`abs${charac.name}`],
-        rel: values[`rel${charac.name}`]
+        charac: charac.name.replace(/\./g, "").trim(),
+        abs: values[`abs${charac.name.replace(/\./g, "").trim()}`],
+        rel: values[`rel${charac.name.replace(/\./g, "").trim()}`]
       }
       return data
     })
@@ -131,6 +136,7 @@ export function SetPetExam() {
 
 
     try {
+  
       await api.patch(`/reportexam/${id}`,data)
       toast.success("Exame laudado com sucesso!")
     } catch (error) {
@@ -351,17 +357,15 @@ export function SetPetExam() {
       const table = charac?.especie.find((data: any) => data.name === pet?.medicine?.pet?.especie)
       return (
         <Tr key={charac.id} fontWeight="bold">
-        <Td border="1px solid black">{charac.name}</Td>
+        <Td border="1px solid black">{charac.name.replace(/\./g, "")}</Td>
         <Td border="1px solid black" bg="white">
-         <Input {...register(`abs${charac.name}`)} name={`abs${charac.name}`}   />
+         <Input {...register(`abs${charac.name.replace(/\./g, "").trim()}`)} name={`abs${charac.name.replace(/\./g, "").trim()}`}   />
         </Td>
         <Td border="1px solid black" bg="white">
-        <Input {...register(`rel${charac.name}`)} name={`rel${charac.name}`}  />
+        <Input {...register(`rel${charac.name.replace(/\./g, "").trim()}`)} name={`rel${charac.name.replace(/\./g, "").trim()}`}  />
         </Td>
-        <Td border="1px solid black" bg="white"></Td>
-        <Td border="1px solid black" bg="white">
-          mg/dl
-        </Td>
+        <Td border="1px solid black" bg="white">{charac?.especie[0]?.units.absoluto}</Td>
+        <Td border="1px solid black" bg="white">{charac?.especie[0]?.units.relativo}</Td>
         {
           table?.refIdades.map((ref) => (
             <> 
