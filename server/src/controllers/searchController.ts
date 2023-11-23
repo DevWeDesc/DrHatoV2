@@ -3,6 +3,14 @@ import { prisma } from "../interface/PrismaInstance";
 import { SearchSchema } from "../schemas/schemasValidator";
 import { searchEngine } from "../engines/searchEngine";
 import {  VetsMenuSearch } from "../engines/vets.menu.search";
+import { LabsMenuSearch } from "../engines/labs.menu.search";
+
+type LabSearchParams = {
+  petName:  string;
+  petCode: string;
+  solicitedBy: string;
+}
+
 export const searchController = {
  getAll: async (request: FastifyRequest<{
     Querystring: { name?: string; cpf?: string; adress?: string };
@@ -108,9 +116,29 @@ export const searchController = {
       reply.send({error})
       console.log(error)
   }
+},
+searchLabMenu: async (request: FastifyRequest<{
+  Querystring: LabSearchParams
+}>, reply: FastifyReply) => {
+
+  try {
+    const { petCode, petName, solicitedBy } = request.query
+
+      const labSearchMenu = new LabsMenuSearch()
+
+
+      const {data} = await labSearchMenu.getWithParams({petCode, petName, solicitedBy})
+
+      reply.send({
+        data
+      })
+
+
+   } catch (error) {
+    console.log(error)
+
+    reply.send({error})
   }
-
-
 }
 
-
+}

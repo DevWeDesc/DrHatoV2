@@ -9,14 +9,6 @@ const worksheet = workbook.Sheets[sheetName];
 const data = XLSX.utils.sheet_to_json(worksheet, { raw: true, skipEmptyLines: true});
 
 
-function returnTypeUser(crm) {
-  if(crm != null || crm != undefined) {
-    return "VETERINARIAN"
-  } else {
-    return "UNDEFINED"
-  }
-}
-
 const filteredData = data.map(exam => ({
     name: exam.nomeexame, 
     price: exam.preçoexame,
@@ -28,7 +20,7 @@ const filteredData = data.map(exam => ({
     examsType: exam.Laboratorial ? "['lab']": "['image']",
   }));
 
- async function populeDb () {
+ export async function PopulateExams () {
      try {
 
 
@@ -40,11 +32,10 @@ const filteredData = data.map(exam => ({
           })
     
       }
-      console.log("Banco populado")
+      console.log("Banco populado Exams")
       
      } catch (error) {
       console.log(error);
      }
  } 
 
- populeDb()

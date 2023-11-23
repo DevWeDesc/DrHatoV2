@@ -32,7 +32,7 @@ const filteredData = data // Filtra linhas com Nome e senha preenchidos
   kindPerson: user.Juridica === true ? "Fisica" : "Juridica"
   }));
 
- async function populeDb () {
+ export async function PopulateCustomer () {
      try {
         const uniqueCpfs = new Set();
       for await(const user of filteredData) {
@@ -52,10 +52,10 @@ const filteredData = data // Filtra linhas com Nome e senha preenchidos
           }
 
       }
-      console.log("Banco populado")
+      console.log("Banco populado Customers")
      } catch (error) {
       console.log(error);
      }
  } 
 
- populeDb()
+ 

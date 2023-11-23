@@ -7,4 +7,5 @@ export async function searchsRoutes(app: FastifyInstance) {
   app.get("/queryall", searchController.getAll);
   app.get("/vetmenusearch/:page", searchController.searchVetMenu)
   app.get("/searchcodpet/:codPet", searchController.getByCodPet)
+  app.get("/labmenusearch", searchController.searchLabMenu)
 }

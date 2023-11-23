@@ -58,15 +58,15 @@ export default function ListMedicines() {
     GetMedicineGroups()
   }, [])
   return (
-    <Box w="90%" bg="gray.200" height="800px" p="8" rounded="lg">
+    <Box w="90%" bg="gray.200" height="800px" p="8" rounded="lg" overflowY="auto">
       <TableContainer w="100%"  display="flex">
-        <Table h="100%" overflowY="auto" >
+        <Table h="100%" >
           <Thead>
             <Tr>
               <Th  border="2px" bgColor="cyan.100" fontSize="20" display="flex" justifyContent="space-between">Tipos de Medicamentos <FaClipboardList color="gray" size={26}  /></Th>
             </Tr>
           </Thead>
-          <Tbody  >
+          <Tbody   >
             {medicinesGroups.map((medicine) => (
               <Tr
              
