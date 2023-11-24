@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Pets" ALTER COLUMN "rga" DROP NOT NULL;

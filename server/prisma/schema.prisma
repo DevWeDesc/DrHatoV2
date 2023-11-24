@@ -494,3 +494,59 @@ model MedicinesForPets {
 }
 
 // -------------- Medicines ----------------- //
+
+// -------------- Exames Old Version ----------------- //
+
+model OldExams {
+  codexam           Int         @id @default(autoincrement())
+  name              String
+  price             Float
+  onePart           Boolean?
+  twoPart           Boolean?
+  byReport          Boolean?
+  ageGroups         Int?        @default(3)
+  disponible        Boolean?
+  minAge            Int?        @default(0)
+  maxAge            Int?        @default(9999)
+  applicableMales   Boolean?
+  appicableFemales  Boolean?
+  defaultMetodology String?
+  uniqueCod         String?
+  sector            Int?
+  ImageLab          Boolean?
+  defaultLab        Boolean?
+  healthPlan        Boolean?
+  impressName       String?
+  partExams         PartExams[]
+}
+
+model PartExams {
+  id              Int       @id @default(autoincrement())
+  codpart         Int?      @unique
+  OldExams        OldExams? @relation(fields: [oldExamsCodexam], references: [codexam])
+  oldExamsCodexam Int?
+
+  examsDetails PartDetails[]
+  partName     String
+  isFirst      Boolean
+}
+
+model PartDetails {
+  id               Int        @id @default(autoincrement())
+  codDetalhe       Int?       @unique
+  PartExams        PartExams? @relation(fields: [partExamsCodpart], references: [codpart])
+  partExamsCodpart Int?
+  caracteristic    String?
+  relativeUnit     String?
+  absoluteUnit     String?
+  agesOne          String?
+  minAgesOne       String?
+  maxAgesOne       String?
+  agesTwo          String?
+  minAgesTwo       String?
+  maxAgesTwo       String?
+  agesThree        String?
+  minAgesThree     String?
+  maxAgesThree     String?
+  parts            Int?
+}
