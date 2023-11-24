@@ -126,6 +126,7 @@ searchLabMenu: async (request: FastifyRequest<{
 
       const labSearchMenu = new LabsMenuSearch()
 
+      
 
       const {data} = await labSearchMenu.getWithParams({petCode, petName, solicitedBy})
 

@@ -25,6 +25,8 @@ export const autorizationsController = {
     const autorization = await prisma.autorizations.findFirst({
         where: { id: parseInt(id)}
     })
+
+    
     reply.send(autorization)
     },
 
