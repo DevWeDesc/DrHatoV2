@@ -7,12 +7,14 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { ToastContainer } from "react-toastify";
 import { Router } from "./Router";
 import { BoxContextProvider } from "./contexts/BoxContext";
+import { ModalProvider } from "./hooks/useModal";
 
 function App() {
   return (
     <ChakraProvider theme={defaultTheme}>
       <DbContextProvider>
         <BoxContextProvider>
+          <ModalProvider>
 
        
         <ThemeProvider theme={defaultTheme}>
@@ -23,6 +25,7 @@ function App() {
           </BrowserRouter>
           <ToastContainer autoClose={3000} />
         </ThemeProvider>
+        </ModalProvider>
         </BoxContextProvider>
       </DbContextProvider>
     </ChakraProvider>

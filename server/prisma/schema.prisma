@@ -22,15 +22,16 @@ enum UserRoles {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  email     String?    @unique
-  username  String?    @unique
-  name      String?
-  password  String
-  role      UserRoles?
-  crmv      String?
-  userIsVet Boolean?   @default(false)
-  userType  String[]
+  id          Int        @id @default(autoincrement())
+  email       String?    @unique
+  username    String?    @unique
+  consultName String?
+  name        String?
+  password    String
+  role        UserRoles?
+  crmv        String?
+  userIsVet   Boolean?   @default(false)
+  userType    String[]
 }
 
 model Customer {
@@ -90,10 +91,10 @@ model Autorizations {
 }
 
 model MedicineRecord {
-  id            Int                @id @default(autoincrement())
-  observations  String[]           @default([""])
-  petId         Int                @unique
-  pet           Pets               @relation(fields: [petId], references: [id])
+  id            Int                    @id @default(autoincrement())
+  observations  String[]               @default([""])
+  petId         Int                    @unique
+  pet           Pets                   @relation(fields: [petId], references: [id])
   petExams      ExamsForPet[]
   petVaccines   VaccinesForPet[]
   petSurgeries  SurgeriesForPet[]
@@ -101,6 +102,7 @@ model MedicineRecord {
   petBeds       BedsForPet[]
   petQueues     QueuesForPet[]
   petMedicines  MedicinesForPets[]
+  petConsults   OpenedConsultsForPet[]
 }
 
 model Sectors {
@@ -166,6 +168,7 @@ model Queues {
   vetPreference String?
   queueEntry    DateTime?
   queueExit     DateTime?
+  openConsultId String?
   queueOur      String?
   moreInfos     String?
   petIsInQueue  Boolean?  @default(false)
@@ -185,6 +188,22 @@ model QueuesForPet {
   observations            String?
   medicine_id             Int
   medicine                MedicineRecord @relation(fields: [medicine_id], references: [id])
+}
+
+model OpenedConsultsForPet {
+  id               String              @id @default(uuid())
+  openedDate       DateTime            @default(now())
+  closedDate       DateTime?
+  updatedDate      DateTime?
+  isClosed         Boolean?
+  closedByVetId    Int?
+  petWeight        String?
+  observations     String?
+  consultType      String?
+  totaLDebits      Decimal?
+  consultDebits    PetConsultsDebits[]
+  MedicineRecord   MedicineRecord?     @relation(fields: [medicineRecordId], references: [id])
+  medicineRecordId Int?
 }
 
 //  ------------- ADMISSIONS -------------   //
@@ -297,6 +316,25 @@ model SurgeriesReports {
 // -------------- SURGERIES ----------------- //
 
 // -------------- FINANCES ----------------- //
+model PetConsultsDebits {
+  id                 Int      @id @default(autoincrement())
+  name               String?
+  price              Decimal?
+  itemId             Int?
+  isExam             Boolean?
+  isSurgerie         Boolean?
+  isVaccine          Boolean?
+  isProcedure        Boolean?
+  isAdmission        Boolean?
+  RequestedByVetId   Int?
+  RequestedByVetName String?
+  requestedDate      DateTime @default(now())
+  consultOpenedId    String?  @unique
+
+  OpenedConsultsForPet   OpenedConsultsForPet? @relation(fields: [openedConsultsForPetId], references: [id])
+  openedConsultsForPetId String?
+}
+
 model PricesAccumulator {
   id          Int      @id @default(autoincrement())
   petId       Int      @unique

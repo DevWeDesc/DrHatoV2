@@ -33,12 +33,9 @@ export function ListExams() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
-  const [isModalOpenThree, setIsModalOpenThree] = useState(false);
   const [loading, setLoading] = useState(false);
   const [exams, setExams] = useState([] as any);
-  const [examsIds, setExamsIds] = useState<number[]>([])
-  const [mergedExamName, setMergedExamName] = useState("")
-  const [mergedExamPrice, setMergedExamPrice] = useState(0)
+
 
 
   function openModal() {
@@ -57,8 +54,8 @@ export function ListExams() {
 
 
   const getExamesListData = async () => {
-    const exams = await api.get("exams");
-    setExams(exams.data);
+    const exams = await api.get("/exams/old/all");
+    setExams(exams.data.exams);
   
   };
   useEffect(() => {
@@ -128,6 +125,7 @@ export function ListExams() {
           w="100%"
           py="8"
           fontSize="20"
+          isDisabled={true}
           colorScheme="whatsapp"
           leftIcon={<Icon as={RiAddLine} />}
           onClick={() => openModalTwo()}
@@ -146,8 +144,12 @@ export function ListExams() {
               Preço
             </Th>
             <Th fontSize="21" borderColor="black">
-              Disponivel ?
+              Disponivel
             </Th>
+            <Th fontSize="21" borderColor="black">
+              Duas Partes
+            </Th>
+           
             <Th width="8" borderColor="black"></Th>
             <Th width="8" borderColor="black"></Th>
           </Tr>
@@ -178,9 +180,18 @@ export function ListExams() {
                     }).format(exam.price)}
                   </Text>
                 </Td>
-                <Td borderColor="black">
-                  {exam.available === true ? <p>SIM</p> : <p>NÃO</p>}
+                <Td  
+                fontWeight="bold"
+                color="gray.800"
+                borderColor="black"
+                bgColor={exam.disponible ? "green.200" : "red.100"}
+                >
+                        
+                  {exam.disponible ? "SIM" : "NÃO"}
                 </Td>
+                <Td  fontWeight="bold"
+                        color="gray.800"
+                        borderColor="black">{exam.twoPart ? "SIM" : "NÃO"}</Td>
                 <Td borderColor="black">
                   {" "}
                   <ConfirmationDialog

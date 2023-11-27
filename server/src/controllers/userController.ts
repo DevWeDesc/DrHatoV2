@@ -66,9 +66,11 @@ loginUser: async(request: FastifyRequest, reply: FastifyReply)=> {
     }
 
     const userData = {
+      id: user.id,
       crm: user?.crmv,
       username: user?.username,
-      name: user.name
+      name: user.name,
+      consultName: user.consultName
     }
     
   
@@ -164,7 +166,8 @@ getVetUsers: async (request: FastifyRequest, reply: FastifyReply) => {
       username: true,
       id: true,
       crmv: true,
-      name: true
+      name: true,
+      consultName: true
     }
 
   })
@@ -175,5 +178,24 @@ getVetUsers: async (request: FastifyRequest, reply: FastifyReply) => {
     console.error(error)
     reply.status(400).send({message: error})
   }
+},
+
+searchVetByName: async (request: FastifyRequest<{
+  Params: { consultName: string}
+}>, reply: FastifyReply) => {
+try {
+  const {consultName} = request.params
+  const vets = await prisma.user.findMany({
+    where: {
+      consultName: {contains: consultName},
+      role: 'VETERINARIAN'
+    }})
+
+
+    reply.send(vets)
+
+} catch (error) {
+    reply.send(error)
+}
 }
 }

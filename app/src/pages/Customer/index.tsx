@@ -1,3 +1,6 @@
+import { useEffect, useState, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../../lib/axios";
 import {
   Text,
   Flex,
@@ -17,11 +20,11 @@ import {
   Input,
   Select,
 } from "@chakra-ui/react";
-import { useEffect, useState, useContext } from "react";
+import { Input as AdminInput } from "../../components/admin/Input";
 import { AiFillTags, BiHome, TbArrowBack } from "react-icons/all";
 import { toast } from "react-toastify";
-import { useNavigate, useParams } from "react-router-dom";
-import { api } from "../../lib/axios";
+
+
 import {
   WorkSpaceContainer,
   WorkSpaceContent,
@@ -50,6 +53,7 @@ interface CustomerProps {
 type VetsProps = {
   username: string;
   id: number;
+  consultName: string;
 }
 
 export function CustomerDetails() {
@@ -77,6 +81,10 @@ export function CustomerDetails() {
   const [petSelected, setPetSelected] = useState<any>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [reload, setReload] = useState(false);
+  const [vetName, setVetName] = useState("");
+
+
+
   async function loadCustomer() {
     const response = await api.get(`/customers/${id}`);
     setCustomer(response.data);
@@ -87,15 +95,23 @@ export function CustomerDetails() {
     setUserVets(response.data.vets);
   }
 
+  async function loadVetsByName() {
+    const response = await api.get(`/users/vets/name/${vetName}`);
+    setUserVets(response.data);
+  }
+
   useEffect(() => {
     loadVets()
     loadCustomer();
   }, []);
 
   useEffect(() => {
+    loadVetsByName()
+  }, [vetName])
+
+  useEffect(() => {
     if (reload === true) {
       loadCustomer();
-
       setReload(false);
     }
   }, [reload]);
@@ -121,12 +137,10 @@ export function CustomerDetails() {
       };
       if (!!queryType && !!petSelected.id && !!vetPreference) {
         await api.put(`queue/${petSelected.id}`, data);
+    
         toast.success("Pet colocado na fila com sucesso!");
       } else {
-        toast.error(`Antes de colocar o Pet na Fila e necessário selecionar todos campos obrigatórios\n
-        1. Selecione o Pet\n,
-        2. Selecione o Tipo de Atendimento\n
-        3. Selecione o Veterinário`);
+        toast.error(`Selecione Pet/Tipo de Atendimento/Veterinário`);
       }
     } catch (error) {
       toast.error("Falha ao colocar na fila");
@@ -532,11 +546,20 @@ export function CustomerDetails() {
               overflow="auto"
               height="100%"
             >
-              <Flex direction="column" overflow="auto" height="100%">
-                <Text mt="4" fontWeight="bold" pb="2">
-                  SELECIONAR VETERINÁRIO
+              <Flex direction="column" overflow="auto" height="100%"  >
+                <Flex align="center" justify="space-between" gap={8} w="100%" p="2" mb="2" position="relative">
+                <Text  fontWeight="bold" >
+                  SELECIONAR VETERINÁRIO:
                 </Text>
-
+                <Input
+                bgColor="white"
+                w="180px"
+                border="1px"
+                placeholder="Pesquisar"
+                name="searchVet"
+                onChange={(ev) => setVetName(ev.target.value)}
+                />
+                </Flex>
                 {userVets.map((vet) => (
                   <RadioGroup
                     key={vet.id}
@@ -548,9 +571,9 @@ export function CustomerDetails() {
                         mb="2"
                         borderColor="teal.800"
                         colorScheme="green"
-                        value={vet.username.toString()}
+                        value={vet.consultName.toString()}
                       >
-                        {vet.username}
+                        {vet.consultName}
                       </Radio>
                     </Flex>
                   </RadioGroup>

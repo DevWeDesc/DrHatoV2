@@ -1,5 +1,7 @@
+import { PopulateOldExams } from "./CadExamsOld.mjs";
+import { PopulateOldCaractersExams } from "./CadPartDetailsOld.mjs";
+import { PopulatePartDetails } from "./CadPartExamsOld.mjs";
 import { PopulateUsers } from "./transformExcell.mjs";
-import { PopulateExams } from "./transformExcellExams.mjs";
 import { PopulateMGroups } from "./transformExcellMGroups.mjs";
 import { PopulateMedicines } from "./transformExcellMedicines.mjs";
 import { PopulatePets } from "./transformExcellPet.mjs";
@@ -12,11 +14,15 @@ async function PopulateDataBase () {
  await PopulateUsers().then(() => {
             PopulateCustomer().then(() => {
                 PopulatePets().then(() => {
-                    PopulateExams().then(()  => {
-                        PopulateSurgeries().then(() => {
-                            PopulateVaccines().then(() => {
-                                PopulateMGroups().then(() => {
-                                    PopulateMedicines().then(() =>  console.log("TODO BANCO POPULADO COM SUCESSO!"))
+                    PopulateOldExams().then(() => {
+                        PopulatePartDetails().then(() => {
+                            PopulateOldCaractersExams().then(() => {
+                                PopulateSurgeries().then(() => {
+                                    PopulateVaccines().then(() => {
+                                        PopulateMGroups().then(() => {
+                                            PopulateMedicines().then(() =>  console.log("TODO BANCO POPULADO COM SUCESSO!"))
+                                        })
+                                    })
                                 })
                             })
                         })

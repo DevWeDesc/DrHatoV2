@@ -4,15 +4,16 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react";
-
+import {Suspense} from 'react'
 import { BiHome } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { ExamsVet } from "../../../components/Exams";
+import { LoadingSpinner } from "../../../components/Loading";
 
 export function VetExams() {
-  const { id } = useParams<{ id: string }>();
+  const { id, queueId } = useParams<{ id: string; queueId: string; }>();
   const navigate = useNavigate();
   
 
@@ -35,13 +36,16 @@ export function VetExams() {
             <Button
               colorScheme="yellow"
               leftIcon={<TbArrowBack size={24} />}
-              onClick={() => navigate(`/Vets/Workspace/${id}`)}
+              onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
             >
               Voltar
             </Button>
           </Flex>
         </Flex>
+        <Suspense fallback={<LoadingSpinner/>}>
         <ExamsVet />
+        </Suspense>
+      
       </Flex>
     </ChakraProvider>
   );

@@ -14,7 +14,7 @@ import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 
 export function EditPets() {
-  const { id } = useParams();
+  const { id , queueId} = useParams<{ id: string; queueId: string; }>();
   const navigate = useNavigate();
   return (
     <ChakraProvider>
@@ -51,7 +51,7 @@ export function EditPets() {
           <GenericSidebar>
             <GenericLink
               name="Voltar"
-              path={`/Vets/Workspace/${id}`}
+              path={`/Vets/Workspace/${id}/${queueId}`}
               icon={BiLeftArrowAlt}
             />
           </GenericSidebar>

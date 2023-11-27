@@ -10,8 +10,9 @@ import {
   Button,
   Checkbox,
   HStack,
+  Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
@@ -19,64 +20,61 @@ import { ExamsProps, PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
 
 export function ExamsVet() {
-  const { id } = useParams<{ id: string }>();
+  const { id , queueId} = useParams<{ id: string; queueId: string; }>();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
-  const [mergedExams, setMergedExams] = useState([])
   const [exams, setExams] = useState([]);
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
+  const [examName, setExamName] = useState("");
+  const [searchByLetter, setSearchByLetter] = useState("");
 
   async function getPetExams() {
     const response = await api.get(`/pets/${id}`);
     setPetDetails(response.data);
 
-    const exams = await api.get("/exams");
-    setExams(exams.data);
-
-
-    const mergedExams = await api.get('mergedexams')
-    setMergedExams(mergedExams.data)
-    
+    const exams = await api.get("/exams/old/all");
+    setExams(exams.data.exams);
   }
 
+  async function searchExamByName() {
+    const response = await api.get(`/exams/old/${examName}`);
+    setExams(response.data);
+  }
 
-  
-  async function setExamInPet(examId: number) {
+  async function searchByFirstLetter() {
+    const response = await api.get(`/exams/old/letter/${searchByLetter}`);
+    setExams(response.data);
+  }
+
+  async function setOldExamInPet(examId: number) {
     try {
-        const data = {
-          requestedFor: user.name,
-          requestedCrm: user.crm
-        }
-        await api.post(`/setexam/${examId}/${petDetails.recordId}/${petDetails.totalAcc.id}`, data);
-        setReloadData(true);
-        toast.success("Exame criado com Sucesso");
+      const data = {
+        RequestedByVetId: user.id, 
+        RequestedByVetName: user.consultName, 
+        RequestedCrm: user.crm
+      };
+      await api.post(
+        `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,data);
+      setReloadData(true);
+      toast.success("Exame criado com Sucesso");
     } catch (error) {
       toast.error("Falha ao cadastrar exame!");
     }
   }
-  
-  async function setMergedExamId(examId: number) {
-    try {
-      const data = {
-        requestedFor: user.username
-      }
-      await api.post(`/setmergedexam/${examId}/${petDetails.recordId}/${petDetails.totalAcc.id}`, data);
-      setReloadData(true);
-      toast.success("Exame criado com Sucesso");
-  } catch (error) {
-    toast.error("Falha ao cadastrar exame!");
-  }
-  }
 
-
-  async function deleteExam(examId: string | number, examPrice: string | number) {
+  async function deleteExam(
+    examId: string | number,
+    examPrice: string | number
+  ) {
     try {
       const confirmation = window.confirm(
         "DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
       );
 
       if (confirmation === true) {
-        await api.delete(`/petexam/${examId}/${petDetails.totalAcc.id}/${examPrice}`);
+        await api.delete(
+          `/petexam/${examId}/${petDetails.totalAcc.id}/${examPrice}`
+        );
         setReloadData(true);
         toast.warning("Deletado com sucesso!");
       } else {
@@ -87,6 +85,35 @@ export function ExamsVet() {
       console.log(error);
     }
   }
+
+  const SearchAlfabet = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+  ];
 
   useEffect(() => {
     getPetExams();
@@ -99,11 +126,17 @@ export function ExamsVet() {
     }
   }, [reloadData]);
 
-  // console.log("ESTADO DE CHAMADA  API", petDetails);
+  useEffect(() => {
+    searchExamByName();
+  }, [examName]);
+
+  useEffect(() => {
+    searchByFirstLetter();
+  }, [searchByLetter]);
 
   return (
     <>
-      <Flex w="100%" height="45vh" align="center" overflowY="auto">
+      <Flex w="100%" height="35vh" align="center" overflowY="auto">
         <TableContainer overflowY="auto" w="100%" height="100%">
           <Table>
             <Thead>
@@ -145,7 +178,11 @@ export function ExamsVet() {
                     {exam.coleted != null ? exam.coleted : "Sem coleta"}
                   </Td>
                   <Td border="2px" fontSize="1xl" fontWeight="bold">
-                    {new Intl.DateTimeFormat('pt-BR').format(new Date(exam.requestedData ? exam.requestedData : new Date()))}
+                    {new Intl.DateTimeFormat("pt-BR").format(
+                      new Date(
+                        exam.requestedData ? exam.requestedData : new Date()
+                      )
+                    )}
                   </Td>
                   <Td border="2px" fontSize="1xl" fontWeight="bold">
                     {exam.doneExam === true ? "SIM" : "NÃO"}
@@ -165,13 +202,12 @@ export function ExamsVet() {
                   </Td>
                 </Tr>
               ))}
-              
             </Tbody>
           </Table>
         </TableContainer>
       </Flex>
 
-      <Flex w="100%" height="45vh" direction="column">
+      <Flex w="100%" height="65vh" direction="column">
         <Flex
           height="48px"
           w="100%"
@@ -181,25 +217,35 @@ export function ExamsVet() {
           gap={4}
         >
           <HStack>
-            {petDetails.more !== "" ? (
-              <Button colorScheme="blue" w="300px">
-                PetLove
-              </Button>
-            ) : (
-              <></>
-            )}
-            <Input height="38px" name="filter" />
+            <Button colorScheme="teal">Filtrar</Button>
+            <Input
+              placeholder="Nome do Exame"
+              height="38px"
+              name="filter"
+              onChange={(ev) => setExamName(ev.target.value)}
+            />
           </HStack>
-          <Button colorScheme="teal">
-          Filtrar
-          </Button>
+          <HStack spacing={2}>
+            {SearchAlfabet.map((letter) => (
+              <Button
+                _hover={{
+                  bgColor: "green.300",
+                }}
+                colorScheme="whatsapp"
+                onClick={() => setSearchByLetter(letter)}
+                fontWeight="bold"
+                fontSize="22px"
+              >
+                {letter.toUpperCase()}
+              </Button>
+            ))}
+          </HStack>
         </Flex>
         <TableContainer w="100%" height="100%" overflowY="auto">
           <Table>
             <Thead>
               <Tr>
-                
-                <Th color="black" fontSize="1xl" border="2px"  w="40%">
+                <Th color="black" fontSize="1xl" border="2px" w="40%">
                   NOME
                 </Th>
                 <Th color="black" fontSize="1xl" border="2px" w="40%">
@@ -212,17 +258,18 @@ export function ExamsVet() {
             </Thead>
             <Tbody>
               {exams.map((exam: ExamsProps) => (
-                <Tr key={exam.id}>
+                <Tr key={exam.codexam}>
                   <Td border="2px">{exam.name}</Td>
                   <Td border="2px">R$ {exam.price}</Td>
-                  <Td border="2px" ><Button w="100%" onClick={() => setExamInPet(exam.id)} colorScheme="whatsapp">INCLUIR EXAME</Button></Td>
-                </Tr>
-              ))}
-              {mergedExams.map((exam: ExamsProps) => (
-                <Tr key={exam.id}>
-                  <Td border="2px">{exam.name}</Td>
-                  <Td border="2px">R$ {exam.price}</Td>
-                  <Td border="2px" ><Button w="100%" onClick={() => setMergedExamId(exam.id)} colorScheme="whatsapp">INCLUIR EXAME</Button></Td>
+                  <Td border="2px">
+                    <Button
+                      w="100%"
+                      onClick={() => setOldExamInPet(exam.codexam)}
+                      colorScheme="whatsapp"
+                    >
+                      INCLUIR EXAME
+                    </Button>
+                  </Td>
                 </Tr>
               ))}
             </Tbody>

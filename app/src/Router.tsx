@@ -228,23 +228,23 @@ eateMedicine
               <Route path="/Vets" element={<VetsList />} />
               <Route path="/Vets/Menu" element={<MenuVet />} />
               <Route path="/Vets/Create" element={<CreateVet />} />
-              <Route path="/Vets/WorkSpace/:id" element={<WorkSpaceVet />} />
+              <Route path="/Vets/WorkSpace/:id/:queueId" element={<WorkSpaceVet />} />
 
               {/* VETS WORKSPACE PATHS */}
-              <Route path="/WorkSpace/Exam/:id" element={<VetExams />} />
+              <Route path="/WorkSpace/Exam/:id/:queueId" element={<VetExams />} />
               <Route
-                path="/WorkSpace/Procedures/:id"
+                path="/WorkSpace/Procedures/:id/:queueId"
                 element={<ProceduresVet />}
               />
-              <Route path="/WorkSpace/Vaccines/:id" element={<Vaccines />} />
+              <Route path="/WorkSpace/Vaccines/:id/:queueId" element={<Vaccines />} />
               <Route path="/WorkSpace/Protocols/:id" element={<Protocols />} />
         
               <Route
-                path="/WorkSpace/Admissions/:id"
+                path="/WorkSpace/Admissions/:id/:queueId"
                 element={<VetsAdmissions />}
               />
               <Route
-                path="/WorkSpace/Surgeries/:id"
+                path="/WorkSpace/Surgeries/:id/:queueId"
                 element={<VetsSurgeries />}
               />
               <Route  path="/WorkSpace/ExamsDetails/:examId" element={<ExamsDetails/>}  />
@@ -320,7 +320,7 @@ eateMedicine
                 element={<CreatePets />}
               />
               <Route
-                path="/Recepcao/Consultas/Clientes/Pets/Edit/:id"
+                path="/Recepcao/Consultas/Clientes/Pets/Edit/:id/:queueId"
                 element={<EditPets />}
               />
               <Route

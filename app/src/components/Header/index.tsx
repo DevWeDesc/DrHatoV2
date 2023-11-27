@@ -54,7 +54,7 @@ export function Header() {
         
           <Menu>
             <MenuButton as={Button} rightIcon={<ArrowDown />}>
-              {user.name}
+              {user.consultName}
             </MenuButton>
             <MenuList>
               <Flex direction="column" gap="2">

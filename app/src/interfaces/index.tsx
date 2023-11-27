@@ -122,6 +122,7 @@ export interface CreateUserFormData {
 
 export interface ExamsProps {
   id: number;
+  codexam: number;
   requestedData: string;
   name: string;
   price: string;

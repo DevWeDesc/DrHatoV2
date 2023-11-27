@@ -76,7 +76,7 @@ export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
 
         <Flex align="center" direction="column">
           <Text fontSize="md" fontWeight="bold">
-            {user.name}
+            {user.consultName ? user.consultName : "Realizar Login"}
           </Text>
           <Link to={url ? url : "/Home"}>
             <Button colorScheme="yellow" leftIcon={<TbArrowBack size={24} />}>

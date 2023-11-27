@@ -27,22 +27,19 @@ import {
   MdPets,
   TbArrowBack,
   TbMedicalCrossFilled,
-  CiStethoscope,
-  MdAttachMoney,
   GiMedicines,
 } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent, useContext } from "react";
 import { api } from "../../lib/axios";
-import { GenericModal } from "../../components/Modal/GenericModal";
-import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
 import { PetDetaisl } from "../../interfaces";
-import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 import { toast } from "react-toastify";
 import { Textarea } from "@chakra-ui/react";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import * as pdfMake from "pdfmake/build/pdfmake";
-import * as pdfFonts from "pdfmake/build/vfs_fonts";
+import { ModalContext, ModalProvider } from "../../hooks/useModal";
+import { GenericModal } from "../../components/Modal/GenericModal";
+import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
 import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
 import { SetMedicineInPet } from "../../components/Medicine/SetMedicineInPet";
 import { VetInstructions } from "./WorkSpaceVets/instructions";
@@ -55,23 +52,28 @@ type OpenExamProps = {
 }
 
 export function WorkSpaceVet() {
-  const { id } = useParams<{ id: string }>();
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate();
   const [pet, setPet] = useState({} as PetDetaisl);
+  const {setModalWeigthPet,
+    setAutorizationModalOpen,
+    closeAutorizationModal,closeInstructionModal,closeModal,closeMedicineModal,insInstructionsModalOpen,isAutorizationModalOpen,isMedicineModalOpen,isModalOpen,modalWeigthPet,setInstructionModalOpen
+    ,setIsModalOpen, setMedicineModalOpen, closeEndQueueModal, isEndConsultQueue, setIsEndConsultQueue
+  } = useContext(ModalContext)
   const [handleViewComponent, setHandleViewComponent] = useState("");
   const [petWeigth, setPetWeigth] = useState("")
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAutorizationModalOpen, setAutorizationModalOpen] = useState(false);
-  const [insInstructionsModalOpen, setInstructionModalOpen] = useState(false);
-  const [isMedicineModalOpen, setMedicineModalOpen] = useState(false);
   const [reloadData, setReloadData] = useState(false);
   const [viewComponentPrint, setViewComponentPrint] = useState("");
   const [PdfDiagnostic, setPdfDiagnostic] = useState("");
   const [PdfPrescrition, setPdfPrescrition] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
-  const [modalWeigthPet, setModalWeigthPet] = useState(false);
   const [petObservations, setPetObservations] = useState("")
 
+  const handleChangePet = async (newPetId: number) => {
+    navigate(`/Vets/Workspace/${newPetId}`);
+    setReloadData(true);
+  };
+  
   function handleCreateInstruction(text: string) {
 
 
@@ -83,33 +85,6 @@ export function WorkSpaceVet() {
     pdfMake.createPdf(docDefinition).open();
   }
 
-  function openModal() {
-    setIsModalOpen(true);
-  }
-  function closeModal() {
-    setIsModalOpen(false);
-  }
-  function openAutorizationModal() {
-    setAutorizationModalOpen(true);
-  }
-  function closeAutorizationModal() {
-    setAutorizationModalOpen(false);
-  }
-
-  function openInstructionModal() {
-    setInstructionModalOpen(true);
-  }
-  function closeInstructionModal() {
-    setInstructionModalOpen(false);
-  }
-
-  function openMedicineModal() {
-      setMedicineModalOpen(true);
-  }
-
-  function closeMedicineModal() {
-    setMedicineModalOpen(false);
-  }
 
   function handleOpenResultExams({isOnePart, isMultiPart, isReportByText, examId}: OpenExamProps) {
     if (isOnePart === true) {
@@ -125,10 +100,7 @@ export function WorkSpaceVet() {
     } 
   }
 
-  const handleChangePet = async (newPetId: number) => {
-    navigate(`/Vets/Workspace/${newPetId}`);
-    setReloadData(true);
-  };
+
 
   const handleChangePetWeight = async (weigth: string) => {
     try {
@@ -313,8 +285,12 @@ export function WorkSpaceVet() {
 
   console.log("examss", pet.exams)
 
-  return (
+  return (  
+    
     <ChakraProvider>
+    
+
+     
       <WorkSpaceContainer>
         <WorkSpaceHeader>
           <Flex
@@ -355,7 +331,7 @@ export function WorkSpaceVet() {
               overflowX="auto"
             >
               <Button
-                onClick={() => openModal()}
+                onClick={() => setIsModalOpen(true)}
                 height={8}
                 colorScheme="whatsapp"
               >
@@ -364,14 +340,14 @@ export function WorkSpaceVet() {
               <Button
                 height={8}
                 colorScheme="whatsapp"
-                onClick={() => openInstructionModal()}
+                onClick={() => setInstructionModalOpen(true)}
               >
                 INSTRUÇÕES PROPRIETÁRIO
               </Button>
               <Button
                 height={8}
                 colorScheme="whatsapp"
-                onClick={() => openAutorizationModal()}
+                onClick={() => setAutorizationModalOpen(true)}
               >
                 AUTORIZAÇÕES
               </Button>
@@ -386,13 +362,13 @@ export function WorkSpaceVet() {
                 isDisabled={pet.isBusy}
                 height={8}
                 colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Exam/${id}`)}
+                onClick={() => navigate(`/WorkSpace/Exam/${id}/${queueId}`)}
               >
                 EXAMES
               </Button>
               <Button
                 isDisabled={pet.isBusy}
-                onClick={() => navigate(`/WorkSpace/Procedures/${id}`)}
+                onClick={() => navigate(`/WorkSpace/Procedures/${id}/${queueId}`)}
                 height={8}
                 colorScheme="whatsapp"
               >
@@ -402,7 +378,7 @@ export function WorkSpaceVet() {
                 isDisabled={pet.isBusy}
                 height={8}
                 colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Vaccines/${id}`)}
+                onClick={() => navigate(`/WorkSpace/Vaccines/${id}/${queueId}`)}
               >
                 VACINAS
               </Button>
@@ -410,7 +386,7 @@ export function WorkSpaceVet() {
                 isDisabled={pet.isBusy}
                 height={8}
                 colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Surgeries/${id}`)}
+                onClick={() => navigate(`/WorkSpace/Surgeries/${id}/${queueId}`)}
               >
                 CIRURGIAS
               </Button>
@@ -418,7 +394,7 @@ export function WorkSpaceVet() {
                 isDisabled={pet.isBusy}
                 height={8}
                 colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Admissions/${id}`)}
+                onClick={() => navigate(`/WorkSpace/Admissions/${id}/${queueId}`)}
               >
                 INTERNAR
               </Button>
@@ -428,7 +404,7 @@ export function WorkSpaceVet() {
                 height={8}
                 gap={2}
                 colorScheme="whatsapp"
-                onClick={() => openMedicineModal()}
+                onClick={() => setMedicineModalOpen(true)}
               >
                 Medicar Animal
               </Button>
@@ -442,14 +418,11 @@ export function WorkSpaceVet() {
                 PRONTUÁRIO DO PET
               </Button>
 
-              <ConfirmationDialog
-                disabled={pet.queue?.petIsInQueue === false ? true : false}
-                icon={<CiStethoscope fill="white" size={24} />}
-                buttonTitle="Concluir Consulta"
-                whatIsConfirmerd="Tem certeza que deseja encerrar consulta ?"
-                describreConfirm="Encerrar a consulta registra todos débitos desta consulta no pet, e é uma ação irreversivel !!"
-                callbackFn={handleCloseQuery}
-              />
+            <Button colorScheme="red"
+            onClick={() => setIsEndConsultQueue(true)}
+            >
+              Concluir Consulta
+            </Button>
 
             </Flex>
           </Flex>
@@ -540,7 +513,7 @@ export function WorkSpaceVet() {
                   bgColor="gray.100"
                   cursor="pointer"
                   onClick={() =>
-                    navigate(`/Recepcao/Consultas/Clientes/Pets/Edit/${id}`)
+                    navigate(`/Recepcao/Consultas/Clientes/Pets/Edit/${id}/${queueId}`)
                   }
                 >
                   {`${pet.name}, ${pet.race}`}
@@ -600,20 +573,7 @@ export function WorkSpaceVet() {
                 >
                   {pet.more != "" ? "PetLove" : "Sem plano de Saúde"}
                 </Text>
-                {/* <Select
-                    border="1px"
-                    height="26px"
-                    width="100%"
-                    rounded="4px"
-                    fontWeight="bold"
-                    textAlign="center"
-                    bgColor="gray.100"
-                    placeholder="Selecione uma Opção"
-                    value={pet.more != "" ? "PetLove" : "Sem plano de Saúde"}
-                  >
-                    <option value="option1">Não tenho plano de saúde</option>
-                    <option value="option2">Pet Love</option>
-                  </Select> */}
+      
               </VStack>
             </Flex>
             <Flex direction="column" mx="4">
@@ -779,6 +739,7 @@ export function WorkSpaceVet() {
           </Flex>
         </WorkSpaceFooter>
       </WorkSpaceContainer>
+
       <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
         <Flex direction="column" gap="4" border="2px" m="4" p="4" rounded={8}>
           <Button colorScheme="whatsapp">FICHA ANESTÉSICA PERSONALIZADA</Button>
@@ -822,6 +783,13 @@ export function WorkSpaceVet() {
       >
         <VetInstructions />
       </GenericModal>
+      <GenericModal
+       isOpen={isEndConsultQueue}
+       onRequestClose={closeEndQueueModal}
+      >
+
+      </GenericModal>
+   
     </ChakraProvider>
   );
 }

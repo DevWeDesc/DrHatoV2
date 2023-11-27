@@ -16,8 +16,21 @@ export const queueController = {
     setPetInQueue: async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
         const {queueEntry, queryType, vetPreference, petIsInQueue, moreInfos, queueOur} = QueueSchema.parse(request.body)
         const { id } = request.params
-        try {
-           await prisma.queues.update({where: {id: parseInt(id) }, data: {queueEntry, queryType, vetPreference,petIsInQueue, moreInfos, queueOur } })
+        try { 
+
+            await prisma.openedConsultsForPet.create({
+              data: {
+                openedDate: queueEntry,
+                consultType: queryType,
+                MedicineRecord: {
+                  connect: {petId: parseInt(id)}
+                }
+              }
+            }).then(async (res) => {
+              await prisma.queues.update({where: {id: parseInt(id) }, data: {queueEntry, queryType, vetPreference,petIsInQueue, moreInfos, queueOur, 
+              openConsultId: res.id } })
+            })
+
            reply.status(200).send("Status da fila Atualizada")
         } catch (error) {
          console.error(error)

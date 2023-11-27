@@ -15,7 +15,7 @@ const filteredData = data.map(exam => ({
     codexame: exam.codexame
   }));
 
- export async function PopulateOldExams () {
+ export async function PopulatePartDetails () {
      try {
 
 
@@ -46,4 +46,3 @@ const filteredData = data.map(exam => ({
      }
  } 
 
- PopulateOldExams ()

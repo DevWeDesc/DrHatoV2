@@ -58,9 +58,11 @@ export function LoginForm() {
             localStorage.setItem(
               "user",
               JSON.stringify({
+                id: res.data.userData.id,
                 crm: res.data.userData.crm,
                 username: res.data.userData.username,
-                name: res.data.userData.name
+                name: res.data.userData.name,
+                consultName: res.data.userData.consultName
               })
             );
             //console.log(localStorage);

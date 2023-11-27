@@ -13,6 +13,7 @@ app.delete('/users/:id' , userController.deleteUser)
 
 
 app.get('/users/vets', userController.getVetUsers)
+app.get('/users/vets/name/:consultName',userController.searchVetByName)
 }
 
 

@@ -246,13 +246,15 @@ export const petsController = {
         include: {
           queue: {
             select: {
+              id: true,
               vetPreference: true,
               queryType: true,
               queueEntry: true,
               petIsInQueue: true,
               queueExit: true,
               queueOur: true,
-              moreInfos: true
+              moreInfos: true,
+              openConsultId: true
             }
           },
           customer: { select: { name: true, vetPreference: true, cpf: true } }
@@ -268,7 +270,9 @@ export const petsController = {
           id: pet.id,
           customerName: pet.customer.name,
           vetPreference: pet.queue?.vetPreference,
-          codPet: pet.codPet.substring(0, 6).concat('...'),
+          queueId: pet.queue?.id,
+          consultUniqueId: pet.queue?.openConsultId,
+          codPet: pet.CodAnimal,
           queueEntry: pet.queue?.queueEntry,
           ouor: pet.queue?.queueOur,
           especie: pet.especie,

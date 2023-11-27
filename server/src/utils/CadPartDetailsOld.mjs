@@ -26,7 +26,7 @@ const filteredData = data.filter((exam => exam.Caracteristica)).map(exam => ({
   parts        : exam.parte,
   }));
 
- export async function PopulateOldExams () {
+ export async function PopulateOldCaractersExams () {
      try {
      for await (const exams of filteredData) {
         try {
@@ -64,5 +64,5 @@ const filteredData = data.filter((exam => exam.Caracteristica)).map(exam => ({
      }
  } 
 
-PopulateOldExams ()
+
 

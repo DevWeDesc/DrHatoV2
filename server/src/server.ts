@@ -21,6 +21,7 @@ import { boxRoutes } from './routes/box.routes'
 import { accountsRoutes } from './routes/accounts.routes'
 import { medicinesRoutes } from './routes/medicines.routes'
 import { oldExamsRoutes } from './routes/old.exams.routes'
+import { petDebitsRoutes } from './routes/pets.debits.routes'
 
 const app = fastify()
 app.register(cors, {origin: true})
@@ -28,6 +29,7 @@ app.register(userRoutes)
 app.register(transactionRoutes)
 app.register(customersRoutes)
 app.register(petRoutes)
+app.register(petDebitsRoutes)
 app.register(autorizationRoutes)
 app.register(oldExamsRoutes)
 app.register(examsRoutes)

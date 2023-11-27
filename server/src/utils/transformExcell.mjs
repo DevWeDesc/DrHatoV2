@@ -22,7 +22,8 @@ const filteredData = data
   .map(user => ({
     password: user.senha, 
     username: user.Nome,
-    userType: ['admin'],
+    consultName: user.NomeCompleto,
+    userType: ['user'],
     crmv: user.crm,
     role: returnTypeUser(user.crm)
   }));

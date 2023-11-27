@@ -47,7 +47,7 @@ export function MenuVet() {
   const [dataByFilter, setDataByFilter] = useState([] as any)
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
-
+  const user = JSON.parse(localStorage.getItem("user") as string);
 
   function incrementPage() {
     SetPagination(prevCount => pagination < numberOfPages ? prevCount + 1 : numberOfPages);
@@ -123,6 +123,11 @@ export function MenuVet() {
     break
   }
       
+  }
+
+
+  function preferenceName(){
+    
   }
 
   useEffect(() => {
@@ -260,7 +265,7 @@ export function MenuVet() {
                                           key={pet?.id}
                                           cursor="pointer"
                                           
-                                          onClick={() => navigate(`/Vets/Workspace/${pet?.id}`)}
+                                          onClick={() => navigate(`/Vets/Workspace/${pet?.id}/${pet.consultUniqueId}`)}
                                         >
                                           <Td>
                                             <Text colorScheme="whatsapp">
@@ -277,10 +282,10 @@ export function MenuVet() {
                                             {pet?.name ? pet.name : "Não encontrado"}
                                           </Td>
                                           <Td>
-                                            {pet?.CodAnimal  ? pet.codAnimal : "Não encontrado"}
+                                            {pet?.CodAnimal  ? pet.CodAnimal : "Não encontrado"}
                                           </Td>
                                           <Td>{pet?.weigth}</Td>
-                                          <Td>{pet?.customer.vetPreference ? pet?.customer.vetPreference : "Sem Preferência"}</Td>
+                                          <Td> {pet.customer.vetPreference == user.consultName ? pet.vetPreference : "Sem preferência"}</Td>
                                           
                                         </Tr>
                                       )
@@ -307,7 +312,7 @@ export function MenuVet() {
                             <Tr
                               key={pet.id}
                               cursor="pointer"
-                              onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
+                              onClick={() => navigate(`/Vets/Workspace/${pet.id}/${pet.consultUniqueId}`)}
                             >
                               <Td>
                                 <Text colorScheme="whatsapp">{pet.customerCpf}</Text>
@@ -325,7 +330,7 @@ export function MenuVet() {
                               <Td>{pet.queueEntry}</Td>
                               <Td>{pet.ouor}</Td>
                               <Td>
-                                {pet.vetPreference ? pet.vetPreference : 'Sem Preferência'}
+                              {pet.vetPreference == user.consultName ? pet.vetPreference : "Sem preferência"}
                               </Td>
                               <Td>0</Td>
                             </Tr>

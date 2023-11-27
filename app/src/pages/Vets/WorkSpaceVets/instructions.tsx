@@ -5,8 +5,6 @@ import { Button, Flex, Select } from "@chakra-ui/react";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { LoadingSpinner } from "../../../components/Loading";
-import { AutorizationsPdf } from "../../../components/ReactPdfComp/AutorizationPdf";
-
 
 type InstructionsProps = {
   id: number;
@@ -59,7 +57,7 @@ export function VetInstructions() {
       border="2px"
       bgColor="gray.100"
       borderColor="black"
-      placeholder="Selecione a Autorização"
+      placeholder="Selecione a Instrução"
       onChange={(ev) => setfilterInstructionId(Number(ev.target.value))}
     >
       {instructions ? (
