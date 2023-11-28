@@ -158,7 +158,7 @@ export function LabExames() {
                     <Tr
                       key={exam.id}
                       cursor="pointer"
-                      onClick={() => navigate(`/Labs/Set/${exam.id}/${exams.find((data: any) => data.name === exam.name).id}`)}
+                      onClick={() => navigate(`/Labs/Set/${exam.id}/${exams.find((data: any) => data.name === exam.name).codexam}`)}
                     >
                       <Td>{new Intl.DateTimeFormat('pt-BR').format(new Date(exam?.requesteData))} </Td>
 
@@ -166,13 +166,9 @@ export function LabExames() {
 
                       <Td>{exam.name}</Td>
 
-                      <Td>
-                        {exam.responsibleForExam === null
-                          ? "Não Adicionado"
-                          : exam.responsibleForExam}
-                      </Td>
-                      <Td>À Fazer</Td>
-                      <Th>Não Adicionado</Th>
+                      <Td>{exam.requestedFor ? exam.requestedFor : "Não definido"}</Td>
+                      <Td>{exam.doneExame ? "Laudado" : "A Fazer"}</Td>
+                      <Th>{exam.responsibleForExam ? exam.responsibleForExam : "Não Laudado"}</Th>
                     </Tr>
                   )}
 

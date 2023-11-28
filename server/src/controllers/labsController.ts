@@ -19,8 +19,8 @@ export const labsController = {
 
       })
 
-      const examsdefault = await prisma.exams.findMany({
-        select: {id: true, name: true}
+      const examsdefault = await prisma.oldExams.findMany({
+        select: {codexam: true, name: true}
       })
 
 

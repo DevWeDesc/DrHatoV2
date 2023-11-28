@@ -43,6 +43,7 @@ import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
 import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
 import { SetMedicineInPet } from "../../components/Medicine/SetMedicineInPet";
 import { VetInstructions } from "./WorkSpaceVets/instructions";
+import { EndConsults } from "./WorkSpaceVets/endconsults";
 
 type OpenExamProps = {
   isMultiPart: boolean,
@@ -411,7 +412,7 @@ export function WorkSpaceVet() {
 
               <Button
                 height={8}
-                onClick={() => navigate(`/Pets/MedicineRecord/${id}`)}
+                onClick={() => navigate(`/Pets/MedicineRecord/${id}/${queueId}`)}
                 leftIcon={<MdPets />}
                 colorScheme="messenger"
               >
@@ -419,6 +420,7 @@ export function WorkSpaceVet() {
               </Button>
 
             <Button colorScheme="red"
+             height={8}
             onClick={() => setIsEndConsultQueue(true)}
             >
               Concluir Consulta
@@ -787,7 +789,7 @@ export function WorkSpaceVet() {
        isOpen={isEndConsultQueue}
        onRequestClose={closeEndQueueModal}
       >
-
+            <EndConsults />
       </GenericModal>
    
     </ChakraProvider>

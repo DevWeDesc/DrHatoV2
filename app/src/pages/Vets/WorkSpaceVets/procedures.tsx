@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ProceduresVets from "../../../components/Procedures";
 
 export function ProceduresVet() {
-  const { id } = useParams<{ id: string }>();
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate();
 
   return (
@@ -26,7 +26,7 @@ export function ProceduresVet() {
             <Button
               colorScheme="yellow"
               leftIcon={<TbArrowBack size={24} />}
-              onClick={() => navigate(`/Vets/Workspace/${id}`)}
+              onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
             >
               Voltar
             </Button>

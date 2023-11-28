@@ -145,11 +145,12 @@ export const examsController = {
   ) => {
     const { id } = request.params;
     try {
-      const exam = await prisma.exams.findUnique({
-        where: { id: parseInt(id) },
+      const exam = await prisma.oldExams.findUnique({
+        where: { codexam: parseInt(id) },
         include: {
-          characteristics: true,
-          multiparts: { include: { characteristics: true } },
+            partExams: {
+              include: {examsDetails: true}
+            }
         },
       });
 

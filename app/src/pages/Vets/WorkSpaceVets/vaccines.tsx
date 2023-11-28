@@ -33,7 +33,7 @@ export function Vaccines() {
   const [vaccineId, setVaccineId] = useState(0);
   const [reloadData, setReloadData] = useState(false);
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
 
   async function GetVaccine() {
     try {
@@ -105,7 +105,7 @@ export function Vaccines() {
             <Button
               colorScheme="yellow"
               leftIcon={<TbArrowBack size={24} />}
-              onClick={() => navigate(`/Vets/Workspace/${id}`)}
+              onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
             >
               Voltar
             </Button>

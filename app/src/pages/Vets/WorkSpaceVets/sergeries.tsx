@@ -12,7 +12,7 @@ import { Surgierslist } from '../../../components/surgeries/surgierslist'
 import { Createsurgeries } from '../../../components/surgeries/createsurgeries'
 
 export function VetsSurgeries() {
-  const { id } = useParams<{id: string}>()
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate()
   const [renderizarion, setRenderizarion] = useState<string>("List")
 
@@ -43,7 +43,7 @@ export function VetsSurgeries() {
             <Button
               colorScheme="yellow"
               leftIcon={<TbArrowBack size={24} />}
-              onClick={() => navigate(`/Vets/Workspace/${id}`)}
+              onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
             >
               Voltar
             </Button>

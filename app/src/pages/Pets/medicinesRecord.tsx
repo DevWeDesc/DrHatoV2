@@ -78,7 +78,7 @@ interface PetProps {
 }
 
 export function MedicineRecords() {
-  const { id } = useParams<{ id: string }>()
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [pets, setPets] = useState({} as PetProps)
   const navigate = useNavigate()
@@ -124,7 +124,7 @@ export function MedicineRecords() {
             <Button
               colorScheme="yellow"
               leftIcon={<TbArrowBack size={24} />}
-              onClick={() => navigate(`/Vets/Workspace/${id}`)}
+              onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
             >
               Voltar
             </Button>

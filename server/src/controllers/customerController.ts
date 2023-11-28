@@ -38,25 +38,36 @@ export const customerController = {
 
   searchUser: async (
     request: FastifyRequest<{
-      Querystring: { name?: string; cpf?: string; rg?: string, codPet: string };
+      Params: {page: string;}
+      Querystring: { name?: string; cpf?: string; rg?: string, codPet: string; };
+      
     }>,
     reply: FastifyReply
   ) => {
     const {name, cpf, rg, codPet} = request.query
+          // Obtenha o número da página atual a partir da solicitação.
+          const currentPage = Number(request.params.page) || 1;
 
+          // Obtenha o número total de usuários.
+          const totalUsers = await prisma.customer.count();
+      
+          // Calcule o número de páginas.
+          const totalPages = Math.ceil(totalUsers / 35);
     try {
       let customer 
 
       customer = await prisma.customer.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
         where: {
-          OR: [{ name: {startsWith: name} }, { cpf: {startsWith: cpf} }, { rg: {startsWith: rg},  
+          OR: [{ name: {contains: name} }, { cpf: {contains: cpf} }, { rg: {contains: rg},  
           }],
         }, include: { pets: true, transaction: true}
       });
 
       if(!!codPet) {
           customer = []
-          const data =await prisma.customer.findFirst({
+          const data = await prisma.customer.findFirst({
             where: {pets: {some: {CodAnimal: Number(codPet)}}}
           })
           customer.push(data)

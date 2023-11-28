@@ -9,6 +9,8 @@ export interface PropsInputs {
   onBlur?: any;
   id?: string;
   name?: string;
+  width?: number;
+  height?: number;
 }
 
 export function CEPInput({ value, onChange, onBlur, id, name }: PropsInputs) {

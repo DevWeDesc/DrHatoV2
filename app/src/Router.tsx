@@ -354,7 +354,7 @@ eateMedicine
               />
 
               <Route
-                path="/Pets/MedicineRecord/:id"
+                path="/Pets/MedicineRecord/:id/:queueId"
                 element={<MedicineRecords />}
               />
               <Route path="/Recepcao/Create" element={<CreateCustomer />} />

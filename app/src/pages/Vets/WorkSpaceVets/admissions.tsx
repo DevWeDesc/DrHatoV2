@@ -39,7 +39,7 @@ interface Kennels {
 }
 
 export function VetsAdmissions() {
-  const { id } = useParams<{ id: string }>();
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [kennelId, setKennelId] = useState(0);
   const [bedId, setBedId] = useState(0);
   const [fasting, setFasting] = useState(false);
@@ -336,7 +336,7 @@ export function VetsAdmissions() {
             <Button
               colorScheme="yellow"
               leftIcon={<TbArrowBack size={24} />}
-              onClick={() => navigate(`/Vets/Workspace/${id}`)}
+              onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
             >
               Voltar
             </Button>

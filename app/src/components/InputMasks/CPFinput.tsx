@@ -3,7 +3,7 @@ import React from "react";
 import InputMask, { ReactInputMask } from "react-input-mask";
 import { PropsInputs } from "./CEPInput";
 
-export function CPFInput({ value, onChange, id, name }: PropsInputs) {
+export function CPFInput({ value, onChange, id, name, height, width }: PropsInputs) {
   return (
     <InputMask
       style={{
@@ -29,6 +29,8 @@ export function CPFInput({ value, onChange, id, name }: PropsInputs) {
       placeholder="CPF do Cliente"
       id={id}
       name={name}
-    />
+      width={width}
+      height={height}
+      />
   );
 }

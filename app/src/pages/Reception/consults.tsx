@@ -18,10 +18,12 @@ import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import { AiFillEdit } from "react-icons/ai";
 import { FaUserPlus } from "react-icons/fa";
+import { LoadingSpinner } from "../../components/Loading";
 
 export function ReceptionConsults() {
   const { customer } = useContext(DbContext);
   const [dataCostumer, setDataCostumer] = useState([]);
+  const [page, setPage] = useState(0)
 
   async function getCustomer() {
     const dataCostumer = await api.get("customers");
@@ -58,7 +60,7 @@ export function ReceptionConsults() {
             maxH="44rem"
             overflow="auto"
           >
-            <RecepetionSearch path="/customersearch" />
+            <RecepetionSearch path={`/customersearch/${page}`} />
             <Flex
               mb="8"
               gap="8"
@@ -85,18 +87,18 @@ export function ReceptionConsults() {
                   </Thead>
                   {customer ? (
                     customer.map((client: any) => (
-                      <Tbody key={client.id}>
+                      <Tbody key={client?.id}>
                         <Tr>
                           <Td>
                             <Link
-                              to={`/Recepcao/Consultas/Clientes/${client.id}`}
+                              to={`/Recepcao/Consultas/Clientes/${client?.id}`}
                             >
-                              {client.name}
+                              {client?.name}
                             </Link>
                           </Td>
-                          <Td>{client.phone}</Td>
-                          <Td>{client.rg}</Td>
-                          <Td>{client.cpf}</Td>
+                          <Td>{client?.phone}</Td>
+                          <Td>{client?.rg}</Td>
+                          <Td>{client?.cpf}</Td>
                         </Tr>
                       </Tbody>
                     ))
@@ -110,7 +112,7 @@ export function ReceptionConsults() {
                       </Tr>
                     </Tbody>
                   )}
-                  {customer <= 0 && (
+                  {customer <= 0 ? ((
                     <>
                       {dataCostumer.map((client: any) => (
                         <Tbody key={client.id}>
@@ -129,7 +131,7 @@ export function ReceptionConsults() {
                         </Tbody>
                       ))}
                     </>
-                  )}
+                  )) : (<></>)}
             
                 </Table>
               </Flex>

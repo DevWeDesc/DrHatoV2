@@ -101,3 +101,25 @@
 [X] - Tabela exames duplicando
 [X] - Ajustar cadastro de pets campo idade
 [] - Valores já prédefinidos dos exames que já existem
+
+
+### To do Solicitado Dr Daniel ###
+[X] - correção por pesquisa no nome busca inteligente
+[X] - Mascara no CPF e busca inteligente
+[X] - Validação do CPF como encontrar a regra
+[X] - Correios CEP Acesso externo
+[X] - Busca rápida nos veterinarios / nome completo
+[X] - Preferencia = Só aparece para a preferencia
+[X] - Ordem de consulta é da antiga para a mais nova
+[] - Visualização de todos os veterinarios
+[] - Formularios, instruções do proprietário, autorizações
+[] - Exames, procedimentos, vacinas, cirurgias, internar
+[] - Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa
+[X] - Concluir: ao clicar trazer os preços e validar
+[X] - Subir procedimento
+[] - vacinas para cachorro e vacinas para gato, tirar a palavra "a fazer"
+[] - Macho não faz cesaria
+[] - Adicionar observações no Laudo
+[] - Painel de Internações, listagem e aparecer os animais, após 48hrs destacar o animal
+[X] - histórico completo da diaria, custos na tela de procedimento
+[] - Criar acesso para desconcluir a consulta
