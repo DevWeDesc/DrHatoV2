@@ -107,6 +107,7 @@ model MedicineRecord {
 
 model Sectors {
   id        Int          @id @default(autoincrement())
+  sectorId  Int?         @unique
   name      String
   examId    Int?
   proced_id Int?
@@ -123,11 +124,19 @@ model Instructions {
 
 model Procedures {
   id                  Int      @id @default(autoincrement())
-  name                String   @unique
-  price               Int
+  codProcedimento     Int?     @unique
+  name                String
+  price               Decimal?
+  priceTwo            Decimal?
+  priceThree          Decimal?
+  priceFour           Decimal?
+  categoryOld         String?
+  minAge              Int?
+  maxAge              Int?
+  applicableMale      Boolean?
+  applicableFemale    Boolean?
   applicationInterval String?
-  applicableGender    String[]
-  ageRange            String[]
+  categoryProcedure   Int?
   available           Boolean
   observations        String
   group_id            Int?
@@ -139,12 +148,16 @@ model Procedures {
 model ProceduresForPet {
   id                  Int            @id @default(autoincrement())
   name                String
-  price               Int
+  price               Decimal?
+  priceTwo            Decimal?
+  priceThree          Decimal?
+  priceFour           Decimal?
+  categoryOld         String?
+  minAge              Int?
+  maxAge              Int?
   applicationInterval String?
-  applicableGender    String[]
-  ageRange            String[]
   available           Boolean
-  observations        String
+  observations        String?
   group_id            Int?
   sector_id           Int?
   requestedDate       DateTime?
@@ -281,9 +294,11 @@ model VaccinesForPet {
 
 // -------------- SURGERIES ----------------- //
 model Surgeries {
-  id    Int     @id @default(autoincrement())
-  name  String
-  price Decimal
+  id                 Int      @id @default(autoincrement())
+  name               String
+  price              Decimal
+  applicableToMale   Boolean?
+  applicableToFemale Boolean?
 }
 
 enum SurgerieStatus {
@@ -418,6 +433,8 @@ model Exams {
   examsType          String[]
   ageRange           String[]
   applicableGender   String[]
+  applicableToMale   Boolean?
+  applicableToFemale Boolean?
   isMultiPart        Boolean?              @default(false)
   isReportByText     Boolean?              @default(false)
   isOnePart          Boolean?              @default(false)

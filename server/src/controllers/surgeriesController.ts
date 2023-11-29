@@ -7,8 +7,16 @@ import { accumulatorService } from "../services/accumulatorService";
 type params = {
   id: string;
   recordId: string;
-  accId: string, 
+  accId: string; 
+  queueId: string;
+  petId: string;
   sugPrice: string;
+}
+type body = {
+  RequestedByVetId: number,
+  RequestedByVetName: string;
+   petIsMale: boolean;
+   petIsFemale: boolean;
 }
 export const surgeriesController = {
   createSurgerie: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -31,30 +39,99 @@ export const surgeriesController = {
       }
   },
 
-  getSurgeries: async (request: FastifyRequest, reply: FastifyReply) => {
+  getSurgeries: async (request: FastifyRequest<{
+    Querystring: { page: string; male: string; female: string}
+  }>, reply: FastifyReply) => {
     try {
-        const surgeries = await prisma.surgeries.findMany({})
+      const {female, male} = request.query
+   // Obtenha o número da página atual a partir da solicitação.
+    const currentPage = Number(request.query.page) || 1;
+    // Obtenha o número total de usuários.
+    const totalSurgeries = await prisma.surgeries.count();
+    // Calcule o número de páginas.
+    const totalPages = Math.ceil(totalSurgeries / 35);
+     
+    if(Boolean(male) === true) {
+      const surgeries = await prisma.surgeries.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {applicableToMale: true}})
 
-        reply.send(surgeries).status(200)   
+      reply.send(
+        {
+          currentPage,
+          totalPages,
+          totalSurgeries,
+          surgeries
+
+        }
+      ).status(200)   
+    } else if(Boolean(female) === true) {
+      const surgeries = await prisma.surgeries.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {applicableToFemale: true}})
+
+      reply.send(
+        {
+          currentPage,
+          totalPages,
+          totalSurgeries,
+          surgeries
+
+        }
+      ).status(200)   
+    } else {
+     const surgeries = await prisma.surgeries.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35})
+      reply.send(
+        {
+          currentPage,
+          totalPages,
+          totalSurgeries,
+          surgeries
+
+        }
+      ).status(200)   
+    }
+
        } catch (error) {
-        reply.send({message: error})
+        reply.send(error)
         console.log(error)
     }
   },
 
-  setSurgerieInPet: async (request: FastifyRequest<{ Params: params }>, reply: FastifyReply) => {
-    const { id, recordId, accId} = request.params
+  setSurgerieInPet: async (request: FastifyRequest<{ Params: params, Body: body }>, reply: FastifyReply) => {
+    const { id, petId, accId, queueId} = request.params
+    const {RequestedByVetId,
+      RequestedByVetName} = request.body
     try {
       const surgerie = await prisma.surgeries.findUnique({
         where:{id: parseInt(id)}
       })
       if(!surgerie) {
-        reply.status(400).send("Falha ao buscar vacina/Falha ao criar vacina")
+        reply.status(400).send("Falha ao buscar cirurgia/Falha ao criar Cirurgia")
          return
       }
-      await prisma.surgeriesForPet.create({data: {name: surgerie.name, status: 'STARTED', price: surgerie.price, medicine: {connect: {id:parseInt(recordId)}}}})
-      await accumulatorService.addPriceToAccum(Number(surgerie.price), accId)
-      reply.send("Cirurgia adiciona ao pet com sucesso").status(200)
+      await prisma.petConsultsDebits.create({
+        data: {
+          OpenedConsultsForPet: {connect: {id: queueId}},
+          isSurgerie: true,
+          name: surgerie.name,
+          price: surgerie.price,
+          itemId: surgerie.id,
+          RequestedByVetId,
+          RequestedByVetName
+        }
+      }).then(async () => {
+        await prisma.surgeriesForPet.create({data: {name: surgerie.name, status: 'STARTED', price: surgerie.price, medicine: {connect: {petId:parseInt(petId)}}}})
+      }).then(async () => {
+        await accumulatorService.addPriceToAccum(Number(surgerie.price), accId)
+        reply.send("Cirurgia adiciona ao pet com sucesso").status(200)
+      })
+     
+    
     } catch (error) {
       reply.send({message: error})
       console.log(error)

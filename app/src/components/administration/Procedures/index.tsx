@@ -12,6 +12,8 @@ import {
   Th,
   Thead,
   Tr,
+  HStack,
+  VStack,
 } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,16 +26,46 @@ import { toast } from "react-toastify";
 import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
 import { ProceduresData } from "../../../interfaces";
+import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
+
+interface ProceduresProps {
+  id: number;
+	codProcedimento: number;
+	name: string;
+	price: string;
+	priceTwo: string
+	priceThree: string;
+	priceFour: string;
+	categoryOld: string;
+	minAge: number,
+	maxAge: number,
+	applicableMale: boolean;
+	applicableFemale: boolean;
+	applicationInterval: string | null;
+	categoryProcedure: number;
+	available: boolean;
+	observations: string;
+	group_id: number;
+	sector_id: number;
+	groups: number;
+}
 
 export default function ListProcedures() {
-  //const { procedures, groups } = useContext(DbContext);
-  const { register, handleSubmit } = useForm();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [procedures, setProcedures] = useState([]);
-  const navigate = useNavigate();
+  const [procedures, setProcedures] = useState<ProceduresProps[]>([]);
+  const [pagination, SetPagination] = useState(1)
+  const [paginationInfos, setPaginationInfos] = useState({
+    totalPages: 0,
+    currentPage: 0,
+    totalProceds: 0
+  })
+  function incrementPage() {
+    SetPagination(prevCount => pagination < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
+  }
 
+  function decrementPage() {
+    SetPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+  }
   async function handleDeleteProcedure(Id: number | string) {
     await api
       .delete(`/procedures/${Id}`)
@@ -45,13 +77,18 @@ export default function ListProcedures() {
   }
 
   async function getProcedure() {
-    const procedures = await api.get("/procedures");
-    setProcedures(procedures.data);
+    const procedures = await api.get(`/procedures?page=${pagination}`);
+    setProcedures(procedures.data.procedures);
+    setPaginationInfos({
+      currentPage: procedures.data.currentPage,
+      totalPages: procedures.data.totalPages,
+      totalProceds: procedures.data.totalProceds
+    })
   }
 
   useEffect(() => {
     getProcedure();
-  }, []);
+  }, [pagination]);
 
   useEffect(() => {
     if (loading === true) {
@@ -60,7 +97,6 @@ export default function ListProcedures() {
     }
   }, [loading]);
 
-  console.log(procedures);
   return (
     <Box
       flex="1"
@@ -68,19 +104,37 @@ export default function ListProcedures() {
       bg="gray.200"
       p="8"
       w="100%"
-      maxH="44rem"
+      maxH="65rem"
       overflow="auto"
     >
       <Flex
         mb="8"
-        justify="space-between"
+        
         direction="column"
         align="center"
         w="100%"
       >
+        <Flex w="100%" h="180px" align="center">
         <Heading fontSize="30" fontWeight="bold" w="100%" mb="5">
           Procedimentos
         </Heading>
+        <HStack>
+        <Button colorScheme="teal">Total de Procedimentos {paginationInfos?.totalProceds}</Button>
+        <Button colorScheme="teal">Páginas {paginationInfos?.totalPages}</Button>
+        <Button colorScheme="teal">Página Atual {paginationInfos?.currentPage}</Button>
+        <Button colorScheme="yellow" gap={4} onClick={() => decrementPage()} >
+                  <BiLeftArrow/>
+                  Página Anterior
+                </Button>
+                <Button colorScheme="yellow" gap={4} onClick={() => incrementPage()}>
+                  Próxima Página
+                  <BiRightArrow/>
+                </Button>
+        </HStack>
+        </Flex>
+    
+    
+       
 
         <Link to="/Admin/Procedures/Create" style={{ width: "100%" }}>
           <Button
@@ -108,12 +162,7 @@ export default function ListProcedures() {
             <Th fontSize="18" borderColor="black">
               Preço
             </Th>
-            <Th fontSize="18" borderColor="black">
-              Setor
-            </Th>
-            <Th fontSize="18" borderColor="black">
-              Grupo
-            </Th>
+          
 
             <Th borderColor="black"></Th>
           </Tr>
@@ -122,7 +171,7 @@ export default function ListProcedures() {
 
         <Tbody>
           {procedures ? (
-            procedures.map((proceds: ProceduresData) => (
+            procedures.map((proceds) => (
               <Tr key={proceds.id}>
                 <Td borderColor="black">
                   <Text fontWeight="bold" color="gray.800">
@@ -134,10 +183,9 @@ export default function ListProcedures() {
                   {new Intl.NumberFormat("pt-BR", {
                     currency: "BRL",
                     style: "currency",
-                  }).format(proceds.price)}
+                  }).format(Number(proceds.price))}
                 </Td>
-                <Td borderColor="black">{proceds.sector?.name}</Td>
-                <Td borderColor="black">{proceds.groups.name}</Td>
+               
 
                 <Td borderColor="black" display="flex" gap="2" py="5">
                   <Link to={`/Admin/Procedures/Edit/${proceds.id}`}>
@@ -160,16 +208,6 @@ export default function ListProcedures() {
                     describreConfirm="Excluir o Procedimento é uma ação irreversivel, tem certeza que deseja excluir?"
                     callbackFn={() => handleDeleteProcedure(proceds.id)}
                   />
-                  {/* <Button
-                    as="a"
-                    size="sm"
-                    fontSize="sm"
-                    colorScheme="red"
-                    leftIcon={<Icon as={RiPencilLine} />}
-                    onClick={() => handleDeleteProcedure(proceds.id)}
-                  >
-                    Deletar Procedimento
-                  </Button> */}
                 </Td>
               </Tr>
             ))

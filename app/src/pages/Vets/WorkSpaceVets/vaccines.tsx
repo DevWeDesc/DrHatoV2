@@ -30,11 +30,10 @@ interface VaccinesProps {
 export function Vaccines() {
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [vaccines, setVaccines] = useState<VaccinesProps[]>([]);
-  const [vaccineId, setVaccineId] = useState(0);
   const [reloadData, setReloadData] = useState(false);
   const navigate = useNavigate();
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
-
+  const user = JSON.parse(localStorage.getItem("user") as string);
   async function GetVaccine() {
     try {
       const vaccines = await api.get("/vaccines");
@@ -46,9 +45,13 @@ export function Vaccines() {
     }
   }
 
-  async function setVaccineInPet() {
+  async function setVaccineInPet(vaccineId:number) {
     try {
-      await api.post(`/vaccinepet/${vaccineId}/${petDetails.recordId}/${petDetails.totalAcc.id}`);
+      const data = {
+        RequestedByVetId: user.id, 
+        RequestedByVetName: user.consultName, 
+      };
+      await api.post(`/vaccinepet/${vaccineId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`, data);
       setReloadData(true);
       toast.success("Vacina criada com Sucesso");
     } catch (error) {
@@ -137,7 +140,7 @@ export function Vaccines() {
                 </Table>
               </TableContainer>
             </Flex>
-            <Flex height="60%" width="100" direction="column">
+            <Flex height="70%" width="100" direction="column">
               <Flex
                 width="100%"
                 height="48px"
@@ -146,12 +149,10 @@ export function Vaccines() {
                 align="center"
                 justify="center"
               >
-                <Button colorScheme="whatsapp" onClick={setVaccineInPet}>
-                  INCLUIR VACINA
-                </Button>
+         
                 <Flex align="center" gap="2" p="4">
                   <Button colorScheme="teal">FILTRAR</Button>
-                  <Input name="filter" />
+                  <Input name="filter" placeholder="Nome da Vacina" />
                 </Flex>
               </Flex>
               <TableContainer
@@ -163,34 +164,24 @@ export function Vaccines() {
                 <Table>
                   <Thead>
                     <Tr bgColor="cyan.100">
-                      <Th>Selecione</Th>
                       <Th>VACINAS</Th>
                       <Th>ATÉ 6KG</Th>
                       <Th>7 A 15KG</Th>
                       <Th>16 A 35KG</Th>
                       <Th>35KG +</Th>
+                      <Th>Incluir Vacina</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {vaccines.map((vaccine) => (
                       <Tr key={vaccine.id}>
-                        <Td>
-                          <Checkbox
-                            onChange={(ev) =>
-                              ev.target.checked === true
-                                ? setVaccineId(vaccine.id)
-                                : setVaccineId(0)
-                            }
-                            value={vaccine.id}
-                            size="lg"
-                            borderColor="black"
-                          />{" "}
-                        </Td>
+                   
                         <Td>{vaccine.name}</Td>
-                        <Td>R${vaccine.price}</Td>
-                        <Td>R${vaccine.price}</Td>
-                        <Td>R${vaccine.price}</Td>
-                        <Td>R${vaccine.price}</Td>
+                        <Td>{ new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency'}).format(vaccine?.price) }</Td>
+                        <Td>{ new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency'}).format(vaccine?.price) }</Td>
+                        <Td>{ new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency'}).format(vaccine?.price) }</Td>
+                        <Td>{ new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency'}).format(vaccine?.price) }</Td>
+                        <Td><Button colorScheme="whatsapp" onClick={() => setVaccineInPet(vaccine.id)}>Incluir</Button></Td>
                       </Tr>
                     ))}
                   </Tbody>
@@ -217,16 +208,16 @@ export function Vaccines() {
                     <Tr>
                       <Th>DATA SOLICITADA</Th>
                       <Th>VACINAS</Th>
-                      <Th>STATUS</Th>
+                      
                       <Th>Cancelar?</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {petDetails.vaccines?.map((vaccine) => (
                       <Tr key={vaccine.id}>
-                        <Td>{vaccine.requestedDate.toString()}</Td>
+                        <Td>{new Intl.DateTimeFormat('pt-BR').format(new Date(vaccine?.requestedDate))}</Td>
                         <Td>{vaccine.name}</Td>
-                        <Td color="red">A FAZER</Td>
+                        
                         <Td><Button onClick={() => deleteVaccine(vaccine.id, vaccine.price)} w="89px" colorScheme="red">Excluir</Button></Td>
                       </Tr>
                     ))}

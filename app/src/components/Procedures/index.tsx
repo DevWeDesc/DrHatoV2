@@ -26,15 +26,18 @@ interface ProceduresProps {
   id: number;
   name: string;
   price: number;
+  priceTwo?: number;
+  priceThree?: number;
+  priceFour?: number;
   requestedDate: any;
 }
 
 export default function ProceduresVets() {
-  const { id } = useParams<{ id: string }>();
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [procedures, setProcedures] = useState<ProceduresProps[]>([]);
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [reloadData, setReloadData] = useState(false);
-  const [procedureId, setProcedureId] = useState(0);
+  const user = JSON.parse(localStorage.getItem("user") as string);
   const { url } = useContext(UrlContext);
   const navigate = useNavigate();
   async function GetPet() {
@@ -43,17 +46,18 @@ export default function ProceduresVets() {
   }
   async function GetData() {
     const procedures = await api.get("/procedures");
-    setProcedures(procedures.data);
+    setProcedures(procedures.data.procedures);
   }
 
-  const setProcedureInPet = async () => {
+  async function setProcedureInPet (procedureId: number)  {
     try {
-      const now = new Date();
-      const actualDate = moment(now).format("DD/MM/YYYY");
-      console.log("DATA ATUAL", actualDate);
+      const data = {
+        RequestedByVetId: user.id, 
+        RequestedByVetName: user.consultName, 
+      };
 
       await api.post(
-        `/procedures/${petDetails.recordId}/${procedureId}/${petDetails.totalAcc.id}`
+        `/procedures/${procedureId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`, data
       );
       setReloadData(true);
       toast.success("Procedimento incluido com sucesso!!");
@@ -97,16 +101,15 @@ export default function ProceduresVets() {
     }
   }, [reloadData]);
 
-  console.log();
-
   return (
     <>
       <Flex
         w="100%"
         height={url === `/Admissions/${id}` ? "" : "45vh"}
         align="center"
+     
       >
-        <TableContainer w="100%" height="100%">
+        <TableContainer w="100%" height="100%" >
           <Table>
             <Thead>
               <Tr bgColor="cyan.100">
@@ -354,7 +357,7 @@ export default function ProceduresVets() {
         </TableContainer>
       </Flex>
       {url != `/Admissions/${id}` && (
-        <Flex w="100%" height="45vh" direction="column">
+        <Flex w="100%" height="55vh" direction="column">
           <Flex
             height="48px"
             w="100%"
@@ -362,16 +365,8 @@ export default function ProceduresVets() {
             align="center"
             justify="center"
             gap={4}
+               overflowY="auto"
           >
-            {/* 
-      <HStack>
-        <Select onChange={ev => setCovenant(ev.target.value)} borderColor="black" bgColor="gray.100">
-        <option value="Particular">Particular</option>
-       <option value="Petlove">Petlove</option>
-        </Select>
-       
-      </HStack>
-       */}
             <HStack>
               {" "}
               <Button colorScheme="teal" w="300px">
@@ -379,17 +374,11 @@ export default function ProceduresVets() {
               </Button>{" "}
               <Input h="38px" name="filter" />
             </HStack>
-            <Button colorScheme="whatsapp" onClick={setProcedureInPet}>
-              INCLUIR NOVO PROCEDIMENTO
-            </Button>
           </Flex>
-          <TableContainer w="100%" height="100%">
+          <TableContainer w="100%" height="100%"    overflowY="auto">
             <Table>
               <Thead>
                 <Tr>
-                  <Th color="black" fontSize="1xl" border="2px" w="100px">
-                    SELECIONADO
-                  </Th>
                   <Th
                     color="black"
                     bgColor="whatsapp.100"
@@ -399,27 +388,32 @@ export default function ProceduresVets() {
                     NOME - PARTICULAR
                   </Th>
                   <Th color="black" fontSize="1xl" border="2px" w="200px">
-                    VALOR POR PESO
+                   ATÉ 6KG
+                  </Th>
+                  <Th color="black" fontSize="1xl" border="2px" w="200px">
+                  Entre 7 e 15KG
+                  </Th>
+                  <Th color="black" fontSize="1xl" border="2px" w="200px">
+                  Entre 16 e 35KG
+                  </Th>
+                  <Th color="black" fontSize="1xl" border="2px" w="200px">
+                    ACIMA DE 35KG
+                  </Th>
+                  <Th color="black" fontSize="1xl" border="2px" w="200px">
+                    INCLUIR
                   </Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {procedures.map((procedure) => (
                   <Tr key={procedure.id}>
-                    <Td border="2px">
-                      <Checkbox
-                        onChange={(ev) =>
-                          ev.target.checked === true
-                            ? setProcedureId(procedure.id)
-                            : setProcedureId(0)
-                        }
-                        value={procedure.id}
-                        borderColor="black"
-                        size="lg"
-                      />
-                    </Td>
+      
                     <Td border="2px">{procedure.name}</Td>
-                    <Td border="2px">R$ {procedure.price}</Td>
+                    <Td border="2px">{ new Intl.NumberFormat("pt-BR", {style: "currency", currency: "BRL"}).format(Number(procedure?.price)) }</Td>
+                    <Td border="2px">{ new Intl.NumberFormat("pt-BR", {style: "currency", currency: "BRL"}).format(Number(procedure?.priceTwo)) }</Td>
+                    <Td border="2px">{ new Intl.NumberFormat("pt-BR", {style: "currency", currency: "BRL"}).format(Number(procedure?.priceThree)) }</Td>
+                    <Td border="2px">{ new Intl.NumberFormat("pt-BR", {style: "currency", currency: "BRL"}).format(Number(procedure?.priceFour)) }</Td>
+                    <Td border="2px"><Button colorScheme="whatsapp" onClick={() => setProcedureInPet(procedure.id)} >Incluir Procedimento</Button></Td>
                   </Tr>
                 ))}
               </Tbody>

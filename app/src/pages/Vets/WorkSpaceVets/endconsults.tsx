@@ -21,7 +21,11 @@ interface ConsultDebitsProps {
 	isAdmission: boolean;
   }>
 }
-export function EndConsults() {
+
+interface EndConsutsProps {
+  handleCloseQuery: () => void;
+}
+export function EndConsults({handleCloseQuery}: EndConsutsProps) {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [consultDebitsDetails, setConsultDebitsDetails] = useState<ConsultDebitsProps[]>([])
 
@@ -80,7 +84,7 @@ export function EndConsults() {
             </Table>
           
           </TableContainer>
-          <Button  w='100%' colorScheme="whatsapp">Finalizar Consulta</Button>
+          <Button  onClick={handleCloseQuery} w='100%' colorScheme="whatsapp">Finalizar Consulta</Button>
           </React.Fragment>
         ))
        }

@@ -136,14 +136,18 @@ export const GroupSchema = z.object({
 
 export const ProcedureSchema = z.object({
   name: z.string(),
-  price: z.number(),
+  price: z.any(),
   applicationInterval: z.string(),
-  applicableGender:  z.string().array().optional(), 
-  ageRange:  z.string().array().optional(),
   available: z.boolean(),
-  observations:  z.string(),
-  group_id: z.number(),
-  sector_id: z.number()
+  observations:  z.string(),   
+  applicableFemale: z.boolean().optional(),
+  applicableMale: z.boolean().optional(),
+  sector_id: z.any(),
+  priceTwo   : z.any().optional(),
+  priceThree : z.any().optional(),
+  priceFour: z.any().optional(),
+  minAge: z.any().optional(),
+  maxAge: z.any().optional(),
 })
 
 export const SearchSchema = z.object({

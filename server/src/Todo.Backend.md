@@ -113,13 +113,13 @@
 [X] - Ordem de consulta é da antiga para a mais nova
 [] - Visualização de todos os veterinarios
 [] - Formularios, instruções do proprietário, autorizações
-[] - Exames, procedimentos, vacinas, cirurgias, internar
+[X] - Exames, procedimentos, vacinas, cirurgias, internar
 [] - Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa
 [X] - Concluir: ao clicar trazer os preços e validar
 [X] - Subir procedimento
-[] - vacinas para cachorro e vacinas para gato, tirar a palavra "a fazer"
-[] - Macho não faz cesaria
-[] - Adicionar observações no Laudo
+[X] - vacinas para cachorro e vacinas para gato, tirar a palavra "a fazer"
+[X] - Macho não faz cesaria
+[X] - Adicionar observações no Laudo
 [] - Painel de Internações, listagem e aparecer os animais, após 48hrs destacar o animal
 [X] - histórico completo da diaria, custos na tela de procedimento
 [] - Criar acesso para desconcluir a consulta

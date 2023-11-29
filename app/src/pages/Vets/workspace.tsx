@@ -113,6 +113,7 @@ export function WorkSpaceVet() {
       toast.error("Falha ao editar peso do animal!")
     }
   }
+
   async function getPetDetails() {
     const response = await api.get(`/pets/${id}`);
     setPet(response.data);
@@ -135,7 +136,7 @@ export function WorkSpaceVet() {
         queueEntry: pet.queue.queueEntry,
         queueExit: new Date(),
         debitOnThisQuery: Number(pet.totalAcc.price),
-        responsibleVeterinarian: user.username,
+        responsibleVeterinarian: user.consultName,
         petName: pet.name,
         petWeight: pet.weigth,
         observations: petObservations
@@ -322,22 +323,25 @@ export function WorkSpaceVet() {
             </Flex>
 
             <Flex
-              flexWrap="wrap"
-              width="2200px"
+              width="100%"
               height="100%"
-              justify="start"
-              gap="2"
+                align="center"
+         
+     
               m="4"
               p="2"
-              overflowX="auto"
+           
             >
-              <Button
+              <VStack w="100%" align="flex-start">
+                <HStack>
+                <Button
                 onClick={() => setIsModalOpen(true)}
                 height={8}
                 colorScheme="whatsapp"
               >
                 FORMULÁRIOS
               </Button>
+              
               <Button
                 height={8}
                 colorScheme="whatsapp"
@@ -359,46 +363,10 @@ export function WorkSpaceVet() {
               >
                 PROTOCOLOS
               </Button>
-              <Button
-                isDisabled={pet.isBusy}
-                height={8}
-                colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Exam/${id}/${queueId}`)}
-              >
-                EXAMES
-              </Button>
-              <Button
-                isDisabled={pet.isBusy}
-                onClick={() => navigate(`/WorkSpace/Procedures/${id}/${queueId}`)}
-                height={8}
-                colorScheme="whatsapp"
-              >
-                PROCEDIMENTOS
-              </Button>
-              <Button
-                isDisabled={pet.isBusy}
-                height={8}
-                colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Vaccines/${id}/${queueId}`)}
-              >
-                VACINAS
-              </Button>
-              <Button
-                isDisabled={pet.isBusy}
-                height={8}
-                colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Surgeries/${id}/${queueId}`)}
-              >
-                CIRURGIAS
-              </Button>
-              <Button
-                isDisabled={pet.isBusy}
-                height={8}
-                colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Admissions/${id}/${queueId}`)}
-              >
-                INTERNAR
-              </Button>
+           
+           
+          
+              
               <Button
               leftIcon={<GiMedicines color="black" size={24}/>}
                 isDisabled={pet.isBusy}
@@ -414,11 +382,53 @@ export function WorkSpaceVet() {
                 height={8}
                 onClick={() => navigate(`/Pets/MedicineRecord/${id}/${queueId}`)}
                 leftIcon={<MdPets />}
-                colorScheme="messenger"
+                colorScheme="linkedin"
+       
               >
                 PRONTUÁRIO DO PET
               </Button>
-
+                </HStack>
+                <HStack>
+                <Button
+                isDisabled={pet.isBusy}
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Admissions/${id}/${queueId}`)}
+              >
+                INTERNAR
+              </Button>
+              <Button
+                isDisabled={pet.isBusy}
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Surgeries/${id}/${queueId}`)}
+              >
+                CIRURGIAS
+              </Button>
+              <Button
+                isDisabled={pet.isBusy}
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Vaccines/${id}/${queueId}`)}
+              >
+                VACINAS
+              </Button>
+              <Button
+                isDisabled={pet.isBusy}
+                onClick={() => navigate(`/WorkSpace/Procedures/${id}/${queueId}`)}
+                height={8}
+                colorScheme="whatsapp"
+              >
+                PROCEDIMENTOS
+              </Button>
+              <Button
+                isDisabled={pet.isBusy}
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate(`/WorkSpace/Exam/${id}/${queueId}`)}
+              >
+                EXAMES
+              </Button>
             <Button colorScheme="red"
              height={8}
             onClick={() => setIsEndConsultQueue(true)}
@@ -426,6 +436,13 @@ export function WorkSpaceVet() {
               Concluir Consulta
             </Button>
 
+                </HStack>
+              </VStack>
+            
+           
+           
+              
+       
             </Flex>
           </Flex>
         </WorkSpaceHeader>
@@ -620,7 +637,7 @@ export function WorkSpaceVet() {
                   >
                     <>
                       {exam.doneExam === true ? (
-                        <Button onClick={() => handleOpenResultExams({isOnePart: exam?.reports[0]?.isOnePart, isMultiPart: exam?.reports[0]?.isMultiPart, isReportByText: exam.byText, examId: exam.id})} colorScheme="whatsapp" fontWeight="bold">
+                        <Button onClick={() => handleOpenResultExams({isOnePart: exam?.onePart, isMultiPart: exam?.twoPart, isReportByText: exam.byText, examId: exam.id})} colorScheme="whatsapp" fontWeight="bold">
                           {exam.name}
                         </Button>
                       ) : (
@@ -789,7 +806,7 @@ export function WorkSpaceVet() {
        isOpen={isEndConsultQueue}
        onRequestClose={closeEndQueueModal}
       >
-            <EndConsults />
+            <EndConsults handleCloseQuery={handleCloseQuery} />
       </GenericModal>
    
     </ChakraProvider>

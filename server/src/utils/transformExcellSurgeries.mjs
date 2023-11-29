@@ -22,6 +22,8 @@ const filteredData = data
     .map(surgeries => ({
     name: surgeries.NomeProcedimento, 
     price: surgeries.Preço1,
+    applicableToFemale: surgeries.femea,
+    applicableToMale: surgeries.macho
   }));
 
  export async function PopulateSurgeries () {
@@ -29,7 +31,12 @@ const filteredData = data
 
      for await (const surgeries of filteredData) {
         await prisma.surgeries.create({
-          data: surgeries
+          data: {
+            name: surgeries.name,
+            price: surgeries.price,
+            applicableToFemale: surgeries.applicableToFemale,
+            applicableToMale: surgeries.applicableToMale
+          }
         })
 
         console.log(surgeries)

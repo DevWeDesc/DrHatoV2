@@ -7,41 +7,52 @@ import { prisma } from "../interface/PrismaInstance";
 
 type params = {
   id: string;
+  queueId: string;
+  procedureId: string;
+  petId: string;
+  accId: string;
 };
+
+type body = {
+  RequestedByVetId: number;
+  RequestedByVetName: string;
+}
 
 export const proceduresController = {
   createProcedure: async (request: FastifyRequest, reply: FastifyReply) => {
-    const contract = new ValidationContract();
     const {
       name,
       price,
       available,
       observations,
       applicationInterval,
-      ageRange,
-      applicableGender,
-      group_id,
+      applicableFemale,
+      applicableMale,
+      priceTwo,
+      priceThree,
+      priceFour,
+      minAge,
+      maxAge,
       sector_id,
     } = ProcedureSchema.parse(request.body);
     try {
-      await contract.procedureAlreadyExist(name, "Procedimento já existe");
-      if (contract.hadError()) {
-        reply.status(400).send(contract.showErrors());
-        contract.clearErrors();
-        return;
-      }
-
+     
       await prisma.procedures.create({
         data: {
           name,
           price,
+          priceTwo,
+          priceThree,
+          priceFour,
           available,
           observations,
           applicationInterval,
-          ageRange,
-          applicableGender,
-          group_id,
-          sector_id,
+          applicableFemale,
+          applicableMale,
+          maxAge,
+          minAge,
+          sector: {connect: {id: parseInt(sector_id)}}
+    
         },
       });
       reply.status(201).send("Procedimento criado!");
@@ -51,15 +62,27 @@ export const proceduresController = {
     }
   },
 
-  getProcedures: async (request: FastifyRequest, reply: FastifyReply) => {
-    const procedures = await prisma.procedures.findMany({
-      include: {
-        groups: { select: { name: true } },
-        sector: { select: { name: true } },
-      },
-    });
+  getProcedures: async (request: FastifyRequest<{Querystring: { page: string;}}>, reply: FastifyReply) => {
     try {
-      reply.send(procedures);
+            // Obtenha o número da página atual a partir da solicitação.
+            const currentPage = Number(request.query.page) || 1;
+
+            // Obtenha o número total de usuários.
+            const totalProceds = await prisma.procedures.count();
+        
+            // Calcule o número de páginas.
+            const totalPages = Math.ceil(totalProceds / 35);
+        
+      const procedures = await prisma.procedures.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        include: {
+          groups: { select: { name: true } },
+          sector: { select: { name: true } },
+        },
+      });
+      
+      reply.send({totalPages, totalProceds,  currentPage, procedures });
     } catch (error) {
       console.log(error);
       reply.status(400).send({ message: error });
@@ -97,9 +120,7 @@ export const proceduresController = {
       available,
       observations,
       applicationInterval,
-      ageRange,
-      applicableGender,
-      group_id,
+
       sector_id,
     } = ProcedureSchema.parse(request.body);
 
@@ -110,10 +131,7 @@ export const proceduresController = {
           available,
           observations,
           applicationInterval,
-          ageRange,
-          applicableGender,
-          group_id,
-          sector_id,
+   
         }})
       } catch (error) {
         
@@ -134,30 +152,44 @@ export const proceduresController = {
     }
   },
 
-  setProcedureInPet: async(request: FastifyRequest<{Params: {recordId: string, procedureId: string, accId: string;}}>, reply: FastifyReply) => {
+  setProcedureInPet: async(request: FastifyRequest<{Params: params, Body: body}>, reply: FastifyReply) => {
     const actualDate = getFormattedDateTime()
-    const {recordId, procedureId, accId} = request.params
+    const {procedureId, petId,  accId, queueId} = request.params
+    const {RequestedByVetId, RequestedByVetName} = request.body
     try {
      
       const procedure = await prisma.procedures.findUnique({where: {id: parseInt(procedureId)}})
       if(!procedure) return
-      
-      await prisma.proceduresForPet.create({
+        
+      await prisma.petConsultsDebits.create({
         data: {
+          OpenedConsultsForPet: {connect: {id: queueId}},
+          isProcedure: true,
           name: procedure.name,
-          available: procedure.available,
-          observations: procedure.observations,
           price: procedure.price,
-          ageRange: procedure.ageRange,
-          applicableGender: procedure.applicableGender,
-          applicationInterval: procedure.applicationInterval,
-          requestedDate: actualDate,
-          medicine: {connect: {id: parseInt(recordId)}}
+          itemId: procedure.id,
+          RequestedByVetId,
+          RequestedByVetName,
+
         }
+      }).then(async () => {
+        await prisma.proceduresForPet.create({
+          data: {
+            name: procedure.name,
+            available: procedure.available,
+            observations: procedure.observations,
+            price: procedure.price,
+            applicationInterval: procedure.applicationInterval,
+            requestedDate: actualDate,
+            medicine: {connect: {petId: parseInt(petId)}}
+          }
+        })
+      }).then(async () => {
+        await accumulatorService.addPriceToAccum(procedure?.price, accId)
+        reply.status(200).send("Procedimento adicionado com sucesso!")
       })
+
       
-      await accumulatorService.addPriceToAccum(procedure?.price, accId)
-      reply.status(200).send("Procedimento adicionado com sucesso!")
     } catch (error) {
       reply.status(400).send({message: error})
       console.log(error)

@@ -107,25 +107,25 @@ export function SetPetExam() {
 
   //One Part
   const handleSetTableReport: SubmitHandler<FieldValues> = async values => {
-    const refs = exam.characteristics.map(charac => {
+    const refs = exam.partExams[0].examsDetails.map(charac => {
       let data = {
-        charac: charac.name.replace(/\./g, '').trim(),
-        abs: values[`abs${charac.name.replace(/\./g, '').trim()}`],
-        rel: values[`rel${charac.name.replace(/\./g, '').trim()}`]
+        
+        charac: charac.caracteristic.replace(/\./g, '').trim(),
+        abs: values[`abs${charac.caracteristic.replace(/\./g, '').trim()}`],
+        rel: values[`rel${charac.caracteristic.replace(/\./g, '').trim()}`]
       }
       return data
     })
 
     const data = {
       report: refs,
-      isOnePart: exam.isOnePart,
-      isMultiPart: exam.isMultiPart,
-      isReportByText: exam.isReportByText,
-      reportedFor: user.username,
+      obs: values.obsOnePart,
+      reportedFor: user.consultName,
       reportedForCrm: user.crm
     }
 
     try {
+    
       await api.patch(`/reportexam/${id}`, data)
       toast.success('Exame laudado com sucesso!')
     } catch (error) {
@@ -136,14 +136,14 @@ export function SetPetExam() {
   //Multi Part
   const handleSetMultTableReport: SubmitHandler<FieldValues> = async values => {
     try {
-      const refs = exam.multiparts.map(charac => {
+      const refs = exam.partExams.map(charac => {
         return {
-          name: charac.name.replace(/\./g, '').trim(),
-          refs: charac.characteristics.map(charac => {
+          name: charac.partName.replace(/\./g, '').trim(),
+          refs: charac.examsDetails.map(charac => {
             let data = {
-              charac: charac.name,
-              abs: values[`abs${charac.name.replace(/\./g, '').trim()}`],
-              rel: values[`rel${charac.name.replace(/\./g, '').trim()}`]
+              charac: charac.caracteristic,
+              abs: values[`abs${charac.caracteristic.replace(/\./g, '').trim()}`],
+              rel: values[`rel${charac.caracteristic.replace(/\./g, '').trim()}`]
             }
             return data
           })
@@ -153,10 +153,7 @@ export function SetPetExam() {
 
       const data = {
         report: refs,
-        isOnePart: exam.isOnePart,
-        isMultiPart: exam.isMultiPart,
-        isReportByText: exam.isReportByText,
-        requestedFor: user.username
+        requestedFor: user.consultName
       }
 
       await api.patch(`/reportexam/${id}`, data)
@@ -167,7 +164,6 @@ export function SetPetExam() {
     }
   }
 
-  const agesLogic = new Array(exam.ageGroup)
 
   let typeTableView
   switch (true) {
@@ -281,9 +277,9 @@ export function SetPetExam() {
                   ))}
                 </Tbody>
               </Table>
-              <Flex m="4" align="center" w="100%">
+              <Flex m="4"  gap={4} align="center" w="100%">
                 <Text>Observações</Text>
-                <input width="100%" />
+                <Input width="80%" bgColor="white" border="2px" />
               </Flex>
             </TableContainer>
           ) : (
@@ -392,6 +388,10 @@ export function SetPetExam() {
                   ))}
                 </Tbody>
               </Table>
+              <Flex m="4"  gap={4} align="center" w="100%">
+                <Text>Observações</Text>
+                <Input width="80%" bgColor="white" border="2px" />
+              </Flex>
             </TableContainer>
           ) : (
             <h1>FALHA NA RENDERIZAÇÃO DO EXAME</h1>
@@ -451,6 +451,18 @@ export function SetPetExam() {
                 <Td border="1px solid black">Un. Rel.</Td>
 
             
+                      <Td  border="1px solid black">
+                        Absoluto
+                      </Td>
+                      <Td  border="1px solid black">
+                        Relativo
+                      </Td>
+                      <Td  border="1px solid black">
+                        Absoluto
+                      </Td>
+                      <Td  border="1px solid black">
+                        Relativo
+                      </Td>
                       <Td  border="1px solid black">
                         Absoluto
                       </Td>
@@ -526,6 +538,10 @@ export function SetPetExam() {
           >
             GRAVAR
           </Button>
+          <Flex m="4"  gap={4} align="center" w="100%">
+                <Text>Observações</Text>
+                <Input width="80%" bgColor="white" border="2px" {...register("obsOnePart")} name="obsOnePart" />
+              </Flex>
         </TableContainer>
       )
       break

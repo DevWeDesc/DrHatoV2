@@ -31,22 +31,37 @@ interface SugeriesProps {
 export function Createsurgeries() {
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
     const [sugeries, setSugeries] = useState<SugeriesProps[]>([])
-    const [sugeriesId, setSugeriesId] = useState(0)
     const [reloadData, setReloadData] = useState(false);
+    const [pagination, setPagination] = useState(1);
+    const user = JSON.parse(localStorage.getItem("user") as string);
     const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+     const { id, queueId } = useParams<{ id: string; queueId: string; }>();
 
-
+async function getPetData() {
+  const pet = await api.get(`/pets/${id}`);
+  setPetDetails(pet.data)
+}
     async function GetData() {
       try {
-      const pet = await api.get(`/pets/${id}`);
-      const sugeries = await api.get('/surgeries')
-      setPetDetails(pet.data)
-      setSugeries(sugeries.data)
+        if(petDetails.sexo == "Fêmea" || petDetails.sexo == "Femea" || petDetails.sexo == "femea") {
+          const sugeries = await api.get(`/surgeries?page=${pagination}&female=true`)
+          setSugeries(sugeries.data.surgeries)
+        } else if(petDetails.sexo == "Macho" || petDetails.sexo == "macho") {
+          const sugeries = await api.get(`/surgeries?page=${pagination}&male=true`)
+          setSugeries(sugeries.data.surgeries)
+        } else {
+          const sugeries = await api.get(`/surgeries?page=${pagination}`)
+          setSugeries(sugeries.data.surgeries)
+        }
       } catch (error) {
         console.error(error)
       }
     }
+
+
+    useEffect(() => {
+      getPetData()
+    }, [])
 
     useEffect(() => {},[
       GetData()
@@ -60,9 +75,13 @@ export function Createsurgeries() {
     }, [reloadData])
 
 
-    async function setSugeriesInPet ()  {
+    async function setSugeriesInPet (surgerieId: number)  {
       try {
-        await api.post(`surgeries/${sugeriesId}/${petDetails.recordId}/${petDetails.totalAcc.id}`)
+        const data = {
+          RequestedByVetId: user.id, 
+          RequestedByVetName: user.consultName, 
+        };
+        await api.post(`surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`, data)
         setReloadData(true);
         toast.success("Cirurgia adicionada com Sucesso")
       } catch (error) {
@@ -89,11 +108,12 @@ export function Createsurgeries() {
 
   return (
     <ChakraProvider>
-      <Flex>
+      <Flex w="100vw" h="100vh">
         <Flex
           color="black"
           direction="column"
           w="65vw"
+          h="90vh"
           borderRight="2px solid black"
           fontWeight="bold"
         >
@@ -114,7 +134,7 @@ export function Createsurgeries() {
               border="1px solid black"
               fontSize="20"
               w="65vw"
-              h="41vh"
+              h="25vh"
             
             >
                    <TableContainer width="100%" height="100%" overflowY="auto">
@@ -131,7 +151,7 @@ export function Createsurgeries() {
             petDetails.surgeries?.map((surgerie) => (
                     <Tr key={surgerie.id}>
                       <Td>{surgerie.name}</Td>
-                      <Td>{surgerie.price}</Td>
+                      <Td>{new Intl.NumberFormat("pt-BR", {style:'currency', currency: 'BRL'}).format(Number(surgerie.price))}</Td>
                       <Td><Button colorScheme="red" 
                       isDisabled={surgerie.surgerieStatus === "FINISHED"}
                       onClick={() => handleDeleteSugerie(surgerie.id, surgerie.price)} >EXCLUIR</Button></Td>
@@ -142,7 +162,7 @@ export function Createsurgeries() {
            </Table>
               </TableContainer>
          </Flex>
-          <Flex direction="column" h="41vh">
+          <Flex direction="column" h="65vh" >
             <Text
               bg="gray.700"
               fontSize="2xl"
@@ -164,36 +184,35 @@ export function Createsurgeries() {
                   Procurar
                 </Button>
 
-                <Button onClick={setSugeriesInPet} color="white" rounded="0" colorScheme="whatsapp">
-                  ADICIONAR
-                </Button>
+         
                 </HStack>
            
               </Flex>
             </Flex>
            
-              <TableContainer>
+              <TableContainer overflowY="auto">
                 <Table>
                   <Thead>
                     <Tr>
-                    <Th>Selecione</Th>
+                    
                       <Th>Cirurgia</Th>
                       <Th>Até 6kg</Th>
                       <Th>7kg á 15kg</Th>
                       <Th>16kg á 35kg</Th>
                       <Th>35kg+</Th>
+                      <Th>Incluir</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {
                       sugeries.map((sugerie) => (
                         <Tr key={sugerie.id}>
-                        <Td><Checkbox size="lg" borderColor="black" onChange={(ev) => ev.target.checked === true ? setSugeriesId(sugerie.id) : setSugeriesId(0)}  /></Td>
                         <Td>{sugerie.name}</Td>
-                        <Td>{sugerie.price}</Td>
-                        <Td>{sugerie.price}</Td>
-                        <Td>{sugerie.price}</Td>
-                        <Td>{sugerie.price}</Td>
+                        <Td>{ new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL'}).format(Number(sugerie?.price)) }</Td>
+                        <Td>{ new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL'}).format(Number(sugerie?.price))}</Td>
+                        <Td>{ new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL'}).format(Number(sugerie?.price)) }</Td>
+                        <Td>{ new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL'}).format(Number(sugerie?.price)) }</Td>
+                        <Td><Button onClick={() =>setSugeriesInPet(sugerie.id)} colorScheme="whatsapp">Incluir</Button></Td>
                       </Tr>
                       ))
                     }

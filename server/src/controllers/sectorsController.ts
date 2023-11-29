@@ -14,7 +14,7 @@ export const sectorsController = {
   createSector: async (request: FastifyRequest, reply: FastifyReply) => {
     const { name} = SectorSchema.parse(request.body);
     try {
-      await prisma.sectors.create({data: { name: name,} });
+      await prisma.sectors.create({data: { name: name} });
       reply.status(201)
     } catch (error) {
       console.log(error);

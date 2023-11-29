@@ -29,7 +29,7 @@ export const petsController = {
           },
           medicineRecords: {
             select: {
-              petExams: { include: { reportExams: true } },
+              petExams: true,
               petQueues: true,
               observations: true,
               id: true,
@@ -108,7 +108,9 @@ export const petsController = {
             name: exams.name,
             price: exams.price,
             doneExam: exams.doneExame,
-            reports: exams.reportExams,
+           
+            onePart: exams.isOnePart,
+            twoPart: exams.isMultiPart,
             byText: exams.isReportByText
           }
           return examData

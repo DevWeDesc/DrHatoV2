@@ -45,18 +45,6 @@ export class ValidationContract {
         }
     }
 
-
-    public async procedureAlreadyExist(value: string, message: string) {
-      const procedureExist = await prisma.procedures.findUnique({
-         where: {name: value}
-      })
-
-      if(procedureExist) {
-          this.errors.push(message)
-      }
-    }
-
-
     public async examAlreadyExist(value: string, message: string) {
       const examExist = await prisma.exams.findFirst({
         where: {name: value}

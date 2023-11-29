@@ -5,33 +5,30 @@ import { PopulateUsers } from "./transformExcell.mjs";
 import { PopulateMGroups } from "./transformExcellMGroups.mjs";
 import { PopulateMedicines } from "./transformExcellMedicines.mjs";
 import { PopulatePets } from "./transformExcellPet.mjs";
+import { PopulateProcedures } from "./transformExcellProced.mjs";
+import { PopulateSectors } from "./transformExcellSector.mjs";
 import { PopulateSurgeries } from "./transformExcellSurgeries.mjs";
 import { PopulateCustomer } from "./transformExcellUser.mjs";
 import { PopulateVaccines } from "./transformExcellVaccines.mjs";
 
 async function PopulateDataBase () {
     try {
- await PopulateUsers().then(() => {
-            PopulateCustomer().then(() => {
-                PopulatePets().then(() => {
-                    PopulateOldExams().then(() => {
-                        PopulatePartDetails().then(() => {
-                            PopulateOldCaractersExams().then(() => {
-                                PopulateSurgeries().then(() => {
-                                    PopulateVaccines().then(() => {
-                                        PopulateMGroups().then(() => {
-                                            PopulateMedicines().then(() =>  console.log("TODO BANCO POPULADO COM SUCESSO!"))
-                                        })
-                                    })
-                                })
-                            })
-                        })
-                    })
-                })
-            })
-        })
 
-       
+        await PopulateUsers();
+        await PopulateCustomer();
+        await PopulatePets();
+        await PopulateOldExams();
+        await PopulatePartDetails();
+        await PopulateOldCaractersExams();
+        await PopulateSurgeries();
+        await PopulateVaccines();
+        await PopulateMGroups();
+        await PopulateMedicines();
+        await PopulateSectors();
+        await PopulateProcedures();
+
+        console.log("Todo Banco Populado com Sucesso!")
+        
     } catch (error) {
         console.log("FALHA AO POPULAR BANCO")
     }
