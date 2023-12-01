@@ -457,9 +457,9 @@ model ExamsForPet {
   responsibleForExam String?
   responsibleForCrm  String?
   doneExame          Boolean?         @default(false)
-  isMultiPart        Boolean?         @default(false)
-  isReportByText     Boolean?         @default(false)
-  isOnePart          Boolean?         @default(false)
+  onePart            Boolean?
+  twoPart            Boolean?
+  byReport           Boolean?
   medicine_id        Int
   reportExams        ReportForExams[]
   medicine           MedicineRecord   @relation(fields: [medicine_id], references: [id])
@@ -479,9 +479,10 @@ model ReportForExams {
   report         Json?
   textReport     String?
   internalReport String[]
-  isOnePart      Boolean?    @default(false)
-  isMultiPart    Boolean?    @default(false)
-  isReportByText Boolean?    @default(false)
+  externalReport Boolean?
+  onePart        Boolean?
+  twoPart        Boolean?
+  byReport       Boolean?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   examsId        Int

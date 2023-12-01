@@ -25,7 +25,7 @@
 [X] - Sistema Internação
 [X] - Sistema de Filas 
 [] - Sistema Etiquetas 
-[] - Impressão do exame concluido via PDF
+[X] - Impressão do exame concluido via PDF
 
 
 
@@ -72,7 +72,7 @@
 [X] - Senhas encriptadas
 [X] - Autenticação por JWT
 [X] - Motor de Busca Veterinários
-[] - Motor de Busca Laboratório
+[X] - Motor de Busca Laboratório
 [] - Motor de Busca Internação
 [X] - Motor de Busca Veterinários
 [] - Solicitado por/Concluido por em todas finalizações com valores
@@ -100,7 +100,7 @@
 #### BUGS e Correções  ####
 [X] - Tabela exames duplicando
 [X] - Ajustar cadastro de pets campo idade
-[] - Valores já prédefinidos dos exames que já existem
+[X] - Valores já prédefinidos dos exames que já existem
 
 
 ### To do Solicitado Dr Daniel ###

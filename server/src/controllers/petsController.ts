@@ -109,9 +109,9 @@ export const petsController = {
             price: exams.price,
             doneExam: exams.doneExame,
            
-            onePart: exams.isOnePart,
-            twoPart: exams.isMultiPart,
-            byText: exams.isReportByText
+            onePart: exams.onePart,
+            twoPart: exams.twoPart,
+            byText: exams.byReport
           }
           return examData
         }),
