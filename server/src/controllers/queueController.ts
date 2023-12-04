@@ -2,7 +2,8 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../interface/PrismaInstance";
 import {QueueSchema } from "../schemas/schemasValidator";
 import { petContract } from "../interface/PetContractInstance";
-
+import bcrypt from "bcrypt";
+import { z } from "zod";
 type params = {
     id: string;
     petId: string;
@@ -10,6 +11,13 @@ type params = {
     recordId: string;
     customerId: string;
     date: string;
+  }
+
+  type body = {
+    masterPassword: string;
+    userId: number;
+    unconcludeObs: string;
+    queueId: number;
   }
 
 export const queueController = {
@@ -124,6 +132,45 @@ export const queueController = {
       reply.send(data)
     } catch (error) {
       console.log(error)
+    }
+  },
+
+  unconcludeQueue: async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
+    try {
+        const unconcludeSchema = z.object({
+          masterPassword: z.string(),
+          unconcludeObs: z.string(),
+          userId: z.number(),
+          queueId: z.number()
+        })
+        const { masterPassword, unconcludeObs, userId, queueId } = unconcludeSchema.parse(request.body) 
+        const user = await prisma.user.findUnique({where: {id: userId}})
+        if(!user) return
+
+        const authorizedUser =  await bcrypt.compare(masterPassword, user.password)
+
+        if(authorizedUser) {
+          await prisma.queuesForPet.update({where: {id:queueId}, data: {
+            queueIsDone: false,
+            unconcludeObs,
+            medicine: {
+              update: {pet: {  update: {queue: {update: {petIsInQueue: true}}}}}
+            }
+          }})
+
+    
+
+          reply.send("Consulta desconcluida!!")
+
+        } else {
+          reply.send("Falha ao desconcluir consulta!").status(401)
+        }
+
+    } catch (error) {
+
+      console.log(error)
+      reply.send(error)
+
     }
   }
 

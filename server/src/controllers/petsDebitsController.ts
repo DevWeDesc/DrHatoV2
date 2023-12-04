@@ -50,10 +50,15 @@ getDebitsInQueue: async (request: FastifyRequest<{ Params: params}>, reply: Fast
             }
         })
 
+        const total = debits[0].consultDebits.reduce((acc, total) => {
+            acc.total +=  Number(total.price)
+            return acc 
+        }, { total: 0})
 
         reply.send({
-            debits
-        })
+            debits,
+            total
+            })
 
     } catch (error) {
         reply.send({

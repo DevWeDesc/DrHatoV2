@@ -9,18 +9,18 @@ import {
   Tbody,
   Th,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "../../components/admin/Header";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import { FaClipboardList, TbVaccine } from "react-icons/all";
 import { AdminContainer } from "../../pages/AdminDashboard/style";
 import { useNavigate } from "react-router-dom";
-import { DbContext } from "../../contexts/DbContext";
 import { api } from "../../lib/axios";
 import { AdmissionSearch } from "../Search/admissionSearch";
 import { BiHome } from "react-icons/all";
 import { PetDetaisl } from "../../interfaces";
+import moment from "moment";
 
 interface QueueProps {
   response: [];
@@ -30,7 +30,6 @@ interface QueueProps {
 export function SearchAdmission() {
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [addmitedPets, setAdmmitedPets] = useState<PetDetaisl[]>([])
-  let { dataCustomer } = useContext(DbContext);
   const navigate = useNavigate();
   useEffect(() => {
     async function getQueue() {
@@ -39,6 +38,8 @@ export function SearchAdmission() {
     }
     getQueue();
   }, [inQueue.length]);
+
+
 
 
 
@@ -82,34 +83,41 @@ export function SearchAdmission() {
 
                     <Tbody>
                           {
-                            addmitedPets.length >= 1 ? addmitedPets.map((pet) =>
-                            (<Tr onClick={() => navigate(`/Admissions/${pet.id}`)} key={pet.id}>
-                                <Td>{pet.customer.name}</Td>
-                                <Td>{pet.name}</Td>
-                                <Td>{pet.especie}</Td>
-                                <Td>{pet.race}</Td>
-                                <Td>{new Intl.DateTimeFormat('pt-BR', {
-                                      day: '2-digit',
-                                      month: '2-digit',
-                                      year: '2-digit',
-                                      hour: '2-digit',
-                                      minute: '2-digit'
-                                  //@ts-ignore
-                               }).format(new Date(pet?.bed?.entryOur))}</Td>
-                               <Td>
-                                {pet.codPet}
-                               </Td>
-                               <Td>
-                               
-                                {
-                                  //@ts-ignore
-                                pet?.bed?.kennel.name
-                                }
-                               </Td>
-                               <Td>{
-                               //@ts-ignore
-                               pet?.bed?.id}</Td>
-                            </Tr>)) : 
+                            addmitedPets.length >= 1 ? addmitedPets.map((pet) => {
+                              //@ts-ignore
+                              const actualDate = moment(new Date()).diff(pet?.bed?.entryOur, 'minutes')
+                              console.log("DIF MINUTES", actualDate)
+                              return  <Tr 
+                              bgColor={actualDate >= 20 ? 'red.200' : 'green.200'}
+                              onClick={() => navigate(`/Admissions/${pet.id}`)} key={pet.id}>
+                              <Td>{pet.customer.name}</Td>
+                              <Td>{pet.name}</Td>
+                              <Td>{pet.especie}</Td>
+                              <Td>{pet.race}</Td>
+                              <Td>{new Intl.DateTimeFormat('pt-BR', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                //@ts-ignore
+                             }).format(new Date(pet?.bed?.entryOur))}</Td>
+                             <Td>
+                              {pet.codPet}
+                             </Td>
+                             <Td>
+                             
+                              {
+                                //@ts-ignore
+                              pet?.bed?.kennel.name
+                              }
+                             </Td>
+                             <Td>{
+                             //@ts-ignore
+                             pet?.bed?.id}</Td>
+                          </Tr>
+                            }
+                              ) : 
                             (<Tr>
                                 <h1>SEM ANIMAIS INTERNADOS NO MOMENTO</h1>
                             </Tr>)

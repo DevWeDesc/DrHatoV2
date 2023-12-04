@@ -48,11 +48,6 @@ export const createCustomer = z.object({
   neighbour: z.string().optional()
 
  })
-
- enum Roles {
-"ADMIN",
-
- }
 export const UserSchema = z.object({
   email: z.string().email(),
   name: z.string().optional(),
@@ -61,7 +56,7 @@ export const UserSchema = z.object({
   userType: z.any(),
   userIsVet: z.boolean().optional(),
   crmv: z.string().optional(),
-  role: z.enum(["ADMIN", "MANAGER","VETERINARIAN", "LABORATORY", "RECEPTIONIST", "UNDEFINED" ]).optional()
+  role: z.enum(["MASTER", "ADMIN", "MANAGER","VETERINARIAN", "LABORATORY", "RECEPTIONIST", "UNDEFINED" ]).optional()
 })
  
 export const VaccineSchema = z.object({

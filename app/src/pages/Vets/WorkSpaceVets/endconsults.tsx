@@ -28,11 +28,13 @@ interface EndConsutsProps {
 export function EndConsults({handleCloseQuery}: EndConsutsProps) {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [consultDebitsDetails, setConsultDebitsDetails] = useState<ConsultDebitsProps[]>([])
+  const [totalDebits, setTotalDebits] = useState({ total: 0});
 
   async function getConsultDebitsDetails() {
     try {
       const response = await api.get(`/debits/pets/consults/${queueId}`)
       setConsultDebitsDetails(response.data.debits)
+      setTotalDebits(response.data.total)
 
     } catch (error) {
       toast.error("Falha ao buscar informações da consulta!")
@@ -84,6 +86,7 @@ export function EndConsults({handleCloseQuery}: EndConsutsProps) {
             </Table>
           
           </TableContainer>
+          <Text m="2" fontWeight="bold">Total: {new Intl.NumberFormat('pt-BR', {currency: 'BRL', style: 'currency'}).format(Number(totalDebits.total))}</Text>
           <Button  onClick={handleCloseQuery} w='100%' colorScheme="whatsapp">Finalizar Consulta</Button>
           </React.Fragment>
         ))

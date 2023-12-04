@@ -5,6 +5,7 @@ export async function queueRoutes(app: FastifyInstance) {
     app.put('/queue/:id', queueController.setPetInQueue)
     app.put('/endqueue/:petId/:recordId/:queueId/:customerId', queueController.finishQueueOfPet)
     app.get('/queuedebits/:petId/:date', queueController.getQueuePetHistory)
+    app.put('/queue/unconclude', queueController.unconcludeQueue)
 
 
 }

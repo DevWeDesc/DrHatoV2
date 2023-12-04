@@ -126,9 +126,7 @@ export function MenuVet() {
   }
 
 
-  function preferenceName(){
-    
-  }
+
 
   useEffect(() => {
     searchDataVet()
@@ -293,7 +291,7 @@ export function MenuVet() {
                                   </Tbody>
                                 </Table>
                       ) : (
-                        <Table colorScheme="blackAlpha">
+                        <Table  colorScheme="blackAlpha">
                         <Thead>
                           <Tr>
                             <Th>CPF</Th>
@@ -310,6 +308,7 @@ export function MenuVet() {
                         <Tbody>
                           {petTotal.map((pet: any) => (
                             <Tr
+                       
                               key={pet.id}
                               cursor="pointer"
                               onClick={() => navigate(`/Vets/Workspace/${pet.id}/${pet.consultUniqueId}`)}
@@ -327,14 +326,14 @@ export function MenuVet() {
                                 {pet.name}
                               </Td>
                               <Td>{pet.codPet}</Td>
-                              <Td>{pet.queueEntry}</Td>
+                              <Td>{new Intl.DateTimeFormat("pt-BR",{ month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).format(new Date(pet?.queueEntry))}</Td>
                               <Td>{pet.ouor}</Td>
                               <Td>
                               {pet.vetPreference == user.consultName ? pet.vetPreference : "Sem preferência"}
                               </Td>
                               <Td>0</Td>
                             </Tr>
-                          ))}
+                          )).reverse()}
                         </Tbody>
                       </Table>
                       )

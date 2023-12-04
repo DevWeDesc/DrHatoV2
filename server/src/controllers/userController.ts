@@ -70,7 +70,8 @@ loginUser: async(request: FastifyRequest, reply: FastifyReply)=> {
       crm: user?.crmv,
       username: user?.username,
       name: user.name,
-      consultName: user.consultName
+      consultName: user.consultName,
+      role: user.role
     }
     
   
@@ -86,7 +87,7 @@ loginUser: async(request: FastifyRequest, reply: FastifyReply)=> {
     } 
 
   
-   const token = jwt.sign({userData }, secret, {expiresIn: "01h"})
+   const token = jwt.sign({userData}, secret, {expiresIn: "01h"})
    reply.send({token: token, userData}).status(200)
     
 
