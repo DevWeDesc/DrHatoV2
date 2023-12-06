@@ -8,6 +8,9 @@ import {
   Thead,
   Tbody,
   Th,
+  Text,
+  Checkbox,
+  HStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Header } from "../../components/admin/Header";
@@ -64,7 +67,22 @@ export function SearchAdmission() {
             </GenericSidebar>
             <Box w="100%" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
+               
                 <AdmissionSearch path="vetsearch" />
+
+                <Flex align="center" gap={4}>
+                <Text>Legenda:</Text> 
+                <HStack>
+                <Text fontWeight="bold">Abaixo de 48 horas</Text>
+                <Box  border="1px"  bgColor="green.200"  w={4} h={4} />
+                </HStack>
+                <HStack>
+                <Text  fontWeight="bold" >Acima de 48 horas </Text>
+                <Box  border="1px" bgColor="red.200"  w={4} h={4} />
+                <Text  fontWeight="hairline" >(prioridade)</Text>
+                </HStack>
+               
+                </Flex>
 
                 <Flex textAlign="center" justify="center">
                   <Table colorScheme="blackAlpha">
@@ -88,8 +106,8 @@ export function SearchAdmission() {
                               const actualDate = moment(new Date()).diff(pet?.bed?.entryOur, 'minutes')
                               console.log("DIF MINUTES", actualDate)
                               return  <Tr 
-                              bgColor={actualDate >= 20 ? 'red.200' : 'green.200'}
-                              onClick={() => navigate(`/Admissions/${pet.id}`)} key={pet.id}>
+                              bgColor={actualDate >= 2880 ? 'red.200' : 'green.200'}
+                              onClick={() => navigate(`/Admissions/${pet.id}/${pet?.medicineRecords?.petBeds[0]?.openedAdmissionId}`)} key={pet.id}>
                               <Td>{pet.customer.name}</Td>
                               <Td>{pet.name}</Td>
                               <Td>{pet.especie}</Td>
@@ -103,7 +121,7 @@ export function SearchAdmission() {
                                 //@ts-ignore
                              }).format(new Date(pet?.bed?.entryOur))}</Td>
                              <Td>
-                              {pet.codPet}
+                              {pet.CodAnimal}
                              </Td>
                              <Td>
                              

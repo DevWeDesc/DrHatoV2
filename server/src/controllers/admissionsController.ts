@@ -88,6 +88,13 @@ export const admissionsController = {
         contract.clearErrors();
         return;
       }
+
+      const {id: openedSurgerieId} = await prisma.openededAdmissionsForPet.create({
+        data: {
+          openedDate: new Date(),
+        }
+      })
+
       await prisma.kennel.update({
         where: { id: kennelId },
         data: {
@@ -111,6 +118,7 @@ export const admissionsController = {
           entryOur: actualDate,
           mustFasting,
           isCompleted: false,
+          openedAdmissionId: openedSurgerieId,
           medicine: { connect: { id: recordId } },
         },
       });

@@ -105,7 +105,7 @@ export function VetsAdmissions() {
     try {
       await api.put("admitpet", data);
       toast.success("Animal internado!");
-      navigate(`/Vets/Workspace/${id}`);
+      navigate(`/Vets/Workspace/${id}/${queueId}`);
     } catch (error) {
       console.log(error);
       toast.error("Falha ao internar animal!");

@@ -17,6 +17,7 @@ type params = {
   type body = {
     RequestedByVetId: number;
     RequestedByVetName: string;
+    isAdmission: boolean;
   }
 
 
@@ -51,33 +52,49 @@ export const vaccinesController = {
 
     setVaccineInPet: async (request: FastifyRequest<{Params: params, Body: body}>, reply: FastifyReply) => {
         const { id, petId, accId, queueId} = request.params
-        const {RequestedByVetId, RequestedByVetName} = request.body
+        const {RequestedByVetId, RequestedByVetName, isAdmission} = request.body
         const vaccine = await prisma.vaccines.findUnique({where: {id: parseInt(id)}})
         if(!vaccine) {
             reply.status(400).send("Falha ao buscar vacina/Falha ao criar vacina")
             return
-        }
-        try {
+            }
+            try {
 
-            await prisma.petConsultsDebits.create({
-                data: {
-                    OpenedConsultsForPet: {connect: {id: queueId}},
-                    isVaccine: true,
-                    name: vaccine.name,
-                    price: vaccine.price,
-                    itemId: vaccine.id,
-                    RequestedByVetId,
-                    RequestedByVetName
-                }
-            }).then(async () => {
-                await prisma.vaccinesForPet.create({
-                    data: {name: vaccine?.name, price: vaccine?.price, description: vaccine?.description, requestedDate: new Date(), medicine: {connect: { petId: parseInt(petId)}}}
+             if(isAdmission === true) {
+                await prisma.petConsultsDebits.create({
+                    data: {
+                        OpenedAdmissionsForPet: {connect: {id: queueId}},
+                        isVaccine: true,
+                        name: vaccine.name,
+                        price: vaccine.price,
+                        itemId: vaccine.id,
+                        RequestedByVetId,
+                        RequestedByVetName,
+                    
+                    }
                 })
-            }).then(async() => {
-                await accumulatorService.addPriceToAccum(vaccine?.price, accId)
-            
-                reply.status(201).send("Vacina adicionada ao PET")
+             } else {
+                await prisma.petConsultsDebits.create({
+                    data: {
+                        OpenedConsultsForPet: {connect: {id: queueId}},
+                        isVaccine: true,
+                        name: vaccine.name,
+                        price: vaccine.price,
+                        itemId: vaccine.id,
+                        RequestedByVetId,
+                        RequestedByVetName
+                    }
+                })
+             }  
+   
+            await prisma.vaccinesForPet.create({
+                data: {name: vaccine?.name, price: vaccine?.price, description: vaccine?.description, requestedDate: new Date(), medicine: {connect: { petId: parseInt(petId)}}}
             })
+            
+            await accumulatorService.addPriceToAccum(vaccine?.price, accId)
+            
+            reply.status(201).send("Vacina adicionada ao PET")
+
 
         } catch (error) {
             reply.send({message: error})

@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router";
 import { Createsurgeries } from "../surgeries/createsurgeries";
 
 export function SurgeriesAdmission() {
-  const { id } = useParams();
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate();
   return (
     <ChakraProvider>
@@ -33,14 +33,14 @@ export function SurgeriesAdmission() {
               <Button
                 colorScheme="yellow"
                 leftIcon={<TbArrowBack size={24} />}
-                onClick={() => navigate(`/Admissions/${id}`)}
+                onClick={() => navigate(`/Admissions/${id}/${queueId}`)}
               >
                 Voltar
               </Button>
             </Flex>
           </Flex>
         </Flex>
-        <Createsurgeries />
+        <Createsurgeries InAdmission={true} admissionQueueId={queueId} />
       </Flex>
     </ChakraProvider>
   );

@@ -89,7 +89,7 @@ export const petsController = {
         sizePet: pet?.sizePet,
         bornDate: pet?.bornDate,
         observations: pet?.observations,
-        codPet: pet?.codPet,
+        codPet: pet?.CodAnimal,
         more: pet?.queue?.moreInfos,
         ouor: pet?.queue?.queueOur,
         recordId: pet?.medicineRecords?.id,

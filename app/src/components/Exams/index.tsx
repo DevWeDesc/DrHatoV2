@@ -19,7 +19,12 @@ import { Input } from "../../components/admin/Input";
 import { ExamsProps, PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
 
-export function ExamsVet() {
+type ExamsVetProps = {
+  InAdmission: boolean;
+  admissionQueueId?: string;
+}
+
+export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
   const { id , queueId} = useParams<{ id: string; queueId: string; }>();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [exams, setExams] = useState([]);
@@ -45,18 +50,29 @@ export function ExamsVet() {
     const response = await api.get(`/exams/old/letter/${searchByLetter}`);
     setExams(response.data);
   }
-
+  
   async function setOldExamInPet(examId: number) {
     try {
       const data = {
         RequestedByVetId: user.id, 
         RequestedByVetName: user.consultName, 
-        RequestedCrm: user.crm
+        RequestedCrm: user.crm,
+        isAdmission: InAdmission
       };
-      await api.post(
-        `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,data);
-      setReloadData(true);
-      toast.success("Exame criado com Sucesso");
+      if(InAdmission === true) {
+
+        await api.post(
+          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,data);
+        setReloadData(true);
+        toast.success("Exame adicionado Ala Internação!");
+
+      } else {
+        await api.post(
+          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,data);
+        setReloadData(true);
+        toast.success("Exame adicionado Ala Veterinários");
+      }
+
     } catch (error) {
       toast.error("Falha ao cadastrar exame!");
     }

@@ -8,7 +8,7 @@ import VaccinesVets from "../Vaccines";
 
 export default function VaccinesAdmission() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
 
   return (
     <ChakraProvider>
@@ -40,7 +40,7 @@ export default function VaccinesAdmission() {
                 <Button
                   colorScheme="yellow"
                   leftIcon={<TbArrowBack size={24} />}
-                  onClick={() => navigate(`/Admissions/${id}`)}
+                  onClick={() => navigate(`/Admissions/${id}/${queueId}`)}
                 >
                   Voltar
                 </Button>
@@ -49,7 +49,7 @@ export default function VaccinesAdmission() {
           </WorkSpaceHeader>
           <Flex w="100%" mx="auto">
             <Box w="100%" borderRadius={8}>
-              <VaccinesVets />
+              <VaccinesVets InAdmission={true} admissionQueueId={queueId} />
             </Box>
           </Flex>
         </Flex>

@@ -15,7 +15,7 @@ import { set, SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CPFInput } from "../InputMasks/CPFinput";
 import { RGInput } from "../InputMasks/RGInput";
 import { CEPInput } from "../InputMasks/CEPInput";
@@ -24,6 +24,7 @@ import { FixedInput } from "../InputMasks/FixedInput";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, number, date, InferType } from "yup";
 import { useNavigate } from "react-router-dom";
+import { validateCpf } from "../../helpers/validateCpf";
 
 interface CreateNewClienteProps {
   name: string;
@@ -77,16 +78,6 @@ export function ReceptionCreateNewConsultForm() {
   const [errorInput, setErrorInput] = useState(0);
   const navigate = useNavigate();
 
-  const Dayes = {
-    phone: CelularValue,
-    tell: FixedValue,
-    cpf: CPFValue,
-    rg: RGValue,
-    cep: CEPValue,
-    howKnowUs: howKnow,
-    kindPerson: kindPerson,
-  };
-
   if (tamCep >= 9)
     fetch(`https://viacep.com.br/ws/${CEPValue}/json/`)
       .then((response) => response.json())
@@ -128,20 +119,27 @@ export function ReceptionCreateNewConsultForm() {
       neighbour: bairro,
     };
     try {
-      await api
+
+      const validCpf = validateCpf(CPFValue)
+
+      if(validCpf) {
+        await api
         .post("/customers", data)
         .then((res) => navigate(`/Recepcao/Consultas/Clientes/${res.data}`));
       toast.success("Usuário cadastrado");
-      console.log(data);
+      } else {
+        toast.error("CPF Fora dos padrões")
+      }
     } catch (error) {
       toast.error("Falha ao cadastrar novo usuário");
       console.log(data);
       console.log(error);
     }
   };
-  console.log("Erorr input " + errorInput);
-  console.log(CelularValue);
-  console.log(errorInput);
+
+
+
+
   return (
     <ChakraProvider>
       <Text
@@ -712,44 +710,4 @@ export function ReceptionCreateNewConsultForm() {
   );
 }
 
-{
-  /*
-  <Text fontWeight="bold" fontSize="20" mt="5">
-                Campos marcados com * São obrigatórios
-              </Text>
-  <Flex
-direction="column"
-align="center"
-w="30%"
-style={{ overflow: "none" }}
->
-<Text mt="2" textAlign="left" fontWeight="bold" fontSize="20">
-  Pessoa Fisica ou Juridica ?
-</Text>
 
-<RadioGroup
-  onChange={setKindPerson}
-  value={kindPerson}
-  style={{ overflow: "none" }}
->
-  <Flex gap="2" mt="2">
-    <Radio
-      mb="2"
-      borderColor="teal.800"
-      colorScheme="green"
-      value="FÍSICA"
-    >
-      PESSOA FÍSICA
-    </Radio>
-    <Radio
-      mb="2"
-      borderColor="teal.800"
-      colorScheme="green"
-      value="JURÍDICA"
-    >
-      PESSOA JURÍDICA
-    </Radio>
-  </Flex>
-</RadioGroup>
-</Flex>*/
-}

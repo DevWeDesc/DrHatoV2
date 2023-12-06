@@ -92,10 +92,10 @@ model Autorizations {
 }
 
 model MedicineRecord {
-  id            Int                    @id @default(autoincrement())
-  observations  String[]               @default([""])
-  petId         Int                    @unique
-  pet           Pets                   @relation(fields: [petId], references: [id])
+  id            Int                        @id @default(autoincrement())
+  observations  String[]                   @default([""])
+  petId         Int                        @unique
+  pet           Pets                       @relation(fields: [petId], references: [id])
   petExams      ExamsForPet[]
   petVaccines   VaccinesForPet[]
   petSurgeries  SurgeriesForPet[]
@@ -104,6 +104,7 @@ model MedicineRecord {
   petQueues     QueuesForPet[]
   petMedicines  MedicinesForPets[]
   petConsults   OpenedConsultsForPet[]
+  petAdmissions OpenededAdmissionsForPet[]
 }
 
 model Sectors {
@@ -250,15 +251,16 @@ model Bed {
 }
 
 model BedsForPet {
-  id          Int                    @id @default(autoincrement())
-  entryOur    DateTime?
-  exitOur     DateTime?
-  mustFasting Boolean?               @default(false)
-  totalDebt   Decimal?
-  isCompleted Boolean?               @default(false)
-  hospDiary   HospitalizationDiary[]
-  medicine_id Int
-  medicine    MedicineRecord         @relation(fields: [medicine_id], references: [id])
+  id                Int                    @id @default(autoincrement())
+  openedAdmissionId String?                @unique
+  entryOur          DateTime?
+  exitOur           DateTime?
+  mustFasting       Boolean?               @default(false)
+  totalDebt         Decimal?
+  isCompleted       Boolean?               @default(false)
+  hospDiary         HospitalizationDiary[]
+  medicine_id       Int
+  medicine          MedicineRecord         @relation(fields: [medicine_id], references: [id])
 }
 
 model HospitalizationDiary {
@@ -322,6 +324,22 @@ model SurgeriesForPet {
   medicine        MedicineRecord    @relation(fields: [medicine_id], references: [id])
 }
 
+model OpenededAdmissionsForPet {
+  id                String              @id @default(uuid())
+  openedDate        DateTime            @default(now())
+  closedDate        DateTime?
+  updatedDate       DateTime?
+  isClosed          Boolean?
+  closedByVetId     Int?
+  petWeight         String?
+  observations      String?
+  consultType       String?
+  totaLDebits       Decimal?
+  MedicineRecord    MedicineRecord?     @relation(fields: [medicineRecordId], references: [id])
+  medicineRecordId  Int?
+  PetConsultsDebits PetConsultsDebits[]
+}
+
 model SurgeriesReports {
   id                Int             @id @default(autoincrement())
   reportedAt        DateTime        @default(now())
@@ -335,22 +353,25 @@ model SurgeriesReports {
 
 // -------------- FINANCES ----------------- //
 model PetConsultsDebits {
-  id                 Int      @id @default(autoincrement())
-  name               String?
-  price              Decimal?
-  itemId             Int?
-  isExam             Boolean?
-  isSurgerie         Boolean?
-  isVaccine          Boolean?
-  isProcedure        Boolean?
-  isAdmission        Boolean?
-  RequestedByVetId   Int?
-  RequestedByVetName String?
-  requestedDate      DateTime @default(now())
-  consultOpenedId    String?  @unique
-
-  OpenedConsultsForPet   OpenedConsultsForPet? @relation(fields: [openedConsultsForPetId], references: [id])
-  openedConsultsForPetId String?
+  id                       Int                       @id @default(autoincrement())
+  name                     String?
+  price                    Decimal?
+  itemId                   Int?
+  isAdmissions             Boolean?
+  isExam                   Boolean?
+  isSurgerie               Boolean?
+  isVaccine                Boolean?
+  isProcedure              Boolean?
+  isAdmission              Boolean?
+  RequestedByVetId         Int?
+  RequestedByVetName       String?
+  requestedDate            DateTime                  @default(now())
+  consultOpenedId          String?                   @unique
+  surgerieOpenedId         String?                   @unique
+  OpenedAdmissionsForPet   OpenededAdmissionsForPet? @relation(fields: [openedAdmissionsForPetId], references: [id])
+  OpenedConsultsForPet     OpenedConsultsForPet?     @relation(fields: [openedConsultsForPetId], references: [id])
+  openedConsultsForPetId   String?
+  openedAdmissionsForPetId String
 }
 
 model PricesAccumulator {

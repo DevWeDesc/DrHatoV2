@@ -16,6 +16,7 @@ type params = {
 type body = {
   RequestedByVetId: number;
   RequestedByVetName: string;
+  InAdmission: boolean;
 }
 
 export const proceduresController = {
@@ -155,40 +156,57 @@ export const proceduresController = {
   setProcedureInPet: async(request: FastifyRequest<{Params: params, Body: body}>, reply: FastifyReply) => {
     const actualDate = getFormattedDateTime()
     const {procedureId, petId,  accId, queueId} = request.params
-    const {RequestedByVetId, RequestedByVetName} = request.body
+    const {RequestedByVetId, RequestedByVetName, InAdmission} = request.body
     try {
-     
       const procedure = await prisma.procedures.findUnique({where: {id: parseInt(procedureId)}})
+      
       if(!procedure) return
         
-      await prisma.petConsultsDebits.create({
-        data: {
-          OpenedConsultsForPet: {connect: {id: queueId}},
-          isProcedure: true,
-          name: procedure.name,
-          price: procedure.price,
-          itemId: procedure.id,
-          RequestedByVetId,
-          RequestedByVetName,
-
-        }
-      }).then(async () => {
-        await prisma.proceduresForPet.create({
+      if(InAdmission === true) {
+        await prisma.petConsultsDebits.create({
           data: {
+            OpenedAdmissionsForPet: {connect: {id: queueId}},
+            isProcedure: true,
             name: procedure.name,
-            available: procedure.available,
-            observations: procedure.observations,
             price: procedure.price,
-            applicationInterval: procedure.applicationInterval,
-            requestedDate: actualDate,
-            medicine: {connect: {petId: parseInt(petId)}}
+            itemId: procedure.id,
+            RequestedByVetId,
+            RequestedByVetName,
+  
           }
         })
-      }).then(async () => {
-        await accumulatorService.addPriceToAccum(procedure?.price, accId)
-        reply.status(200).send("Procedimento adicionado com sucesso!")
-      })
+      } else {
+        await prisma.petConsultsDebits.create({
+          data: {
+            OpenedConsultsForPet: {connect: {id: queueId}},
+            isProcedure: true,
+            name: procedure.name,
+            price: procedure.price,
+            itemId: procedure.id,
+            RequestedByVetId,
+            RequestedByVetName,
+  
+          }
+        })
+      }
 
+      
+      await prisma.proceduresForPet.create({
+        data: {
+          name: procedure.name,
+          available: procedure.available,
+          observations: procedure.observations,
+          price: procedure.price,
+          applicationInterval: procedure.applicationInterval,
+          requestedDate: actualDate,
+          medicine: {connect: {petId: parseInt(petId)}}
+        }
+      })
+      
+      await accumulatorService.addPriceToAccum(procedure?.price, accId)
+      reply.status(200).send("Procedimento adicionado com sucesso!")
+      
+ 
       
     } catch (error) {
       reply.status(400).send({message: error})

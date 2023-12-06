@@ -44,7 +44,7 @@ import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
 import { SetMedicineInPet } from "../../components/Medicine/SetMedicineInPet";
 import { VetInstructions } from "./WorkSpaceVets/instructions";
 import { EndConsults } from "./WorkSpaceVets/endconsults";
-
+import { validateCpf } from "../../helpers/validateCpf";
 type OpenExamProps = {
   isMultiPart: boolean,
   isReportByText: boolean,
@@ -285,7 +285,7 @@ export function WorkSpaceVet() {
       break;
   }
 
-  console.log("examss", pet.exams)
+  
 
   return (  
     
