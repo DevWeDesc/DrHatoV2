@@ -378,15 +378,6 @@ export function WorkSpaceVet() {
                 Medicar Animal
               </Button>
 
-              <Button
-                height={8}
-                onClick={() => navigate(`/Pets/MedicineRecord/${id}/${queueId}`)}
-                leftIcon={<MdPets />}
-                colorScheme="linkedin"
-       
-              >
-                PRONTUÁRIO DO PET
-              </Button>
                 </HStack>
                 <HStack>
                 <Button
@@ -428,6 +419,16 @@ export function WorkSpaceVet() {
                 onClick={() => navigate(`/WorkSpace/Exam/${id}/${queueId}`)}
               >
                 EXAMES
+              </Button>
+              
+              <Button
+                height={8}
+                onClick={() => navigate(`/Pets/MedicineRecord/${id}/${queueId}`)}
+                leftIcon={<MdPets />}
+                colorScheme="linkedin"
+       
+              >
+                PRONTUÁRIO DO PET
               </Button>
             <Button colorScheme="red"
              height={8}

@@ -39,8 +39,6 @@ const filteredData = data
           }
         })
 
-        console.log(surgeries)
-
       }
       
       console.log("Banco Populado Surgeries")

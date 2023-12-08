@@ -51,7 +51,7 @@ const filteredData = data.map(procedure => ({
                 }
               })
         } catch (error) {
-            console.log(`Procedimento com erro ${proced.name} Cod: ${proced.codProcedimento}`)
+            //console.log(`Procedimento com erro ${proced.name} Cod: ${proced.codProcedimento}`)
         }
       }
       console.log("Banco populado Procedimentos")

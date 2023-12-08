@@ -22,15 +22,8 @@ import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
 import { AiOutlineSearch, BiLeftArrow, BiRightArrow } from 'react-icons/all'
 import { AdminContainer } from '../AdminDashboard/style'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import { api } from '../../lib/axios'
 import { Input } from '../../components/admin/Input'
-interface QueueProps {
-  response: []
-  totalInQueue: number
-}
-
-
 
 export function MenuVet() {
   const [petName, setPetName] = useState('')
@@ -38,16 +31,28 @@ export function MenuVet() {
   const [customerName, setCustomerName] = useState('')
   const [isFinishied, setIsFinishied] = useState(false)
   const [isAddmited, setIsAddmited] = useState(false)
+  const [showAllVets, setShowAllVets] = useState(false)
   const [pagination, SetPagination] = useState(1)
   const [numberOfPages, setNumberOfPages] = useState(0)
   const [totalInQueue, setTotalInQueue] = useState(0 as any)
-  const [petTotal, setPetTotal] = useState([])
-  const [inQueue, setInQueue] = useState<QueueProps[]>([])
+  const [petsByVetPreference, setPetsByVetPreference] = useState([])
   const [petData, setPetData] = useState([] as any)
-  const [dataByFilter, setDataByFilter] = useState([] as any)
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
+
+
+  async function getQueueVetPreference() {
+    if(showAllVets === true) {
+      const response = await api.get('/pets/queue')
+      setTotalInQueue(response.data)
+      setPetsByVetPreference(response.data.response)
+    } else {
+      const response = await api.get(`/pets/queue/preference/${user.consultName}`)
+      setPetsByVetPreference(response.data.response)
+    }
+
+  }
 
   function incrementPage() {
     SetPagination(prevCount => pagination < numberOfPages ? prevCount + 1 : numberOfPages);
@@ -58,19 +63,6 @@ export function MenuVet() {
   }
 
   const navigate = useNavigate()
-
-  useEffect(() => {
-    async function getQueue() {
-      const response = await api.get('/pets/queue')
-      const total = await api.get('/pets/queue')
-      setTotalInQueue(total.data)
-      setInQueue(response.data.response)
-      setPetTotal(total.data.response)
-    }
-    getQueue()
-  }, [inQueue.length])
-
-  
 
   async function searchDataVet() {
     switch (true) {
@@ -127,6 +119,9 @@ export function MenuVet() {
 
 
 
+  useEffect(() => {
+    getQueueVetPreference()
+  }, [showAllVets])
 
   useEffect(() => {
     searchDataVet()
@@ -150,8 +145,8 @@ export function MenuVet() {
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
-                <Flex direction="column">
-                  <Flex align="center" justify="center" gap="8">
+                <Flex direction="column"> 
+                  <Flex align="center" justify="center" gap="8" w="960px" >
                     <HStack spacing={8}>
                       <Input
                         name="initialDate"
@@ -164,7 +159,8 @@ export function MenuVet() {
                       onChange={(ev) => setFinalDate(ev.target.value)}
                       label="data final" 
                       type="date" />
-                      <VStack>
+                      <HStack align="center">
+                        <VStack>
                         <FormLabel>Finalizados</FormLabel>
                         <Checkbox
                           onChange={ev =>
@@ -175,7 +171,11 @@ export function MenuVet() {
                           border="2px"
                           size="lg"
                         />
-                        <FormLabel>Internados</FormLabel>
+
+                        </VStack>
+                      
+                          <VStack>
+                          <FormLabel>Internados</FormLabel>
                         <Checkbox
                          onChange={ev =>
                           ev.target.checked === true
@@ -184,7 +184,23 @@ export function MenuVet() {
                         }
                         
                         border="2px" size="lg" />
-                      </VStack>
+
+                          </VStack>
+
+                          <VStack w={160}  >
+                          <FormLabel>Todos Veterinários</FormLabel>
+                        <Checkbox
+                         onChange={ev =>
+                          ev.target.checked === true
+                            ? setShowAllVets(true)
+                            : setShowAllVets(false)
+                        }
+                        
+                        border="2px" size="lg" />
+
+                          </VStack>
+                    
+                      </HStack>
                     </HStack>
                   </Flex>
 
@@ -306,7 +322,7 @@ export function MenuVet() {
                         </Thead>
             
                         <Tbody>
-                          {petTotal.map((pet: any) => (
+                          {petsByVetPreference.map((pet: any) => (
                             <Tr
                        
                               key={pet.id}
@@ -333,7 +349,8 @@ export function MenuVet() {
                               </Td>
                               <Td>0</Td>
                             </Tr>
-                          )).reverse()}
+                          )).reverse() 
+                          }
                         </Tbody>
                       </Table>
                       )

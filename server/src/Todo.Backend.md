@@ -88,13 +88,15 @@
 [] - Sistema HelpDesk Interno
 
 
-
 ### ARQUITETURA INTERNA ### 
 [] - Padronizar interfaces e contratos entre front/back
 [] - Atualizar Tipagens e ajustar as que estão com any
 [] - Reajustar pastas e padronizações front
+[] - Converter chamadas API para React Query(objetivo tirar todos useEffect que chama API)
 [] - Refatorar arquitetura back-end com SOLID 
 
+## DILAN IMPORTANTE ##
+[] - ENCERRAMENTO DE QUEUE.
 
 #### BUGS e Correções  ####
 [X] - Tabela exames duplicando
@@ -126,23 +128,21 @@
 [X] - Liberar permissão para usuario de desconcluir
 [X] - Legenda Internação abaixo de 24hrs verde...
 [X] - Validação do CPF como encontrar a regra (confirmar api receita)
-[] - Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)
-[] - Visualização de todos os veterinarios
-[] - Cadastro de endereço mascara completmento e numero
-[] - Filtro de vet só aparecer o vet ativo. mais pesquisa de qualquer forma
-[] - check de todos os veterinarios
-[] - Visualização de todos os veterinarios
-[] - prontuario e pet descer a linha
-[] - Filtro no cadastro de procedimentos e vacinas
-[]- Tela de exames: colocar o botão de laudados (concluidos) e visualizar o laudo.
-[]- verificar a impressão: Ajustar os exames e laudos no pdf
-[]- vacinas para cachorro e vacinas para gato (separar)
-[] - Procedimento para cachorro e vacinas para gato (separar)
-[] - Ao adicionar os procedimentos e vacinas trazer especies permitidas
-[] - Preferencia = Só aparece para a preferencia
-[] - Visualização de todos os veterinarios (usuario master vê toda a fila)
-[] - Formularios (encontrar o PDF), instruções do proprietário (melhorar tamanho da letra)
+[X] - Visualização de todos os veterinarios
+[X] - Filtro de vet só aparecer o vet ativo. mais pesquisa de qualquer forma
+[X] - check de todos os veterinarios
+[X] - Visualização de todos os veterinarios
+[X] - Visualização de todos os veterinarios (usuario master vê toda a fila)
+[x] - Preferencia = Só aparece para a preferencia
+[x] - prontuario e pet descer a linha
+[] -  Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)
+[] -  Cadastro de endereço mascara complemento e numero
+[] -  Tela de exames: colocar o botão de laudados (concluidos) e visualizar o laudo.
+[] -  verificar a impressão: Ajustar os exames e laudos no pdf
+[] -  vacinas para cachorro e vacinas para gato (separar)
+[] -  Procedimento para cachorro e vacinas para gato (separar)
+[] -  Ao adicionar os procedimentos e vacinas trazer especies permitidas
+[] -  Filtro no cadastro de procedimentos e vacinas
+[] -  Formularios (encontrar o PDF), instruções do proprietário (melhorar tamanho da letra)
 
 
-## DILAN IMPORTANTE ##
-[] - ENCERRAMENTO DE QUEUE.

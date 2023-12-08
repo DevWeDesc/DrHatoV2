@@ -6,6 +6,7 @@ import { PopulateMGroups } from "./transformExcellMGroups.mjs";
 import { PopulateMedicines } from "./transformExcellMedicines.mjs";
 import { PopulatePets } from "./transformExcellPet.mjs";
 import { PopulateProcedures } from "./transformExcellProced.mjs";
+import { PopulateGroups } from "./transformExcellSGroups.mjs";
 import { PopulateSectors } from "./transformExcellSector.mjs";
 import { PopulateSurgeries } from "./transformExcellSurgeries.mjs";
 import { PopulateCustomer } from "./transformExcellUser.mjs";
@@ -25,6 +26,7 @@ async function PopulateDataBase () {
         await PopulateMGroups();
         await PopulateMedicines();
         await PopulateSectors();
+        await PopulateGroups();
         await PopulateProcedures();
 
         console.log("Todo Banco Populado com Sucesso!")

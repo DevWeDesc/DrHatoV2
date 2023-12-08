@@ -2,7 +2,7 @@ import { Box, Button, ChakraProvider, Flex, Heading } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
-import { EditProcedureForm } from "../../components/Forms/EditProcedureForm";
+import { CreateProcedureForm } from "../../components/Forms/CreateProcedureForm";
 import { AdminContainer } from "../AdminDashboard/style";
 
 export function ProcedureEdit() {
@@ -21,7 +21,7 @@ export function ProcedureEdit() {
               <Flex mb="8" align="center" direction="column">
                 <Flex direction="row" justify="space-between" w="100%">
                   <Heading size="lg" fontWeight="normal">
-                    Cadastro Procedimentos
+                    Edição procedimento
                   </Heading>
                   <Button
                     onClick={() => navigate("/Admin/Procedures")}
@@ -31,7 +31,7 @@ export function ProcedureEdit() {
                   </Button>
                 </Flex>
 
-                <EditProcedureForm path={id} />
+                <CreateProcedureForm procedureId={id} isEditable={true} />
               </Flex>
             </Box>
           </Flex>

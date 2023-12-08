@@ -25,8 +25,6 @@ const filteredData = data
           data: vaccines
         })
 
-        console.log(vaccines)
-
       }
       
       console.log("Banco Populado Vaccines")
