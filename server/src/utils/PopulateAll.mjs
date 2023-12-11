@@ -2,10 +2,12 @@ import { PopulateOldExams } from "./CadExamsOld.mjs";
 import { PopulateOldCaractersExams } from "./CadPartDetailsOld.mjs";
 import { PopulatePartDetails } from "./CadPartExamsOld.mjs";
 import { PopulateUsers } from "./transformExcell.mjs";
+import { PopulateEspecies } from "./transformExcellEspecies.mjs";
 import { PopulateMGroups } from "./transformExcellMGroups.mjs";
 import { PopulateMedicines } from "./transformExcellMedicines.mjs";
 import { PopulatePets } from "./transformExcellPet.mjs";
 import { PopulateProcedures } from "./transformExcellProced.mjs";
+import { PopulateRaces } from "./transformExcellRaces.mjs";
 import { PopulateGroups } from "./transformExcellSGroups.mjs";
 import { PopulateSectors } from "./transformExcellSector.mjs";
 import { PopulateSurgeries } from "./transformExcellSurgeries.mjs";
@@ -14,7 +16,6 @@ import { PopulateVaccines } from "./transformExcellVaccines.mjs";
 
 async function PopulateDataBase () {
     try {
-
         await PopulateUsers();
         await PopulateCustomer();
         await PopulatePets();
@@ -28,6 +29,8 @@ async function PopulateDataBase () {
         await PopulateSectors();
         await PopulateGroups();
         await PopulateProcedures();
+        await PopulateEspecies();
+        await PopulateRaces();
 
         console.log("Todo Banco Populado com Sucesso!")
         

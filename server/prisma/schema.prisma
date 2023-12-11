@@ -519,16 +519,17 @@ model ReportForExams {
 
 // -------------- Especies/Raças ----------------- //
 model Especies {
-  id           Int         @id @default(autoincrement())
-  name         String
+  id           Int          @id @default(autoincrement())
+  name         String       @unique
   race         Races[]
-  Procedures   Procedures? @relation(fields: [proceduresId], references: [id])
+  Procedures   Procedures[]
   proceduresId Int?
 }
 
 model Races {
   id         Int       @id @default(autoincrement())
   name       String
+  codEspOld  Int?
   Especies   Especies? @relation(fields: [especiesId], references: [id])
   especiesId Int?
 }

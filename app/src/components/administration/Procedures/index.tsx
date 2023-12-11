@@ -14,19 +14,22 @@ import {
   Tr,
   HStack,
   VStack,
+  Input,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react";
-import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
+import {  useState } from "react";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { LoadingSpinner } from "../../../components/Loading";
-import { DbContext } from "../../../contexts/DbContext";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
-import { ProceduresData } from "../../../interfaces";
+
 import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
+import { AiOutlineSearch } from "react-icons/ai";
+
 
 interface ProceduresProps {
   id: number;
@@ -53,6 +56,7 @@ interface ProceduresProps {
 export default function ListProcedures() {
   const [loading, setLoading] = useState(false);
   const [procedures, setProcedures] = useState<ProceduresProps[]>([]);
+  const [query, setQuery] = useState("")
   const [pagination, SetPagination] = useState(1)
   const [paginationInfos, setPaginationInfos] = useState({
     totalPages: 0,
@@ -77,25 +81,40 @@ export default function ListProcedures() {
   }
 
   async function getProcedure() {
-    const procedures = await api.get(`/procedures?page=${pagination}`);
-    setProcedures(procedures.data.procedures);
-    setPaginationInfos({
-      currentPage: procedures.data.currentPage,
-      totalPages: procedures.data.totalPages,
-      totalProceds: procedures.data.totalProceds
-    })
+    switch(true) {
+      case query.length >= 1: 
+      const response = await api.get(`/procedures/query?q=${query}&page=${pagination}`)
+      setProcedures(response.data.procedures)
+      setPaginationInfos({
+        currentPage: response.data.currentPage,
+        totalPages: response.data.totalPages,
+        totalProceds: response.data.totalProceds
+      })
+      setLoading(true);
+      break;
+      default: 
+      const procedures = await api.get(`/procedures?page=${pagination}`);
+      setProcedures(procedures.data.procedures);
+      setPaginationInfos({
+        currentPage: procedures.data.currentPage,
+        totalPages: procedures.data.totalPages,
+        totalProceds: procedures.data.totalProceds
+      })
+      break;
+    }
+  
+    
   }
+
 
   useEffect(() => {
     getProcedure();
-  }, [pagination]);
+}, []);
+
 
   useEffect(() => {
-    if (loading === true) {
-      getProcedure();
-      setLoading(false);
-    }
-  }, [loading]);
+    getProcedure();
+  }, [pagination, query]);
 
   return (
     <Box
@@ -115,10 +134,13 @@ export default function ListProcedures() {
         w="100%"
       >
         <Flex w="100%" h="180px" align="center">
-        <Heading fontSize="30" fontWeight="bold" w="100%" mb="5">
+          <VStack>
+
+          <Heading fontSize="26px" fontWeight="bold" w="100%" mb="5">
           Procedimentos
         </Heading>
         <HStack>
+      
         <Button colorScheme="teal">Total de Procedimentos {paginationInfos?.totalProceds}</Button>
         <Button colorScheme="teal">Páginas {paginationInfos?.totalPages}</Button>
         <Button colorScheme="teal">Página Atual {paginationInfos?.currentPage}</Button>
@@ -131,6 +153,20 @@ export default function ListProcedures() {
                   <BiRightArrow/>
                 </Button>
         </HStack>
+
+        <HStack align="center" w="100%"  >
+          <Text fontWeight="bold" fontSize="18px" >Pesquisar</Text> 
+                  <InputGroup>
+            <InputLeftElement pointerEvents='none'>
+            <AiOutlineSearch />
+            </InputLeftElement>
+            <Input border="1px" bgColor="white" placeholder='Nome do Procedimento' value={query} onChange={(ev) => setQuery(ev.target.value)} />
+          </InputGroup>
+
+        </HStack>
+
+          </VStack>
+
         </Flex>
     
     

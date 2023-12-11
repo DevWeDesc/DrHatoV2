@@ -90,6 +90,37 @@ export const proceduresController = {
     }
   },
 
+  queryProcedureByName: async (request: FastifyRequest<{Querystring: {q: string, page: string}}>, reply: FastifyReply) => {
+    try {
+            const currentPage = Number(request.query.page) || 1;
+
+            // Obtenha o número total de usuários.
+            const totalProceds = await prisma.procedures.count();
+        
+            // Calcule o número de páginas. 
+            const totalPages = Math.ceil(totalProceds / 35);
+           const {q} = request.query
+
+      const procedures = await prisma.procedures.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {name: {contains: q}}
+        
+      })
+
+
+      reply.send({
+        totalProceds,
+        totalPages,
+        currentPage,
+        procedures
+      })
+    } catch (error) {
+      
+    }
+  },
+
+
   getWithId: async (
     request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
@@ -101,6 +132,7 @@ export const proceduresController = {
         include: {
           groups: { select: { name: true } },
           sector: { select: { name: true } },
+          appicableEspecies: true
         },
       });
       reply.send(procedure);
@@ -234,5 +266,66 @@ export const proceduresController = {
         console.log(error)
         reply.send({message: error})
     }
-  }
+  },
+
+  setEspecieInProcedure: async (request: FastifyRequest<{Params: { procedureId: string, especieId: string}}>, reply: FastifyReply) => {
+    try {
+      const {procedureId, especieId} = request.params
+
+      await prisma.procedures.update({
+        where: {id: parseInt(procedureId)}, data: {
+          appicableEspecies: {
+            connect: {id: parseInt(especieId)},
+          }
+        }
+      })
+
+      reply.status(201)
+
+    } catch (error) {
+
+      reply.send(error).status(400)
+
+    }
+  },
+
+  setAllEspeciesInProcedure: async (request: FastifyRequest<{Params: { procedureId: string, especieId: string}}>, reply: FastifyReply) => {
+    try {
+      const {procedureId} = request.params
+
+      const especies = await prisma.especies.findMany();
+
+      for (const especie of especies) {
+       await prisma.procedures.update({where: {id: parseInt(procedureId)}, data: {appicableEspecies: {connect: {id: especie.id}}}})
+      }
+
+      reply.status(201).send("Todas especies setadas!")
+
+    } catch (error) {
+
+      reply.send(error).status(400)
+
+    }
+  },
+
+  removeAllEspeciesInProcedure: async (request: FastifyRequest<{Params: { procedureId: string, especieId: string}}>, reply: FastifyReply) => {
+    try {
+      const {procedureId} = request.params
+
+      const especies = await prisma.especies.findMany();
+
+      for (const especie of especies) {
+       await prisma.procedures.update({where: {id: parseInt(procedureId)}, data: {appicableEspecies: {disconnect: {id: especie.id}}}})
+      }
+
+      reply.status(201).send("Todas especies Removidas!")
+
+    } catch (error) {
+
+      reply.send(error).status(400)
+
+    }
+  },
+
+
 };

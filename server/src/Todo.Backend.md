@@ -141,8 +141,8 @@
 [] -  verificar a impressão: Ajustar os exames e laudos no pdf
 [] -  vacinas para cachorro e vacinas para gato (separar)
 [] -  Procedimento para cachorro e vacinas para gato (separar)
-[] -  Ao adicionar os procedimentos e vacinas trazer especies permitidas
-[] -  Filtro no cadastro de procedimentos e vacinas
+[x] -  Ao adicionar os procedimentos trazer especies permitidas
+[x] -  Filtro no cadastro de procedimentos e vacinas
 [] -  Formularios (encontrar o PDF), instruções do proprietário (melhorar tamanho da letra)
 
 

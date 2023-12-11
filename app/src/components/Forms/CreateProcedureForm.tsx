@@ -13,6 +13,7 @@ import {
   Select,
   VStack,
   HStack,
+  Divider,
 } from "@chakra-ui/react";
 import { useContext, useState, useEffect } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -21,7 +22,7 @@ import { DbContext } from "../../contexts/DbContext";
 import { Input } from "../../components/admin/Input";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
-import { formatPrice } from "../../helpers/format";
+import { GenericModal } from "../Modal/GenericModal";
 
 type ProcedureFormProps = {
   procedureId?: string;
@@ -48,13 +49,31 @@ type ProceduresDTO  = {
 	group_id: number;
 	sector_id: number;
 	groups: number;
+  appicableEspecies: Array<{
+    id: number;
+    name?: string;
+  }>
 	sector: {
 		name: string
 	}
 }
+
+type EspeciesDTO = {
+  id: number;
+  name: string;
+  race: Array<{
+  id:  number;
+	name:  string;
+	codEspOld:  number;
+	especiesId:  number;
+  }>
+}
 export function CreateProcedureForm({ procedureId, isEditable }: ProcedureFormProps) {
   const { groups, sectors } = useContext(DbContext);
   const [procedures, setProcedures] = useState({} as ProceduresDTO)
+  const [especies, setEspecies] = useState<EspeciesDTO[]>([])
+  const [especiesModalIsOpen, setEspeciesModalIsOpen] = useState(false);
+  const [shouldReloadProcedures, setShouldReloadProcedures] = useState(false);
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   
@@ -65,6 +84,34 @@ export function CreateProcedureForm({ procedureId, isEditable }: ProcedureFormPr
     } catch (error) {
       console.error(error)
     }
+  }
+
+  async function getEspeciesData() {
+    try {
+      const response = await api.get("/pets/especie")
+      setEspecies(response.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+
+  async function setEspecieInProcedure(especieId: number) {
+    await api.put(`/procedures/especies/${procedureId}/${especieId}`)
+    setShouldReloadProcedures(true)
+    toast.success("Especie Adicionada!")
+  }
+
+  async function setAllEspecieInProcedure() {
+    await api.put(`/procedures/especies/all/${procedureId}`)
+    setShouldReloadProcedures(true)
+    toast.success("Todas Especies Adicionada!")
+  }
+
+  async function removeEspecieInProcedure() {
+    await api.put(`/procedures/especies/all/remove/${procedureId}`)
+    setShouldReloadProcedures(true)
+    toast.success("Todas Especies Removidas!!")
   }
 
   const handleCreateProcedure: SubmitHandler<FieldValues> = async (values) => {
@@ -92,10 +139,15 @@ export function CreateProcedureForm({ procedureId, isEditable }: ProcedureFormPr
 
 
 
+  useEffect(() => {
+    getProceduresData()
+    setShouldReloadProcedures(false)
+  }, [shouldReloadProcedures])
 
 
   useEffect(() => {
     getProceduresData()
+    getEspeciesData()
   }, [])
 
 
@@ -112,32 +164,38 @@ export function CreateProcedureForm({ procedureId, isEditable }: ProcedureFormPr
         padding="4"
       >
         <Flex w="100%">
+  
           <Flex direction="column" w="45%">
+            <HStack gap={4}>
+
+            <Text fontWeight="bold" >Especies permitidas:</Text> <Button colorScheme="linkedin" onClick={() => setEspeciesModalIsOpen(true)}>Visualizar</Button>
+            </HStack>
+        
             <label htmlFor="" style={{ fontWeight: "bold", fontSize: "17px" }}>
               Nome do Procedimento
             </label>
             <Input mb="1" {...register("name")} name="name" defaultValue={procedures.name} />
             <HStack mt="4" mb="4">
               <VStack>
-                <label style={{ fontWeight: "bold", fontSize: "17px" }} htmlFor="price">
+                <label style={{ fontWeight: "bold", fontSize: "14px" }} htmlFor="price">
               Preço Até 6KG
                 </label>
                <Input mb="1" mt="0" {...register("price")} name="price" id="price"  defaultValue={(procedures.price)} />
               </VStack>
               <VStack>
-                <label style={{ fontWeight: "bold", fontSize: "17px" }} htmlFor="priceTwo">
+                <label style={{ fontWeight: "bold", fontSize: "14px" }} htmlFor="priceTwo">
               Entre 7 e 15KG
             </label>
             <Input mb="1" mt="0" {...register("priceTwo")} name="priceTwo" id="priceTwo"  defaultValue={procedures.priceTwo}  />
               </VStack>
               <VStack>
-                <label style={{ fontWeight: "bold", fontSize: "17px" }} htmlFor="priceThree">
-              Entre 16 e 35KG
-            </label>
+                <label style={{ fontWeight: "bold", fontSize: "14px" }} htmlFor="priceThree">
+               Entre 16 e 35KG
+               </label>
             <Input mb="1" mt="0" {...register("priceThree")} name="priceThree" id="priceThree"  defaultValue={procedures.priceThree}  />
               </VStack>
               <VStack>
-                <label style={{ fontWeight: "bold", fontSize: "17px" }} htmlFor="priceFour">
+                <label style={{ fontWeight: "bold", fontSize: "14px" }} htmlFor="priceFour">
                35KG +
             </label>
             <Input mb="1" mt="0" {...register("priceFour")} name="priceFour" id="priceFour"  defaultValue={procedures.priceFour}  />
@@ -309,6 +367,7 @@ export function CreateProcedureForm({ procedureId, isEditable }: ProcedureFormPr
           py="10"
           fontSize="20"
           type="submit"
+         isDisabled //TODO
         >
           Editar Procedimento
         </Button> 
@@ -533,6 +592,32 @@ export function CreateProcedureForm({ procedureId, isEditable }: ProcedureFormPr
     
       </FormControl> )
      }
+     <GenericModal
+     isOpen={especiesModalIsOpen}
+     onRequestClose={() => setEspeciesModalIsOpen(false)}
+     >
+      <Flex w="460px" h="500px"  justify="space-between">
+        <VStack h="100%" w="50%" overflowY="scroll">
+        <Button colorScheme="red" onClick={() => removeEspecieInProcedure()}>Remover Especies</Button>
+        <Text fontWeight="bold">Especies Permitidas</Text>
+          {
+            procedures?.appicableEspecies?.map((esp) => <Button key={esp.id} colorScheme="facebook">{esp.name}</Button>)
+          }
+        </VStack>
+
+        <Divider border="1px"  orientation="vertical"/>
+
+        <VStack h="100%"  w="50%" overflowY="scroll">
+        <Button colorScheme="whatsapp" onClick={() => setAllEspecieInProcedure()}>Todas Especies</Button>
+        <Text fontWeight="bold">Especies Disponiveis</Text>
+        {
+          especies.map((esp) => <Button key={esp.id} onClick={() => setEspecieInProcedure(esp.id)} colorScheme="teal">{esp.name}</Button>)
+        }
+
+        </VStack>
+      </Flex>
+        
+     </GenericModal>
     </>
 
   );
