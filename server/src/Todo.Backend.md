@@ -135,14 +135,15 @@
 [X] - Visualização de todos os veterinarios (usuario master vê toda a fila)
 [x] - Preferencia = Só aparece para a preferencia
 [x] - prontuario e pet descer a linha
+[X] -  vacinas para cachorro e vacinas para gato (separar)
+OBS: Não tem separação por especies nas vacinas, na verdade nem vacinas tem.
+todas vacinas atuais do sistema antigo são procedimentos. solução incluir sistema de especies pra vacina também, já inclui nos Procedimentos, ou utilizar as vacinas dos procedimentos que já estão protegidas pelas especies.
+[X] -  Procedimento para cachorro e vacinas para gato (separar)
+OBS: Acrescentado sistema de Especies, um procedimento só vai poder ser lançado nas especies permitidas pelo Dr.
+[x] -  Ao adicionar os procedimentos trazer especies permitidas
+[x] -  Filtro no cadastro de procedimentos e vacinas
+[x] -  Formularios (encontrar o PDF), instruções do proprietário (melhorar tamanho da letra)
 [] -  Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)
 [] -  Cadastro de endereço mascara complemento e numero
 [] -  Tela de exames: colocar o botão de laudados (concluidos) e visualizar o laudo.
 [] -  verificar a impressão: Ajustar os exames e laudos no pdf
-[] -  vacinas para cachorro e vacinas para gato (separar)
-[] -  Procedimento para cachorro e vacinas para gato (separar)
-[x] -  Ao adicionar os procedimentos trazer especies permitidas
-[x] -  Filtro no cadastro de procedimentos e vacinas
-[] -  Formularios (encontrar o PDF), instruções do proprietário (melhorar tamanho da letra)
-
-

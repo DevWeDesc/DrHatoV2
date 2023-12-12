@@ -40,9 +40,15 @@ export const vaccinesController = {
         }
     },
 
-    getAllVaccines: async (request: FastifyRequest, reply: FastifyReply) => {
+    getAllVaccines: async (request: FastifyRequest<{Querystring: { sex?: string;}}>, reply: FastifyReply) => {
          try {
-            const vaccines = await prisma.vaccines.findMany()
+            const animalSex = request.query.sex || null;
+    
+            const vaccines = await prisma.vaccines.findMany({
+                where: {
+                    disponible: true
+                }
+            })
             reply.send(vaccines).status(200)
          } catch (error) {
             reply.send({message: error})

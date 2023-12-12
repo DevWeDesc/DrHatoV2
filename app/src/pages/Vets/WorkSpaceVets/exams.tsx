@@ -43,7 +43,7 @@ export function VetExams() {
           </Flex>
         </Flex>
         <Suspense fallback={<LoadingSpinner/>}>
-        <ExamsVet />
+        <ExamsVet InAdmission={false} />
         </Suspense>
       
       </Flex>

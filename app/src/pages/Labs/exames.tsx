@@ -2,109 +2,89 @@ import {
   Box,
   Button,
   ChakraProvider,
-  Flex,
-  Menu,
-  MenuButton,
-  MenuList,
-  Radio,
-  RadioGroup,
-  Table,
+  Flex, Table,
   Tbody,
   Td,
   Th,
   Thead,
   Tr,
-  Text,
-  HStack,
-  Select,
-} from "@chakra-ui/react";
-import { Header } from "../../components/admin/Header";
-import { ReactNode, useContext, useEffect, useState } from "react";
-import { GenericLink } from "../../components/Sidebars/GenericLink";
-import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
+  Text, Select,
+  Checkbox,
+  FormLabel,
+  VStack
+} from '@chakra-ui/react'
+import { Header } from '../../components/admin/Header'
+import { ReactNode, useEffect, useState } from 'react'
+import { GenericLink } from '../../components/Sidebars/GenericLink'
+import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
 import {
-  AiOutlineMenu,
-  BsArrowLeft,
-  IoIosFlask,
-  BsImages,
   AiOutlineSearch,
   TbVaccine,
-  FaClipboardList,
-} from "react-icons/all";
-import { AdminContainer } from "../AdminDashboard/style";
-import { LabsSearch } from "../../components/Search/labsSearch";
-import { DbContext } from "../../contexts/DbContext";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { StyledBox } from "../../components/Header/style";
-import { VetsSearch } from "../../components/Search/vetsSearch";
-import { api } from "../../lib/axios";
-import { MdPets as Burger } from "react-icons/all";
-import { BiHome } from "react-icons/all";
-import { Input } from "../../components/admin/Input";
+  FaClipboardList
+} from 'react-icons/all'
+import { AdminContainer } from '../AdminDashboard/style'
+import { useNavigate } from 'react-router-dom'
+import { api } from '../../lib/axios'
+import { BiHome } from 'react-icons/all'
+import { Input } from '../../components/admin/Input'
 
 interface QueueProps {
-  response: [];
-  totalInQueue: number;
+  response: []
+  totalInQueue: number
 }
 
 interface ExamsDataProps {
-  id: number;
-  CodAnimal: number;
-  name: string;
+  id: number
+  CodAnimal: number
+  name: string
 
   medicineRecords: {
-    petExams: Array< {
-       id: number;
-       name: string;
-       requestedFor: string;
-       doneExame: boolean;
-       requesteData: Date | null
-       responsibleForExam: string | null;
-
+    petExams: Array<{
+      id: number
+      name: string
+      requestedFor: string
+      doneExame: boolean
+      requesteData: Date | null
+      responsibleForExam: string | null
     }>
   }
-
 }
 
 export function LabExames() {
-  const [labs, setLabs] = useState([] as any);
-  const [inQueue, setInQueue] = useState<QueueProps[]>([]);
+  const [labs, setLabs] = useState([] as any)
+  const [inQueue, setInQueue] = useState<QueueProps[]>([])
   const [exams, setExams] = useState([] as any)
   const [examsData, setExamsData] = useState<ExamsDataProps[]>([])
   const [petName, setPetName] = useState('')
   const [codPet, setCodPet] = useState('')
   const [solicitedBy, setSolicitedBy] = useState('')
+  const [showEndExams, setShowEndExams] = useState(false);
 
-
-  const navigate = useNavigate();
-
+  const navigate = useNavigate()
 
   async function getQueue() {
-    const response = await api.get("/pets/queue");
-    const labs = await api.get("/labs");
-    
-    setLabs(labs.data.exams);
+    const response = await api.get('/pets/queue')
+    const labs = await api.get('/labs')
+
+    setLabs(labs.data.exams)
     setExams(labs.data.allExams)
-    setInQueue(response.data.response);
+    setInQueue(response.data.response)
   }
 
-  useEffect(() => { 
-    
-    getQueue();
-  }, [inQueue.length]);
 
 
-   
-   
-  let typeTable: ReactNode;
+  useEffect(() => {
+    getQueue()
+  }, [inQueue.length])
+
+  let typeTable: ReactNode
   switch (true) {
-    case examsData.length >= 1 : 
-    typeTable = (
-      <>
-        <Table colorScheme="blackAlpha">
-          <Thead>
-          <Tr>
+    case examsData.length >= 1:
+      typeTable = (
+        <>
+          <Table colorScheme="blackAlpha">
+            <Thead>
+              <Tr>
                 <Th>Data</Th>
                 <Th>Animal</Th>
                 <Th>Exame</Th>
@@ -112,29 +92,41 @@ export function LabExames() {
                 <Th>Status</Th>
                 <Th>Responsável</Th>
               </Tr>
-          </Thead>
+            </Thead>
 
-          <Tbody>
-            {examsData?.map((exam) => {
-              
-              return exam?.medicineRecords?.petExams?.map((exams) => (
-                <Tr key={exams.id} >
-                  <Td>{new Intl.DateTimeFormat("pt-BR").format(new Date(exams.requesteData? exams.requesteData : Date.now()))}</Td>
-                  <Td>{exam?.name}</Td>
-                  <Td>{exams?.name}</Td>
-                  <Td>{exams?.requestedFor ? exams.requestedFor : "Não definido"}</Td>
-                  <Td>{exams?.doneExame ? "Laudado"  : "A Fazer"}</Td>
-                  <Td>{exams?.responsibleForExam ? exams.responsibleForExam : "Não Laudado"}</Td>
-                </Tr>
-              ))
-               
-            })}
-          </Tbody>
-        </Table>
-      </>
-    );
-    break;
-      default: 
+            <Tbody>
+              {examsData?.map(exam => {
+                return exam?.medicineRecords?.petExams?.map(exams => (
+                  <Tr key={exams.id}>
+                    <Td>
+                      {new Intl.DateTimeFormat('pt-BR').format(
+                        new Date(
+                          exams.requesteData ? exams.requesteData : Date.now()
+                        )
+                      )}
+                    </Td>
+                    <Td>{exam?.name}</Td>
+                    <Td>{exams?.name}</Td>
+                    <Td>
+                      {exams?.requestedFor
+                        ? exams.requestedFor
+                        : 'Não definido'}
+                    </Td>
+                    <Td>{exams?.doneExame ? 'Laudado' : 'A Fazer'}</Td>
+                    <Td>
+                      {exams?.responsibleForExam
+                        ? exams.responsibleForExam
+                        : 'Não Laudado'}
+                    </Td>
+                  </Tr>
+                ))
+              })}
+            </Tbody>
+          </Table>
+        </>
+      )
+      break
+      case showEndExams === true: 
       typeTable = (
         <>
           <Table colorScheme="blackAlpha">
@@ -151,35 +143,115 @@ export function LabExames() {
 
             <Tbody>
               {labs.map((exam: any) => {
-                return ( 
+                return (
                   <>
-                  	{
-                  exam.doneExame === false && (
-                    <Tr
-                      key={exam.id}
-                      cursor="pointer"
-                      onClick={() => navigate(`/Labs/Set/${exam.id}/${exams.find((data: any) => data.name === exam.name).codexam}`)}
-                    >
-                      <Td>{new Intl.DateTimeFormat('pt-BR').format(new Date(exam?.requesteData))} </Td>
+                    {exam.doneExame === true && (
+                      <Tr
+                        key={exam.id}
+                        cursor="pointer"
+                        onClick={() =>
+                          navigate(
+                            `/Labs/Set/${exam.id}/${
+                              exams.find((data: any) => data.name === exam.name)
+                                .codexam
+                            }`
+                          )
+                        }
+                      >
+                        <Td>
+                          {new Intl.DateTimeFormat('pt-BR').format(
+                            new Date(exam?.requesteData)
+                          )}{' '}
+                        </Td>
 
-                      <Td>{exam.medicine?.pet.name}</Td>
+                        <Td>{exam.medicine?.pet.name}</Td>
 
-                      <Td>{exam.name}</Td>
+                        <Td>{exam.name}</Td>
 
-                      <Td>{exam.requestedFor ? exam.requestedFor : "Não definido"}</Td>
-                      <Td>{exam.doneExame ? "Laudado" : "A Fazer"}</Td>
-                      <Th>{exam.responsibleForExam ? exam.responsibleForExam : "Não Laudado"}</Th>
-                    </Tr>
-                  )}
-
+                        <Td>
+                          {exam.requestedFor
+                            ? exam.requestedFor
+                            : 'Não definido'}
+                        </Td>
+                        <Td>{exam.doneExame ? 'Laudado' : 'A Fazer'}</Td>
+                        <Th>
+                          {exam.responsibleForExam
+                            ? exam.responsibleForExam
+                            : 'Não Laudado'}
+                        </Th>
+                      </Tr>
+                    )}
                   </>
                 )
               })}
             </Tbody>
           </Table>
         </>
-      );
-      break;
+      )
+      break
+    default:
+      typeTable = (
+        <>
+          <Table colorScheme="blackAlpha">
+            <Thead>
+              <Tr>
+                <Th>Data</Th>
+                <Th>Animal</Th>
+                <Th>Exame</Th>
+                <Th>Veterinário</Th>
+                <Th>Status</Th>
+                <Th>Responsável</Th>
+              </Tr>
+            </Thead>
+
+            <Tbody>
+              {labs.map((exam: any) => {
+                return (
+                  <>
+                    {exam.doneExame === false && (
+                      <Tr
+                        key={exam.id}
+                        cursor="pointer"
+                        onClick={() =>
+                          navigate(
+                            `/Labs/Set/${exam.id}/${
+                              exams.find((data: any) => data.name === exam.name)
+                                .codexam
+                            }`
+                          )
+                        }
+                      >
+                        <Td>
+                          {new Intl.DateTimeFormat('pt-BR').format(
+                            new Date(exam?.requesteData)
+                          )}{' '}
+                        </Td>
+
+                        <Td>{exam.medicine?.pet.name}</Td>
+
+                        <Td>{exam.name}</Td>
+
+                        <Td>
+                          {exam.requestedFor
+                            ? exam.requestedFor
+                            : 'Não definido'}
+                        </Td>
+                        <Td>{exam.doneExame ? 'Laudado' : 'A Fazer'}</Td>
+                        <Th>
+                          {exam.responsibleForExam
+                            ? exam.responsibleForExam
+                            : 'Não Laudado'}
+                        </Th>
+                      </Tr>
+                    )}
+                  </>
+                )
+              })}
+            </Tbody>
+          </Table>
+        </>
+      )
+      break
   }
 
   async function searchDataLabs() {
@@ -195,25 +267,29 @@ export function LabExames() {
         })
         break
       case solicitedBy?.length >= 1:
-        await api
-          .get(`labmenusearch?solicitedBy=${solicitedBy}`)
-          .then(res => {
-            setExamsData(res.data.data)
-          })
+        await api.get(`labmenusearch?solicitedBy=${solicitedBy}`).then(res => {
+          setExamsData(res.data.data)
+        })  
         break
+      case showEndExams === true: 
+      await api.get('/labs/end').then((res) => {
+        setLabs(res.data.exams)
+      })
+      break;  
+
     }
   }
 
   function clearExamData() {
     setExamsData([])
-    setPetName("")
-    setCodPet("")
-    setSolicitedBy("")
+    setPetName('')
+    setCodPet('')
+    setSolicitedBy('')
   }
   useEffect(() => {
     searchDataLabs()
-  }, [petName,codPet,solicitedBy])
-  
+  }, [petName, codPet, solicitedBy, showEndExams])
+
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -247,53 +323,73 @@ export function LabExames() {
               overflow="auto"
             >
               <Flex mb="8" gap="8" direction="column" align="center">
-               <Flex w="100%" direction="column" align="center">
-                <Text fontWeight="bold">SISTEMA DE EXAMES</Text>
-              <Flex w="100%" mb={4}>
+                <Flex w="100%" direction="column" align="center">
+                  <Text fontWeight="bold">SISTEMA DE EXAMES</Text>
+                  <Flex w="100%" mb={4}>
                     <Flex align="center" gap={8}>
-                    <Text >Tipo de Exame</Text>
-                  <Select placeholder="Selecione um exame" w={320} border="2px">
-                  {
-                    exams.map((exam: {name: string; id: string}) => <option key={exam.id}>{exam?.name}</option>)
-                  }
-                  </Select>
-                 
+                      <Text>Tipo de Exame</Text>
+                      <Select
+                        placeholder="Selecione um exame"
+                        w={320}
+                        border="2px"
+                      >
+                        {exams.map((exam: { name: string; id: string }) => (
+                          <option key={exam.id}>{exam?.name}</option>
+                        ))}
+                      </Select>
                     </Flex>
-                  
-            
-              </Flex>
+                  </Flex>
 
-              <Flex w="100%"   mb={4}>
-                <Flex align="center"  gap={8} >
-                 <Input label="Data Inicial" name="initialDate" type="date"   />
+                  <Flex w="100%" align="center" mb={4}>
+                    <Flex align="center" gap={8}>
+                      <Input
+                        label="Data Inicial"
+                        name="initialDate"
+                        type="date"
+                      />
 
-                 <Input label="Data Final" name="finalDate" type="date"   />
+                      <Input label="Data Final" name="finalDate" type="date" />
+
+                      <VStack>
+                        <FormLabel fontWeight="bold" htmlFor="finished">
+                          Concluidos
+                        </FormLabel>
+                        <Checkbox
+                          border="2px"
+                          onChange={(ev) => setShowEndExams(ev.target.checked)}
+                          name="finished"
+                          id="finished"
+                          size="lg"
+                        />
+                      </VStack>
+                    </Flex>
+                  </Flex>
+
+                  <Flex w="100%" gap={8} align="center">
+                    <Input
+                      label="Nome do Animal"
+                      name="petName"
+                      onChange={ev => setPetName(ev.target.value)}
+                    />
+
+                    <Input
+                      label="Solicitante"
+                      name="solicitedBy"
+                      onChange={ev => setSolicitedBy(ev.target.value)}
+                    />
+
+                    <Input
+                      label="Código Animal"
+                      name="petCode"
+                      onChange={ev => setCodPet(ev.target.value)}
+                    />
+                  </Flex>
+
+                  <Button colorScheme="whatsapp" w="380px" mt="4" p={4}>
+                    Filtrar
+                  </Button>
                 </Flex>
-              </Flex>
-
-              
-              <Flex w="100%" gap={8} align="center" >
-       
-               
-                 <Input label="Nome do Animal" name="petName" onChange={(ev) => setPetName(ev.target.value)} />
-          
-    
-              
-                 <Input label="Solicitante" name="solicitedBy"  onChange={(ev) => setSolicitedBy(ev.target.value)} />
-        
-
-    
-               
-                 <Input label="Código Animal" name="petCode"  onChange={(ev) => setCodPet(ev.target.value)} />
-              
-              </Flex>
-
-              <Button colorScheme="whatsapp" w="380px"  mt="4" p={4}>Filtrar</Button>
-               </Flex>
-                <Button
-                  colorScheme="teal"
-                  onClick={() => clearExamData()}
-                >
+                <Button colorScheme="teal" onClick={() => clearExamData()}>
                   <>TOTAL NA FILA: {labs.length}</>
                 </Button>
                 <Flex textAlign="center" justify="center">
@@ -305,5 +401,5 @@ export function LabExames() {
         </Flex>
       </AdminContainer>
     </ChakraProvider>
-  );
+  )
 }

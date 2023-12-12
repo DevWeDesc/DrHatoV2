@@ -278,11 +278,13 @@ model HospitalizationDiary {
 //  ------------- VACINES -------------   //
 
 model Vaccines {
-  id          Int      @id @default(autoincrement())
-  name        String
-  price       Decimal
-  description String
-  disponible  Boolean?
+  id               Int      @id @default(autoincrement())
+  name             String
+  price            Decimal
+  description      String
+  disponible       Boolean?
+  applicableMale   Boolean?
+  applicableFemale Boolean?
 }
 
 model VaccinesForPet {
@@ -373,7 +375,7 @@ model PetConsultsDebits {
   OpenedAdmissionsForPet   OpenededAdmissionsForPet? @relation(fields: [openedAdmissionsForPetId], references: [id])
   OpenedConsultsForPet     OpenedConsultsForPet?     @relation(fields: [openedConsultsForPetId], references: [id])
   openedConsultsForPetId   String?
-  openedAdmissionsForPetId String
+  openedAdmissionsForPetId String?
 }
 
 model PricesAccumulator {

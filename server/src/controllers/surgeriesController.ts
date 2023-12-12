@@ -41,18 +41,21 @@ export const surgeriesController = {
   },
 
   getSurgeries: async (request: FastifyRequest<{
-    Querystring: { page: string; male: string; female: string}
+    Querystring: { page: string; sex?: string;}
   }>, reply: FastifyReply) => {
     try {
-      const {female, male} = request.query
+
    // Obtenha o número da página atual a partir da solicitação.
     const currentPage = Number(request.query.page) || 1;
     // Obtenha o número total de usuários.
     const totalSurgeries = await prisma.surgeries.count();
     // Calcule o número de páginas.
     const totalPages = Math.ceil(totalSurgeries / 35);
+
+
+    const animalSex = request.query.sex || null
      
-    if(Boolean(male) === true) {
+    if(animalSex != null && animalSex == "Macho") {
       const surgeries = await prisma.surgeries.findMany({
         skip: (currentPage - 1) * 35,
         take: 35,
@@ -67,7 +70,7 @@ export const surgeriesController = {
 
         }
       ).status(200)   
-    } else if(Boolean(female) === true) {
+    } else if(animalSex != null && animalSex == "Femea") {
       const surgeries = await prisma.surgeries.findMany({
         skip: (currentPage - 1) * 35,
         take: 35,

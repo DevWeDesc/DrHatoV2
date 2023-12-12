@@ -14,7 +14,9 @@ const filteredData = data
     name: vaccine.NomeProcedimento, 
     price: vaccine.Preço1,
     disponible: vaccine.Disponivel,
-    description: ""
+    description: "",
+    applicableMale: vaccine.macho,
+    applicableFemale: vaccine.femea,
   }));
 
  export async function PopulateVaccines () {

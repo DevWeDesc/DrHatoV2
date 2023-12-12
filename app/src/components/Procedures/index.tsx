@@ -9,11 +9,15 @@ import {
   TableContainer,
   Button,
   HStack,
+  InputGroup,
+  InputLeftElement,
+  Input
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { AiOutlineSearch } from "react-icons/ai";
+import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
 import {   useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Input } from "../../components/admin/Input";
 import { PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
 
@@ -26,6 +30,11 @@ interface ProceduresProps {
   priceThree?: number;
   priceFour?: number;
   requestedDate: any;
+  appicableEspecies?: Array<{
+    id?: number;
+    name: string;
+    
+}>
 }
 
 type ProceduresAdmissionProps = {
@@ -36,17 +45,52 @@ type ProceduresAdmissionProps = {
 export default function ProceduresVets({InAdmission, admissionQueueId}: ProceduresAdmissionProps ) {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [procedures, setProcedures] = useState<ProceduresProps[]>([]);
+  const [query, setQuery] = useState("")
+  const [pagination, SetPagination] = useState(1)
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
+  const [paginationInfos, setPaginationInfos] = useState({
+    totalPages: 0,
+    currentPage: 0,
+    totalProceds: 0
+  })
+
+  function incrementPage() {
+    SetPagination(prevCount => pagination < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
+  }
+
+  function decrementPage() {
+    SetPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+  }
 
   async function GetPet() {
     const pet = await api.get(`/pets/${id}`);
     setPetDetails(pet.data);
   }
   async function GetData() {
-    const procedures = await api.get("/procedures");
-    setProcedures(procedures.data.procedures);
+    switch(true) {
+      case query.length >= 1:
+      const response = await api.get(`/procedures/query?q=${query}&sex=${petDetails.sexo}&page=${pagination}`)
+      setProcedures(response.data.procedures)
+      setPaginationInfos({
+        currentPage: response.data.currentPage,
+        totalPages: response.data.totalPages,
+        totalProceds: response.data.totalProceds
+      })
+      setReloadData(true)
+      break;
+      default: 
+      const procedures = await api.get(`/procedures?sex=${petDetails.sexo}`);
+      setProcedures(procedures.data.procedures);
+      setPaginationInfos({
+        currentPage: procedures.data.currentPage,
+        totalPages: procedures.data.totalPages,
+        totalProceds: procedures.data.totalProceds
+      })
+      break;
+    }
+   
   }
 
   async function setProcedureInPet (procedureId: number)  {
@@ -56,6 +100,17 @@ export default function ProceduresVets({InAdmission, admissionQueueId}: Procedur
         RequestedByVetName: user.consultName, 
         InAdmission
       };
+
+      const validateEspecie 
+      = procedures.find(p => p.id === procedureId)?.appicableEspecies?.some(e => e.name === petDetails.especie)
+
+      console.log("VALIDATE ESP", validateEspecie)
+
+      if(validateEspecie === false) {
+        return toast.warning("Essa especie não e permitida para esse procedimento!")
+      }
+        
+        
       if(InAdmission === true) {
         await api.post(
           `/procedures/${procedureId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`, data
@@ -104,11 +159,10 @@ export default function ProceduresVets({InAdmission, admissionQueueId}: Procedur
   }, []);
 
   useEffect(() => {
-    if (reloadData === true) {
       GetPet();
+      GetData();
       setReloadData(false); // Reseta o estado para evitar chamadas infinitas
-    }
-  }, [reloadData]);
+  }, [reloadData, query]);
 
   return (
     <>
@@ -206,9 +260,28 @@ export default function ProceduresVets({InAdmission, admissionQueueId}: Procedur
             <HStack>
               {" "}
               <Button colorScheme="teal" w="300px">
-                FILTRAR POR NOME
+               Pesquisar
               </Button>{" "}
-              <Input h="38px" name="filter" />
+              <InputGroup>
+            <InputLeftElement pointerEvents='none'>
+            <AiOutlineSearch />
+            </InputLeftElement>
+            <Input border="1px" bgColor="white" name="query" placeholder='Nome do Procedimento' value={query} onChange={(ev) => setQuery(ev.target.value)} />
+          </InputGroup>
+          <HStack>
+      
+      <Button colorScheme="teal">Total de Procedimentos {paginationInfos?.totalProceds}</Button>
+      <Button colorScheme="teal">Páginas {paginationInfos?.totalPages}</Button>
+      <Button colorScheme="teal">Página Atual {paginationInfos?.currentPage}</Button>
+      <Button colorScheme="yellow" gap={4} onClick={() => decrementPage()} >
+                <BiLeftArrow/>
+                Página Anterior
+              </Button>
+              <Button colorScheme="yellow" gap={4} onClick={() => incrementPage()}>
+                Próxima Página
+                <BiRightArrow/>
+              </Button>
+      </HStack>
             </HStack>
           </Flex>
           <TableContainer w="100%" height="100%"    overflowY="auto">

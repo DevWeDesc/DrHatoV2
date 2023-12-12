@@ -72,7 +72,7 @@ export function VetsSurgeries() {
           <Surgierslist/>
         }
         {renderizarion === "Create" &&
-          <Createsurgeries/>
+          <Createsurgeries InAdmission={false} />
         }
         </Flex>
       </Flex>

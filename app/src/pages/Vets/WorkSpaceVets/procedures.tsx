@@ -32,7 +32,7 @@ export function ProceduresVet() {
             </Button>
           </Flex>
         </Flex>
-        <ProceduresVets />
+        <ProceduresVets InAdmission={false} />
       </Flex>
     </ChakraProvider>
   );

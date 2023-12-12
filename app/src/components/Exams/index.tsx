@@ -24,10 +24,16 @@ type ExamsVetProps = {
   admissionQueueId?: string;
 }
 
+type ExamsDTO = {
+  codexam: number;
+  name: string;
+  price: number;
+}
+
 export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
   const { id , queueId} = useParams<{ id: string; queueId: string; }>();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
-  const [exams, setExams] = useState([]);
+  const [exams, setExams] = useState<ExamsDTO[]>([]);
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [examName, setExamName] = useState("");
@@ -57,15 +63,15 @@ export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
         RequestedByVetId: user.id, 
         RequestedByVetName: user.consultName, 
         RequestedCrm: user.crm,
-        isAdmission: InAdmission
+        isAdmission: InAdmission 
       };
-      if(InAdmission === true) {
 
+
+      if(InAdmission === true) {
         await api.post(
           `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,data);
         setReloadData(true);
         toast.success("Exame adicionado Ala Internação!");
-
       } else {
         await api.post(
           `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,data);
@@ -273,7 +279,7 @@ export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
               </Tr>
             </Thead>
             <Tbody>
-              {exams.map((exam: ExamsProps) => (
+              {exams.map((exam) => (
                 <Tr key={exam.codexam}>
                   <Td border="2px">{exam.name}</Td>
                   <Td border="2px">R$ {exam.price}</Td>

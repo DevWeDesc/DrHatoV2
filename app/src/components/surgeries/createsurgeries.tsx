@@ -48,16 +48,8 @@ async function getPetData() {
 }
     async function GetData() {
       try {
-        if(petDetails.sexo == "Fêmea" || petDetails.sexo == "Femea" || petDetails.sexo == "femea") {
-          const sugeries = await api.get(`/surgeries?page=${pagination}&female=true`)
-          setSugeries(sugeries.data.surgeries)
-        } else if(petDetails.sexo == "Macho" || petDetails.sexo == "macho") {
-          const sugeries = await api.get(`/surgeries?page=${pagination}&male=true`)
-          setSugeries(sugeries.data.surgeries)
-        } else {
-          const sugeries = await api.get(`/surgeries?page=${pagination}`)
-          setSugeries(sugeries.data.surgeries)
-        }
+        const sugeries = await api.get(`/surgeries?page=${pagination}&sex=${petDetails.sexo}`)
+        setSugeries(sugeries.data.surgeries)
       } catch (error) {
         console.error(error)
       }

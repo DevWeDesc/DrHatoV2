@@ -63,58 +63,156 @@ export const proceduresController = {
     }
   },
 
-  getProcedures: async (request: FastifyRequest<{Querystring: { page: string;}}>, reply: FastifyReply) => {
+  getProcedures: async (request: FastifyRequest<{Querystring: { page: string; sex?: string;}}>, reply: FastifyReply) => {
     try {
             // Obtenha o número da página atual a partir da solicitação.
             const currentPage = Number(request.query.page) || 1;
-
+            const animalSex = request.query.sex || null;
             // Obtenha o número total de usuários.
             const totalProceds = await prisma.procedures.count();
         
             // Calcule o número de páginas.
             const totalPages = Math.ceil(totalProceds / 35);
+
+        if(animalSex != null && animalSex == "Macho") {
+          const procedures = await prisma.procedures.findMany({
+            skip: (currentPage - 1) * 35,
+            take: 35,
+            where: {
+              applicableMale: true,
+              applicableFemale: false
+            },
+            include: {
+              groups: { select: { name: true } },
+              sector: { select: { name: true } },
+              appicableEspecies: true
+            },
+          });
+          
+          reply.send({totalPages, totalProceds,  currentPage, procedures });
+        } else if(animalSex != null && animalSex == "Femea") {
+          const procedures = await prisma.procedures.findMany({
+            skip: (currentPage - 1) * 35,
+            take: 35,
+            where: {
+              applicableFemale: true,
+              applicableMale: false,
+            },
+            include: {
+              groups: { select: { name: true } },
+              sector: { select: { name: true } },
+              appicableEspecies: true
+            },
+          });
+
+          reply.send({totalPages, totalProceds,  currentPage, procedures });
+        } else {
+          const procedures = await prisma.procedures.findMany({
+            skip: (currentPage - 1) * 35,
+            take: 35,
+            include: {
+              groups: { select: { name: true } },
+              sector: { select: { name: true } },
+              appicableEspecies: true
+            },
+          });
+          
+          reply.send({totalPages, totalProceds,  currentPage, procedures });
+        }
         
-      const procedures = await prisma.procedures.findMany({
-        skip: (currentPage - 1) * 35,
-        take: 35,
-        include: {
-          groups: { select: { name: true } },
-          sector: { select: { name: true } },
-        },
-      });
-      
-      reply.send({totalPages, totalProceds,  currentPage, procedures });
+
     } catch (error) {
       console.log(error);
       reply.status(400).send({ message: error });
     }
   },
 
-  queryProcedureByName: async (request: FastifyRequest<{Querystring: {q: string, page: string}}>, reply: FastifyReply) => {
+  queryProcedureByName: async (request: FastifyRequest<{Querystring: {q: string, page: string; sex?: string}}>, reply: FastifyReply) => {
     try {
             const currentPage = Number(request.query.page) || 1;
-
-            // Obtenha o número total de usuários.
-            const totalProceds = await prisma.procedures.count();
-        
-            // Calcule o número de páginas. 
-            const totalPages = Math.ceil(totalProceds / 35);
+            const animalSex = request.query.sex || null;
+   
            const {q} = request.query
 
-      const procedures = await prisma.procedures.findMany({
-        skip: (currentPage - 1) * 35,
-        take: 35,
-        where: {name: {contains: q}}
-        
-      })
+           if(animalSex != null && animalSex == "Macho") {
 
+                     const totalProceds = await prisma.procedures.count({
+                      where: {
+                        name: {contains: q},
+                        applicableMale: true,
+                        applicableFemale: false
+                      },
+                     });
+       
+                     const totalPages = Math.ceil(totalProceds / 35);
+                     
+            const procedures = await prisma.procedures.findMany({
+              skip: (currentPage - 1) * 35,
+              take: 35,
+              where: {
+                name: {contains: q},
+                applicableMale: true,
+                applicableFemale: false
+              },
+              include: {
+                groups: { select: { name: true } },
+                sector: { select: { name: true } },
+                appicableEspecies: true
+              },
+            });
+            
+            reply.send({totalPages, totalProceds,  currentPage, procedures });
+          } else if(animalSex != null && animalSex == "Femea") {
+            const totalProceds = await prisma.procedures.count({
+              where: {
+                name: {contains: q},
+                applicableMale: false,
+                applicableFemale: true
+              },
+             });
 
-      reply.send({
-        totalProceds,
-        totalPages,
-        currentPage,
-        procedures
-      })
+             const totalPages = Math.ceil(totalProceds / 35);
+            
+            const procedures = await prisma.procedures.findMany({
+              skip: (currentPage - 1) * 35,
+              take: 35,
+              where: {
+                name: {contains: q},
+                applicableFemale: true,
+                applicableMale: false,
+              },
+              include: {
+                groups: { select: { name: true } },
+                sector: { select: { name: true } },
+                appicableEspecies: true
+              },
+            });
+  
+            reply.send({totalPages, totalProceds,  currentPage, procedures });
+          } else {
+            const totalProceds = await prisma.procedures.count({
+              where: {name: {contains: q}}
+            });
+
+             const totalPages = Math.ceil(totalProceds / 35);
+            const procedures = await prisma.procedures.findMany({
+              skip: (currentPage - 1) * 35,
+              take: 35,
+              where: {name: {contains: q}}
+              
+            })
+      
+      
+            reply.send({
+              totalProceds,
+              totalPages,
+              currentPage,
+              procedures
+            })
+          }
+
+           
+    
     } catch (error) {
       
     }
