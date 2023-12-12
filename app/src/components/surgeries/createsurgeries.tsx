@@ -28,7 +28,12 @@ interface SugeriesProps {
   price: number | string;
 }
 
-export function Createsurgeries() {
+type SurgerieVetProps = {
+  InAdmission: boolean;
+  admissionQueueId?: string;
+}
+
+export function Createsurgeries({InAdmission, admissionQueueId} : SurgerieVetProps) {
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
     const [sugeries, setSugeries] = useState<SugeriesProps[]>([])
     const [reloadData, setReloadData] = useState(false);
@@ -80,10 +85,19 @@ async function getPetData() {
         const data = {
           RequestedByVetId: user.id, 
           RequestedByVetName: user.consultName, 
+          isAdmission: InAdmission
         };
-        await api.post(`surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`, data)
-        setReloadData(true);
-        toast.success("Cirurgia adicionada com Sucesso")
+
+        if (InAdmission === true) {
+          await api.post(`surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`, data)
+          setReloadData(true);
+          toast.success("Cirurgia adicionada - Internações")
+        } else {
+          await api.post(`surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`, data)
+          setReloadData(true);
+          toast.success("Cirurgia adicionada - Veterinários")
+        }
+      
       } catch (error) {
         toast.error("Falha ao cadastrar Cirurgia!")
       }

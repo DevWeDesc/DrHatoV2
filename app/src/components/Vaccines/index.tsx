@@ -25,13 +25,20 @@ interface VaccinesProps {
   description: string;
 }
 
-export default function VaccinesVets() {
+type VaccinesVetProps = {
+  InAdmission: boolean;
+  admissionQueueId?: string;
+}
+
+
+export default function VaccinesVets({InAdmission, admissionQueueId} : VaccinesVetProps) {
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [vaccines, setVaccines] = useState<VaccinesProps[]>([]);
   const [vaccineId, setVaccineId] = useState(0);
   const [reloadData, setReloadData] = useState(false);
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
+  const user = JSON.parse(localStorage.getItem("user") as string);
 
   async function GetVaccine() {
     try {
@@ -44,13 +51,26 @@ export default function VaccinesVets() {
     }
   }
 
-  console.log(petDetails)
 
   async function setVaccineInPet() {
     try {
-      await api.post(`/vaccinepet/${vaccineId}/${petDetails.recordId}/${petDetails.totalAcc.id}`);
-      setReloadData(true);
-      toast.success("Vacina criada com Sucesso");
+      const data = {
+        RequestedByVetId: user.id, 
+        RequestedByVetName: user.consultName, 
+        RequestedCrm: user.crm,
+        isAdmission: InAdmission
+      };
+
+      if(InAdmission === true) {
+        await api.post(`/vaccinepet/${vaccineId}/${petDetails.recordId}/${petDetails.totalAcc.id}/${admissionQueueId}`, data);
+        setReloadData(true);
+        toast.success("Vacina adicionada - Internações");
+      } else {
+        await api.post(`/vaccinepet/${vaccineId}/${petDetails.recordId}/${petDetails.totalAcc.id}/${queueId}`, data);
+        setReloadData(true);
+        toast.success("Vacina adicionada - Veterinários");
+      }
+     
     } catch (error) {
       toast.error("Falha ao cadastrar Vacina!");
     }

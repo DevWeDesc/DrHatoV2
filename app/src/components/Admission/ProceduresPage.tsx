@@ -4,9 +4,7 @@ import {
   Flex,
   Text,
   Button,
-  Input,
 } from "@chakra-ui/react";
-import { borderRadius } from "polished";
 import { useState } from "react";
 import { BiHome } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
@@ -14,20 +12,11 @@ import { useNavigate, useParams } from "react-router";
 import { AdminContainer } from "../../pages/AdminDashboard/style";
 import { WorkSpaceHeader } from "../../pages/Vets/styles";
 import ProceduresVets from "../Procedures";
-import ProceduresAdmissions from "./procedures";
 
-export default function ProceduresAdmisisonPage() {
-  const [listExam, setListExam] = useState<boolean>(false);
-  const [nameExam, setNameExam] = useState<string>("");
-  const [priceExam, setPriceExam] = useState<string>("");
-  const date = new Date();
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  const dataformatted = `${year}-${month}-${day}`;
+export default function ProceduresAdmissionPage() {
 
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id , queueId} = useParams<{ id: string; queueId: string; }>();
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -58,7 +47,7 @@ export default function ProceduresAdmisisonPage() {
                 <Button
                   colorScheme="yellow"
                   leftIcon={<TbArrowBack size={24} />}
-                  onClick={() => navigate(`/Admissions/${id}`)}
+                  onClick={() => navigate(`/Admissions/${id}/${queueId}`)}
                 >
                   Voltar
                 </Button>
@@ -67,7 +56,7 @@ export default function ProceduresAdmisisonPage() {
           </WorkSpaceHeader>
           <Flex w="100%" mx="auto">
             <Box w="100%">
-              <ProceduresVets />
+              <ProceduresVets  InAdmission={true} admissionQueueId={queueId} />
             </Box>
           </Flex>
         </Flex>

@@ -2,7 +2,7 @@
 import XLSX from 'xlsx';
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-const arquivoExcel = './src/CadAnimais.xlsx';
+const arquivoExcel = './src/databases/CadAnimais.xlsx';
 const workbook = XLSX.readFile(arquivoExcel);
 const sheetName = workbook.SheetNames[0];
 const worksheet = workbook.Sheets[sheetName];

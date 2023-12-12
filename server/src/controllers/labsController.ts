@@ -138,7 +138,7 @@ export const labsController = {
         doneExame: true,
         responsibleForExam: responsible,
         responsibleForCrm: responsibleCrm,
-        isReportByText: true
+        byReport: true
       }
     })
 
@@ -149,17 +149,17 @@ export const labsController = {
 
   reportTableExam: async (request:FastifyRequest<{Params: {examId: string}, Body: {reportedFor: string, reportedForCrm: string} & Prisma.ReportForExamsCreateInput }>, reply: FastifyReply) => {
     const {examId} = request.params
-    const {report, isOnePart , isMultiPart, isReportByText, reportedFor, reportedForCrm } = request.body
+    const {report, onePart , twoPart, byReport, reportedFor, reportedForCrm } = request.body
     try {
      
       await prisma.examsForPet.update({
         where:{id: parseInt(examId)}, data: {
-          doneExame: true,isMultiPart,isOnePart, responsibleForExam: reportedFor ,isReportByText, responsibleForCrm: reportedForCrm
+          doneExame: true,onePart,twoPart, responsibleForExam: reportedFor ,byReport, responsibleForCrm: reportedForCrm
         }
       })
 
       await prisma.reportForExams.create({
-        data: { isOnePart, isMultiPart, isReportByText, report, examsForPet: {connect: {id: parseInt(examId)}}}
+        data: { onePart, twoPart, byReport, report, examsForPet: {connect: {id: parseInt(examId)}}}
       })
 
 
@@ -251,8 +251,8 @@ export const labsController = {
 
 
 
-     const examRefs =  await prisma.exams.findFirst({
-      where: {name: {contains: examDetails.name}},include: {characteristics: true}
+     const examRefs =  await prisma.oldExams.findFirst({
+      where: {name: {equals: examDetails.name}}, include: {partExams: {include: {examsDetails: true}}}
      }) 
 
 
@@ -273,20 +273,11 @@ export const labsController = {
       result: examDetails.reportExams[0].report
      }
 
-     const petExamRefs = examRefs?.characteristics
+     const petExamRefs = examRefs?.partExams
 
+     const refByEspecie = examRefs?.partExams[0].examsDetails.filter((item) => { item.agesTwo?.includes(`${petExamResult.petEspecie}`)})
 
-     //@ts-ignore
-     const filteredRefIdades = petExamRefs?.map((ch) => {
-      return {
-        id: ch.id,
-        name: ch.name,
-          //@ts-ignore
-        especies:  ch.especie.filter(e => e.name === petExamResult.petEspecie )
-      }
-     })
-
-      reply.send({petExamResult, filteredRefIdades }).status(200)
+      reply.send({petExamResult, petExamRefs, refByEspecie }).status(200)
 
     } catch (error) {
         console.log(error)

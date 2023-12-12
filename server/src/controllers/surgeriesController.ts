@@ -13,6 +13,7 @@ type params = {
   sugPrice: string;
 }
 type body = {
+  isAdmission: boolean;
   RequestedByVetId: number,
   RequestedByVetName: string;
    petIsMale: boolean;
@@ -104,33 +105,49 @@ export const surgeriesController = {
 
   setSurgerieInPet: async (request: FastifyRequest<{ Params: params, Body: body }>, reply: FastifyReply) => {
     const { id, petId, accId, queueId} = request.params
-    const {RequestedByVetId,
-      RequestedByVetName} = request.body
+    const {RequestedByVetId, 
+      RequestedByVetName, isAdmission} = request.body
     try {
       const surgerie = await prisma.surgeries.findUnique({
         where:{id: parseInt(id)}
       })
+
       if(!surgerie) {
         reply.status(400).send("Falha ao buscar cirurgia/Falha ao criar Cirurgia")
          return
       }
-      await prisma.petConsultsDebits.create({
-        data: {
-          OpenedConsultsForPet: {connect: {id: queueId}},
-          isSurgerie: true,
-          name: surgerie.name,
-          price: surgerie.price,
-          itemId: surgerie.id,
-          RequestedByVetId,
-          RequestedByVetName
-        }
-      }).then(async () => {
-        await prisma.surgeriesForPet.create({data: {name: surgerie.name, status: 'STARTED', price: surgerie.price, medicine: {connect: {petId:parseInt(petId)}}}})
-      }).then(async () => {
-        await accumulatorService.addPriceToAccum(Number(surgerie.price), accId)
-        reply.send("Cirurgia adiciona ao pet com sucesso").status(200)
-      })
-     
+
+      if(isAdmission === true) {
+        await prisma.petConsultsDebits.create({
+          data: {
+            OpenedAdmissionsForPet: {connect: {id: queueId}},
+            isSurgerie: true,
+            name: surgerie.name,
+            price: surgerie.price,
+            itemId: surgerie.id,
+            RequestedByVetId,
+            RequestedByVetName
+          }
+        })
+      } else {
+        await prisma.petConsultsDebits.create({
+          data: {
+            OpenedConsultsForPet: {connect: {id: queueId}},
+            isSurgerie: true,
+            name: surgerie.name,
+            price: surgerie.price,
+            itemId: surgerie.id,
+            RequestedByVetId,
+            RequestedByVetName
+          }
+        })
+      }
+
+      await prisma.surgeriesForPet.create({data: {name: surgerie.name, status: 'STARTED', price: surgerie.price, medicine: {connect: {petId:parseInt(petId)}}}})
+
+      await accumulatorService.addPriceToAccum(Number(surgerie.price), accId)
+      reply.send("Cirurgia adiciona ao pet com sucesso").status(200)
+  
     
     } catch (error) {
       reply.send({message: error})

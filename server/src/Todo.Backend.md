@@ -25,7 +25,7 @@
 [X] - Sistema Internação
 [X] - Sistema de Filas 
 [] - Sistema Etiquetas 
-[] - Impressão do exame concluido via PDF
+[X] - Impressão do exame concluido via PDF
 
 
 
@@ -72,9 +72,8 @@
 [X] - Senhas encriptadas
 [X] - Autenticação por JWT
 [X] - Motor de Busca Veterinários
-[] - Motor de Busca Laboratório
+[X] - Motor de Busca Laboratório
 [] - Motor de Busca Internação
-[X] - Motor de Busca Veterinários
 [] - Solicitado por/Concluido por em todas finalizações com valores
 [X] - Dados devem ser persistidos em banco Postgres
 [] - Implementação de Refresh Token
@@ -89,18 +88,20 @@
 [] - Sistema HelpDesk Interno
 
 
-
 ### ARQUITETURA INTERNA ### 
 [] - Padronizar interfaces e contratos entre front/back
 [] - Atualizar Tipagens e ajustar as que estão com any
 [] - Reajustar pastas e padronizações front
+[] - Converter chamadas API para React Query(objetivo tirar todos useEffect que chama API)
 [] - Refatorar arquitetura back-end com SOLID 
 
+## DILAN IMPORTANTE ##
+[] - ENCERRAMENTO DE QUEUE.
 
 #### BUGS e Correções  ####
 [X] - Tabela exames duplicando
 [X] - Ajustar cadastro de pets campo idade
-[] - Valores já prédefinidos dos exames que já existem
+[X] - Valores já prédefinidos dos exames que já existem
 
 
 ### To do Solicitado Dr Daniel ###
@@ -111,15 +112,37 @@
 [X] - Busca rápida nos veterinarios / nome completo
 [X] - Preferencia = Só aparece para a preferencia
 [X] - Ordem de consulta é da antiga para a mais nova
-[] - Visualização de todos os veterinarios
-[] - Formularios, instruções do proprietário, autorizações
+[x] - Formularios, instruções do proprietário, autorizações (Autorizações/instruções já encontradas, procurando Formularios)
 [X] - Exames, procedimentos, vacinas, cirurgias, internar
-[] - Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa
 [X] - Concluir: ao clicar trazer os preços e validar
 [X] - Subir procedimento
 [X] - vacinas para cachorro e vacinas para gato, tirar a palavra "a fazer"
 [X] - Macho não faz cesaria
 [X] - Adicionar observações no Laudo
-[] - Painel de Internações, listagem e aparecer os animais, após 48hrs destacar o animal
+[X] - Painel de Internações, listagem e aparecer os animais, após 48hrs destacar o animal
 [X] - histórico completo da diaria, custos na tela de procedimento
-[] - Criar acesso para desconcluir a consulta
+[X] - Criar acesso para desconcluir a consulta
+[X]- trazer o código do animal
+[X] - Histórico internação e custos tela internação
+[X]- Código unico vinculado ao código da consulta
+[X] - Liberar permissão para usuario de desconcluir
+[X] - Legenda Internação abaixo de 24hrs verde...
+[X] - Validação do CPF como encontrar a regra (confirmar api receita)
+[X] - Visualização de todos os veterinarios
+[X] - Filtro de vet só aparecer o vet ativo. mais pesquisa de qualquer forma
+[X] - check de todos os veterinarios
+[X] - Visualização de todos os veterinarios
+[X] - Visualização de todos os veterinarios (usuario master vê toda a fila)
+[x] - Preferencia = Só aparece para a preferencia
+[x] - prontuario e pet descer a linha
+[] -  Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)
+[] -  Cadastro de endereço mascara complemento e numero
+[] -  Tela de exames: colocar o botão de laudados (concluidos) e visualizar o laudo.
+[] -  verificar a impressão: Ajustar os exames e laudos no pdf
+[] -  vacinas para cachorro e vacinas para gato (separar)
+[] -  Procedimento para cachorro e vacinas para gato (separar)
+[x] -  Ao adicionar os procedimentos trazer especies permitidas
+[x] -  Filtro no cadastro de procedimentos e vacinas
+[] -  Formularios (encontrar o PDF), instruções do proprietário (melhorar tamanho da letra)
+
+

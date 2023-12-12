@@ -62,7 +62,8 @@ export function LoginForm() {
                 crm: res.data.userData.crm,
                 username: res.data.userData.username,
                 name: res.data.userData.name,
-                consultName: res.data.userData.consultName
+                consultName: res.data.userData.consultName,
+                role: res.data.userData.role
               })
             );
             //console.log(localStorage);

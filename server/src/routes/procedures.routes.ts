@@ -9,4 +9,11 @@ export async function proceduresRoutes(app: FastifyInstance) {
     app.put('/procedures/:id', proceduresController.editProcedure)
     app.delete('/procedures/:id', proceduresController.deleteProcedure)
     app.delete('/proceduresfp/:id/:accId/:procedPrice', proceduresController.deleteProcedureOfPet)
+
+
+
+    app.get("/procedures/query", proceduresController.queryProcedureByName)
+    app.put("/procedures/especies/:procedureId/:especieId", proceduresController.setEspecieInProcedure)
+    app.put("/procedures/especies/all/:procedureId", proceduresController.setAllEspeciesInProcedure)
+    app.put("/procedures/especies/all/remove/:procedureId", proceduresController.removeAllEspeciesInProcedure)
 }

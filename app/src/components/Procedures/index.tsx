@@ -1,6 +1,4 @@
-import React, { useContext } from "react";
 import {
-  ChakraProvider,
   Flex,
   Table,
   Tr,
@@ -10,17 +8,15 @@ import {
   Tbody,
   TableContainer,
   Button,
-  Checkbox,
   HStack,
 } from "@chakra-ui/react";
-import moment from "moment";
 import { useEffect, useState } from "react";
-import {  useNavigate, useParams } from "react-router-dom";
+import {   useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 import { PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
-import { UrlContext } from "../../contexts/UrlContext";
+
 
 interface ProceduresProps {
   id: number;
@@ -32,14 +28,18 @@ interface ProceduresProps {
   requestedDate: any;
 }
 
-export default function ProceduresVets() {
+type ProceduresAdmissionProps = {
+  InAdmission: boolean;
+  admissionQueueId?: string;
+}
+
+export default function ProceduresVets({InAdmission, admissionQueueId}: ProceduresAdmissionProps ) {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [procedures, setProcedures] = useState<ProceduresProps[]>([]);
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
-  const { url } = useContext(UrlContext);
-  const navigate = useNavigate();
+
   async function GetPet() {
     const pet = await api.get(`/pets/${id}`);
     setPetDetails(pet.data);
@@ -54,13 +54,22 @@ export default function ProceduresVets() {
       const data = {
         RequestedByVetId: user.id, 
         RequestedByVetName: user.consultName, 
+        InAdmission
       };
+      if(InAdmission === true) {
+        await api.post(
+          `/procedures/${procedureId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`, data
+        );
+        setReloadData(true);
+        toast.success("Procedimento incluido - Internação");
+      } else {
+        await api.post(
+          `/procedures/${procedureId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`, data
+        );
+        setReloadData(true);
+        toast.success("Procedimento incluido - Veterinários");
+      }
 
-      await api.post(
-        `/procedures/${procedureId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`, data
-      );
-      setReloadData(true);
-      toast.success("Procedimento incluido com sucesso!!");
     } catch (error) {
       console.log(error);
       toast.error("Falha ao acrescentar novo procedimento!!");
@@ -105,9 +114,8 @@ export default function ProceduresVets() {
     <>
       <Flex
         w="100%"
-        height={url === `/Admissions/${id}` ? "" : "45vh"}
+        height="45vh"
         align="center"
-     
       >
         <TableContainer w="100%" height="100%" >
           <Table>
@@ -139,177 +147,7 @@ export default function ProceduresVets() {
             </Thead>
 
             <Tbody>
-              {url === `/Admissions/${id}` ? (
-                <>
-                  {" "}
-                  {petDetails.exams?.map((exams) => (
-                    <Tr key={exams.id}>
-                      <Td
-                        border="2px"
-                        fontSize="1xl"
-                        fontWeight="bold"
-                        color="green.700"
-                      >
-                        1
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        {exams.name}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        R${exams.price}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        Total{" "}
-                        {/* {new Intl.DateTimeFormat().format(procedure.requestedDate)} */}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        {exams.requestedData}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        --
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        <Button
-                          onClick={() =>
-                            excludeProcedureInPet(exams.id, exams.price)
-                          }
-                          colorScheme="red"
-                        >
-                          EXCLUIR
-                        </Button>
-                      </Td>
-                    </Tr>
-                  ))}
-                  {petDetails.surgeries?.map((surgeries) => (
-                    <Tr key={surgeries.id}>
-                      <Td
-                        border="2px"
-                        fontSize="1xl"
-                        fontWeight="bold"
-                        color="green.700"
-                      >
-                        1
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        {surgeries.name}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        R${surgeries.price}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        Total{" "}
-                        {/* {new Intl.DateTimeFormat().format(procedure.requestedDate)} */}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        {new Intl.DateTimeFormat("pt-BR", {
-                          month: "2-digit",
-                          day: "2-digit",
-                        }).format(
-                          new Date(
-                            surgeries.scheduledDate != null
-                              ? surgeries.scheduledDate
-                              : "21/08/2023"
-                          )
-                        )}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        --
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        <Button
-                          onClick={() =>
-                            excludeProcedureInPet(surgeries.id, surgeries.price)
-                          }
-                          colorScheme="red"
-                        >
-                          EXCLUIR
-                        </Button>
-                      </Td>
-                    </Tr>
-                  ))}
-                  {petDetails.procedures?.map((procedures) => (
-                    <Tr key={procedures.id}>
-                      <Td
-                        border="2px"
-                        fontSize="1xl"
-                        fontWeight="bold"
-                        color="green.700"
-                      >
-                        1
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        {procedures.name}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        R${procedures.price}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        Total{" "}
-                        {/* {new Intl.DateTimeFormat().format(procedure.requestedDate)} */}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        21/08/2023
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        --
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        <Button
-                          onClick={() =>
-                            excludeProcedureInPet(
-                              procedures.id,
-                              procedures.price
-                            )
-                          }
-                          colorScheme="red"
-                        >
-                          EXCLUIR
-                        </Button>
-                      </Td>
-                    </Tr>
-                  ))}
-                  {petDetails.vaccines?.map((vaccines) => (
-                    <Tr key={vaccines.id}>
-                      <Td
-                        border="2px"
-                        fontSize="1xl"
-                        fontWeight="bold"
-                        color="green.700"
-                      >
-                        1
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        {vaccines.name}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        R${vaccines.price}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        Total{" "}
-                        {/* {new Intl.DateTimeFormat().format(procedure.requestedDate)} */}
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        21/08/2023
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        --
-                      </Td>
-                      <Td border="2px" fontSize="1xl" fontWeight="bold">
-                        <Button
-                          onClick={() =>
-                            excludeProcedureInPet(vaccines.id, vaccines.price)
-                          }
-                          colorScheme="red"
-                        >
-                          EXCLUIR
-                        </Button>
-                      </Td>
-                    </Tr>
-                  ))}
-                </>
-              ) : (
-                <>
-                  {" "}
+      
                   {petDetails.procedures?.map((procedure: ProceduresProps) => (
                     <Tr key={procedure.id}>
                       <Td
@@ -350,13 +188,11 @@ export default function ProceduresVets() {
                       </Td>
                     </Tr>
                   ))}
-                </>
-              )}
+              
             </Tbody>
           </Table>
         </TableContainer>
       </Flex>
-      {url != `/Admissions/${id}` && (
         <Flex w="100%" height="55vh" direction="column">
           <Flex
             height="48px"
@@ -420,7 +256,6 @@ export default function ProceduresVets() {
             </Table>
           </TableContainer>
         </Flex>
-      )}
     </>
   );
 }

@@ -277,21 +277,21 @@ eateMedicine
                 element={<EditProtocols />}
               />
 
-              <Route path="/Admissions/:id" element={<AdmissionDetails />} />
+              <Route path="/Admissions/:id/:queueId" element={<AdmissionDetails />} />
               <Route
-                path="/Admissions/Procedures/:id"
+                path="/Admissions/Procedures/:id/:queueId"
                 element={<ProceduresAdmisisonPage />}
               />
               <Route
-                path="/Admissions/Vaccines/:id"
+                path="/Admissions/Vaccines/:id/:queueId"
                 element={<AdmissionsVaccines />}
               />
               <Route
-                path="/Admissions/Exams/:id"
+                path="/Admissions/Exams/:id/:queueId"
                 element={<AdmissionExams />}
               />
               <Route
-                path="/Admissions/Surgeries/:id"
+                path="/Admissions/Surgeries/:id/:queueId"
                 element={<SurgeriesAdmission />}
               />
               <Route path="/Admissions/Beds" element={<ShowBeds />} />

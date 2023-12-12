@@ -2,7 +2,7 @@ import XLSX from 'xlsx';
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
-const arquivoExcel = './src/Users.xlsx';
+const arquivoExcel = './src/databases/Users.xlsx';
 const workbook = XLSX.readFile(arquivoExcel);
 const sheetName = workbook.SheetNames[0];
 const worksheet = workbook.Sheets[sheetName];

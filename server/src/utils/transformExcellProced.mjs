@@ -1,7 +1,7 @@
 import XLSX from 'xlsx';
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-const arquivoExcel = './src/Procedimentos.xlsx';
+const arquivoExcel = './src/databases/Procedimentos.xlsx';
 const workbook = XLSX.readFile(arquivoExcel);
 const sheetName = workbook.SheetNames[0];
 const worksheet = workbook.Sheets[sheetName];
@@ -51,7 +51,7 @@ const filteredData = data.map(procedure => ({
                 }
               })
         } catch (error) {
-            console.log(`Procedimento com erro ${proced.name} Cod: ${proced.codProcedimento}`)
+            //console.log(`Procedimento com erro ${proced.name} Cod: ${proced.codProcedimento}`)
         }
       }
       console.log("Banco populado Procedimentos")

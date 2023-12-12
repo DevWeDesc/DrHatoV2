@@ -225,6 +225,7 @@ type PetQueueProps = {
 }
 type PetBedsProps = {
   id: number
+  openedAdmissionId: string;
 	entryOur: Date
 	exitOur:Date 
 	mustFasting: boolean
@@ -264,6 +265,7 @@ export interface BoxProps {
 }
 
 export interface PetDetaisl {
+  CodAnimal: string | number;
   id: number;
   more: string;
   name: string;

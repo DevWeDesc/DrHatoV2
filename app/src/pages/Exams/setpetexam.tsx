@@ -109,25 +109,27 @@ export function SetPetExam() {
   const handleSetTableReport: SubmitHandler<FieldValues> = async values => {
     const refs = exam.partExams[0].examsDetails.map(charac => {
       let data = {
-        
         charac: charac.caracteristic.replace(/\./g, '').trim(),
         abs: values[`abs${charac.caracteristic.replace(/\./g, '').trim()}`],
         rel: values[`rel${charac.caracteristic.replace(/\./g, '').trim()}`]
       }
-      return data
+        return data
     })
 
     const data = {
-      report: refs,
-      obs: values.obsOnePart,
+      report: { 
+        refs,
+        obs: values.obsOnePart,
+      },
       reportedFor: user.consultName,
       reportedForCrm: user.crm
     }
 
     try {
-    
+    console.log(data)
       await api.patch(`/reportexam/${id}`, data)
       toast.success('Exame laudado com sucesso!')
+      navigate("/Labs/Exames")
     } catch (error) {
       console.log(error)
     }

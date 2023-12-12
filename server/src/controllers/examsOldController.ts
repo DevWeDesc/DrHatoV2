@@ -18,6 +18,7 @@ type body = {
     RequestedByVetId: number;
     RequestedByVetName: string;
     RequestedCrm: string;
+    isAdmission: boolean;
 }
 
 export const oldExamsController = {
@@ -132,12 +133,25 @@ export const oldExamsController = {
     try {
 
         const {examId, petId, accId, queueId} = request.params
-        const { RequestedByVetId, RequestedByVetName, RequestedCrm} = request.body
+        const { RequestedByVetId, RequestedByVetName, RequestedCrm, isAdmission} = request.body
         const exam = await prisma.oldExams.findUnique({where: {codexam: parseInt(examId)}})
 
         if(!exam) return
 
-        await prisma.petConsultsDebits.create({
+        if(isAdmission === true) {
+          await prisma.petConsultsDebits.create({
+            data: {
+                OpenedAdmissionsForPet: {connect: {id: queueId}},
+                isExam: true,
+                name: exam.name,
+                price: exam.price,
+                itemId: exam.codexam,
+                RequestedByVetId,
+                RequestedByVetName
+            }
+        })
+        } else {
+          await prisma.petConsultsDebits.create({
             data: {
                 OpenedConsultsForPet: {connect: {id: queueId}},
                 isExam: true,
@@ -147,26 +161,32 @@ export const oldExamsController = {
                 RequestedByVetId,
                 RequestedByVetName
             }
-        }).then(async () => {
-            await prisma.examsForPet.create({
-                data: {
-                  name: exam.name,
-                  price: exam.price,
-                  doneExame: false,
-                  isMultiPart: exam.twoPart,
-                  isOnePart: exam.onePart,
-                  isReportByText: exam.byReport,
-                  requesteData: new Date(),
-                  requestedFor: RequestedByVetName,
-                  requestedCrm: RequestedCrm,
-                  examsType: exam.defaultLab ? ['lab'] : ['image'],
-                  medicine: { connect: { petId: parseInt(petId) } },
-                },
-              });
-        }).then(async () => {
-            await accumulatorService.addPriceToAccum(exam.price, accId);
-            reply.send("Success").status(200)
         })
+        }
+
+
+        await prisma.examsForPet.create({
+          data: {
+            name: exam.name,
+            price: exam.price,
+            doneExame: false,
+            twoPart: exam.twoPart,
+            onePart: exam.onePart,
+            byReport: exam.byReport,
+            requesteData: new Date(),
+            requestedFor: RequestedByVetName,
+            requestedCrm: RequestedCrm,
+            examsType: exam.defaultLab ? ['lab'] : ['image'],
+            medicine: { connect: { petId: parseInt(petId) } },
+          },
+        });
+        
+        await accumulatorService.addPriceToAccum(exam.price, accId);
+
+
+
+        reply.send("Success").status(200)
+   
         
     } catch (error) {
     reply.send({

@@ -12,7 +12,8 @@ import {
   TableContainer,
   Input,
   Textarea,
-  HStack
+  HStack,
+  FormLabel
 } from '@chakra-ui/react'
 import { BiHome, GiMedicines, TbArrowBack } from 'react-icons/all'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -21,6 +22,7 @@ import { api } from '../../lib/axios'
 import { MedicineContainer } from './style'
 import { GenericModal } from '../../components/Modal/GenericModal'
 import { MedicinesHistory } from './MedicinesHistory'
+import { toast } from 'react-toastify'
 
 interface PetProps {
   id: number
@@ -80,15 +82,30 @@ interface PetProps {
 export function MedicineRecords() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [modalUnconclude, setModalUnconclude] = useState(false);
+  const [masterPassword, setMasterPassword] = useState("");
+  const [unconcludeObs, setUnconcludeObs] = useState("");
+  const [endQueueId, setEndQueueId] = useState(0);
   const [pets, setPets] = useState({} as PetProps)
+  const user: {
+    id: number;
+    role: string;
+  } = JSON.parse(localStorage.getItem("user") as string);
   const navigate = useNavigate()
 
   function  openModal() {
     setModalIsOpen(true)
   }
-
   function closeModal() {
     setModalIsOpen(false)
+  }
+
+  function openUnconcludeModal() {
+    setModalUnconclude(true);
+  }
+
+  function closeUnconcludeModal() {
+    setModalUnconclude(false);
   }
 
   async function getPet() {
@@ -97,6 +114,23 @@ export function MedicineRecords() {
       setPets(response.data)
     } catch (error) {
       console.log(error)
+    }
+  }
+
+
+  async function unclocludeQueue(queueId: number) {
+    const data = {
+      masterPassword, 
+      unconcludeObs, 
+      userId: user.id, 
+      queueId
+    } 
+    if(user.role != "MASTER") {
+      toast.warning("Função apenas de usuário MASTER!")
+    } else {
+  
+      await api.put("/queue/unconclude", data)
+      toast.success("Consulta desconcluida!!")
     }
   }
 
@@ -250,6 +284,7 @@ export function MedicineRecords() {
                       <Flex m="2" align="center" textAlign="center" gap="2">
                       <Text border="2px"  fontWeight="bold"  fontSize="lg"  bgColor="gray.300" h="38px" w="20%"> Peso</Text>
                       <Text  border="2px"  fontWeight="black" fontSize="lg" bgColor="white"  h="38px" w="80%"> {queue.petWeight}</Text>
+                      <Button colorScheme="red" onClick={() => {setEndQueueId(queue.id);openUnconcludeModal()}} >Desconcluir</Button>
                       </Flex>
                
                         <Flex align="center" gap="2">
@@ -538,6 +573,16 @@ export function MedicineRecords() {
       onRequestClose={closeModal}
       >
         <MedicinesHistory/>
+      </GenericModal>
+      <GenericModal isOpen={modalUnconclude} onRequestClose={closeUnconcludeModal}>
+              <Flex w={400} h={200} align="center" direction="column" >
+                <Text fontWeight="bold">Apenas MASTER's podem desconcluir consultas:</Text>
+
+                <Textarea onChange={(ev) => setUnconcludeObs(ev.target.value)} border="1px" placeholder='Opcional: Motivo Desconclusão ' />
+                <Input mt="2" onChange={(ev) => setMasterPassword(ev.target.value)}  border="1px" name='masterPassword' type="password"  placeholder='Senha usuário Master'/>
+                <Button mt="4" colorScheme="teal"  onClick={() => unclocludeQueue(endQueueId)}>Desconcluir</Button>
+                
+              </Flex>
       </GenericModal>
     </ChakraProvider>
   )

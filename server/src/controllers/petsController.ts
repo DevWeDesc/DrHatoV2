@@ -89,7 +89,7 @@ export const petsController = {
         sizePet: pet?.sizePet,
         bornDate: pet?.bornDate,
         observations: pet?.observations,
-        codPet: pet?.codPet,
+        codPet: pet?.CodAnimal,
         more: pet?.queue?.moreInfos,
         ouor: pet?.queue?.queueOur,
         recordId: pet?.medicineRecords?.id,
@@ -109,9 +109,9 @@ export const petsController = {
             price: exams.price,
             doneExam: exams.doneExame,
            
-            onePart: exams.isOnePart,
-            twoPart: exams.isMultiPart,
-            byText: exams.isReportByText
+            onePart: exams.onePart,
+            twoPart: exams.twoPart,
+            byText: exams.byReport
           }
           return examData
         }),
@@ -256,7 +256,7 @@ export const petsController = {
               queueExit: true,
               queueOur: true,
               moreInfos: true,
-              openConsultId: true
+              openConsultId: true,
             }
           },
           customer: { select: { name: true, vetPreference: true, cpf: true } }
@@ -271,11 +271,71 @@ export const petsController = {
           name: pet.name,
           id: pet.id,
           customerName: pet.customer.name,
-          vetPreference: pet.queue?.vetPreference,
+          vetPreference: pet.queue?.vetPreference ?? "Sem preferência",
           queueId: pet.queue?.id,
           consultUniqueId: pet.queue?.openConsultId,
           codPet: pet.CodAnimal,
-          queueEntry: pet.queue?.queueEntry,
+          queueEntry: pet.queue?.queueEntry ?? new Date(),
+          ouor: pet.queue?.queueOur,
+          especie: pet.especie,
+          more: pet.queue?.moreInfos,
+          race: pet.race,
+          customerCpf: pet.customer.cpf,
+          queryType: pet.queue?.queryType,
+          totalInQueue
+        }
+        return data
+      })
+
+      return reply.send({ response, totalInQueue })
+    } catch (error) {
+      reply.status(404).send(error)
+    }
+  },
+
+  petsByVetQueue: async (request: FastifyRequest< {Params: { vetName: string}}>, reply: FastifyReply) => {
+    try {
+
+      const { vetName } = request.params
+
+      const pets = await prisma.pets.findMany({
+        where: {
+          queue: { petIsInQueue: true },
+          AND: {
+            queue: {vetPreference: {contains: vetName}}
+          }
+        },
+        include: {
+          queue: {
+            select: {
+              id: true,
+              vetPreference: true,
+              queryType: true,
+              queueEntry: true,
+              petIsInQueue: true,
+              queueExit: true,
+              queueOur: true,
+              moreInfos: true,
+              openConsultId: true,
+            }
+          },
+          customer: { select: { name: true, vetPreference: true, cpf: true } }
+        }
+      })
+
+      const totalInQueue = await prisma.queues.count({
+        where: { petIsInQueue: true }
+      })
+      const response = pets.map(pet => {
+        let data = {
+          name: pet.name,
+          id: pet.id,
+          customerName: pet.customer.name,
+          vetPreference: pet.queue?.vetPreference ?? "Sem preferência",
+          queueId: pet.queue?.id,
+          consultUniqueId: pet.queue?.openConsultId,
+          codPet: pet.CodAnimal,
+          queueEntry: pet.queue?.queueEntry ?? new Date(),
           ouor: pet.queue?.queueOur,
           especie: pet.especie,
           more: pet.queue?.moreInfos,

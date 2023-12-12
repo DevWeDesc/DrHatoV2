@@ -26,16 +26,18 @@ import { PetDetaisl } from "../../../interfaces";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { UrlContext } from "../../../contexts/UrlContext";
+import { GenericModal } from "../../Modal/GenericModal";
+import { EndConsults } from "../../../pages/Vets/WorkSpaceVets/endconsults";
 
 export default function DetailsAdmissions() {
   const [admissiondiary, setAdmissionDiary] = useState<number | boolean>(false);
+  const [endModalIsOpen, setEndModalIsOpen] = useState(false);
   const [dailyObservations, setDailyObservations] = useState("")
-  const { id } = useParams();
+  const { id , queueId} = useParams<{ id: string; queueId: string; }>();
   const navigate = useNavigate();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const entryDate = petDetails.bedInfos?.entry;
   const { setUrl } = useContext(UrlContext);
-
 
   const totalDaily = moment(new Date()).diff(entryDate, "minutes");
 
@@ -137,9 +139,7 @@ export default function DetailsAdmissions() {
     );
   }, [totalToPayInTimeAdmmited, petDetails.totalAcc?.price]);
 
-  useEffect(() => {
-    console.log(dailyObservations)
-  },[dailyObservations])
+
 
   return (
     <ChakraProvider>
@@ -186,12 +186,9 @@ export default function DetailsAdmissions() {
                   //onClick={() => openModal()}
                   height={8}
                   colorScheme="twitter"
-                  onClick={() => {
-                    setUrl(`/Admissions/${petDetails.recordId}`);
-                    navigate(`/Admissions/Procedures/${petDetails.recordId}`);
-                  }}
+                  onClick={() => alert("TODOO")}
                 >
-                  Histórico de Procedimentos
+                  Histórico da Internação
                 </Button>
                 <Button
                   //onClick={() => openModal()}
@@ -199,7 +196,7 @@ export default function DetailsAdmissions() {
                   colorScheme="whatsapp"
                   onClick={() => {
                     setUrl("");
-                    navigate(`/Admissions/Procedures/${petDetails.recordId}`);
+                    navigate(`/Admissions/Procedures/${petDetails.recordId}/${queueId}`);
                   }}
                 >
                   Procedimentos
@@ -207,7 +204,7 @@ export default function DetailsAdmissions() {
                 <Button
                   height={8}
                   colorScheme="whatsapp"
-                  onClick={() => navigate(`/Admissions/Vaccines/${id}`)}
+                  onClick={() => navigate(`/Admissions/Vaccines/${id}/${queueId}`)}
                 >
                   Vacinas
                 </Button>
@@ -215,14 +212,14 @@ export default function DetailsAdmissions() {
                   height={8}
                   colorScheme="whatsapp"
                   //onClick={() => openAutorizationModal()}
-                  onClick={() => navigate(`/Admissions/Exams/${id}`)}
+                  onClick={() => navigate(`/Admissions/Exams/${id}/${queueId}`)}
                 >
                   Exames
                 </Button>
                 <Button
                   height={8}
                   colorScheme="whatsapp"
-                  onClick={() => navigate(`/Admissions/Surgeries/${id}`)}
+                  onClick={() => navigate(`/Admissions/Surgeries/${id}/${queueId}`)}
                 >
                   Cirurgias
                 </Button>
@@ -315,9 +312,9 @@ export default function DetailsAdmissions() {
                             </Text>
                             <Text>
                               {" "}
-                              {petDetails.sexo}, {petDetails.bornDate}
+                              {petDetails.sexo}, {petDetails.bornDate}, Cod:{petDetails.codPet}
                             </Text>
-                            {petDetails.codPet}
+                          
                           </Flex>
                         </Td>
                         <Td borderRight="2px">
@@ -418,7 +415,7 @@ Previsão de alta:`}
                           _active={{
                             boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.2)",
                           }}
-                          onClick={handleEndAdmission}
+                          onClick={() => setEndModalIsOpen(true)}
                         >
                           Encerrar Diárias
                         </Button>
@@ -429,61 +426,7 @@ Previsão de alta:`}
                   {admissiondiary === true && (
                     <Flex direction="column">
                       <Flex>
-                        {/* <Text
-                          w="12vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="blue.100"
-                          fontSize="20"
-                          height="40px"
-                          border="1px solid black"
-                        >
-                          Data
-                        </Text>
-                        <Text
-                          w="8vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="blue.100"
-                          fontSize="20"
-                          height="40px"
-                          border="1px solid black"
-                        >
-                          Hora
-                        </Text>
-                        <Text
-                          w="25vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="blue.100"
-                          fontSize="20"
-                          height="40px"
-                          border="1px solid black"
-                        >
-                          Usuário
-                        </Text>
-                        <Text
-                          w="9vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="blue.100"
-                          fontSize="20"
-                          height="40px"
-                          border="1px solid black"
-                        >
-                          Quantidade
-                        </Text>
-                        <Text
-                          w="19vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="blue.100"
-                          fontSize="20"
-                          height="40px"
-                          border="1px solid black"
-                        >
-                          Ação
-                        </Text> */}
+             
                         <Text
                           w="73vw"
                           fontWeight="bold"
@@ -517,78 +460,7 @@ Previsão de alta:`}
                         </Text>
                       </Flex>
                       <Flex>
-                        {/* <Input
-                          type="date"
-                          w="12vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="white"
-                          fontSize="19"
-                          height="40px"
-                          border="1px solid black"
-                          rounded="0"
-                        />
-                        <Input
-                          type="time"
-                          w="8vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="white"
-                          fontSize="19"
-                          height="40px"
-                          border="1px solid black"
-                          rounded="0"
-                        />
-                        <Input
-                          w="25vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="white"
-                          fontSize="19"
-                          height="40px"
-                          border="1px solid black"
-                          rounded="0"
-                        />
-                        <Input
-                          w="9vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="white"
-                          fontSize="19"
-                          height="40px"
-                          border="1px solid black"
-                          rounded="0"
-                        />
-                        <Input
-                          w="19vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="white"
-                          fontSize="19"
-                          height="40px"
-                          border="1px solid black"
-                          rounded="0"
-                        />
-                        <Input
-                          w="12vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="white"
-                          fontSize="19"
-                          height="40px"
-                          border="1px solid black"
-                          rounded="0"
-                        />
-                        <Input
-                          w="15vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="white"
-                          fontSize="19"
-                          height="40px"
-                          border="1px solid black"
-                          rounded="0"
-                        /> */}
+                     
                       </Flex>
                       <Flex align="center" borderY="1px solid black">
                         <Text w="60vw"></Text>
@@ -730,6 +602,9 @@ Previsão de alta:`}
           </Flex>
         </Flex>
       </AdminContainer>
+      <GenericModal isOpen={endModalIsOpen} onRequestClose={() => setEndModalIsOpen(false)}>
+      <EndConsults handleCloseAdmission={handleEndAdmission} isAdmission={true} />
+      </GenericModal>
     </ChakraProvider>
   );
 }

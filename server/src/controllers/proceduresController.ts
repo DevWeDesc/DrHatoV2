@@ -16,6 +16,7 @@ type params = {
 type body = {
   RequestedByVetId: number;
   RequestedByVetName: string;
+  InAdmission: boolean;
 }
 
 export const proceduresController = {
@@ -89,6 +90,37 @@ export const proceduresController = {
     }
   },
 
+  queryProcedureByName: async (request: FastifyRequest<{Querystring: {q: string, page: string}}>, reply: FastifyReply) => {
+    try {
+            const currentPage = Number(request.query.page) || 1;
+
+            // Obtenha o número total de usuários.
+            const totalProceds = await prisma.procedures.count();
+        
+            // Calcule o número de páginas. 
+            const totalPages = Math.ceil(totalProceds / 35);
+           const {q} = request.query
+
+      const procedures = await prisma.procedures.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {name: {contains: q}}
+        
+      })
+
+
+      reply.send({
+        totalProceds,
+        totalPages,
+        currentPage,
+        procedures
+      })
+    } catch (error) {
+      
+    }
+  },
+
+
   getWithId: async (
     request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
@@ -100,6 +132,7 @@ export const proceduresController = {
         include: {
           groups: { select: { name: true } },
           sector: { select: { name: true } },
+          appicableEspecies: true
         },
       });
       reply.send(procedure);
@@ -155,40 +188,57 @@ export const proceduresController = {
   setProcedureInPet: async(request: FastifyRequest<{Params: params, Body: body}>, reply: FastifyReply) => {
     const actualDate = getFormattedDateTime()
     const {procedureId, petId,  accId, queueId} = request.params
-    const {RequestedByVetId, RequestedByVetName} = request.body
+    const {RequestedByVetId, RequestedByVetName, InAdmission} = request.body
     try {
-     
       const procedure = await prisma.procedures.findUnique({where: {id: parseInt(procedureId)}})
+      
       if(!procedure) return
         
-      await prisma.petConsultsDebits.create({
-        data: {
-          OpenedConsultsForPet: {connect: {id: queueId}},
-          isProcedure: true,
-          name: procedure.name,
-          price: procedure.price,
-          itemId: procedure.id,
-          RequestedByVetId,
-          RequestedByVetName,
-
-        }
-      }).then(async () => {
-        await prisma.proceduresForPet.create({
+      if(InAdmission === true) {
+        await prisma.petConsultsDebits.create({
           data: {
+            OpenedAdmissionsForPet: {connect: {id: queueId}},
+            isProcedure: true,
             name: procedure.name,
-            available: procedure.available,
-            observations: procedure.observations,
             price: procedure.price,
-            applicationInterval: procedure.applicationInterval,
-            requestedDate: actualDate,
-            medicine: {connect: {petId: parseInt(petId)}}
+            itemId: procedure.id,
+            RequestedByVetId,
+            RequestedByVetName,
+  
           }
         })
-      }).then(async () => {
-        await accumulatorService.addPriceToAccum(procedure?.price, accId)
-        reply.status(200).send("Procedimento adicionado com sucesso!")
-      })
+      } else {
+        await prisma.petConsultsDebits.create({
+          data: {
+            OpenedConsultsForPet: {connect: {id: queueId}},
+            isProcedure: true,
+            name: procedure.name,
+            price: procedure.price,
+            itemId: procedure.id,
+            RequestedByVetId,
+            RequestedByVetName,
+  
+          }
+        })
+      }
 
+      
+      await prisma.proceduresForPet.create({
+        data: {
+          name: procedure.name,
+          available: procedure.available,
+          observations: procedure.observations,
+          price: procedure.price,
+          applicationInterval: procedure.applicationInterval,
+          requestedDate: actualDate,
+          medicine: {connect: {petId: parseInt(petId)}}
+        }
+      })
+      
+      await accumulatorService.addPriceToAccum(procedure?.price, accId)
+      reply.status(200).send("Procedimento adicionado com sucesso!")
+      
+ 
       
     } catch (error) {
       reply.status(400).send({message: error})
@@ -216,5 +266,66 @@ export const proceduresController = {
         console.log(error)
         reply.send({message: error})
     }
-  }
+  },
+
+  setEspecieInProcedure: async (request: FastifyRequest<{Params: { procedureId: string, especieId: string}}>, reply: FastifyReply) => {
+    try {
+      const {procedureId, especieId} = request.params
+
+      await prisma.procedures.update({
+        where: {id: parseInt(procedureId)}, data: {
+          appicableEspecies: {
+            connect: {id: parseInt(especieId)},
+          }
+        }
+      })
+
+      reply.status(201)
+
+    } catch (error) {
+
+      reply.send(error).status(400)
+
+    }
+  },
+
+  setAllEspeciesInProcedure: async (request: FastifyRequest<{Params: { procedureId: string, especieId: string}}>, reply: FastifyReply) => {
+    try {
+      const {procedureId} = request.params
+
+      const especies = await prisma.especies.findMany();
+
+      for (const especie of especies) {
+       await prisma.procedures.update({where: {id: parseInt(procedureId)}, data: {appicableEspecies: {connect: {id: especie.id}}}})
+      }
+
+      reply.status(201).send("Todas especies setadas!")
+
+    } catch (error) {
+
+      reply.send(error).status(400)
+
+    }
+  },
+
+  removeAllEspeciesInProcedure: async (request: FastifyRequest<{Params: { procedureId: string, especieId: string}}>, reply: FastifyReply) => {
+    try {
+      const {procedureId} = request.params
+
+      const especies = await prisma.especies.findMany();
+
+      for (const especie of especies) {
+       await prisma.procedures.update({where: {id: parseInt(procedureId)}, data: {appicableEspecies: {disconnect: {id: especie.id}}}})
+      }
+
+      reply.status(201).send("Todas especies Removidas!")
+
+    } catch (error) {
+
+      reply.send(error).status(400)
+
+    }
+  },
+
+
 };
