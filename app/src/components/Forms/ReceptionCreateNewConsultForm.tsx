@@ -75,6 +75,7 @@ export function ReceptionCreateNewConsultForm() {
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
   const [tamCep, setTamCep] = useState(0);
+  const [adressNumber, setAdressNumber] = useState("")
   const [errorInput, setErrorInput] = useState(0);
   const navigate = useNavigate();
 
@@ -82,7 +83,6 @@ export function ReceptionCreateNewConsultForm() {
     fetch(`https://viacep.com.br/ws/${CEPValue}/json/`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         setLogradouro(data.logradouro);
         setBairro(data.bairro);
         setCidade(data.localidade);
@@ -104,7 +104,7 @@ export function ReceptionCreateNewConsultForm() {
   ) => {
     const data = {
       name: values.name + values.surname,
-      adress: logradouro,
+      adress: `${logradouro}, N° ${adressNumber}`,
       district: estado,
       email: values.email,
       birthday: values.birthday.toString(),
@@ -137,6 +137,11 @@ export function ReceptionCreateNewConsultForm() {
     }
   };
 
+  const handleBlur = () => {
+    if (logradouro.endsWith('  ')) {
+      setLogradouro(logradouro + 'Nº ');
+    }
+  };
 
 
 
@@ -493,7 +498,7 @@ export function ReceptionCreateNewConsultForm() {
                     </Flex>
                   </Flex>
                   <Flex w="100%" mt="4" gap="2">
-                    <Flex direction="column" w="55%">
+                    <Flex direction="column" w="35%">
                       <FormLabel
                         fontWeight="bold"
                         htmlFor="adress"
@@ -507,6 +512,7 @@ export function ReceptionCreateNewConsultForm() {
                         //{...register("adress")}
                         id="adress"
                         name="adress"
+                        onFocus={handleBlur}
                         value={logradouro}
                         onChange={(e) => setLogradouro(e.target.value)}
                       />
@@ -521,6 +527,17 @@ export function ReceptionCreateNewConsultForm() {
                             : "O campo Endereço é obrigatório"}
                         </Text>
                       )}
+                    </Flex>
+                    <Flex direction="column" w="15%">
+                    <FormLabel htmlFor="adressNumber" mb="0" fontSize="17">
+                        Número
+                      </FormLabel>
+                      <Input
+                        placeholder="Número"
+                        id="adressNumber"
+                        name="adressNumber"
+                        onChange={(ev) => setAdressNumber(ev.target.value)}
+                      />
                     </Flex>
                     <Flex direction="column" w="25%">
                       <FormLabel
@@ -552,9 +569,9 @@ export function ReceptionCreateNewConsultForm() {
                         </Text>
                       )}
                     </Flex>
-                    <Flex direction="column" w="20%">
+                    <Flex direction="column" w="25%">
                       <FormLabel htmlFor="complement" mb="0" fontSize="17">
-                        Número
+                        Complemento
                       </FormLabel>
                       <Input
                         placeholder="Complemento"

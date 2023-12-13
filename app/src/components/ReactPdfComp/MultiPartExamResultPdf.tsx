@@ -35,37 +35,47 @@ interface ExamDetailsDTO {
 }
 
 interface ExamRefDTO {
-      id: number;
-	    name: string;
-      characteristics: Array<{
-        id: number;
-        name: string;
-        refs: Array<{
-            name: string;
-            units: {
-              absoluto: string;
-              relativo: string;
-            }
-            refIdades: Array<{
-                maxAge: number;
-				absoluto: string;
-				relativo: string;
-            }>
-        }>
-      }>
+  codexam: number;
+  name: string;
+  price: number;
+  partExams: Array<{
+  id: number;
+	codpart: number;
+	oldExamsCodexam: number;
+	partName: string;
+	isFirst: boolean;
+  examsDetails: Array<{
+  id: number,
+	codDetalhe: number,
+	partExamsCodpart: number,
+	caracteristic: string;
+	relativeUnit: string;
+	absoluteUnit: string;
+	agesOne: string;
+	minAgesOne:string;
+	maxAgesOne: string;
+	agesTwo: string;
+	minAgesTwo:string;
+	maxAgesTwo:string;
+	agesThree:string;
+	minAgesThree: string;
+	maxAgesThree: string;
+	parts: number;
+  }>
+  }>
 }
 
 
 export function MultiPartExamResultPdf () {
     const { examId } = useParams<{ examId: string }>();
     const [examDetails, setExamDetails] = useState({} as ExamDetailsDTO);
-    const [examCharacs, setExamCharacs] = useState<ExamRefDTO[]>([])
+    const [examCharacs, setExamCharacs] = useState({} as ExamRefDTO)
 
     async function getExamDetails() {
       try {
         const response = await api.get(`/lab/multipart/${examId}`);
         setExamDetails(response.data.petExamResult);
-        setExamCharacs(response.data.filteredRefIdades)
+        setExamCharacs(response.data.examRefs)
       } catch (error) {
         console.log(error);
       }
@@ -141,52 +151,55 @@ const Quixote = () => (
 
           
           <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '12px', gap: '8px', }}>
-            <View    style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
-            
-            
-            {examCharacs[index].characteristics.map((ref) => (
-                  <View key={ref.name} style={{ display: 'flex', flexDirection: 'row', gap: '4px', width: '100px' }}>
-                  <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{ref.name}</Text>
-               
+              <View  style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100px' }}>
+
+                {
+                  charac.refs.map((charac) => 
+                  <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{charac.charac}</Text>
+                  )
+                }
+                 
                 </View>
-            ))}
-            </View>
-
-
-            <View    style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '150px', fontSize: '12px' 
-        }}>
-          
-                  {
-                      charac.refs.map((ref) => (
-                          <View  key={ref.charac}   style={{display: 'flex', flexDirection: 'row', width: '150px',  justifyContent: 'space-between', paddingLeft: '8px', paddingRight: '8px', fontSize: '12px' }}>
-                          <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}  >{ref.abs}</Text>
-                          <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}  >  {ref.rel}</Text>
-                          </View>
-                      ))
-                  }
+     
       
+
+
+            <View    style={{display: 'flex', flexDirection: 'column', gap: '4px', width: '150px', fontSize: '12px' 
+        }}>
+                   {
+                    charac.refs.map((result) => (
+                      <View     style={{display: 'flex', flexDirection: 'row', width: '100%',  justifyContent: 'space-evenly',  fontSize: '12px' }}>
+                      <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}  >{result.abs}</Text>
+                      <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}  > {result.rel} </Text>
+                      </View>
+                    ))
+                   }
+               
             </View>
             
             <View    style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100px'}}>
-            {examCharacs[index].characteristics.map((ref) => (
-                   <View style={{display: 'flex', flexDirection: 'row', gap: '8px', width: '100px',justifyContent: 'space-between' }}>
-                   <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{ref?.refs[0]?.units?.absoluto}</Text>
-                                  <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>%</Text>
-                   </View>
-            ))}
-        
+
+                      {
+                        examCharacs.partExams[index].examsDetails.map((refs) => (
+                          <View style={{display: 'flex', flexDirection: 'row', gap: '8px', width: '100px',justifyContent: 'space-between' }}>
+                          <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{refs.absoluteUnit}</Text>
+                             <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{refs.relativeUnit}</Text>
+                          </View>
+                        ))
+                      }
+                  
+          
             </View>
          
          
             <View style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '120px',justifyContent: 'space-between',}}>
-            {examCharacs[index].characteristics.map((ref) => {
-              return ref.refs.map((ref) => (
+
+   
                 <View  style={{display: 'flex', flexDirection: 'row', gap: '12px', width: '120px',justifyContent: 'space-between',}}   >
-                <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{ref.refIdades[0].absoluto}</Text>
-                <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{ref.refIdades[0].relativo}</Text>
+                <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}></Text>
+                <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}></Text>
                 </View>
-              ))
-            })}
+           
            </View>
           
               

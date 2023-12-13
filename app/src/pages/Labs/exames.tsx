@@ -49,9 +49,35 @@ interface ExamsDataProps {
     }>
   }
 }
+type OpenExamProps = {
+  isMultiPart: boolean,
+  isReportByText: boolean,
+  isOnePart: boolean,
+  examId: number
+}
+
+type LabDefaultDTO = {
+id: number;
+name: string
+doneExame: boolean,
+onePart: boolean,
+twoPart: boolean,
+byReport: boolean,
+requesteData: Date;
+requestedFor: string;
+requestedCrm: string;
+responsibleForExam: string;
+responsibleForCrm: string;
+medicine: {
+  pet: {
+    name: string;
+    id: number;
+  }
+}
+}
 
 export function LabExames() {
-  const [labs, setLabs] = useState([] as any)
+  const [labs, setLabs] = useState<LabDefaultDTO[]>([])
   const [inQueue, setInQueue] = useState<QueueProps[]>([])
   const [exams, setExams] = useState([] as any)
   const [examsData, setExamsData] = useState<ExamsDataProps[]>([])
@@ -69,6 +95,20 @@ export function LabExames() {
     setLabs(labs.data.exams)
     setExams(labs.data.allExams)
     setInQueue(response.data.response)
+  }
+
+  function handleOpenResultExams({isOnePart, isMultiPart, isReportByText, examId}: OpenExamProps) {
+    if (isOnePart === true) {
+      window.open(`/WorkSpace/ExamResultsOnePart/${examId}`, '_blank');
+    } 
+
+    if (isMultiPart === true) {
+      window.open(`/WorkSpace/ExamResultsMultiPart/${examId}`, '_blank');
+    } 
+
+    if (isReportByText === true) {
+      window.open(`/WorkSpace/ExamResultsByText/${examId}`, '_blank');
+    } 
   }
 
 
@@ -126,7 +166,7 @@ export function LabExames() {
         </>
       )
       break
-      case showEndExams === true: 
+    case showEndExams === true: 
       typeTable = (
         <>
           <Table colorScheme="blackAlpha">
@@ -138,25 +178,18 @@ export function LabExames() {
                 <Th>Veterinário</Th>
                 <Th>Status</Th>
                 <Th>Responsável</Th>
+                <Th>Resultado</Th>
               </Tr>
             </Thead>
 
             <Tbody>
-              {labs.map((exam: any) => {
+              {labs.map((exam) => {
                 return (
                   <>
                     {exam.doneExame === true && (
                       <Tr
                         key={exam.id}
                         cursor="pointer"
-                        onClick={() =>
-                          navigate(
-                            `/Labs/Set/${exam.id}/${
-                              exams.find((data: any) => data.name === exam.name)
-                                .codexam
-                            }`
-                          )
-                        }
                       >
                         <Td>
                           {new Intl.DateTimeFormat('pt-BR').format(
@@ -179,6 +212,17 @@ export function LabExames() {
                             ? exam.responsibleForExam
                             : 'Não Laudado'}
                         </Th>
+                        <Th >
+                         <Button colorScheme="teal" 
+                         onClick={() => handleOpenResultExams({
+                          examId: exam.id,
+                          isMultiPart: exam.twoPart,
+                          isOnePart: exam.onePart,
+                          isReportByText: exam.byReport
+                         })} >
+                          Visualizar</Button> 
+                        </Th>
+                        
                       </Tr>
                     )}
                   </>
@@ -276,6 +320,10 @@ export function LabExames() {
         setLabs(res.data.exams)
       })
       break;  
+      case showEndExams === false: 
+      const labs = await api.get('/labs')
+      setLabs(labs.data.exams)
+      break;
 
     }
   }

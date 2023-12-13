@@ -327,14 +327,9 @@ export const labsController = {
         return
       }
 
-     const examRefs =  await prisma.exams.findFirst({
-      where: {name: {contains: examDetails.name}},include: {multiparts: {include: {characteristics: true}}}
+     const examRefs =  await prisma.oldExams.findFirst({
+      where: {name: {contains: examDetails.name}},include: {partExams: {include: {examsDetails: true}}}
      }) 
-
-     const petExamRefs = examRefs?.multiparts
-
-
-
 
 
      const petExamResult = {
@@ -354,25 +349,9 @@ export const labsController = {
       result: examDetails.reportExams[0]
      }
 
-          //@ts-ignore
-          const filteredRefIdades = petExamRefs?.map((part) => {
-            return {
-              id: part.id,
-              name: part.name,
-                //@ts-ignore
-              characteristics: part.characteristics.map((ch) => {
-                return {
-                  id: ch.id,
-                  name: ch.name,
-                   //@ts-ignore
-                  refs: ch.especie.filter(e => e.name === petExamResult.petEspecie )
-                }
-              })
-            }
-           })
   
 
-      reply.send({petExamResult, filteredRefIdades }).status(200)
+      reply.send({petExamResult, examRefs }).status(200)
 
     } catch (error) {
         console.log(error)

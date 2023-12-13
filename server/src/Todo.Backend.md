@@ -66,8 +66,6 @@
 
 
 
-
-
 ### RFNs(Requisitos não-funcionais) ###
 [X] - Senhas encriptadas
 [X] - Autenticação por JWT
@@ -96,12 +94,17 @@
 [] - Refatorar arquitetura back-end com SOLID 
 
 ## DILAN IMPORTANTE ##
-[] - ENCERRAMENTO DE QUEUE.
+[] - REFINAR SISTEMA FINANCEIRO
+[] - DIMINUIR USO DE CONTEXTOS
+[] - CACHEAR CHAMADAS BACKEND (REACT QUERY) 
+[] - AJUSTAR PASTAS/ROTAS/COMPONENTS (Bagunçados pelo Vinicius)
 
 #### BUGS e Correções  ####
 [X] - Tabela exames duplicando
 [X] - Ajustar cadastro de pets campo idade
 [X] - Valores já prédefinidos dos exames que já existem
+[] - ENCERRAMENTO DE QUEUE.
+[] -  VERIFICAR PORQUE EXAME DUAS PARTES NÃO COMPUTOU QUE LAUDOU
 
 
 ### To do Solicitado Dr Daniel ###
@@ -143,7 +146,7 @@ OBS: Acrescentado sistema de Especies, um procedimento só vai poder ser lançad
 [x] -  Ao adicionar os procedimentos trazer especies permitidas
 [x] -  Filtro no cadastro de procedimentos e vacinas
 [x] -  Formularios (encontrar o PDF), instruções do proprietário (melhorar tamanho da letra)
-[] -  Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)
-[] -  Cadastro de endereço mascara complemento e numero
-[] -  Tela de exames: colocar o botão de laudados (concluidos) e visualizar o laudo.
+[X] -  Cadastro de endereço mascara complemento e numero
+[X] -  Tela de exames: colocar o botão de laudados (concluidos) e visualizar o laudo.
 [] -  verificar a impressão: Ajustar os exames e laudos no pdf
+[] -  Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)

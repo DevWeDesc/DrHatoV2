@@ -117,25 +117,25 @@ const Quixote = () => (
   <Document>
     <Page  style={{display: 'flex', flexDirection: 'column'}} >
       { /* HEADER */}
-      <View style={{display: 'flex', marginBottom: '8px'}}>
-  <Image style={{ width: '100%', height: '88px'}} source={logo} />
+      <View style={{display: 'flex', marginBottom: '8px', height: '74px'}}>
+  <Image  source={logo}  style={{ height: '100%'}} />
 
   </View>
   { /* HEADER END */}
 
   { /* EXAM DETAILS */}
   <View style={{width: '100%', alignItems: 'center'}}>
-    <Text style={{fontSize: '12px', fontWeight: 'bold' }} >EXAME</Text>
+    <Text style={{fontSize: '12px', fontWeight: 'bold' }} >Resultado do Exame</Text>
 
   <View  style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '24px' }}>
-  <View style={{ display: 'flex', flexDirection: 'column', height: '120px', gap: '12px'}}>
+  <View style={{ display: 'flex', flexDirection: 'column', height: '120px', gap: '8px'}}>
     <Text style={{fontSize: '12px', fontWeight: 'bold'}}>Cliente:</Text>
     <Text style={{fontSize: '12px', fontWeight: 'bold'}}>Animal:</Text>
     <Text style={{fontSize: '12px', fontWeight: 'bold'}}>Data:</Text>
     <Text style={{fontSize: '12px', fontWeight: 'bold'}}>Exame:</Text>
     <Text style={{fontSize: '12px', fontWeight: 'bold'}}>Solicitante:</Text>
   </View>
-    <View style={{ display: 'flex', flexDirection: 'column', height: '120px', gap: '12px', marginLeft: '18px'}}>
+    <View style={{ display: 'flex', flexDirection: 'column', height: '120px', gap: '8px', marginLeft: '8px'}}>
     <Text style={{fontSize: '12px', fontWeight: 'bold'}}>{examDetails.petCustomer}</Text>
     <Text style={{fontSize: '12px', fontWeight: 'bold', width: '100%'}}>{`${examDetails.petName}, ${examDetails.petEspecie}, ${examDetails.petRace}, ${examDetails.petAge}, ${examDetails.petSex}, Código: ${examDetails.petCod}`}</Text>
     <Text style={{fontSize: '12px', fontWeight: 'bold'}}>{new Intl.DateTimeFormat('pt-BR').format(new Date(examDetails.solicitedDate ? examDetails.solicitedDate : Date.now()))}</Text>
@@ -149,38 +149,48 @@ const Quixote = () => (
 
   { /* EXAM RESULT */}
   <View style={{ display: 'flex', flexDirection: 'column', width: 'auto',  borderTop: '1px', borderColor: 'gray'}} >
-    <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '8px', gap: '12px'}}>
-      <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{examCharacs[0]?.partName}</Text>
-      <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '120px' }}>Resultados</Text>
-      <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>Unidades</Text>
-        <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '150px' }}>{refByEsp ? refByEsp[0]?.refName : "@Ref Padrão"}</Text>
+    <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '8px', gap: '12px', textAlign: 'center'}}>
+      <Text style={{ fontSize: '12px', fontWeight: 'bold', width: '100px' }}>{examCharacs[0]?.partName}</Text>
+      <Text style={{ fontSize: '12px', fontWeight: 'bold', width: '120px' }}>Resultados</Text>
+      <Text style={{ fontSize: '12px', fontWeight: 'bold', width: '150px' }}>Unidades</Text>
+        <Text style={{ fontSize: '12px', fontWeight: 'bold', width: '150px' }}>{refByEsp ? refByEsp[0]?.refName : "@Ref Padrão"}</Text>
     </View>
     <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '12px', gap: '12px'}}>
             <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>Característica</Text>
-            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', fontSize: '12px', fontWeight: 'semibold', width: '125px'}} >
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', fontSize: '12px', fontWeight: 'semibold', width: '120px'}} >
               <Text>Absoluto</Text>
               <Text>Relativo</Text>
             </View>
-            <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px',justifyContent: 'space-between' }}>Uni. abs.    Uni.rel.</Text>
-            <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '150px', justifyContent: 'space-between' }}>Absoluto.      Relativo.</Text>
-          </View>
+
+
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', fontSize: '12px', fontWeight: 'semibold', width: '150px'}} >
+            <Text style={{ fontSize: '12px', fontWeight: 'semibold',}}>Uni. Abs</Text>
+            <Text style={{ fontSize: '12px', fontWeight: 'semibold',}}>Uni. Rel</Text>
+            </View>
+
+
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', fontSize: '12px', fontWeight: 'semibold', width: '150px'}} >
+            <Text style={{ fontSize: '12px', fontWeight: 'semibold'}}>Absoluto.</Text>
+            <Text style={{ fontSize: '12px', fontWeight: 'semibold'}}>Relativo.</Text>
+          
+            </View>
+           
+          
+     </View>
 
     <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '12px', gap: '8px'}}>
-      <View    style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
-
-     
+      <View    style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100px' }}>
         {
-          examCharacs[0]?.examsDetails?.map((ref) => <Text key={ref?.caracteristic}  style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{ref?.caracteristic}</Text>)
+          examCharacs[0]?.examsDetails?.map((ref) => <Text key={ref?.caracteristic}  style={{ fontSize: '12px', fontWeight: 'semibold', }}>{ref?.caracteristic}</Text>)
         }
-    
       </View>
 
 
-      <View  style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '125px', fontSize: '12px' }}>
+      <View  style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '120px', fontSize: '12px' }}>
     
         {
           examDetails?.result?.refs.map((ref) => (
-            <View key={ref.charac} style={{display: 'flex', flexDirection: 'row', width: '125px',  justifyContent: 'space-between', paddingLeft: '8px', paddingRight: '8px', fontSize: '12px'}}> 
+            <View key={ref.charac} style={{display: 'flex', flexDirection: 'row', width: '100%',  justifyContent: 'space-evenly', fontSize: '12px'}}> 
             <Text  style={{ fontSize: '12px', fontWeight: 'semibold' }}>{ref.abs}</Text>
              <Text  style={{ fontSize: '12px', fontWeight: 'semibold'}}>{ref.rel}</Text> 
              </View>
@@ -189,37 +199,32 @@ const Quixote = () => (
       
       </View>
   
-     <View style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100px'}}>
-
+     <View style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '150px'}}>
      {
           refByEsp ?  refByEsp.map((ref) => (
-            <View key={ref?.refMin} style={{display: 'flex', flexDirection: 'row', gap: '8px', width: '100px',justifyContent: 'space-between' }}>
+            <View key={ref?.refMin} style={{display: 'flex', flexDirection: 'row', gap: '8px', width: '100%',justifyContent: 'space-evenly' }}>
             <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{ref?.refMin.replace(/&#8804/g, '<=')}</Text>
              <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{ref?.refMax.replace(/&#8804/g, '<=')}</Text>
          </View>
           )) : (<h1>carregando...</h1>)
         }
 
-       
-    
-
-    
      </View>
-     <View    style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '120px',justifyContent: 'space-between'}}>
+     <View    style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '150px',justifyContent: 'space-between'}}>
   
         {
           examCharacs[0]?.examsDetails?.map((ref) => (
-            <View key={ref?.caracteristic}  style={{display: 'flex', flexDirection: 'row', gap: '12px', width: '150px',justifyContent: 'space-between'
+            <View key={ref?.caracteristic}  style={{display: 'flex', flexDirection: 'row', gap: '12px', width: '100%',justifyContent: 'space-evenly'
           }} >
-            <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{ref?.minAgesOne.replace(/&#8804/g, '<=')}</Text>
-            <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{ref?.maxAgesOne.replace(/&#8804/g, '<=')}</Text>
+            <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{ref?.minAgesOne.replace(/&#8804/g, '<=')}</Text>
+            <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{ref?.maxAgesOne.replace(/&#8804/g, '<=')}</Text>
             </View>
           ))
         }
       
       </View>
     
-        
+   
 
     </View>
 
@@ -227,13 +232,13 @@ const Quixote = () => (
   { /* EXAM END */}
   <View style={{display: 'flex', width: '100%' , flexDirection: "column", marginTop: '8px'}}>
   { /* EXAM FOOTER */}
-      <View style={{display: 'flex', flexDirection: 'row', marginLeft: '24px', alignItems: 'center', gap: '18px'}}  >
+  <View style={{display: 'flex', flexDirection: 'row', marginLeft: '18px',  marginRight: '18px', alignItems: 'center', gap: '8px', border: '2px', padding: '2px'}}  >
         <Text style={{fontSize: '12px', fontWeight: 'bold'}}>Observações:</Text>
         <Text style={{fontSize: '12px', fontWeight: 'bold'}}>{examDetails?.result?.obs}</Text>
       </View>
 
-      <View style={{display: 'flex', flexDirection: 'row', marginLeft: '24px', alignItems: 'center', gap: '8px', marginTop: '12px'}}  >
-        <Text style={{fontSize: '12px', fontWeight: 'bold'}}>Assinado eletrônicamente por Laboratório -</Text>
+      <View style={{display: 'flex', flexDirection: 'row', marginLeft: '18px',  marginRight: '18px', alignItems: 'center', gap: '8px', marginTop: '12px', textDecoration: 'underline'}}  >
+        <Text style={{fontSize: '12px', fontWeight: 'bold'}}>Assinado eletrônicamente por Laboratório: </Text>
         <Text style={{fontSize: '12px', fontWeight: 'bold'}}>{examDetails?.reportedBy} - CRMV: {examDetails?.reportedByCrm}</Text>
       </View>
 
