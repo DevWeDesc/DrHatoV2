@@ -95,11 +95,12 @@ export function SetPetExam() {
     try {
       const data = {
         jsonString: textReport,
-        responsible: user.username,
+        responsible: user.consultName,
         responsibleCrm: user.crm
       }
       await api.post(`/labreportexam/${id}`, data)
       toast.success('Exame laudado com sucesso!')
+      navigate("/Labs/Exames")
     } catch (error) {
       toast.error('Falha ao laudar com texto!')
     }
@@ -154,13 +155,18 @@ export function SetPetExam() {
       })
 
       const data = {
-        report: refs,
-        requestedFor: user.consultName
+        report: {
+          refs,
+          obs: [values.obsPartOne, values.obsPartTwo]
+        },
+        reportedFor: user.consultName,
+        reportedForCrm: user.crm
       }
 
-      await api.patch(`/reportexam/${id}`, data)
-      setDisableRequest(true)
-      toast.success('Exame laudado com sucesso!')
+ 
+     //await api.patch(`/reportexam/${id}`, data)
+     //toast.success('Exame laudado com sucesso!')
+     navigate("/Labs/Exames")
     } catch (error) {
       console.log(error)
     }
@@ -281,7 +287,7 @@ export function SetPetExam() {
               </Table>
               <Flex m="4"  gap={4} align="center" w="100%">
                 <Text>Observações</Text>
-                <Input width="80%" bgColor="white" border="2px" />
+                <Input {...register("obsPartOne")}  name='obsPartOne' width="80%" bgColor="white" border="2px" />
               </Flex>
             </TableContainer>
           ) : (
@@ -392,7 +398,7 @@ export function SetPetExam() {
               </Table>
               <Flex m="4"  gap={4} align="center" w="100%">
                 <Text>Observações</Text>
-                <Input width="80%" bgColor="white" border="2px" />
+                <Input  {...register("obsPartTwo")}  name='obsPartTwo' width="80%" bgColor="white" border="2px" />
               </Flex>
             </TableContainer>
           ) : (

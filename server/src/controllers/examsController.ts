@@ -1,143 +1,30 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { ValidationContract } from "../validators/userContract";
-import { ExamSchema } from "../schemas/schemasValidator";
 import { accumulatorService } from "../services/accumulatorService";
 import { prisma } from "../interface/PrismaInstance";
 
 type params = {
   id: string;
   recordId: string;
-  accId: string;
   title: string;
+  examId: string;
+  petId: string;
+  accId: string;
+  examName: string;
+  firstLetter: string;
+  queueId: string;
+};
+type query = {
+  page: string;
 };
 
+type body = {
+    RequestedByVetId: number;
+    RequestedByVetName: string;
+    RequestedCrm: string;
+    isAdmission: boolean;
+}
+
 export const examsController = {
-  createExam: async (request: FastifyRequest, reply: FastifyReply) => {
-    const {
-      name,
-      price,
-      examsType,
-      available,
-      applicableGender,
-      description,
-      subName,
-    } = ExamSchema.parse(request.body);
-    const contract = new ValidationContract();
-    try {
-      await contract.validateExamsType(examsType, "Tipo de exame não válido");
-      await contract.examAlreadyExist(name, "Exame já existe");
-      if (contract.hadError()) {
-        reply.status(400).send(contract.showErrors());
-        contract.clearErrors();
-        return;
-      }
-      await prisma.exams.create({
-        data: {
-          name,
-          price,
-          examsType,
-          available,
-          applicableGender,
-          description,
-          subName,
-        },
-      });
-      reply.status(201).send("Exame criado com Sucesso!");
-    } catch (error) {
-      console.log(error);
-      reply.status(400).send({ message: error });
-    }
-  },
-
-  getExams: async (request: FastifyRequest, reply: FastifyReply) => {
-    try {
-      const exams = await prisma.exams.findMany();
-      reply.status(200).send(exams);
-    } catch (error) {
-      reply.status(400).send({ message: error });
-    }
-  },
-
-  editExams: async (
-    request: FastifyRequest<{ Params: params }>,
-    reply: FastifyReply
-  ) => {
-    const { id } = request.params;
-    const {
-      name,
-      price,
-      examsType,
-      available,
-      applicableGender,
-      description,
-      subName,
-      ageRange,
-      characters,
-      isMultiPart,
-      exams,
-      isReportByText,
-      isOnePart,
-    }: any = request.body;
-
-    try {
-      await prisma.exams.update({
-        where: { id: parseInt(id) },
-        data: {
-          name,
-          price,
-          examsType,
-          available,
-          applicableGender,
-          description,
-          subName,
-          ageRange,
-          isMultiPart,
-          isReportByText,
-          isOnePart,
-        },
-      });
-
-      if (exams) {
-        for (const ids of exams) {
-          await prisma.exams.update({
-            where: { id: parseInt(id) },
-            data: { multiparts: { connect: { id: parseInt(ids) } } },
-          });
-        }
-      }
-      if (characters) {
-        for (const cIds of characters) {
-          await prisma.exams.update({
-            where: { id: parseInt(id) },
-            data: { characteristics: { connect: { id: parseInt(cIds) } } },
-          });
-        }
-      }
-
-      reply.status(200).send("Exame editado com sucesso!");
-    } catch (error) {
-      reply.status(400).send(error);
-      console.clear();
-      console.error(error);
-    }
-  },
-
-  deleteExam: async (
-    request: FastifyRequest<{ Params: params }>,
-    reply: FastifyReply
-  ) => {
-    const { id } = request.params;
-    try {
-      await prisma.exams.delete({
-        where: { id: parseInt(id) },
-      });
-
-      reply.status(204).send("Usuário deletado");
-    } catch (error) {
-      console.log(error);
-      reply.status(400).send({ message: error });
-    }
-  },
 
   getById: async (
     request: FastifyRequest<{ Params: params }>,
@@ -161,42 +48,6 @@ export const examsController = {
     }
   },
 
-  setExamInPet: async (
-    request: FastifyRequest<{ Params: params; Body: { requestedFor: string, requestedCrm: string } }>,
-    reply: FastifyReply
-  ) => {
-    const { id, recordId, accId } = request.params;
-    const {requestedFor, requestedCrm } = request.body
-    const getExame = await prisma.exams.findUnique({
-      where: { id: parseInt(id) },
-    });
-    const processData = new Date();
-    if (!getExame || getExame.available === false) {
-      reply.status(400).send("Exame não disponivel/Falha ao criar exame");
-      return;
-    }
-    try {
-      await prisma.examsForPet.create({
-        data: {
-          name: getExame.name,
-          price: getExame.price,
-          doneExame: getExame.doneExame ?? false,
-          requesteData: processData,
-          requestedFor: requestedFor,
-          requestedCrm,
-          examsType: getExame.examsType,
-          medicine: { connect: { id: parseInt(recordId) } },
-        },
-      });
-
-      await accumulatorService.addPriceToAccum(getExame.price, accId);
-
-      reply.status(201);
-    } catch (error) {
-      console.log(error);
-      reply.status(400).send({ message: error });
-    }
-  },
 
   removePetExam: async (
     request: FastifyRequest<{
@@ -233,45 +84,177 @@ export const examsController = {
       console.log(error);
     }
   },
-
-  createExamCharacteristics: async (
-    request: FastifyRequest<{ Params: { id: string } }>,
+  getAllExams: async (
+    request: FastifyRequest<{
+      Params: params;
+      Querystring: query;
+    }>,
     reply: FastifyReply
   ) => {
     try {
-      const { name, jsonData }: any = request.body;
+      const currentPage = Number(request.query.page) || 1;
+      const totalExams = await prisma.oldExams.count();
+      const totalPages = Math.ceil(totalExams / 35);
 
-      await prisma.examCharacteristics.create({
-        data: { name, especie: jsonData },
+      const exams = await prisma.oldExams.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {
+          disponible: true,
+        },
       });
 
-      reply.send("Cadastrado com sucesso!").status(201);
+      reply.send({ totalPages, totalExams, exams });
     } catch (error) {
-      console.log(error);
-      reply.send({ message: error });
+      reply.send({
+        message: error,
+      });
     }
   },
 
-  getExamsCharacteristics: async (
-    request: FastifyRequest<{ Params: { id: string } }>,
+  getExamDetailById: async (
+    request: FastifyRequest<{
+      Params: params;
+      Querystring: query;
+    }>,
     reply: FastifyReply
   ) => {
     try {
-      const res = await prisma.examCharacteristics.findMany();
-
-      const data = res.map((charac) => {
-        let data = {
-          name: charac.name,
-          id: charac.id,
-        };
-
-        return data;
+      const { examId } = request.params;
+      const exam = await prisma.oldExams.findUnique({
+        where: {
+          codexam: parseInt(examId),
+        },
+        include: {
+          partExams: {
+            include: { examsDetails: true },
+          },
+        },
       });
 
-      reply.send({ data, res });
+      reply.send({
+        exam,
+      });
     } catch (error) {
-      reply.status(404);
+      reply.send({
+        error,
+      });
+    }
+  },
+
+  getByName: async (
+    request: FastifyRequest<{
+      Params: params;
+      Querystring: query;
+    }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const { examName } = request.params;
+
+      const response = await prisma.oldExams.findMany({
+        where: {
+          name: { contains: examName },
+        },
+      });
+
+      reply.send(response);
+    } catch (error) {
       console.log(error);
     }
   },
-};
+
+  getByLetter: async (
+    request: FastifyRequest<{
+      Params: params;
+      Querystring: query;
+    }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const { firstLetter } = request.params;
+
+      const response = await prisma.oldExams.findMany({
+        where: {
+          name: { startsWith: firstLetter.toUpperCase() },
+        },
+      });
+
+      reply.send(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  setExamInPet: async (    request: FastifyRequest<{
+    Params: params;
+    Querystring: query;
+    Body: body
+  }>,
+  reply: FastifyReply) => {
+    try {
+
+        const {examId, petId, accId, queueId} = request.params
+        const { RequestedByVetId, RequestedByVetName, RequestedCrm, isAdmission} = request.body
+        const exam = await prisma.oldExams.findUnique({where: {codexam: parseInt(examId)}})
+
+        if(!exam) return
+
+        if(isAdmission === true) {
+          await prisma.petConsultsDebits.create({
+            data: {
+                OpenedAdmissionsForPet: {connect: {id: queueId}},
+                isExam: true,
+                name: exam.name,
+                price: exam.price,
+                itemId: exam.codexam,
+                RequestedByVetId,
+                RequestedByVetName
+            }
+        })
+        } else {
+          await prisma.petConsultsDebits.create({
+            data: {
+                OpenedConsultsForPet: {connect: {id: queueId}},
+                isExam: true,
+                name: exam.name,
+                price: exam.price,
+                itemId: exam.codexam,
+                RequestedByVetId,
+                RequestedByVetName
+            }
+        })
+        }
+
+
+        await prisma.examsForPet.create({
+          data: {
+            name: exam.name,
+            price: exam.price,
+            doneExame: false,
+            twoPart: exam.twoPart,
+            onePart: exam.onePart,
+            byReport: exam.byReport,
+            requesteData: new Date(),
+            requestedFor: RequestedByVetName,
+            requestedCrm: RequestedCrm,
+            examsType: exam.defaultLab ? ['lab'] : ['image'],
+            medicine: { connect: { petId: parseInt(petId) } },
+          },
+        });
+        
+        await accumulatorService.addPriceToAccum(exam.price, accId);
+
+
+
+        reply.send("Success").status(200)
+   
+        
+    } catch (error) {
+    reply.send({
+        error,
+      });
+    }
+  }
+
+}

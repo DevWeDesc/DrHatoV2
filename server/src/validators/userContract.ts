@@ -46,7 +46,7 @@ export class ValidationContract {
     }
 
     public async examAlreadyExist(value: string, message: string) {
-      const examExist = await prisma.exams.findFirst({
+      const examExist = await prisma.oldExams.findFirst({
         where: {name: value}
       })
 

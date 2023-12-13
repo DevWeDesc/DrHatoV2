@@ -98,13 +98,17 @@
 [] - DIMINUIR USO DE CONTEXTOS
 [] - CACHEAR CHAMADAS BACKEND (REACT QUERY) 
 [] - AJUSTAR PASTAS/ROTAS/COMPONENTS (Bagunçados pelo Vinicius)
+[] - COLOCAR POPULATE AUTORIZAÇÕES/INSTRUÇÕES
+[] - SEARCH EXAMS ADMIN E REFAZER O CRUD.
+
 
 #### BUGS e Correções  ####
 [X] - Tabela exames duplicando
 [X] - Ajustar cadastro de pets campo idade
 [X] - Valores já prédefinidos dos exames que já existem
 [] - ENCERRAMENTO DE QUEUE.
-[] -  VERIFICAR PORQUE EXAME DUAS PARTES NÃO COMPUTOU QUE LAUDOU
+[X] -  VERIFICAR PORQUE EXAME DUAS PARTES NÃO COMPUTOU QUEM LAUDOU
+
 
 
 ### To do Solicitado Dr Daniel ###
@@ -148,5 +152,7 @@ OBS: Acrescentado sistema de Especies, um procedimento só vai poder ser lançad
 [x] -  Formularios (encontrar o PDF), instruções do proprietário (melhorar tamanho da letra)
 [X] -  Cadastro de endereço mascara complemento e numero
 [X] -  Tela de exames: colocar o botão de laudados (concluidos) e visualizar o laudo.
-[] -  verificar a impressão: Ajustar os exames e laudos no pdf
+OBS: Sistema antigo de laudar não funcionava a opção de laudo externo, e também tem onde baixar o laudo externo, isso entra como melhoria(dando autorização eu faço). 
+[X] -  verificar a impressão: Ajustar os exames e laudos no pdf
 [] -  Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)
+

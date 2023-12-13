@@ -2,14 +2,12 @@ import { FastifyInstance } from 'fastify'
 import { examsController } from '../controllers/examsController'
 
 export async function examsRoutes(app: FastifyInstance) {
-    app.post('/exams', examsController.createExam)
-    app.post('/setexam/:id/:recordId/:accId', examsController.setExamInPet)
-    app.post('/examcharac', examsController.createExamCharacteristics)
-    app.get('/examcharac', examsController.getExamsCharacteristics)
-    app.get('/exams', examsController.getExams)
     app.get('/exams/:id', examsController.getById)
-    app.put('/exams/:id', examsController.editExams)
-    app.delete('/exams/:id', examsController.deleteExam)
     app.delete('/petexam/:id/:accId/:examPrice', examsController.removePetExam)
+    app.get('/exams/old/detail/:examId', examsController.getExamDetailById)
+    app.get('/exams/old/all', examsController.getAllExams)
+    app.get('/exams/old/:examName', examsController.getByName)
+    app.get('/exams/old/letter/:firstLetter', examsController.getByLetter)
+    app.post('/exams/old/:examId/:petId/:accId/:queueId', examsController.setExamInPet)
 }
 

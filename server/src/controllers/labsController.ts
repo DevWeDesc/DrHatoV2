@@ -213,7 +213,7 @@ export const labsController = {
    await prisma.examsForPet.update({
     where: {id: parseInt(examId)},data: {
       reportExams: {create: {
-        internalReport: paths
+        externalReportIds: paths
       }}
     }
   })
@@ -241,31 +241,6 @@ export const labsController = {
     } 
          
   },
-
-  getReportExamById:async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) => {
-    try {
-      const {examId} = request.params
-    const examDetails =  await prisma.examsForPet.findUnique({
-          where: {id: parseInt(examId)}, include: {reportExams: true, medicine:{include: {pet: {include: {customer: {select: {name: true}}}}}}}
-        })
-
-
-      if(!examDetails){
-        return
-      }
-
-     const examRefs =  await prisma.exams.findFirst({
-      where: {name: {contains: examDetails.name}},include: {multiparts: {select: {characteristics: true}}, characteristics: true}
-     }) 
-  
-      reply.send({examDetails, examRefs}).status(200)
-
-    } catch (error) {
-        console.log(error)
-        reply.send(error)
-    }
-  },
-
 
   getOnePartExamResultById:async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) =>  {
     try {

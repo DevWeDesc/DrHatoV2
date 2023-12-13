@@ -115,7 +115,6 @@ model Sectors {
   proced_id Int?
   sectorsId Int?
   proceds   Procedures[]
-  Exams     Exams?       @relation(fields: [examId], references: [id])
 }
 
 model Instructions {
@@ -448,30 +447,6 @@ model Transaction {
 // -------------- FINANCES ----------------- //
 
 // -------------- EXAMES ----------------- //
-model Exams {
-  id                 Int                   @id @default(autoincrement())
-  name               String
-  price              Decimal
-  defaultMethodology String?
-  impressName        String?
-  available          Boolean?              @default(false)
-  doneExame          Boolean?              @default(false)
-  subName            String?
-  description        String?
-  examsType          String[]
-  ageRange           String[]
-  applicableGender   String[]
-  applicableToMale   Boolean?
-  applicableToFemale Boolean?
-  isMultiPart        Boolean?              @default(false)
-  isReportByText     Boolean?              @default(false)
-  isOnePart          Boolean?              @default(false)
-  multiparts         Exams[]               @relation("MultiParts")
-  Exams              Exams?                @relation("MultiParts", fields: [multipartId], references: [id])
-  multipartId        Int?
-  Sectors            Sectors[]
-  characteristics    ExamCharacteristics[]
-}
 
 model ExamsForPet {
   id                 Int              @id @default(autoincrement())
@@ -488,6 +463,7 @@ model ExamsForPet {
   onePart            Boolean?
   twoPart            Boolean?
   byReport           Boolean?
+  externalReport     Boolean?
   medicine_id        Int
   reportExams        ReportForExams[]
   medicine           MedicineRecord   @relation(fields: [medicine_id], references: [id])
@@ -495,26 +471,19 @@ model ExamsForPet {
   updatedAt          DateTime         @updatedAt
 }
 
-model ExamCharacteristics {
-  id      Int     @id @default(autoincrement())
-  name    String?
-  especie Json?
-  Exams   Exams[]
-}
-
 model ReportForExams {
-  id             Int         @id @default(autoincrement())
-  report         Json?
-  textReport     String?
-  internalReport String[]
-  externalReport Boolean?
-  onePart        Boolean?
-  twoPart        Boolean?
-  byReport       Boolean?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  examsId        Int
-  examsForPet    ExamsForPet @relation(fields: [examsId], references: [id])
+  id                Int         @id @default(autoincrement())
+  report            Json?
+  textReport        String?
+  externalReportIds String[]
+  externalReport    Boolean?
+  onePart           Boolean?
+  twoPart           Boolean?
+  byReport          Boolean?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  examsId           Int
+  examsForPet       ExamsForPet @relation(fields: [examsId], references: [id])
 }
 
 // -------------- EXAMES ----------------- //
@@ -564,6 +533,7 @@ model Medicine {
   unitMeasurement   MedicationUnit?
   dosage            String
   observations      String?
+  stock             Int?
   MedicinesGroups   MedicinesGroups? @relation(fields: [medicinesGroupsId], references: [id])
   medicinesGroupsId Int?
 }

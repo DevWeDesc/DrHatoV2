@@ -23,14 +23,20 @@ interface ExamDetailsDTO {
 		petCustomer: string;
 		result: {
             id: number;
-            report: Array<{
+            report:{
                 name: string;
+                obs: Array<any>
+
                 refs: Array<{
-                    abs: string;
-                    rel: string;
-                    charac: string;
+                  
+                    name: string;
+                    refs: Array<{
+                      abs: string;
+								      rel: string;
+								      charac: string;
+                    }>
                 }>
-            }>
+            }
         }
 }
 
@@ -91,15 +97,15 @@ const Quixote = () => (
   <Document>
     <Page  style={{display: 'flex', flexDirection: 'column'}} >
       { /* HEADER */}
-  <View style={{display: 'flex'}}>
-  <Image style={{ width: '100%', height: '68px'}} source={logo} />
+  <View style={{display: 'flex', marginBottom: '8px', height: '74px'}}>
+  <Image style={{ height: '100%'}} source={logo} />
 
   </View>
   { /* HEADER END */}
 
   { /* EXAM DETAILS */}
   <View style={{width: '100%', alignItems: 'center'}}>
-    <Text style={{fontSize: '12px', fontWeight: 'bold' }} >EXAME</Text>
+    <Text style={{fontSize: '12px', fontWeight: 'bold' }} >Resultado do exame</Text>
 
   <View  style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '24px' }}>
   <View style={{ display: 'flex', flexDirection: 'column', height: '120px', gap: '12px'}}>
@@ -124,29 +130,41 @@ const Quixote = () => (
   { /* EXAM RESULT */}
 
     {
-     examDetails?.result?.report?.map((charac, index) => {
+     examDetails?.result?.report.refs.map((charac, index) => {
       return (
         <View  key={charac.name} style={{ display: 'flex', flexDirection: 'column', width: 'auto',  borderTop: '1px', borderColor: 'gray' }}>
           {
             /*  Header Sub */
           }
-          <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '8px', gap: '12px'}}>
+          <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '8px', gap: '12px', textAlign: 'center'}}>
             <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>{charac.name}</Text>
             <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '150px' }}>Resultados</Text>
             <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>Unidades</Text>
-              <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '120px' }}>Acima de 5 Meses</Text>
+              <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '150px', marginLeft: '12px' }}>Até 3 Meses</Text>
           </View>
           {
             /*  Header Sub */
           }
           <View style={{ display: 'flex', flexDirection: 'row', width: '100%', marginLeft: '18px', marginRight:  '18px', marginTop: '12px', gap: '12px'}}>
             <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px' }}>Característica</Text>
-            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', fontSize: '12px', fontWeight: 'semibold', width: '150px'}} >
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', fontSize: '12px', fontWeight: 'semibold', width: '150px'}} >
               <Text>Absoluto</Text>
               <Text>Relativo</Text>
             </View>
-            <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '100px',justifyContent: 'space-between' }}>Uni. abs.    Uni.rel.</Text>
-            <Text style={{ fontSize: '12px', fontWeight: 'semibold', width: '120px', justifyContent: 'space-between' }}>Absoluto.      Relativo.</Text>
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', fontSize: '12px', fontWeight: 'semibold', width: '100px'}} >
+     
+              <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>Uni abs.</Text>
+              <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>Uni rel.</Text>
+            </View>
+
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', fontSize: '12px', fontWeight: 'semibold', width: '150px', marginLeft: '12px'}} >
+     
+            <Text style={{ fontSize: '12px', fontWeight: 'semibold', }}>Absoluto.</Text>
+            <Text style={{ fontSize: '12px', fontWeight: 'semibold',  }}>Relativo.</Text>
+              </View>
+
+           
+           
           </View>
 
           
@@ -158,7 +176,8 @@ const Quixote = () => (
                   <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{charac.charac}</Text>
                   )
                 }
-                 
+    
+      
                 </View>
      
       
@@ -177,34 +196,45 @@ const Quixote = () => (
                
             </View>
             
-            <View    style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '100px'}}>
-
+            <View    style={{display: 'flex', flexDirection: 'column', gap: '4px', width: '100px'}}>
                       {
                         examCharacs.partExams[index].examsDetails.map((refs) => (
-                          <View style={{display: 'flex', flexDirection: 'row', gap: '8px', width: '100px',justifyContent: 'space-between' }}>
+                          <View style={{display: 'flex', flexDirection: 'row', width: '100%',justifyContent: 'space-between' }}>
                           <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{refs.absoluteUnit}</Text>
                              <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{refs.relativeUnit}</Text>
                           </View>
                         ))
                       }
                   
-          
             </View>
          
          
-            <View style={{display: 'flex', flexDirection: 'column', gap: '8px', width: '120px',justifyContent: 'space-between',}}>
+            <View style={{display: 'flex', flexDirection: 'column', gap: '4px', width: '150px', marginLeft: '12px'}}>
 
-   
-                <View  style={{display: 'flex', flexDirection: 'row', gap: '12px', width: '120px',justifyContent: 'space-between',}}   >
-                <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}></Text>
-                <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}></Text>
-                </View>
-           
+                      {
+                        examCharacs.partExams[index].examsDetails.map((refs) => (
+                          <View  style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between'}}   >
+                          <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{refs.minAgesOne}</Text>
+                          <Text style={{ fontSize: '12px', fontWeight: 'semibold' }}>{refs.maxAgesOne}</Text>
+                          </View>
+                        ))
+                      }
            </View>
           
-              
-      
+        
           </View>
+
+
+              <View style={{display: 'flex', flexDirection: 'row', marginLeft: '18px',  marginRight: '18px', alignItems: 'center', gap: '8px', border: '1px solid gray', marginTop: '4px', marginBottom: '4px'}}>
+              <Text style={{fontSize: '12px', fontWeight: 'bold'}}>Observações:</Text>
+              <Text style={{fontSize: '12px', fontWeight: 'bold'}}>{examDetails?.result?.report?.obs[index]}</Text>
+           </View>
+         
+       
+       
+
+
+
         </View>
       )
           
@@ -218,16 +248,12 @@ const Quixote = () => (
   { /* EXAM END */}
   <View style={{display: 'flex', width: '100%' , flexDirection: "column", marginTop: '8px'}}>
   { /* EXAM FOOTER */}
-      <View style={{display: 'flex', flexDirection: 'row', marginLeft: '24px', alignItems: 'center', gap: '18px'}}  >
-        <Text style={{fontSize: '12px', fontWeight: 'bold'}}>Observações:</Text>
-        <Text style={{fontSize: '14px', fontWeight: 'bold'}}>-------- Todo --------</Text>
-      </View>
+    
 
-      <View style={{display: 'flex', flexDirection: 'row', marginLeft: '24px', alignItems: 'center', gap: '8px', marginTop: '12px'}}  >
-        <Text style={{fontSize: '14px', fontWeight: 'bold'}}>Assinado eletrônicamente por Laboratório -</Text>
-        <Text style={{fontSize: '14px', fontWeight: 'bold'}}>{examDetails.reportedBy} - CRMV: {examDetails.reportedByCrm}</Text>
+  <View style={{display: 'flex', flexDirection: 'row', marginLeft: '18px',  marginRight: '18px', alignItems: 'center', gap: '8px', marginTop: '12px', textDecoration: 'underline'}}  >
+        <Text style={{fontSize: '12px', fontWeight: 'bold'}}>Assinado eletrônicamente por Laboratório: </Text>
+        <Text style={{fontSize: '12px', fontWeight: 'bold'}}>{examDetails?.reportedBy} - CRMV: {examDetails?.reportedByCrm}</Text>
       </View>
-
   { /* EXAM end */}
   </View>
 
