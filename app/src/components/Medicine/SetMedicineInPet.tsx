@@ -1,5 +1,7 @@
-import { Button, Flex, Input, Select, Table, TableContainer, Tbody, Td, Text, Textarea, Th, Thead, Tr, VStack } from "@chakra-ui/react";
+import { Button, Flex, HStack, Input, InputGroup, InputLeftElement, Select, Table, TableContainer, Tbody, Td, Text, Textarea, Th, Thead, Tr, VStack } from "@chakra-ui/react";
 import React, {useState, useEffect} from "react";
+import { BiSearch } from "react-icons/bi";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../../lib/axios";
 
@@ -28,20 +30,36 @@ interface MedicineProps {
 }
 
 interface MedicineComponentProps {
-  petId: any;
-  accId: any;
+  accId: number;
+  admissionId?: string;
+  InAdmission: boolean;
+  
 }
 
-export function SetMedicineInPet({accId, petId}:MedicineComponentProps ){
+export function SetMedicineInPet({accId, admissionId, InAdmission}:MedicineComponentProps ){
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [medicinesGroups, setMedicinesGroups] = useState<MedicineGroupsProps[]>([])
   const [ medicine, setMedicine] = useState({} as MedicineProps)
   const [medicineId, setMedicineId] = useState(0)
   const [dosage, setDosage] = useState("")
+  const user = JSON.parse(localStorage.getItem("user") as string);
 
   async function setMedicineInPet(){
     try {
-      await api.post(`/pet/medicine/${medicineId}/${petId}/${dosage}/${accId}`)
-      toast.success("Medicamento gravado com sucesso!")
+      const data = {
+        RequestedByVetId: user.id, 
+        RequestedByVetName: user.consultName, 
+        InAdmission, 
+        dosage
+      }
+      if(InAdmission === true) {
+        await api.post(`/pet/medicine/${medicineId}/${id}}/${accId}/${admissionId}`, data)
+        toast.success("Medicamento adicionado - Internação!")
+      } else {
+        await api.post(`/pet/medicine/${medicineId}/${id}/${accId}/${queueId}`, data)
+        toast.success("Medicamento adicionado - Veterinãrios!")
+      }
+
     } catch (error) {
       toast.error("Falha ao medicar animal")
     }
@@ -79,11 +97,15 @@ export function SetMedicineInPet({accId, petId}:MedicineComponentProps ){
     getMedicinesGroups()
   },[])
   return (
-    <Flex align="center" w={800} h={600} gap={4} direction="column">
-      <Flex w="100%" gap={2} overflowX="auto">
+    <Flex  w="1200px" h="600px" m="8px" direction="column">
+      <Flex m="8px" justify="center" w="100%"><Text fontWeight="bold" fontSize="2xl">Central de Medicação</Text></Flex>
+      <HStack marginLeft="2rem"  marginRight="2rem">
+      <Flex w="400px" h="400px" overflowY="auto" gap={2}  direction="column">
+      <Text textAlign="center"  fontWeight="bold" fontSize="md" bg="cyan.300">FILTRO POR GRUPOS</Text>
       {
           medicinesGroups.map((medicine) => (
             <Flex key={medicine.id} w="100%"  >
+           
                <Select
                minW={200}
                 borderWidth={3}
@@ -103,23 +125,43 @@ export function SetMedicineInPet({accId, petId}:MedicineComponentProps ){
           ))
         }
       </Flex>
+      <Flex w="400px" h="400px" overflowY="auto" gap={2}  direction="column">
+        <HStack>
+        <Button colorScheme="teal">Filtrar</Button>
+        <InputGroup>
+    <InputLeftElement pointerEvents='none'>
+      <BiSearch color='gray.300' />
+    </InputLeftElement>
+    <Input placeholder='Nome do Medicamento' border="2px" />
+      </InputGroup>
+        </HStack>
+
+      </Flex>
+
+      <Flex ml="4" w="400px" h="400px" overflowY="auto" gap={2}  direction="column">
+      <Text textAlign="center" bgColor="green.300" fontWeight="bold" fontSize="lg">Medicamentos Adicionados!</Text>
+
+      </Flex>
+
+      </HStack>
+    
         
         <Flex direction="column" w="100%" >
           <Text fontWeight="black" fontSize="lg">
            Medicamento selecionado:
           </Text>
-            <Flex w="100%" direction="row" mt="4" justify="space-between" gap={4} >
+            <Flex w="100%" justify="space-evenly" mt="4" gap={4} >
               <VStack>
                 <Text fontWeight="black" fontSize="lg">Nome: </Text>
               <Text fontWeight="black" fontSize="lg">{medicine ? medicine.title : ""}</Text>
-              <Text  fontWeight="black" fontSize="lg" textTransform="lowercase" >Unidade de Medida: {medicine ? medicine.unitMeasurement : ""}</Text>
+            
               <Text mt="4" fontWeight="black" fontSize="lg">Quantidade Aplicado</Text>
               <Input
               value={dosage}
               onChange={(ev) => setDosage(ev.target.value)}
               placeholder="Valor a ser medicado"
               />
-              <Text>Previsão: {`${dosage}/${medicine ? medicine.unitMeasurement : ""}`}</Text>
+              <Text>Previsão: {dosage}</Text>
               </VStack>
             
 
@@ -129,17 +171,19 @@ export function SetMedicineInPet({accId, petId}:MedicineComponentProps ){
                 style: 'currency',
                 currency: 'BRL'
               }).format(medicine.price) : ""}</Text>
-        </VStack>
-     
+              
               <VStack maxWidth={200}>
               <Text fontWeight="black" fontSize="lg">Observação:</Text>
                <Text>{medicine ? medicine.observations : ""}</Text>
               </VStack>
+        </VStack>
+     
               <VStack>
               <Text fontWeight="black" fontSize="lg">Posologia:</Text>
                <Textarea 
              defaultValue={medicine ? medicine.dosage : ""}
                minH={300}
+               minWidth={450}
                disabled _disabled={{
                 textColor: "black",
                 fontWeight: "bold"
@@ -152,7 +196,7 @@ export function SetMedicineInPet({accId, petId}:MedicineComponentProps ){
         <Button 
         onClick={() => setMedicineInPet()}
         
-        w="100%" mt={4} h={46} colorScheme="whatsapp">Gravar medicação neste animal</Button>
+        w="100%" mt={4} padding="12px" colorScheme="whatsapp">Gravar medicação neste animal</Button>
      
     </Flex>
   )

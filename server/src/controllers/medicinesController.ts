@@ -10,6 +10,13 @@ type params = {
   medicineId: string;
 };
 
+type body = {
+  RequestedByVetId: number;
+  RequestedByVetName: string;
+  InAdmission: boolean;
+  dosage: string;
+}
+
 
 
 export const medicinesController = {
@@ -36,10 +43,10 @@ export const medicinesController = {
     try {
 
       const { medicineGroupId} = request.params
-      const {title, price, dosage, observations, unitMeasurement } = request.body
+      const {title, price, dosage, observations, unitMeasurement, stock } = request.body
 
       await prisma.medicine.create({
-        data: {title, dosage, price, unitMeasurement, observations, MedicinesGroups: {
+        data: {title, dosage, price, unitMeasurement, observations, stock ,MedicinesGroups: {
           connect: {id: parseInt(medicineGroupId)}
         }}
       })
@@ -56,15 +63,43 @@ export const medicinesController = {
   },
 
 
-  setMedicineInPet: async (request: FastifyRequest<{Params:{ medicineId: string, petId: string, dosage: string; accId: string;}}>, reply: FastifyReply) => {
+  setMedicineInPet: async (request: FastifyRequest<{Params:{ medicineId: string, petId: string, dosage: string; accId: string; queueId: string}, Body: body}>, reply: FastifyReply) => {
     try {
-      const {medicineId, petId, dosage, accId } = request.params
-
+      const {medicineId, petId, accId, queueId, } = request.params
+      const {RequestedByVetId, RequestedByVetName, InAdmission, dosage} = request.body
       const medicine = await prisma.medicine.findUnique({where: {id: parseInt(medicineId)}})
-
       if(!medicine) return
 
-      await accumulatorService.addPriceToAccum(medicine.price, accId);
+      if(InAdmission === true) {
+        await prisma.petConsultsDebits.create({
+          data: {
+            OpenedAdmissionsForPet: {connect: {id: queueId}},
+            isProcedure: true,
+            name: medicine.title,
+            price: medicine.price,
+            itemId: medicine.id,
+            RequestedByVetId,
+            RequestedByVetName,
+  
+          }
+        })
+      } else {
+        await prisma.petConsultsDebits.create({
+          data: {
+            OpenedConsultsForPet: {connect: {id: queueId}},
+            isProcedure: true,
+            name: medicine.title,
+            price: medicine.price,
+            itemId: medicine.id,
+            RequestedByVetId,
+            RequestedByVetName,
+  
+          }
+        })
+      }
+
+
+
 
       await prisma.medicinesForPets.create({
         data: {title: medicine.title, unitMeasurement: medicine.unitMeasurement, dosageApplication: dosage, isPaid: true
@@ -72,11 +107,16 @@ export const medicinesController = {
         }
       })
 
+
+
+      await accumulatorService.addPriceToAccum(medicine.price, accId);
+
+
       reply.send("Medicado com sucesso!").status(201)
     } catch (error) {
-      
-      reply.send({message: error})
       console.log(error)
+      reply.send({message: error})
+ 
 
     }
   },
@@ -129,6 +169,48 @@ export const medicinesController = {
       
       reply.send({message: error})
       console.log(error)
+    }
+  },
+
+  getMedicineByQuery: async(request: FastifyRequest<{Querystring: {query: string}}>, reply: FastifyReply) => {
+    try {
+      const { query} = request.query
+
+      const medicines = await prisma.medicine.findMany({
+        where: {title: {contains: query}}
+      })
+
+      reply.send({
+        medicines
+      })
+
+
+    } catch (error) {
+       reply.send({message: error})
+      console.log(error)
+    }
+  },
+
+  getMedicinesOnPets: async(request: FastifyRequest<{Params: {CodAnimal: string}}>, reply: FastifyReply) => {
+
+    const {CodAnimal} = request.params
+
+    try {
+      const medicines = await prisma.medicinesForPets.findMany({
+        where: {MedicineRecord: {
+          pet:{
+            id: parseInt(CodAnimal)
+          }
+        }}
+      })
+
+      reply.send({
+        medicines
+      })
+    } catch (error) {
+        reply.send({
+          message: error
+        })
     }
   }
 

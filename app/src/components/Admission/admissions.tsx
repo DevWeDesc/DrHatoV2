@@ -103,7 +103,7 @@ export function SearchAdmission() {
                           {
                             addmitedPets.length >= 1 ? addmitedPets.map((pet) => {
                               //@ts-ignore
-                              const actualDate = moment(new Date()).diff(pet?.bed?.entryOur, 'minutes')
+                              const actualDate = moment(pet?.bed?.entryOur).diff(new Date(), 'minutes')
                               console.log("DIF MINUTES", actualDate)
                               return  <Tr 
                               bgColor={actualDate >= 2880 ? 'red.200' : 'green.200'}

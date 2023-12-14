@@ -795,7 +795,7 @@ export function WorkSpaceVet() {
        isOpen={isMedicineModalOpen}
        onRequestClose={closeMedicineModal}
       >
-         <SetMedicineInPet petId={pet?.id} accId={pet?.totalAcc?.id} />
+         <SetMedicineInPet accId={pet?.totalAcc?.id} InAdmission={false} />
       </GenericModal>
       <GenericModal 
        isOpen={insInstructionsModalOpen}
