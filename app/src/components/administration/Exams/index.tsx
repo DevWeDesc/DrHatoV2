@@ -41,6 +41,13 @@ type ExamsDTO = {
 	byReport: boolean;
 }
 
+type CreateExamsDTO = {
+  name: string;
+  price: number;
+  available: boolean;
+  examsType: any
+}
+
 export function ListExams() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,29 +60,33 @@ export function ListExams() {
 
   const queryClient = useQueryClient()
   const {isLoading, error} = useQuery('adminExams', () => getExamesListData)
+  const {mutate} = useMutation(
+    (data: CreateExamsDTO) => api.post('exams', data),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('adminExams');
+        toast.success('Exame criado com sucesso');
+      },
+      onError: (error) => {
+        toast.error('Falha ao criar novo Exame');
+        console.error(error);
+      },
+    }
+  );
 
-
-  const handleCreateExam: SubmitHandler<FieldValues> = async (values) => {
+  const handleCreateExam: SubmitHandler<FieldValues> = (values) => {
     try {
-      const data = {
+      mutate({
         name: values.name,
         price: Number(values.price),
         available: values.available,
         examsType: values.examsType,
-      };
-      await api.post("exams", data);
-      toast.success("Exame criada com sucesso");
+      });
+
     } catch (error) {
-      toast.error("Falha ao criar novo Exame");
+      console.error(error);
     }
   };
-
-  const mutation = useMutation(async () => handleCreateExam, {
-    onSuccess: () => {
-      queryClient.invalidateQueries('adminExams')
-    }
-  })
-
 
 
   async function DeleteExam(ExamId: string) {
@@ -237,8 +248,8 @@ export function ListExams() {
               </CheckboxGroup>
             </HStack>
 
-            <Button type="submit" colorScheme="green" m="2">
-              Cadastrar
+            <Button type="submit" colorScheme="green" m="2" isLoading={isLoading}>
+                    Cadastrar
             </Button>
           </Flex>
         </FormControl>
