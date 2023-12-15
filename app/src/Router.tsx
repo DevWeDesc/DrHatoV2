@@ -16,7 +16,6 @@ import { DefaultLayout } from "./layouts";
 import { CreateUser } from "./pages/Users/create";
 import { Reception } from "./pages/Reception";
 import { ReceptionConsults } from "./pages/Reception/consults";
-import { Finance } from "./pages/Finance";
 import { CustomerDetails } from "./pages/Customer";
 import { Pets } from "./pages/Pets";
 import { CreatePets } from "./pages/Pets/create";
@@ -67,7 +66,6 @@ import { Hospitalization } from "./pages/AdminDashboard/hospitalization";
 import { Reports } from "./pages/Reports/index";
 import { AdminSurgery } from "./pages/AdminDashboard/surgeryes";
 import { UsersList } from "./pages/Users";
-
 import { QueueLabs } from "./queue/Labs";
 import ReportsComission from "./pages/Reports/comissions";
 import ReportsCashFlow from "./pages/Reports/cashflow";
@@ -98,13 +96,11 @@ import { UsersClinics } from "./pages/Reception/Administration/usersClinics";
 import { BreedRegistry } from "./pages/Reception/Administration/breedRegistry";
 import { OptionSistem } from "./pages/AdminDashboard/optionSistem";
 import { EditPets } from "./pages/Pets/edit";
-import ProtectedRouteMiddleware from "./middleware/ProtectAuthMiddleware";
 import { HealthInsurance } from "./pages/AdminDashboard/healthInsurance";
 import { HealthInsuranceDetails } from "./pages/AdminDashboard/HealthInsuranceDetails";
 import AdminBoxs from "./pages/AdminDashboard/box";
 import { AuthContextProvider } from "./contexts/AuthContext";
 import ReminderPage from "./pages/ReminderPage";
-import { UrlContextProvider } from "./contexts/UrlContext";
 import { ExamsDetails } from "./pages/Vets/WorkSpaceVets/examsDetails";
 import { AdminCadEspecies } from "./pages/AdminDashboard/cadEspecies";
 import { AdminCadRaces } from "./pages/AdminDashboard/cadRaces";
@@ -119,8 +115,6 @@ import { InstructionsPdf } from "./components/ReactPdfComp/InstructionsPdf";
 export function Router() {
   return (
     <AuthContextProvider>
-      <ProtectedRouteMiddleware>
-        <UrlContextProvider>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Login />} />
             <Route element={<DefaultLayout />}>
@@ -382,7 +376,7 @@ eateMedicine
                 path="/Recepcao/Internacoes/Vacinas"
                 element={<ReceptionVaccines />}
               />
-              <Route path="/Recepcao/Finance" element={<Finance />} />
+
               <Route
                 path="/Recepcao/RegistroClinicas"
                 element={<RegisterClinics />}
@@ -411,8 +405,7 @@ eateMedicine
               />
             </Route>
           </Routes>
-        </UrlContextProvider>
-      </ProtectedRouteMiddleware>
+
     </AuthContextProvider>
   );
 }

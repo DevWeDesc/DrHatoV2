@@ -15,11 +15,8 @@ function App() {
       <DbContextProvider>
         <BoxContextProvider>
           <ModalProvider>
-
-       
         <ThemeProvider theme={defaultTheme}>
           <GlobalStyle />
-
           <BrowserRouter>
             <Router />
           </BrowserRouter>

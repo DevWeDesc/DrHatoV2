@@ -14,9 +14,8 @@ import {
   Td,
   Th,
   Textarea,
-  useSafeLayoutEffect,
 } from "@chakra-ui/react";
-import { BiHome, MdPets, TbArrowBack } from "react-icons/all";
+import { BiHome, TbArrowBack } from "react-icons/all";
 import { AdminContainer } from "../../../pages/AdminDashboard/style";
 import { WorkSpaceHeader } from "../../../pages/Vets/styles";
 import { useNavigate, useParams } from "react-router";
@@ -25,7 +24,6 @@ import { api } from "../../../lib/axios";
 import { PetDetaisl } from "../../../interfaces";
 import moment from "moment";
 import { toast } from "react-toastify";
-import { UrlContext } from "../../../contexts/UrlContext";
 import { GenericModal } from "../../Modal/GenericModal";
 import { EndConsults } from "../../../pages/Vets/WorkSpaceVets/endconsults";
 
@@ -37,7 +35,6 @@ export default function DetailsAdmissions() {
   const navigate = useNavigate();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const entryDate = petDetails.bedInfos?.entry;
-  const { setUrl } = useContext(UrlContext);
 
   const totalDaily = moment(new Date()).diff(entryDate, "minutes");
 
@@ -195,7 +192,6 @@ export default function DetailsAdmissions() {
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => {
-                    setUrl("");
                     navigate(`/Admissions/Procedures/${petDetails.recordId}/${queueId}`);
                   }}
                 >

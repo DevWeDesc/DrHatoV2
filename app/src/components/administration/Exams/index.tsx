@@ -27,47 +27,33 @@ import { toast } from "react-toastify";
 import { Input } from "../../../components/admin/Input";
 import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
-import { NewCharacteristics } from "./newCharacteristics";
+import { NewCharacteristics } from "./newCharacteristics"; // DELETAR
+import { useQuery, useQueryClient, useMutation } from "react-query";
+
+
+type ExamsDTO = {  
+  codexam: number;
+  name: string;
+  price: number;
+  disponible: boolean;
+  onePart: boolean;
+	twoPart: boolean;
+	byReport: boolean;
+}
 
 export function ListExams() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [exams, setExams] = useState([] as any);
+  const [exams, setExams] = useState<ExamsDTO[]>([]);
 
-
-
-  function openModal() {
-    setIsModalOpen(true);
-  }
-  function closeModal() {
-    setIsModalOpen(false);
-  }
-
-  function openModalTwo() {
-    setIsModalOpenTwo(true);
-  }
-  function closeModalTwo() {
-    setIsModalOpenTwo(false);
-  }
-
-
-  const getExamesListData = async () => {
+  async function getExamesListData () {
     const exams = await api.get("/exams/old/all");
     setExams(exams.data.exams);
-  
   };
-  useEffect(() => {
-    getExamesListData();
-  }, []);
 
-  useEffect(() => {
-    if (loading === true) {
-      getExamesListData();
-      setLoading(false);
-    }
-  }, [loading]);
+  const queryClient = useQueryClient()
+  const {isLoading, error} = useQuery('adminExams', () => getExamesListData)
+
 
   const handleCreateExam: SubmitHandler<FieldValues> = async (values) => {
     try {
@@ -78,19 +64,25 @@ export function ListExams() {
         examsType: values.examsType,
       };
       await api.post("exams", data);
-      setLoading(true);
       toast.success("Exame criada com sucesso");
     } catch (error) {
       toast.error("Falha ao criar novo Exame");
     }
   };
 
+  const mutation = useMutation(async () => handleCreateExam, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('adminExams')
+    }
+  })
+
+
+
   async function DeleteExam(ExamId: string) {
     await api
       .delete(`/exams/${ExamId}`)
       .then(() => {
         toast.success("Exame deletado com sucesso!!");
-        setLoading(true);
       })
       .catch(() => toast.error("Algo deu errado!!"));
   }
@@ -115,22 +107,9 @@ export function ListExams() {
           fontSize="20"
           colorScheme="whatsapp"
           leftIcon={<Icon as={RiAddLine} />}
-          onClick={() => openModal()}
+          onClick={() => setIsModalOpen(true)}
         >
           Cadastrar novo Exame
-        </Button>
-    
-        <Button
-        mt="4"
-          w="100%"
-          py="8"
-          fontSize="20"
-          isDisabled={true}
-          colorScheme="whatsapp"
-          leftIcon={<Icon as={RiAddLine} />}
-          onClick={() => openModalTwo()}
-        >
-          Cadastrar nova Característica
         </Button>
       </Flex>
 
@@ -156,12 +135,11 @@ export function ListExams() {
         </Thead>
 
         <Tbody>
-          {exams ? (
-            exams.map((exam: any) => (
-              <Tr key={exam.id} fontSize="18">
+          {exams.map((exam) => (
+              <Tr key={exam.codexam} fontSize="18">
                 <Td borderColor="black">
                   <Box>
-                    <Link to={`/Admin/Exams/Details/${exam.id}`}>
+                    <Link to={`/Admin/Exams/Details/${exam.codexam}`}>
                       <Text
                         fontWeight="bold"
                         color="gray.800"
@@ -200,11 +178,11 @@ export function ListExams() {
                     buttonTitle="Deletar Exame"
                     whatIsConfirmerd="Tem certeza que deseja Excluir esse Exame?"
                     describreConfirm="Excluir a Exame é uma ação irreversivel, tem certeza que deseja excluir?"
-                    callbackFn={() => DeleteExam(exam.id)}
+                    callbackFn={() => DeleteExam(exam.codexam.toString())}
                   />
                 </Td>
                 <Td borderColor="black">
-                  <Link to={`/Admin/Exams/${exam.id}`}>
+                  <Link to={`/Admin/Exams/${exam.codexam}`}>
                     <Button
                       as="a"
                       size="sm"
@@ -217,13 +195,10 @@ export function ListExams() {
                   </Link>
                 </Td>
               </Tr>
-            ))
-          ) : (
-            <LoadingSpinner />
-          )}
+            ))}
         </Tbody>
       </Table>
-      <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+      <GenericModal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
         <FormControl as="form" onSubmit={handleSubmit(handleCreateExam)}>
           <Flex direction="column" align="center" margin="4">
             <Input {...register("name")} name="name" label="Nome do Exame" />
@@ -268,10 +243,6 @@ export function ListExams() {
           </Flex>
         </FormControl>
       </GenericModal>
-      <GenericModal isOpen={isModalOpenTwo} onRequestClose={closeModalTwo} >
-            <NewCharacteristics />
-      </GenericModal>
-
     </Box>
   );
 }
