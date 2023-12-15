@@ -14,7 +14,7 @@ const filteredData = data
     description: autorization.TextoInst
   }));
 
- export async function PopulateInstructions () {
+ export async function PopulateInstructAlta() {
      try {
      
      for await (const autorizations of filteredData) {
@@ -33,4 +33,3 @@ const filteredData = data
      }
  } 
 
- PopulateInstructions()

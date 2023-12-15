@@ -154,5 +154,5 @@ OBS: Acrescentado sistema de Especies, um procedimento só vai poder ser lançad
 [X] -  Tela de exames: colocar o botão de laudados (concluidos) e visualizar o laudo.
 OBS: Sistema antigo de laudar não funcionava a opção de laudo externo, e também tem onde baixar o laudo externo, isso entra como melhoria(dando autorização eu faço). 
 [X] -  verificar a impressão: Ajustar os exames e laudos no pdf
-[] -  Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)
+[X] -  Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)
 

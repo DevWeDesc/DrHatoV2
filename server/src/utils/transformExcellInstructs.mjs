@@ -14,7 +14,7 @@ const filteredData = data
     text: autorization.TextoAut
   }));
 
- export async function PopulateInstructions () {
+ export async function PopulateInstructions() {
      try {
      
      for await (const autorizations of filteredData) {
@@ -30,4 +30,3 @@ const filteredData = data
      }
  } 
 
- PopulateInstructions()

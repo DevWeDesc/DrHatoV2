@@ -15,4 +15,5 @@ export async function medicinesRoutes(app: FastifyInstance){
     app.get("/pet/medicine/:petId", medicinesController.getPetMedicineHistory)
     app.post("/medicine/:medicineGroupId", medicinesController.createMedicine)
     app.post("/pet/medicine/:medicineId/:petId/:accId/:queueId", medicinesController.setMedicineInPet)
+    app.patch("/medicine/remove/:appliedId/:queueId", medicinesController.removeMedicineOnPet)
 }

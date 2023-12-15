@@ -149,7 +149,16 @@ export const medicinesController = {
         include: {medicines: true}
       })
 
-      reply.send({medicines})
+      const allMedicines = await prisma.medicine.findMany()
+      const filtredMedicines = allMedicines.map((medicine) => {
+        let data = {
+          id: medicine.id,
+        name: medicine.title,
+        stock: medicine.stock
+        }
+        return data
+      })
+      reply.send({filtredMedicines, medicines})
     } catch (error) {
       reply.send({message: error})
       console.log(error)
@@ -211,6 +220,32 @@ export const medicinesController = {
         reply.send({
           message: error
         })
+    }
+  },
+
+  removeMedicineOnPet: async(request: FastifyRequest<{Params: {appliedId: string, queueId: string}, Body: {title: string; itemId: number; date: Date}}>, reply: FastifyReply) => {
+    try {
+      const {appliedId, queueId } = request.params
+      const {title, itemId, date} = request.body
+
+      await prisma.medicinesForPets.delete({
+        where: {id: parseInt(appliedId)}
+      })
+
+      await prisma.petConsultsDebits.deleteMany({
+      where: {
+            name: title,
+            itemId,
+            requestedDate: date,
+            openedConsultsForPetId: queueId
+      },
+      })
+
+      reply.send("Excluido com sucesso!")
+    } catch (error) {
+      reply.send({
+        message: error
+      })
     }
   }
 

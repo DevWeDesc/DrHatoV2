@@ -2,7 +2,9 @@ import { PopulateOldExams } from "./CadExamsOld.mjs";
 import { PopulateOldCaractersExams } from "./CadPartDetailsOld.mjs";
 import { PopulatePartDetails } from "./CadPartExamsOld.mjs";
 import { PopulateUsers } from "./transformExcell.mjs";
+import { PopulateInstructAlta } from "./transformExcellAuts.mjs";
 import { PopulateEspecies } from "./transformExcellEspecies.mjs";
+import { PopulateInstructions } from "./transformExcellInstructs.mjs";
 import { PopulateMGroups } from "./transformExcellMGroups.mjs";
 import { PopulateMedicines } from "./transformExcellMedicines.mjs";
 import { PopulatePets } from "./transformExcellPet.mjs";
@@ -31,6 +33,8 @@ async function PopulateDataBase () {
         await PopulateProcedures();
         await PopulateEspecies();
         await PopulateRaces();
+        await PopulateInstructions();
+        await PopulateInstructAlta();
 
         console.log("Todo Banco Populado com Sucesso!")
         
