@@ -76,7 +76,7 @@ export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
 
         <Flex align="center" direction="column">
           <Text fontSize="md" fontWeight="bold">
-            {user.username}
+            "vniicus"
           </Text>
           <Link to={url}>
             <Button colorScheme="yellow" leftIcon={<TbArrowBack size={24} />}>
