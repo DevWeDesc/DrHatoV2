@@ -234,6 +234,73 @@ export function ReceptionCreateNewConsultForm() {
                 <FormLabel
                   textAlign="left"
                   fontWeight="bold"
+                  htmlFor="cpf"
+                  mb="0"
+                  fontSize="17"
+                >
+                  * CPF do cliente
+                </FormLabel>
+                <CPFInput
+                  id="cpf"
+                  name="cpf"
+                  //{...register("cpf")}
+                  value={CPFValue}
+                  onChange={(e: any) => setCPFValue(e.target.value)}
+                  onBlur=""
+                />
+                {errorInput > 0 && (
+                  <Text textAlign="start" color="red.500" fontWeight="bold">
+                    {CPFValue != "" ? null : "O campo CPF é obrigatório"}
+                  </Text>
+                )}
+              </Flex>
+              <Flex direction="column" w="50%" mt="4">
+                {" "}
+                <FormLabel
+                  textAlign="left"
+                  fontWeight="bold"
+                  htmlFor="email"
+                  mb="0"
+                  fontSize="17"
+                >
+                  * E-mail do cliente
+                </FormLabel>
+                <Input
+                  placeholder="E-mail do Cliente"
+                  {...register("email")}
+                  id="email"
+                  name="email"
+                />
+                <Text color="red.500" fontWeight="bold" textAlign="left">
+                  {errors?.email?.message}
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex w="100%" alignItems="center" gap="2" mt="4">
+              <Flex direction="column" w="50%" justifyContent="center">
+                <FormLabel
+                  textAlign="left"
+                  fontWeight="bold"
+                  htmlFor="birthday"
+                  mb="0"
+                  fontSize="17"
+                >
+                  * Data de nascimento
+                </FormLabel>
+                <Input
+                  {...register("birthday")}
+                  id="birthday"
+                  name="birthday"
+                  type="date"
+                />
+                <Text color="red.500" fontWeight="bold" textAlign="left">
+                  {errors?.birthday?.message}
+                </Text>
+              </Flex>
+              <Flex direction="column" w="50%">
+                <FormLabel
+                  textAlign="left"
+                  fontWeight="bold"
                   htmlFor="phone"
                   fontSize="17"
                   mb="0"
@@ -256,29 +323,10 @@ export function ReceptionCreateNewConsultForm() {
                   </Text>
                 )}
               </Flex>
-              <Flex direction="column" w="50%" mt="4">
-                <FormLabel
-                  textAlign="left"
-                  fontWeight="bold"
-                  htmlFor="birthday"
-                  mb="0"
-                  fontSize="17"
-                >
-                  * Data de nascimento
-                </FormLabel>
-                <Input
-                  {...register("birthday")}
-                  id="birthday"
-                  name="birthday"
-                  type="date"
-                />
-                <Text color="red.500" fontWeight="bold" textAlign="left">
-                  {errors?.birthday?.message}
-                </Text>
-              </Flex>
             </Flex>
-            <Flex w="100%" alignItems="center" gap="2" mt="4">
-              <Flex direction="column" w="50%" justifyContent="center">
+            <Flex align="center" gap="2" mt="4">
+              <Flex direction="column" w="50%">
+                {" "}
                 <FormLabel textAlign="left" htmlFor="tell" mb="0" fontSize="17">
                   Telefone Fixo do Cliente
                 </FormLabel>
@@ -290,54 +338,7 @@ export function ReceptionCreateNewConsultForm() {
                   onChange={(e: any) => setFixedValue(e.target.value)}
                   onBlur={""}
                 />
-
                 <Text h={errors?.email ? "24px" : "0"}></Text>
-              </Flex>
-              <Flex direction="column" w="50%">
-                <FormLabel
-                  textAlign="left"
-                  fontWeight="bold"
-                  htmlFor="email"
-                  mb="0"
-                  fontSize="17"
-                >
-                  * E-mail do cliente
-                </FormLabel>
-                <Input
-                  placeholder="E-mail do Cliente"
-                  {...register("email")}
-                  id="email"
-                  name="email"
-                />
-                <Text color="red.500" fontWeight="bold" textAlign="left">
-                  {errors?.email?.message}
-                </Text>
-              </Flex>
-            </Flex>
-            <Flex align="center" gap="2" mt="4">
-              <Flex direction="column" w="50%">
-                <FormLabel
-                  textAlign="left"
-                  fontWeight="bold"
-                  htmlFor="cpf"
-                  mb="0"
-                  fontSize="17"
-                >
-                  * CPF do cliente
-                </FormLabel>
-                <CPFInput
-                  id="cpf"
-                  name="cpf"
-                  //{...register("cpf")}
-                  value={CPFValue}
-                  onChange={(e: any) => setCPFValue(e.target.value)}
-                  onBlur=""
-                />
-                {errorInput > 0 && (
-                  <Text textAlign="start" color="red.500" fontWeight="bold">
-                    {CPFValue != "" ? null : "O campo CPF é obrigatório"}
-                  </Text>
-                )}
               </Flex>
               <Flex direction="column" w="50%" justifyContent="center">
                 <FormLabel textAlign="left" htmlFor="rg" mb="0" fontSize="17">
