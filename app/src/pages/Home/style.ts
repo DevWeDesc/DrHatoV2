@@ -1,49 +1,57 @@
 import styled from "styled-components";
 export const HomeContainer = styled.div`
   display: grid;
-
   align-items: flex-start;
-  grid-template-columns: 0.5fr 2fr;
+  @media (max-width: 620px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  grid-template-columns: repeat(5, 1fr);
   gap: 0px 0px;
-  grid-template-areas:
-    "section-1 section-2 section-3"
-    ". ."
-    ". ."
-    ". .";
   background-color: ${(props) => props.theme["gray-50"]};
-
   scroll-behavior: auto;
   .section-1 {
+    @media (max-width: 620px) {
+      grid-column: 1/3;
+    }
+    grid-column: 1/2;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1.25rem;
     padding: 1rem;
-
     background-color: white;
-    width: 400px;
+    width: 100%;
+    max-width: 100vw;
   }
 
   .section-2 {
+    grid-column: 2/6;
+    @media (max-width: 620px) {
+      grid-column: 1/3;
+    }
     margin: 1rem;
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
+    justify-content: stretch;
     width: 100%;
     gap: 1rem;
   }
 
-  .section-3 {
-    display: flex;
-    margin: 1rem;
-    width: 500px;
-    height: 600px;
-  }
-
   .cards {
-    display: flex;
-    flex-wrap: wrap;
+    width: 100%;
     gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+    @media (max-width: 1500px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 1220px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (max-width: 620px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   .dropMenu {
