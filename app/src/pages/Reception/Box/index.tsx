@@ -5,7 +5,7 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { AdminContainer } from "../../AdminDashboard/style";
-import { TbArrowBack, TbReportMoney } from "react-icons/tb";
+import {  TbReportMoney } from "react-icons/tb";
 import { Header } from "../../../components/admin/Header";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
@@ -14,7 +14,7 @@ import { BiCalendarPlus } from "react-icons/bi";
 import { AiFillPrinter } from "react-icons/ai";
 import { TbCashBanknoteOff } from "react-icons/tb";
 import { OpenedBox } from "../../../components/Box/openedBox";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ConfirmationDialog } from "../../../components/dialogConfirmComponent/ConfirmationDialog";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";

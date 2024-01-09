@@ -2,7 +2,7 @@ import { createContext, useState, useEffect } from 'react'
 import { BoxProps, HistoryBoxProps } from '../interfaces';
 import { api } from '../lib/axios';
 
-interface IBoxContextProps {
+export interface IBoxContextProps {
     dailyBox: HistoryBoxProps
     lastBox: HistoryBoxProps
     fatherBox: BoxProps

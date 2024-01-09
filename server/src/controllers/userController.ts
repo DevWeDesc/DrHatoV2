@@ -162,7 +162,7 @@ getVetUsers: async (request: FastifyRequest, reply: FastifyReply) => {
 
   const vets = await prisma.user.findMany({
     where: {
-      role: 'VETERINARIAN'
+      role: 'VETERINARIAN',
     },select: {
       username: true,
       id: true,

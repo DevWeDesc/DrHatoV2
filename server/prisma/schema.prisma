@@ -62,7 +62,7 @@ model Customer {
 model Pets {
   id               Int                @id @default(autoincrement())
   CodCli           Int?
-  CodAnimal        Int?
+  CodAnimal        Int?               @unique
   name             String
   especie          String
   sexo             String
@@ -83,6 +83,23 @@ model Pets {
   customer         Customer           @relation(fields: [customer_id], references: [id])
   queue            Queues?
   bed              Bed?
+  petOldConsults   OldConsults[]
+}
+
+model OldConsults {
+  id           Int       @id @default(autoincrement())
+  codConsulta  Int?
+  date         DateTime?
+  vetId        Int?
+  vetName      String?
+  petWeight    Float?
+  petName      String?
+  customerName String?
+  consulType   String?
+  CodAnimal    Int
+  CodCli       Int
+  Pets         Pets?     @relation(fields: [petsId], references: [CodAnimal])
+  petsId       Int?
 }
 
 model Autorizations {
@@ -92,10 +109,11 @@ model Autorizations {
 }
 
 model MedicineRecord {
-  id            Int                        @id @default(autoincrement())
-  observations  String[]                   @default([""])
-  petId         Int                        @unique
-  pet           Pets                       @relation(fields: [petId], references: [id])
+  id           Int      @id @default(autoincrement())
+  observations String[] @default([""])
+  petId        Int      @unique
+  pet          Pets     @relation(fields: [petId], references: [id])
+
   petExams      ExamsForPet[]
   petVaccines   VaccinesForPet[]
   petSurgeries  SurgeriesForPet[]

@@ -16,7 +16,7 @@ import { PopulateSurgeries } from "./transformExcellSurgeries.mjs";
 import { PopulateCustomer } from "./transformExcellUser.mjs";
 import { PopulateVaccines } from "./transformExcellVaccines.mjs";
 
-async function PopulateDataBase () {
+export async function PopulateDataBase() {
     try {
         await PopulateUsers();
         await PopulateCustomer();

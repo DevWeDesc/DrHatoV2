@@ -7,13 +7,21 @@ import { useState, Suspense, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { BoxContext } from "../../contexts/BoxContext";
+import { HistoryBoxProps } from "../../interfaces";
 import { api } from "../../lib/axios";
-import { LoadingSpinner } from "../Loading";
 import { ClosedBox } from "./closedBox";
 export function OpenedBox() {
-  const {dailyBox, fatherBox,setReloadData } = useContext(BoxContext)
-  const navigate =  useNavigate()
+  const { fatherBox } = useContext(BoxContext)
+  const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
+  const [dailyBox, setDailyBox] = useState({} as HistoryBoxProps);
+
+  async function GetDailyBox () {
+    const response = await api.get("/dailybox")
+    setDailyBox(response.data)
+  }
+
+  
   async function handleOpenBox() {
     try {
       const data = {
@@ -21,27 +29,23 @@ export function OpenedBox() {
         exitValues: 500,
         openBy: user.username,
       };
-      await api
-        .post(`/openhistbox/${fatherBox.id}`, data).then((res) => 
-        {
-          setReloadData(true)
-          toast.success("Caixa aberto com sucesso")
-          navigate(0)
-        })
-      
+      await api.post(`/openhistbox/${fatherBox.id}`, data)
+      setReloadData(true)
+      toast.success("Caixa aberto com sucesso")
     } catch (error) {
       toast.error("Falha ao abrir caixa!");
       console.log(error);
     }
   }
- 
-  
-  return (
-    <>
-     {
-      dailyBox?.boxIsOpen === true ? (
-        <ClosedBox />
-      ) : (
+
+
+  let boxShow;
+  switch(true) {
+    case dailyBox?.boxIsOpen === true:
+      boxShow =  <ClosedBox />
+      break;
+    default: 
+      boxShow = (
         <Box flex="1" borderRadius={8} bg="gray.200" w="100%">
         <Flex
           direction="column"
@@ -60,6 +64,27 @@ export function OpenedBox() {
         </Flex>
       </Box>
       )
+    break;
+
+  }
+
+  useEffect(() => {
+    if(reloadData) {
+      GetDailyBox() 
+      setReloadData(false)
+    }
+  }, [reloadData])
+  
+  useEffect(() => {
+    GetDailyBox() 
+  }, [])
+
+
+  
+  return (
+    <>
+     {
+boxShow
      }
     </>
   );
