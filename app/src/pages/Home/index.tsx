@@ -1,5 +1,5 @@
 import { Header } from "../../components/Header";
-import {  ChakraProvider,  } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { HomeContainer } from "./style";
 import { AsideMenu } from "../../components/AsideMenu";
 import { CardsMenu } from "../../components/CardsMenu";
@@ -7,7 +7,6 @@ import { useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 
 import { useNavigate } from "react-router-dom";
-
 
 export function Home() {
   const navigate = useNavigate();
@@ -30,7 +29,6 @@ export function Home() {
             <CardsMenu />
           </div>
         </div>
-        <div className="section-3"></div>
       </HomeContainer>
     </ChakraProvider>
   );
