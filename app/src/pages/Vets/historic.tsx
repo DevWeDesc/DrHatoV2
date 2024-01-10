@@ -20,40 +20,34 @@ import { Header } from "../../components/admin/Header";
 import { AiOutlineSearch } from "react-icons/ai";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
+import { BiHome, BiLeftArrow, BiRightArrow } from "react-icons/bi";
 import { Input } from "../../components/admin/Input";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../lib/axios";
+import { OldConsults, PetOldConsult } from "../../interfaces";
+import { formatDate } from "react-calendar/dist/cjs/shared/dateFormatter";
+import { TbArrowBack } from "react-icons/tb";
+import { WorkSpaceHeader } from "./styles";
 
 export const Historic = () => {
-  const [petName, setPetName] = useState("");
-  const [codPet, setCodPet] = useState("");
-  const [customerName, setCustomerName] = useState("");
-  const [isFinishied, setIsFinishied] = useState(false);
-  const [isAddmited, setIsAddmited] = useState(false);
-  const [showAllVets, setShowAllVets] = useState(false);
   const [pagination, SetPagination] = useState(1);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [totalInQueue, setTotalInQueue] = useState(0 as any);
-  const [petsByVetPreference, setPetsByVetPreference] = useState([]);
-  const [petData, setPetData] = useState([] as any);
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
-  const user = JSON.parse(localStorage.getItem("user") as string);
 
-  async function getQueueVetPreference() {
-    if (showAllVets === true) {
-      const response = await api.get("/pets/queue");
-      setTotalInQueue(response.data);
-      setPetsByVetPreference(response.data.response);
-    } else {
-      const response = await api.get(
-        `/pets/queue/preference/${user.consultName}`
-      );
-      setPetsByVetPreference(response.data.response);
-    }
+  const [historicPets, setHistoricPets] = useState<OldConsults>(
+    {} as OldConsults
+  );
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  async function getAllConsultsPet() {
+    const response = await api.get(`/pet/old/history/consults/${id}`);
+    setHistoricPets(response.data.oldConsults);
   }
+  console.log(historicPets.petOldConsults);
 
   function incrementPage() {
     SetPagination((prevCount) =>
@@ -65,92 +59,57 @@ export const Historic = () => {
     SetPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
   }
 
-  const navigate = useNavigate();
-
-  async function searchDataVet() {
-    switch (true) {
-      case petName?.length >= 1:
-        await api
-          .get(`vetmenusearch/${pagination}?petName=${petName}`)
-          .then((res) => {
-            setPetData(res.data.data);
-            setNumberOfPages(res.data.totalPages);
-          });
-        break;
-      case customerName?.length >= 1:
-        await api
-          .get(`vetmenusearch/${pagination}?customerName=${customerName}`)
-          .then((res) => {
-            setPetData(res.data.data);
-            setNumberOfPages(res.data.totalPages);
-          });
-        break;
-      case isFinishied === true:
-        await api
-          .get(`vetmenusearch?/${pagination}isFinished=true`)
-          .then((res) => {
-            setPetData(res.data);
-            console.log(res.data.data);
-          });
-        break;
-      case isAddmited === true:
-        await api
-          .get(`vetmenusearch/${pagination}?isAddmited=true`)
-          .then((res) => {
-            setPetData(res.data.data);
-          });
-        break;
-    }
-  }
-
-  const handleGetDataWithParams = async () => {
-    switch (true) {
-      case !!codPet:
-        await api.get(`searchcodpet/${codPet}`).then((res) => {
-          setPetData(res.data);
-        });
-        break;
-      case isFinishied === true:
-        await api
-          .get(
-            `vetmenusearch/${pagination}?isFinished=true&initialDate=${initialDate}&finalDate=${finalDate}`
-          )
-          .then((res) => {
-            setPetData(res.data.data);
-          });
-        break;
-      case isAddmited === true:
-        await api
-          .get(
-            `vetmenusearch/${pagination}?isAddmited=true&initialDate=${initialDate}&finalDate=${finalDate}`
-          )
-          .then((res) => {
-            setPetData(res.data.data);
-          });
-        break;
-    }
-  };
-
   useEffect(() => {
-    getQueueVetPreference();
-  }, [showAllVets]);
-
-  useEffect(() => {
-    searchDataVet();
-  }, [petName, codPet, customerName, isFinishied, isAddmited, pagination]);
+    getAllConsultsPet();
+  }, [historicPets]);
 
   return (
     <ChakraProvider>
       <AdminContainer>
-        <Header title="Painel Administrativo" url="/vets/Menu" />
+        <WorkSpaceHeader>
+          <Flex
+            justify="space-between"
+            align="center"
+            width="100vw"
+            height="100%"
+          >
+            <Flex align="center" gap="2">
+              <Text m="2" fontSize="1xl" fontWeight="bold">
+                WorkSpace Veterinário
+              </Text>
+              <Button
+                colorScheme="teal"
+                leftIcon={<BiHome size={24} />}
+                onClick={() => navigate("/Home")}
+              >
+                Home
+              </Button>
+
+              <Button
+                colorScheme="yellow"
+                leftIcon={<TbArrowBack size={24} />}
+                onClick={() => navigate("/Vets/Menu")}
+              >
+                Voltar
+              </Button>
+            </Flex>
+
+            <Flex width="100%" height="100%" align="center" m="4" p="2">
+              <VStack w="100%" align="flex-start">
+                <HStack>
+                  <Button
+                    height={8}
+                    colorScheme="whatsapp"
+                    onClick={() => navigate(`/WorkSpace/Protocols/${id}`)}
+                  >
+                    PROTOCOLOS
+                  </Button>
+                </HStack>
+              </VStack>
+            </Flex>
+          </Flex>
+        </WorkSpaceHeader>
         <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
-          <GenericSidebar>
-            <GenericLink
-              name="Pesquisar Cliente"
-              icon={AiOutlineSearch}
-              path="/Vets/Menu"
-            />
-          </GenericSidebar>
           <Box flex="1" borderRadius={8} bg="gray.200" p="8">
             <Flex mb="8" gap="8" direction="column" align="center">
               <Flex direction="column">
@@ -170,11 +129,7 @@ export const Historic = () => {
                     />
                   </HStack>
                 </Flex>
-                <Button
-                  onClick={handleGetDataWithParams}
-                  mt="4"
-                  colorScheme="whatsapp"
-                >
+                <Button mt="4" colorScheme="whatsapp">
                   FILTRAR
                 </Button>
               </Flex>
@@ -212,60 +167,78 @@ export const Historic = () => {
                 justify="center"
                 overflowY="auto"
               >
-                {petData.length >= 1 ? (
+                {Object.keys(historicPets).length > 0 ? (
                   <Table colorScheme="blackAlpha">
                     <Thead>
                       <Tr>
+                        <Th>Tipo de Consulta</Th>
+                        <Th>Peso do animal</Th>
                         <Th>Data</Th>
-                        <Th>Horário</Th>
                         <Th>Veterinário</Th>
                         <Th>Cod</Th>
                         <Th>Animal</Th>
-                        <Th>Pago</Th>
+                        <Th>Dono do Animal</Th>
                       </Tr>
                     </Thead>
 
                     <Tbody>
-                      {petData?.map((pet: any) => (
-                        <Tr
-                          key={pet?.id}
-                          cursor="pointer"
-                          onClick={() =>
-                            navigate(
-                              `/Vets/Workspace/${pet?.id}/${pet.consultUniqueId}`
-                            )
-                          }
-                        >
-                          <Td>
-                            <Text colorScheme="whatsapp">
-                              {pet?.customer.cpf
-                                ? pet.customer.cpf
+                      {historicPets?.petOldConsults?.map(
+                        (consult: PetOldConsult) => (
+                          <Tr
+                            key={consult.CodAnimal}
+                            cursor="pointer"
+                            // onClick={() =>
+                            //   // navigate(
+                            //   //   `/Vets/Workspace/${consult?.id}/${consult.consultUniqueId}`
+                            //   // )
+                            // }
+                          >
+                            <Td>{consult.consulType}</Td>
+                            <Td>{consult.petWeight}</Td>
+
+                            <Td>
+                              {" "}
+                              {
+                                <Text colorScheme="whatsapp">
+                                  {new Intl.DateTimeFormat("pt-BR", {
+                                    month: "2-digit",
+                                    day: "2-digit",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  }).format(new Date(consult?.date))}
+                                </Text>
+                              }
+                            </Td>
+
+                            <Td>
+                              {consult?.vetName
+                                ? consult.vetName
                                 : "Não encontrado"}
-                            </Text>
-                          </Td>
-
-                          <Td>
-                            {pet?.customer.name
-                              ? pet.customer.name
-                              : "Não encontrado"}
-                          </Td>
-
-                          <Td>{pet?.name ? pet.name : "Não encontrado"}</Td>
-                          <Td>
-                            {pet?.CodAnimal ? pet.CodAnimal : "Não encontrado"}
-                          </Td>
-                          <Td>{pet?.weigth}</Td>
-                          <Td>
-                            {" "}
-                            {pet.customer.vetPreference == user.consultName
-                              ? pet.vetPreference
-                              : "Sem preferência"}
-                          </Td>
-                        </Tr>
-                      ))}
+                            </Td>
+                            <Td>
+                              {consult?.CodAnimal
+                                ? consult.CodAnimal
+                                : "Não encontrado"}
+                            </Td>
+                            <Td>{consult?.petName}</Td>
+                            <Td>
+                              {" "}
+                              {consult
+                                ? consult.customerName
+                                : "Sem preferência"}
+                            </Td>
+                          </Tr>
+                        )
+                      )}
                     </Tbody>
                   </Table>
                 ) : (
+                  <Text fontSize="2xl" fontWeight={"semibold"}>
+                    Animal sem histórico de Consultas!!
+                  </Text>
+                )}
+                {/* ) : (
                   <Table colorScheme="blackAlpha">
                     <Thead>
                       <Tr>
@@ -285,11 +258,11 @@ export const Historic = () => {
                           <Tr
                             key={pet.id}
                             cursor="pointer"
-                            onClick={() =>
-                              navigate(
-                                ` /Vets/Workspace/${pet.id}/${pet.consultUniqueId}`
-                              )
-                            }
+                            // onClick={() =>
+                            //   // navigate(
+                            //   //   ` /Vets/Workspace/${pet.id}/${pet.consultUniqueId}`
+                            //   // )
+                            // }
                           >
                             <Td>
                               <Text colorScheme="whatsapp">
@@ -332,7 +305,7 @@ export const Historic = () => {
                         .reverse()}
                     </Tbody>
                   </Table>
-                )}
+                              )} */}
               </Flex>
             </Flex>
           </Box>
