@@ -2,10 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CardNavigationContainer } from "./style";
 export function CardNavigation({ path, title, icon, text }: any) {
-
   return (
-    <CardNavigationContainer 
->
+    <CardNavigationContainer>
       <Link to={path}>
         <div className="navContainer">
           <h2>{title}</h2>
