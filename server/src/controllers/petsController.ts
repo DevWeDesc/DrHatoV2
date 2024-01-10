@@ -472,6 +472,36 @@ export const petsController = {
     } catch (error) {
       console.log(error)
     }
+},
+
+
+getPetOldHistoryConsults: async (request: FastifyRequest<{Params: {petId: string}}>, reply: FastifyReply) => {
+  try { 
+    const { petId} = request.params
+
+        const oldConsults = await prisma.pets.findUnique({
+          where: {CodAnimal: parseInt(petId)}, include: {
+            petOldConsults: true
+          }
+        })
+
+
+        if(!oldConsults) {
+          reply.status(404).send("sem histórico para esse animal!")
+        }
+
+        reply.send({
+          oldConsults
+        })
+
+
+  } catch (error) {
+
+    reply.send({
+      message: error
+    })
+
+  }
 }
 
 

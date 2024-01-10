@@ -20,5 +20,6 @@ export async function petRoutes(app: FastifyInstance) {
 
 
   app.get('/pets/history/:petId', petsController.getAllPetHistory)
+  app.get("/pet/old/history/consults/:petId", petsController.getPetOldHistoryConsults)
 
 }
