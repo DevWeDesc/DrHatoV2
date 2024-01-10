@@ -141,15 +141,13 @@ export interface VacinnesProps {
   requestedDate: Date | string;
 }
 
-
 enum SurgerieStatus {
   FINISHED,
   STARTED,
-  INPROGRESS
+  INPROGRESS,
 }
 
 export interface SugeriesProps {
-
   id: number;
   name: string;
   price: number;
@@ -161,7 +159,7 @@ export interface SugeriesProps {
 type QueuePetOn = {
   name: string;
   id: number;
-}
+};
 type QueueProps = {
   id: string | number;
   moreInfos: string;
@@ -170,7 +168,6 @@ type QueueProps = {
   queueEntry: Date;
   queryType: string;
   petIsInQueue: boolean;
-
 };
 
 type totalAccProps = {
@@ -216,30 +213,33 @@ type AdmissionsProps = {
 type PetQueueProps = {
   [x: string]: any;
   id: number;
-  queueEntry: Date
-  queueExit: Date
-  queryType: String
+  queueEntry: Date;
+  queueExit: Date;
+  queryType: String;
   debitOnThisQuery: number;
   responsibleVeterinarian: string;
-  pet: QueuePetOn
-}
+  pet: QueuePetOn;
+};
 type PetBedsProps = {
-  id: number
+  id: number;
   openedAdmissionId: string;
-	entryOur: Date
-	exitOur:Date 
-	mustFasting: boolean
-	totalDebt: number
-	isCompleted: boolean
-	admissionsObservations: string
-	medicine_id: number
-  medicine: {id: number, observations: string[], pet: {id: number, name: string}}
-}
+  entryOur: Date;
+  exitOur: Date;
+  mustFasting: boolean;
+  totalDebt: number;
+  isCompleted: boolean;
+  admissionsObservations: string;
+  medicine_id: number;
+  medicine: {
+    id: number;
+    observations: string[];
+    pet: { id: number; name: string };
+  };
+};
 type MedicineRecordsProps = {
-  petQueues: PetQueueProps[]
-  petBeds: PetBedsProps[]
-}
-
+  petQueues: PetQueueProps[];
+  petBeds: PetBedsProps[];
+};
 
 export type HistoryBoxProps = {
   id: string | number;
@@ -298,37 +298,36 @@ export interface PetDetaisl {
   admissions: AdmissionsProps[];
   vetPreference: string;
   customer: { name: string };
-  queueHistory: QueueHistoryProps[]
+  queueHistory: QueueHistoryProps[];
 }
 type QueueHistoryProps = {
-  id: number
-	queueEntry: Date
-	queueExit: Date
-	queryType: Date
-	debitOnThisQuery: number
-	responsibleVeterinarian: string
-	petName: string
-	petWeight: string
-	observations: string
-	medicine_id: number
-}
+  id: number;
+  queueEntry: Date;
+  queueExit: Date;
+  queryType: Date;
+  debitOnThisQuery: number;
+  responsibleVeterinarian: string;
+  petName: string;
+  petWeight: string;
+  observations: string;
+  medicine_id: number;
+};
 type AccountProps = {
   id: number;
   accountNumber: number;
-  debits:  number;
-  credits:  number;
+  debits: number;
+  credits: number;
   installments: InstallmentsProps[];
-}
+};
 type InstallmentsProps = {
   id: number;
-  debitName: string
+  debitName: string;
   totalDebit: number;
-  paymentType: string
+  paymentType: string;
   paymentDate: Date | number;
   installmentAmount: number;
-  amountInstallments: number; 
-
-}
+  amountInstallments: number;
+};
 export interface ICustomer {
   id: number;
   name: string;
@@ -349,4 +348,39 @@ export interface ICustomer {
   howKnowUs: string;
   customerAccount: AccountProps;
   pets: PetDetaisl[];
+}
+export interface OldConsults {
+  id: number;
+  CodCli: number;
+  CodAnimal: number;
+  name: string;
+  especie: string;
+  sexo: string;
+  race: string;
+  weigth: string;
+  haveChip: boolean;
+  corPet: string;
+  sizePet: string;
+  bornDate: string;
+  dateAge: null;
+  observations: string;
+  customer_id: number;
+  codPet: string;
+  isCastred: boolean;
+  debits: string;
+  petOldConsults: PetOldConsult[];
+}
+export interface PetOldConsult {
+  id: number;
+  codConsulta: number;
+  date: Date;
+  vetId: number;
+  vetName: string;
+  petWeight: number;
+  petName: string;
+  customerName: string;
+  consulType: string;
+  CodAnimal: number;
+  CodCli: number;
+  petsId: number;
 }
