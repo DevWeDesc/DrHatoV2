@@ -191,7 +191,6 @@ export function Router() {
             path="/Vets/WorkSpace/:id/:queueId"
             element={<WorkSpaceVet />}
           />
-          <Route path="/Vets/Historic/:id" element={<Historic />} />
           {/* VETS WORKSPACE PATHS */}
           <Route path="/WorkSpace/Exam/:id/:queueId" element={<VetExams />} />
           <Route
@@ -313,6 +312,7 @@ export function Router() {
             path="/Pets/MedicineRecord/:id/:queueId"
             element={<MedicineRecords />}
           />
+          <Route path="/Pet/Historic/:id" element={<Historic />} />
           <Route path="/Recepcao/Create" element={<CreateCustomer />} />
           <Route
             path="/Recepcao/Customer/Edit/:id"
