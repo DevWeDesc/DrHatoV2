@@ -75,7 +75,7 @@ export function ReceptionCreateNewConsultForm() {
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
   const [tamCep, setTamCep] = useState(0);
-  const [adressNumber, setAdressNumber] = useState("")
+  const [adressNumber, setAdressNumber] = useState("");
   const [errorInput, setErrorInput] = useState(0);
   const navigate = useNavigate();
 
@@ -119,16 +119,15 @@ export function ReceptionCreateNewConsultForm() {
       neighbour: bairro,
     };
     try {
+      const validCpf = validateCpf(CPFValue);
 
-      const validCpf = validateCpf(CPFValue)
-
-      if(validCpf) {
+      if (validCpf) {
         await api
-        .post("/customers", data)
-        .then((res) => navigate(`/Recepcao/Consultas/Clientes/${res.data}`));
-      toast.success("Usuário cadastrado");
+          .post("/customers", data)
+          .then((res) => navigate(`/Recepcao/Consultas/Clientes/${res.data}`));
+        toast.success("Usuário cadastrado");
       } else {
-        toast.error("CPF Fora dos padrões")
+        toast.error("CPF Fora dos padrões");
       }
     } catch (error) {
       toast.error("Falha ao cadastrar novo usuário");
@@ -138,12 +137,10 @@ export function ReceptionCreateNewConsultForm() {
   };
 
   const handleBlur = () => {
-    if (logradouro.endsWith('  ')) {
-      setLogradouro(logradouro + 'Nº ');
+    if (logradouro.endsWith("  ")) {
+      setLogradouro(logradouro + "Nº ");
     }
   };
-
-
 
   return (
     <ChakraProvider>
@@ -529,7 +526,7 @@ export function ReceptionCreateNewConsultForm() {
                       )}
                     </Flex>
                     <Flex direction="column" w="15%">
-                    <FormLabel htmlFor="adressNumber" mb="0" fontSize="17">
+                      <FormLabel htmlFor="adressNumber" mb="0" fontSize="17">
                         Número
                       </FormLabel>
                       <Input
@@ -726,5 +723,3 @@ export function ReceptionCreateNewConsultForm() {
     </ChakraProvider>
   );
 }
-
-
