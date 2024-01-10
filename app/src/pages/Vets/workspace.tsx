@@ -378,7 +378,7 @@ export function WorkSpaceVet() {
                     height={8}
                     gap={2}
                     colorScheme="facebook"
-                    onClick={() => navigate(`/Vets/Historic/${id}`)}
+                    onClick={() => navigate(`/Pet/Historic/${id}`)}
                   >
                     Histórico Animal
                   </Button>
