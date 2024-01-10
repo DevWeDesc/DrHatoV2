@@ -46,38 +46,50 @@ import { VetInstructions } from "./WorkSpaceVets/instructions";
 import { EndConsults } from "./WorkSpaceVets/endconsults";
 import { validateCpf } from "../../helpers/validateCpf";
 type OpenExamProps = {
-  isMultiPart: boolean,
-  isReportByText: boolean,
-  isOnePart: boolean,
-  examId: number
-}
+  isMultiPart: boolean;
+  isReportByText: boolean;
+  isOnePart: boolean;
+  examId: number;
+};
 
 export function WorkSpaceVet() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate();
   const [pet, setPet] = useState({} as PetDetaisl);
-  const {setModalWeigthPet,
+  const {
+    setModalWeigthPet,
     setAutorizationModalOpen,
-    closeAutorizationModal,closeInstructionModal,closeModal,closeMedicineModal,insInstructionsModalOpen,isAutorizationModalOpen,isMedicineModalOpen,isModalOpen,modalWeigthPet,setInstructionModalOpen
-    ,setIsModalOpen, setMedicineModalOpen, closeEndQueueModal, isEndConsultQueue, setIsEndConsultQueue
-  } = useContext(ModalContext)
+    closeAutorizationModal,
+    closeInstructionModal,
+    closeModal,
+    closeMedicineModal,
+    insInstructionsModalOpen,
+    isAutorizationModalOpen,
+    isMedicineModalOpen,
+    isModalOpen,
+    modalWeigthPet,
+    setInstructionModalOpen,
+    setIsModalOpen,
+    setMedicineModalOpen,
+    closeEndQueueModal,
+    isEndConsultQueue,
+    setIsEndConsultQueue,
+  } = useContext(ModalContext);
   const [handleViewComponent, setHandleViewComponent] = useState("");
-  const [petWeigth, setPetWeigth] = useState("")
+  const [petWeigth, setPetWeigth] = useState("");
   const [reloadData, setReloadData] = useState(false);
   const [viewComponentPrint, setViewComponentPrint] = useState("");
   const [PdfDiagnostic, setPdfDiagnostic] = useState("");
   const [PdfPrescrition, setPdfPrescrition] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
-  const [petObservations, setPetObservations] = useState("")
+  const [petObservations, setPetObservations] = useState("");
 
   const handleChangePet = async (newPetId: number) => {
     navigate(`/Vets/Workspace/${newPetId}`);
     setReloadData(true);
   };
-  
+
   function handleCreateInstruction(text: string) {
-
-
     const docDefinition: TDocumentDefinitions = {
       content: [`${text}`],
       pageMargins: [50, 50],
@@ -86,33 +98,35 @@ export function WorkSpaceVet() {
     pdfMake.createPdf(docDefinition).open();
   }
 
-
-  function handleOpenResultExams({isOnePart, isMultiPart, isReportByText, examId}: OpenExamProps) {
+  function handleOpenResultExams({
+    isOnePart,
+    isMultiPart,
+    isReportByText,
+    examId,
+  }: OpenExamProps) {
     if (isOnePart === true) {
-      window.open(`/WorkSpace/ExamResultsOnePart/${examId}`, '_blank');
-    } 
+      window.open(`/WorkSpace/ExamResultsOnePart/${examId}`, "_blank");
+    }
 
     if (isMultiPart === true) {
-      window.open(`/WorkSpace/ExamResultsMultiPart/${examId}`, '_blank');
-    } 
+      window.open(`/WorkSpace/ExamResultsMultiPart/${examId}`, "_blank");
+    }
 
     if (isReportByText === true) {
-      window.open(`/WorkSpace/ExamResultsByText/${examId}`, '_blank');
-    } 
+      window.open(`/WorkSpace/ExamResultsByText/${examId}`, "_blank");
+    }
   }
-
-
 
   const handleChangePetWeight = async (weigth: string) => {
     try {
-      await api.put(`/pet/${id}/${weigth}`)
+      await api.put(`/pet/${id}/${weigth}`);
       setReloadData(true);
-      toast.success("Peso editado com sucesso")
+      toast.success("Peso editado com sucesso");
     } catch (error) {
-      console.log(error)
-      toast.error("Falha ao editar peso do animal!")
+      console.log(error);
+      toast.error("Falha ao editar peso do animal!");
     }
-  }
+  };
 
   async function getPetDetails() {
     const response = await api.get(`/pets/${id}`);
@@ -139,7 +153,7 @@ export function WorkSpaceVet() {
         responsibleVeterinarian: user.consultName,
         petName: pet.name,
         petWeight: pet.weigth,
-        observations: petObservations
+        observations: petObservations,
       };
 
       await api.put(
@@ -180,17 +194,17 @@ export function WorkSpaceVet() {
       );
 
       break;
-      case viewComponentPrint == "Solicitar Exame":
-        ComponentPrint = (
-          <Textarea
-            minW="45.7rem"
-            minH="12.5rem"
-          defaultValue={'Observações nesta consulta'}
-            onChange={(e) => setPetObservations(e.target.value)}
-          />
-        );
-        
-        break;
+    case viewComponentPrint == "Solicitar Exame":
+      ComponentPrint = (
+        <Textarea
+          minW="45.7rem"
+          minH="12.5rem"
+          defaultValue={"Observações nesta consulta"}
+          onChange={(e) => setPetObservations(e.target.value)}
+        />
+      );
+
+      break;
     default:
       ComponentPrint = <Text>Nenhuma informação a ser exibida</Text>;
       break;
@@ -285,14 +299,8 @@ export function WorkSpaceVet() {
       break;
   }
 
-  
-
-  return (  
-    
+  return (
     <ChakraProvider>
-    
-
-     
       <WorkSpaceContainer>
         <WorkSpaceHeader>
           <Flex
@@ -322,128 +330,128 @@ export function WorkSpaceVet() {
               </Button>
             </Flex>
 
-            <Flex
-              width="100%"
-              height="100%"
-                align="center"
-         
-     
-              m="4"
-              p="2"
-           
-            >
+            <Flex width="100%" height="100%" align="center" m="4" p="2">
               <VStack w="100%" align="flex-start">
                 <HStack>
-                <Button
-                onClick={() => setIsModalOpen(true)}
-                height={8}
-                colorScheme="whatsapp"
-              >
-                FORMULÁRIOS
-              </Button>
-              
-              <Button
-                height={8}
-                colorScheme="whatsapp"
-                onClick={() => setInstructionModalOpen(true)}
-              >
-                INSTRUÇÕES PROPRIETÁRIO
-              </Button>
-              <Button
-                height={8}
-                colorScheme="whatsapp"
-                onClick={() => setAutorizationModalOpen(true)}
-              >
-                AUTORIZAÇÕES
-              </Button>
-              <Button
-                height={8}
-                colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Protocols/${id}`)}
-              >
-                PROTOCOLOS
-              </Button>
-           
-           
-          
-              
-              <Button
-              leftIcon={<GiMedicines color="black" size={24}/>}
-                isDisabled={pet.isBusy}
-                height={8}
-                gap={2}
-                colorScheme="whatsapp"
-                onClick={() => setMedicineModalOpen(true)}
-              >
-                Medicar Animal
-              </Button>
+                  <Button
+                    onClick={() => setIsModalOpen(true)}
+                    height={8}
+                    colorScheme="whatsapp"
+                  >
+                    FORMULÁRIOS
+                  </Button>
 
+                  <Button
+                    height={8}
+                    colorScheme="whatsapp"
+                    onClick={() => setInstructionModalOpen(true)}
+                  >
+                    INSTRUÇÕES PROPRIETÁRIO
+                  </Button>
+                  <Button
+                    height={8}
+                    colorScheme="whatsapp"
+                    onClick={() => setAutorizationModalOpen(true)}
+                  >
+                    AUTORIZAÇÕES
+                  </Button>
+                  <Button
+                    height={8}
+                    colorScheme="whatsapp"
+                    onClick={() => navigate(`/WorkSpace/Protocols/${id}`)}
+                  >
+                    PROTOCOLOS
+                  </Button>
+
+                  <Button
+                    leftIcon={<GiMedicines color="black" size={24} />}
+                    isDisabled={pet.isBusy}
+                    height={8}
+                    gap={2}
+                    colorScheme="whatsapp"
+                    onClick={() => setMedicineModalOpen(true)}
+                  >
+                    Medicar Animal
+                  </Button>
+                  <Button
+                    isDisabled={pet.isBusy}
+                    height={8}
+                    gap={2}
+                    colorScheme="facebook"
+                    onClick={() => navigate(`/Pet/Historic/${id}`)}
+                  >
+                    Histórico Animal
+                  </Button>
                 </HStack>
                 <HStack>
-                <Button
-                isDisabled={pet.isBusy}
-                height={8}
-                colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Admissions/${id}/${queueId}`)}
-              >
-                INTERNAR
-              </Button>
-              <Button
-                isDisabled={pet.isBusy}
-                height={8}
-                colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Surgeries/${id}/${queueId}`)}
-              >
-                CIRURGIAS
-              </Button>
-              <Button
-                isDisabled={pet.isBusy}
-                height={8}
-                colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Vaccines/${id}/${queueId}`)}
-              >
-                VACINAS
-              </Button>
-              <Button
-                isDisabled={pet.isBusy}
-                onClick={() => navigate(`/WorkSpace/Procedures/${id}/${queueId}`)}
-                height={8}
-                colorScheme="whatsapp"
-              >
-                PROCEDIMENTOS
-              </Button>
-              <Button
-                isDisabled={pet.isBusy}
-                height={8}
-                colorScheme="whatsapp"
-                onClick={() => navigate(`/WorkSpace/Exam/${id}/${queueId}`)}
-              >
-                EXAMES
-              </Button>
-              
-              <Button
-                height={8}
-                onClick={() => navigate(`/Pets/MedicineRecord/${id}/${queueId}`)}
-                leftIcon={<MdPets />}
-                colorScheme="linkedin"
-       
-              >
-                PRONTUÁRIO DO PET
-              </Button>
-            <Button colorScheme="red"
-             height={8}
-            onClick={() => setIsEndConsultQueue(true)}
-            >
-              Concluir Consulta
-            </Button>
+                  <Button
+                    isDisabled={pet.isBusy}
+                    height={8}
+                    colorScheme="whatsapp"
+                    onClick={() =>
+                      navigate(`/WorkSpace/Admissions/${id}/${queueId}`)
+                    }
+                  >
+                    INTERNAR
+                  </Button>
+                  <Button
+                    isDisabled={pet.isBusy}
+                    height={8}
+                    colorScheme="whatsapp"
+                    onClick={() =>
+                      navigate(`/WorkSpace/Surgeries/${id}/${queueId}`)
+                    }
+                  >
+                    CIRURGIAS
+                  </Button>
+                  <Button
+                    isDisabled={pet.isBusy}
+                    height={8}
+                    colorScheme="whatsapp"
+                    onClick={() =>
+                      navigate(`/WorkSpace/Vaccines/${id}/${queueId}`)
+                    }
+                  >
+                    VACINAS
+                  </Button>
+                  <Button
+                    isDisabled={pet.isBusy}
+                    onClick={() =>
+                      navigate(`/WorkSpace/Procedures/${id}/${queueId}`)
+                    }
+                    height={8}
+                    colorScheme="whatsapp"
+                  >
+                    PROCEDIMENTOS
+                  </Button>
+                  <Button
+                    isDisabled={pet.isBusy}
+                    height={8}
+                    colorScheme="whatsapp"
+                    onClick={() => navigate(`/WorkSpace/Exam/${id}/${queueId}`)}
+                  >
+                    EXAMES
+                  </Button>
 
+                  <Button
+                    height={8}
+                    onClick={() =>
+                      navigate(`/Pets/MedicineRecord/${id}/${queueId}`)
+                    }
+                    leftIcon={<MdPets />}
+                    colorScheme="linkedin"
+                  >
+                    PRONTUÁRIO DO PET
+                  </Button>
+                  <Button
+                    colorScheme="red"
+                    height={8}
+                    onClick={() => setIsEndConsultQueue(true)}
+                  >
+                    Concluir Consulta
+                  </Button>
                 </HStack>
               </VStack>
-            
-           
-           
-              
-       
             </Flex>
           </Flex>
         </WorkSpaceHeader>
@@ -522,7 +530,8 @@ export function WorkSpaceVet() {
                   {new Intl.NumberFormat("pt-BR", {
                     currency: "BRL",
                     style: "currency",
-                  }).format(pet.totalAcc?.price)} Nesta Consulta
+                  }).format(pet.totalAcc?.price)}{" "}
+                  Nesta Consulta
                 </Text>
                 <Text
                   width="100%"
@@ -533,7 +542,9 @@ export function WorkSpaceVet() {
                   bgColor="gray.100"
                   cursor="pointer"
                   onClick={() =>
-                    navigate(`/Recepcao/Consultas/Clientes/Pets/Edit/${id}/${queueId}`)
+                    navigate(
+                      `/Recepcao/Consultas/Clientes/Pets/Edit/${id}/${queueId}`
+                    )
                   }
                 >
                   {`${pet.name}, ${pet.race}`}
@@ -593,7 +604,6 @@ export function WorkSpaceVet() {
                 >
                   {pet.more != "" ? "PetLove" : "Sem plano de Saúde"}
                 </Text>
-      
               </VStack>
             </Flex>
             <Flex direction="column" mx="4">
@@ -638,7 +648,18 @@ export function WorkSpaceVet() {
                   >
                     <>
                       {exam.doneExam === true ? (
-                        <Button onClick={() => handleOpenResultExams({isOnePart: exam?.onePart, isMultiPart: exam?.twoPart, isReportByText: exam.byText, examId: exam.id})} colorScheme="whatsapp" fontWeight="bold">
+                        <Button
+                          onClick={() =>
+                            handleOpenResultExams({
+                              isOnePart: exam?.onePart,
+                              isMultiPart: exam?.twoPart,
+                              isReportByText: exam.byText,
+                              examId: exam.id,
+                            })
+                          }
+                          colorScheme="whatsapp"
+                          fontWeight="bold"
+                        >
                           {exam.name}
                         </Button>
                       ) : (
@@ -647,7 +668,13 @@ export function WorkSpaceVet() {
                         </Button>
                       )}
                     </>
-                    <Text>{new Intl.DateTimeFormat('pt-BR').format(new Date(exam.requestedData ? exam.requestedData : Date.now()))}</Text>
+                    <Text>
+                      {new Intl.DateTimeFormat("pt-BR").format(
+                        new Date(
+                          exam.requestedData ? exam.requestedData : Date.now()
+                        )
+                      )}
+                    </Text>
                   </Flex>
                 ))
               ) : (
@@ -674,8 +701,12 @@ export function WorkSpaceVet() {
               <Button w="25%" colorScheme="whatsapp">
                 Sintomas
               </Button>
-              <Button  onClick={() => setViewComponentPrint("Solicitar Exame")} w="25%" colorScheme="whatsapp">
-               Observações
+              <Button
+                onClick={() => setViewComponentPrint("Solicitar Exame")}
+                w="25%"
+                colorScheme="whatsapp"
+              >
+                Observações
               </Button>
             </HStack>
             <Flex>{ComponentPrint}</Flex>
@@ -779,8 +810,17 @@ export function WorkSpaceVet() {
         </Text>
         <Flex direction="column" gap="15">
           <Text>Insira o peso do animal</Text>
-          <WeightPetInput onChange={(ev: ChangeEvent<HTMLInputElement> ) => setPetWeigth(ev.target.value)} />
-          <Button onClick={() => handleChangePetWeight(petWeigth)}  colorScheme="yellow">Editar</Button>
+          <WeightPetInput
+            onChange={(ev: ChangeEvent<HTMLInputElement>) =>
+              setPetWeigth(ev.target.value)
+            }
+          />
+          <Button
+            onClick={() => handleChangePetWeight(petWeigth)}
+            colorScheme="yellow"
+          >
+            Editar
+          </Button>
         </Flex>
       </GenericModal>
 
@@ -791,25 +831,24 @@ export function WorkSpaceVet() {
         <WorkVetAutorization />
       </GenericModal>
 
-      <GenericModal 
-       isOpen={isMedicineModalOpen}
-       onRequestClose={closeMedicineModal}
+      <GenericModal
+        isOpen={isMedicineModalOpen}
+        onRequestClose={closeMedicineModal}
       >
-         <SetMedicineInPet accId={pet?.totalAcc?.id} InAdmission={false} />
+        <SetMedicineInPet accId={pet?.totalAcc?.id} InAdmission={false} />
       </GenericModal>
-      <GenericModal 
-       isOpen={insInstructionsModalOpen}
-       onRequestClose={closeInstructionModal}
+      <GenericModal
+        isOpen={insInstructionsModalOpen}
+        onRequestClose={closeInstructionModal}
       >
         <VetInstructions />
       </GenericModal>
       <GenericModal
-       isOpen={isEndConsultQueue}
-       onRequestClose={closeEndQueueModal}
+        isOpen={isEndConsultQueue}
+        onRequestClose={closeEndQueueModal}
       >
-            <EndConsults handleCloseQuery={handleCloseQuery} />
+        <EndConsults handleCloseQuery={handleCloseQuery} />
       </GenericModal>
-   
     </ChakraProvider>
   );
 }
