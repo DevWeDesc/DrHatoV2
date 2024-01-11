@@ -9,95 +9,97 @@ import {
   Tr,
   Text,
   Button,
-  TableContainer,
   Input,
   Textarea,
   HStack,
-  FormLabel
-} from '@chakra-ui/react'
-import { BiHome, GiMedicines, TbArrowBack } from 'react-icons/all'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { api } from '../../lib/axios'
-import { MedicineContainer } from './style'
-import { GenericModal } from '../../components/Modal/GenericModal'
-import { MedicinesHistory } from './MedicinesHistory'
-import { toast } from 'react-toastify'
+  FormLabel,
+  TableCaption,
+  Tfoot,
+  TableContainer,
+} from "@chakra-ui/react";
+import { BiHome, GiMedicines, TbArrowBack } from "react-icons/all";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { api } from "../../lib/axios";
+import { MedicineContainer } from "./style";
+import { GenericModal } from "../../components/Modal/GenericModal";
+import { MedicinesHistory } from "./MedicinesHistory";
+import { toast } from "react-toastify";
 
 interface PetProps {
-  id: number
-  name: string
-  especie: string
-  corPet: string
-  observations: string
-  race: string
-  rga: number
-  sizePet: string
-  weigth: string
-  sexo: string
-  status: string
-  bornDate: string
+  id: number;
+  name: string;
+  especie: string;
+  corPet: string;
+  observations: string;
+  race: string;
+  rga: number;
+  sizePet: string;
+  weigth: string;
+  sexo: string;
+  status: string;
+  bornDate: string;
   customer: {
     name: string;
-  }
-  codPet: string
+  };
+  codPet: string;
 
   medicineRecords: {
     petBeds: Array<{
       id: number;
       entryOur: string;
-    }>
+    }>;
     petExams: Array<{
       id: number;
       name: string;
-      requesteData: string
-      doneExame: boolean
-    }>
+      requesteData: string;
+      doneExame: boolean;
+    }>;
     petQueues: Array<{
-      id: number
-     queueEntry: string
-     queueExit: string
-     queryType: string
-     responsibleVeterinarian: string
-     petWeight: string
-     observations: string
-    }>
+      id: number;
+      queueEntry: string;
+      queueExit: string;
+      queryType: string;
+      responsibleVeterinarian: string;
+      petWeight: string;
+      observations: string;
+    }>;
     petSurgeries: Array<{
       id: number;
       name: string;
-      requestedDate: Date 
-      completedDate: Date | null
+      requestedDate: Date;
+      completedDate: Date | null;
       status: string;
-    }>
+    }>;
     petVaccines: Array<{
       id: number;
       name: string;
-      requestedDate: Date 
-      applicationDate: Date | null
-      isDone: boolean
-    }>
-  }
+      requestedDate: Date;
+      applicationDate: Date | null;
+      isDone: boolean;
+    }>;
+  };
 }
 
 export function MedicineRecords() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
-  const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalUnconclude, setModalUnconclude] = useState(false);
   const [masterPassword, setMasterPassword] = useState("");
   const [unconcludeObs, setUnconcludeObs] = useState("");
   const [endQueueId, setEndQueueId] = useState(0);
-  const [pets, setPets] = useState({} as PetProps)
+  const [pets, setPets] = useState({} as PetProps);
   const user: {
     id: number;
     role: string;
   } = JSON.parse(localStorage.getItem("user") as string);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  function  openModal() {
-    setModalIsOpen(true)
+  function openModal() {
+    setModalIsOpen(true);
   }
   function closeModal() {
-    setModalIsOpen(false)
+    setModalIsOpen(false);
   }
 
   function openUnconcludeModal() {
@@ -110,34 +112,31 @@ export function MedicineRecords() {
 
   async function getPet() {
     try {
-      const response = await api.get(`/pets/history/${id}`)
-      setPets(response.data)
+      const response = await api.get(`/pets/history/${id}`);
+      setPets(response.data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
-
   async function unclocludeQueue(queueId: number) {
     const data = {
-      masterPassword, 
-      unconcludeObs, 
-      userId: user.id, 
-      queueId
-    } 
-    if(user.role != "MASTER") {
-      toast.warning("Função apenas de usuário MASTER!")
+      masterPassword,
+      unconcludeObs,
+      userId: user.id,
+      queueId,
+    };
+    if (user.role != "MASTER") {
+      toast.warning("Função apenas de usuário MASTER!");
     } else {
-  
-      await api.put("/queue/unconclude", data)
-      toast.success("Consulta desconcluida!!")
+      await api.put("/queue/unconclude", data);
+      toast.success("Consulta desconcluida!!");
     }
   }
 
   useEffect(() => {
-    getPet()
-  }, [])
-
+    getPet();
+  }, []);
 
   return (
     <ChakraProvider>
@@ -150,7 +149,7 @@ export function MedicineRecords() {
             <Button
               colorScheme="teal"
               leftIcon={<BiHome size={24} />}
-              onClick={() => navigate('/Home')}
+              onClick={() => navigate("/Home")}
             >
               Home
             </Button>
@@ -176,7 +175,6 @@ export function MedicineRecords() {
           <Flex
             direction="column"
             shadow="4px 0px 10px -2px rgba(0, 0, 0, 0.2)"
-        
             w="100%"
           >
             <Flex
@@ -250,57 +248,136 @@ export function MedicineRecords() {
               className="secondmain"
             >
               <Flex w="100%" h="10%" justify="space-evenly" my="2">
-                <Button colorScheme="whatsapp" w="32%">
+                <Button
+                  colorScheme="whatsapp"
+                  w="33.3%"
+                  borderX="2px solid green"
+                  borderY="4px solid green"
+                  borderLeft="4px solid green"
+                  borderRadius={0}
+                >
                   Consultas
                 </Button>
-                <Button colorScheme="whatsapp" w="32%">
+                <Button
+                  colorScheme="whatsapp"
+                  w="33.3%"
+                  borderX="2px solid green"
+                  borderY="4px solid green"
+                  borderRadius={0}
+                >
                   Internações
                 </Button>
-                <Button colorScheme="whatsapp" w="32%">
+                <Button
+                  colorScheme="whatsapp"
+                  w="33.3%"
+                  borderY="4px solid green"
+                  borderX="2px solid green"
+                  borderRight="4px solid green"
+                  borderRadius={0}
+                >
                   Outra Unidade
                 </Button>
               </Flex>
 
               <Flex w="100%" h="100%" overflowY="auto">
-                  <Flex direction="column"  w="100%" h="100%">
-                  {
-                    pets?.medicineRecords?.petQueues.map((queue) => (
-                      <Flex  textAlign="center"  direction="column" w="100%" key={queue.id}>
-                      <Text border="2px" fontSize="lg" color="black" fontWeight="bold">{`Entrada: ${new Intl.DateTimeFormat('pt-BR',{
-                        day: '2-digit',
-                        month: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      } ).format(new Date(queue.queueEntry))} 
+                <Flex direction="column" w="100%" h="100%">
+                  {pets?.medicineRecords?.petQueues.map((queue) => (
+                    <Flex
+                      textAlign="center"
+                      direction="column"
+                      w="100%"
+                      key={queue.id}
+                    >
+                      <Text
+                        border="2px"
+                        fontSize="lg"
+                        bg="gray.300"
+                        color="black"
+                        fontWeight="bold"
+                      >{`Entrada: ${new Intl.DateTimeFormat("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }).format(new Date(queue.queueEntry))} 
                       - 
-                      Saida: ${new Intl.DateTimeFormat('pt-BR',{
-                        day: '2-digit',
-                        month: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      } ).format(new Date(queue.queueExit))}
+                      Saida: ${new Intl.DateTimeFormat("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }).format(new Date(queue.queueExit))}
                       -
-                      ${queue.queryType} - ${queue.responsibleVeterinarian}`}</Text>
-                      <Flex m="2" align="center" textAlign="center" gap="2">
-                      <Text border="2px"  fontWeight="bold"  fontSize="lg"  bgColor="gray.300" h="38px" w="20%"> Peso</Text>
-                      <Text  border="2px"  fontWeight="black" fontSize="lg" bgColor="white"  h="38px" w="80%"> {queue.petWeight}</Text>
-                      <Button colorScheme="red" onClick={() => {setEndQueueId(queue.id);openUnconcludeModal()}} >Desconcluir</Button>
+                      ${queue.queryType} - ${
+                        queue.responsibleVeterinarian
+                      }`}</Text>
+                      <Flex align="center" textAlign="center" gap="0">
+                        <Text
+                          borderY="2px"
+                          fontWeight="bold"
+                          fontSize="lg"
+                          bgColor="gray.300"
+                          h="38px"
+                          w="20%"
+                        >
+                          {" "}
+                          Peso
+                        </Text>
+                        <Text
+                          border="2px"
+                          fontWeight="black"
+                          fontSize="lg"
+                          bgColor="white"
+                          h="38px"
+                          w="80%"
+                        >
+                          {" "}
+                          {queue.petWeight}
+                        </Text>
+                        <Button
+                          maxH="38px"
+                          borderRadius="0px"
+                          colorScheme="red"
+                          onClick={() => {
+                            setEndQueueId(queue.id);
+                            openUnconcludeModal();
+                          }}
+                        >
+                          Desconcluir
+                        </Button>
                       </Flex>
-               
-                        <Flex align="center" gap="2">
-                        <Text  border="2px"  fontWeight="bold"  fontSize="lg"  bgColor="gray.300" h="38px" w="20%" > Observações</Text>
-                        <Textarea bgColor="white"  fontSize="md" fontWeight="bold"  border="2px"  w="90%" defaultValue={queue.observations} />
-                        </Flex>
-                     
-                     
+
+                      <Flex direction="column">
+                        <Text
+                          pl="40px"
+                          textAlign="left"
+                          border="2px"
+                          fontWeight="bold"
+                          fontSize="lg"
+                          bgColor="gray.300"
+                          py="4px"
+                          w="100%"
+                        >
+                          {" "}
+                          Sintomas
+                        </Text>
+                        <Textarea
+                          borderRadius="0"
+                          bgColor="white"
+                          fontSize="md"
+                          fontWeight="bold"
+                          border="2px"
+                          w="100%"
+                          defaultValue={queue.observations}
+                        />
                       </Flex>
-                    ))}
-                  
-                  </Flex>
+                    </Flex>
+                  ))}
+                </Flex>
               </Flex>
             </Flex>
           </Flex>
-          <Flex width="40%" direction="column" className="one">
+          <Flex width="50%" direction="column" className="one">
             <Flex
               height="50%"
               w="100%"
@@ -316,55 +393,47 @@ export function MedicineRecords() {
                 justify="center"
                 py="2"
                 borderTop="1px solid black"
+                bg="gray.600"
+                textColor="white"
               >
                 <Text fontWeight="bold">VACINAS</Text>
               </Flex>
-              <Flex
-                w="100%"
-                height="38px"
-                bgColor="gray.200"
-                gap={2}
-                align="center"
-                justify="space-evenly"
-                borderTop="1px solid black"
-              >
-                <Text fontWeight="bold">TIPOS</Text>
-                <Text fontWeight="bold">DATA</Text>
-              </Flex>
-              <Flex
-                direction="column"
-                height="100%"
-                width="100%"
-                overflowY="auto"
-              >
-                {pets.medicineRecords?.petVaccines?.map(vaccine => (
-                  <Flex
-                    key={vaccine.id}
-                    borderY="1px"
-                    bgColor="cyan.100"
-                    align="center"
-                    height="38px"
-                    width="100%"
-                    p={2}
-                    justify="space-between"
-                  >
-                    {vaccine.isDone === true ? (
-                      <Text fontSize="sm" color="green.400" fontWeight="bold">
-                        {vaccine.name}
-                      </Text>
-                    ) : (
-                      <Text fontSize="sm" color="red.400" fontWeight="bold">
-                        {vaccine.name}
-                      </Text>
-                    )}
-                    <Text fontWeight="bold" fontSize="lg">
-                      {new Intl.DateTimeFormat('pt-BR').format(
-                        new Date(vaccine.requestedDate ? vaccine.requestedDate : Date.now() )
-                      )}
-                    </Text>
-                  </Flex>
-                ))}
-              </Flex>
+              <TableContainer>
+                <Table variant="striped">
+                  <Thead>
+                    <Tr>
+                      <Th>Tipo</Th>
+                      <Th></Th>
+                      <Th borderLeft="2px solid black">Data</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {pets.medicineRecords?.petVaccines?.map((vaccine) => (
+                      <Tr key={vaccine.id}>
+                        {vaccine.isDone === true ? (
+                          <Td borderY="1px solid black">{vaccine.name}</Td>
+                        ) : (
+                          <Td borderY="1px solid black">{vaccine.name}</Td>
+                        )}
+                        <Td borderY="1px solid black"></Td>
+
+                        <Td
+                          borderY="1px solid black"
+                          borderLeft="2px solid black"
+                        >
+                          {new Intl.DateTimeFormat("pt-BR").format(
+                            new Date(
+                              vaccine.requestedDate
+                                ? vaccine.requestedDate
+                                : Date.now()
+                            )
+                          )}
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
             </Flex>
 
             <Flex
@@ -381,63 +450,52 @@ export function MedicineRecords() {
                 align="center"
                 justify="center"
                 borderTop="1px solid black"
+                bg="gray.600"
+                textColor="white"
               >
                 <Text fontWeight="bold">CIRURGIAS</Text>
               </Flex>
-              <Flex
-                w="100%"
-                height="38px"
-                bgColor="gray.200"
-                gap={2}
-                align="center"
-                justify="space-evenly"
-                borderY="1px solid black"
-              >
-                <Text fontWeight="bold">TIPOS</Text>
-                <Text fontWeight="bold">DATA</Text>
-            
-              </Flex>
+              <TableContainer>
+                <Table>
+                  <Thead>
+                    <Tr>
+                      <Th>Tipo</Th>
+                      <Th></Th>
+                      <Th borderLeft="2px solid black">Data</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {pets.medicineRecords?.petSurgeries?.map((surgerie) => (
+                      <Tr key={surgerie.id}>
+                        {surgerie.status === "FINISHED" ? (
+                          <Td borderY="1px solid black">{surgerie.name}</Td>
+                        ) : (
+                          <Td borderY="1px solid black">{surgerie.name}</Td>
+                        )}
+                        <Td borderY="1px solid black"></Td>
 
-              <Flex
-                direction="column"
-                height="100%"
-                width="100%"
-                overflowY="auto"
-              >
-                {pets.medicineRecords?.petSurgeries?.map(surgerie => (
-                  <Flex
-                    key={surgerie.id}
-                    borderY="1px"
-                    bgColor="cyan.100"
-                    align="center"
-                    height="38px"
-                    width="100%"
-                    p={2}
-                    justify="space-between"
-                  >
-                    {surgerie.status === "FINISHED" ? (
-                      <Text fontSize="sm" color="green.400" fontWeight="bold">
-                        {surgerie.name}
-                      </Text>
-                    ) : (
-                      <Text fontSize="sm" color="red.400" fontWeight="bold">
-                        {surgerie.name}
-                      </Text>
-                    )}
-                    <Text fontWeight="bold" fontSize="lg">
-                      {new Intl.DateTimeFormat('pt-BR').format(
-                        new Date(surgerie.requestedDate ? surgerie.requestedDate : Date.now() )
-                      )}
-                    </Text>
-                  </Flex>
-                ))}
-              </Flex>
+                        <Td
+                          borderY="1px solid black"
+                          borderLeft="2px solid black"
+                        >
+                          {new Intl.DateTimeFormat("pt-BR").format(
+                            new Date(
+                              surgerie.requestedDate
+                                ? surgerie.requestedDate
+                                : Date.now()
+                            )
+                          )}
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
             </Flex>
           </Flex>
 
           <Flex
-            ml="1"
-            width="40%"
+            width="50%"
             direction="column"
             className="two"
             borderLeft="1px solid black"
@@ -447,62 +505,49 @@ export function MedicineRecords() {
                 w="100%"
                 height="38px"
                 py="2"
-                bgColor="gray.100"
+                bgColor="gray.600"
+                textColor="white"
                 align="center"
                 justify="center"
                 borderTop="1px solid black"
               >
                 <Text fontWeight="bold">EXAMES</Text>
               </Flex>
-              <Flex
-                w="100%"
-                height="40px"
-                bgColor="gray.200"
-                gap={2}
-                align="center"
-                pl="6"
-                pr="6"
-                justify="space-between"
-                borderTop="1px solid black"
-              >
-                <Text fontWeight="bold">TIPOS</Text>
-                <Text fontWeight="bold">DATA</Text>
-              </Flex>
-              <Flex
-                direction="column"
-                height="100%"
-                width="100%"
-                overflowY="auto"
-              >
-                {pets.medicineRecords?.petExams?.map(exam => (
-                  <Flex
-                    key={exam.id}
-                    borderY="1px"
-                    bgColor="cyan.100"
-                    align="center"
-                    height="38px"
-                    width="100%"
-                    pl="6"
-                    pr="6"
-                    justify="space-between"
-                  >
-                    {exam.doneExame === true ? (
-                      <Text color="green.400" fontWeight="bold">
-                        {exam.name}
-                      </Text>
-                    ) : (
-                      <Text color="red.400" fontWeight="bold">
-                        {exam.name}
-                      </Text>
-                    )}
-                    <Text fontWeight="bold" fontSize="lg">
-                      {new Intl.DateTimeFormat('pt-BR').format(
-                        new Date(exam.requesteData ? exam.requesteData : Date.now() )
-                      )}
-                    </Text>
-                  </Flex>
-                ))}
-              </Flex>
+              <TableContainer>
+                <Table variant="striped">
+                  <Thead>
+                    <Tr>
+                      <Th>Tipo</Th>
+                      <Th></Th>
+                      <Th borderLeft="2px solid black">Data</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {pets.medicineRecords?.petExams?.map((exam) => (
+                      <Tr key={exam.id}>
+                        {exam.doneExame === true ? (
+                          <Td borderY="1px solid black">{exam.name}</Td>
+                        ) : (
+                          <Td borderY="1px solid black">{exam.name}</Td>
+                        )}
+                        <Td borderY="1px solid black"></Td>
+
+                        <Td
+                          borderY="1px solid black"
+                          borderLeft="2px solid black"
+                        >
+                          {new Intl.DateTimeFormat("pt-BR").format(
+                            new Date(
+                              exam.requesteData ? exam.requesteData : Date.now()
+                            )
+                          )}
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+
               <Flex
                 w="100%"
                 height="38px"
@@ -524,66 +569,85 @@ export function MedicineRecords() {
               <Flex
                 w="100%"
                 height="38px"
-                bgColor="gray.100"
+                bgColor="gray.600"
+                textColor="white"
                 align="center"
                 justify="center"
                 borderTop="1px solid black"
               >
                 <Text fontWeight="bold">INTERNAÇÕES</Text>
               </Flex>
-              <Flex
-                w="100%"
-                height="38px"
-                bgColor="gray.200"
-                gap={2}
-                align="center"
-                justify="space-evenly"
-                borderY="1px solid black"
-              >
-                <Text fontWeight="bold">TIPOS</Text>
-                <Text fontWeight="bold">DATA</Text>
-              </Flex>
-              {
-                pets.medicineRecords?.petBeds?.map((admission) => (
-                  <Flex
-                  key={admission.id}
-                  w="100%"
-                  height="38px"
-                  bgColor="cyan.100"
-                  gap={2}
-                  align="center"
-                  justify="space-evenly"
-                  borderY="1px solid black"
+              <TableContainer>
+                <Table variant="striped">
+                  <Thead>
+                    <Tr>
+                      <Th>Tipo</Th>
+                      <Th></Th>
+                      <Th borderX="2px solid black">Data</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {pets.medicineRecords?.petBeds?.map((admission) => (
+                      <Tr key={admission.id}>
+                        <Td borderY="1px solid black">Internação</Td>
 
-                >
-                  <Text fontWeight="bold">Internação</Text>
-                  <Text fontWeight="bold">{new Intl.DateTimeFormat('pt-BR').format(new Date(admission?.entryOur ? admission.entryOur : Date.now()))}</Text>
-                </Flex>
-                ) )
-              }
-        
-         
+                        <Td borderY="1px solid black"></Td>
+
+                        <Td
+                          borderY="1px solid black"
+                          borderLeft="2px solid black"
+                        >
+                          {new Intl.DateTimeFormat("pt-BR").format(
+                            new Date(
+                              admission?.entryOur
+                                ? admission.entryOur
+                                : Date.now()
+                            )
+                          )}
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
             </Flex>
           </Flex>
         </MedicineContainer>
-   
       </Flex>
-      <GenericModal
-      isOpen={modalIsOpen}
-      onRequestClose={closeModal}
-      >
-        <MedicinesHistory/>
+      <GenericModal isOpen={modalIsOpen} onRequestClose={closeModal}>
+        <MedicinesHistory />
       </GenericModal>
-      <GenericModal isOpen={modalUnconclude} onRequestClose={closeUnconcludeModal}>
-              <Flex w={400} h={200} align="center" direction="column" >
-                <Text fontWeight="bold">Apenas MASTER's podem desconcluir consultas:</Text>
+      <GenericModal
+        isOpen={modalUnconclude}
+        onRequestClose={closeUnconcludeModal}
+      >
+        <Flex w={400} h={200} align="center" direction="column">
+          <Text fontWeight="bold">
+            Apenas MASTER's podem desconcluir consultas:
+          </Text>
 
-                <Textarea onChange={(ev) => setUnconcludeObs(ev.target.value)} border="1px" placeholder='Opcional: Motivo Desconclusão ' />
-                <Input mt="2" onChange={(ev) => setMasterPassword(ev.target.value)}  border="1px" name='masterPassword' type="password"  placeholder='Senha usuário Master'/>
-                <Button mt="4" colorScheme="teal"  onClick={() => unclocludeQueue(endQueueId)}>Desconcluir</Button>
-                
-              </Flex>
+          <Textarea
+            onChange={(ev) => setUnconcludeObs(ev.target.value)}
+            border="1px"
+            placeholder="Opcional: Motivo Desconclusão "
+          />
+          <Input
+            mt="2"
+            onChange={(ev) => setMasterPassword(ev.target.value)}
+            border="1px"
+            name="masterPassword"
+            type="password"
+            placeholder="Senha usuário Master"
+          />
+          <Button
+            mt="4"
+            colorScheme="teal"
+            onClick={() => unclocludeQueue(endQueueId)}
+          >
+            Desconcluir
+          </Button>
+        </Flex>
       </GenericModal>
     </ChakraProvider>
-  )
+  );
 }
