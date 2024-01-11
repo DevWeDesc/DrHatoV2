@@ -111,7 +111,7 @@ import { OnePartExamResultPdf } from "./components/ReactPdfComp/OnePartExamResul
 import { MultiPartExamResultPdf } from "./components/ReactPdfComp/MultiPartExamResultPdf";
 import { ByTextExamResultPdf } from "./components/ReactPdfComp/ByTextExamResultPdf";
 import { InstructionsPdf } from "./components/ReactPdfComp/InstructionsPdf";
-import { Historic } from "./pages/Vets/historic";
+import { MedicineRecordOld } from "./pages/Pets/MedicineRecordOld";
 
 export function Router() {
   return (
@@ -312,7 +312,10 @@ export function Router() {
             path="/Pets/MedicineRecord/:id/:queueId"
             element={<MedicineRecords />}
           />
-          <Route path="/Pet/Historic/:id" element={<Historic />} />
+          <Route
+            path="/Pets/MedicineRecordOld/:id/:queueId"
+            element={<MedicineRecordOld />}
+          />
           <Route path="/Recepcao/Create" element={<CreateCustomer />} />
           <Route
             path="/Recepcao/Customer/Edit/:id"

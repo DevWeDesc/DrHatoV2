@@ -7,7 +7,6 @@ import {
 import {
   Button,
   ChakraProvider,
-  Flex,
   Table,
   Thead,
   Tr,
@@ -20,6 +19,7 @@ import {
   Th,
   Input,
   Text,
+  Flex,
 } from "@chakra-ui/react";
 import {
   AiFillMedicineBox,
@@ -45,6 +45,7 @@ import { SetMedicineInPet } from "../../components/Medicine/SetMedicineInPet";
 import { VetInstructions } from "./WorkSpaceVets/instructions";
 import { EndConsults } from "./WorkSpaceVets/endconsults";
 import { validateCpf } from "../../helpers/validateCpf";
+import { CardMedicineRecord } from "../../components/CardMedicineRecord/CardMedicineRecord";
 type OpenExamProps = {
   isMultiPart: boolean;
   isReportByText: boolean;
@@ -74,6 +75,9 @@ export function WorkSpaceVet() {
     closeEndQueueModal,
     isEndConsultQueue,
     setIsEndConsultQueue,
+    isMedicineRecordOpen,
+    setIsMedicineRecordOpen,
+    closeMedicineRecordModal,
   } = useContext(ModalContext);
   const [handleViewComponent, setHandleViewComponent] = useState("");
   const [petWeigth, setPetWeigth] = useState("");
@@ -373,15 +377,6 @@ export function WorkSpaceVet() {
                   >
                     Medicar Animal
                   </Button>
-                  <Button
-                    isDisabled={pet.isBusy}
-                    height={8}
-                    gap={2}
-                    colorScheme="facebook"
-                    onClick={() => navigate(`/Pet/Historic/${id}`)}
-                  >
-                    Histórico Animal
-                  </Button>
                 </HStack>
                 <HStack>
                   <Button
@@ -435,8 +430,9 @@ export function WorkSpaceVet() {
 
                   <Button
                     height={8}
-                    onClick={() =>
-                      navigate(`/Pets/MedicineRecord/${id}/${queueId}`)
+                    onClick={
+                      () => setIsMedicineRecordOpen(true)
+                      // navigate(`/Pets/MedicineRecord/${id}/${queueId}`)
                     }
                     leftIcon={<MdPets />}
                     colorScheme="linkedin"
@@ -848,6 +844,27 @@ export function WorkSpaceVet() {
         onRequestClose={closeEndQueueModal}
       >
         <EndConsults handleCloseQuery={handleCloseQuery} />
+      </GenericModal>
+
+      <GenericModal
+        isOpen={isMedicineRecordOpen}
+        onRequestClose={closeMedicineRecordModal}
+      >
+        <Flex gap="22px">
+          <CardMedicineRecord
+            content="Aqui você vai encontrar o histórico do animal que estava presente no antigo sistema do Dr Hato"
+            redirect={`/Pets/MedicineRecordOld/${id}/${queueId}`}
+            textButton="Histórico Antigo"
+            title="Visualizar Histórico antigo"
+          />
+
+          <CardMedicineRecord
+            content="Aqui você vai encontrar o histórico do animal que está presente no novo sistema do Dr Hato"
+            redirect={`/Pets/MedicineRecord/${id}/${queueId}`}
+            textButton="Histórico Novo"
+            title="Visualizar Histórico novo"
+          />
+        </Flex>
       </GenericModal>
     </ChakraProvider>
   );

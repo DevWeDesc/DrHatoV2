@@ -11,10 +11,6 @@ import {
   Button,
   Input,
   Textarea,
-  HStack,
-  FormLabel,
-  TableCaption,
-  Tfoot,
   TableContainer,
 } from "@chakra-ui/react";
 import { BiHome, GiMedicines, TbArrowBack } from "react-icons/all";
@@ -22,120 +18,39 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { api } from "../../lib/axios";
 import { MedicineContainer } from "./style";
-import { GenericModal } from "../../components/Modal/GenericModal";
-import { MedicinesHistory } from "./MedicinesHistory";
-import { toast } from "react-toastify";
+import { OldConsults } from "../../interfaces";
 
-interface PetProps {
-  id: number;
-  name: string;
-  especie: string;
-  corPet: string;
-  observations: string;
-  race: string;
-  rga: number;
-  sizePet: string;
-  weigth: string;
-  sexo: string;
-  status: string;
-  bornDate: string;
-  customer: {
-    name: string;
-  };
-  codPet: string;
-
-  medicineRecords: {
-    petBeds: Array<{
-      id: number;
-      entryOur: string;
-    }>;
-    petExams: Array<{
-      id: number;
-      name: string;
-      requesteData: string;
-      doneExame: boolean;
-    }>;
-    petQueues: Array<{
-      id: number;
-      queueEntry: string;
-      queueExit: string;
-      queryType: string;
-      responsibleVeterinarian: string;
-      petWeight: string;
-      observations: string;
-    }>;
-    petSurgeries: Array<{
-      id: number;
-      name: string;
-      requestedDate: Date;
-      completedDate: Date | null;
-      status: string;
-    }>;
-    petVaccines: Array<{
-      id: number;
-      name: string;
-      requestedDate: Date;
-      applicationDate: Date | null;
-      isDone: boolean;
-    }>;
-  };
-}
-
-export function MedicineRecords() {
+export function MedicineRecordOld() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [modalUnconclude, setModalUnconclude] = useState(false);
-  const [masterPassword, setMasterPassword] = useState("");
-  const [unconcludeObs, setUnconcludeObs] = useState("");
-  const [endQueueId, setEndQueueId] = useState(0);
-  const [pets, setPets] = useState({} as PetProps);
+  const [consultOldPet, setConsultOldPet] = useState({} as OldConsults);
+  const [customer, setCustomer] = useState("");
   const user: {
     id: number;
     role: string;
   } = JSON.parse(localStorage.getItem("user") as string);
   const navigate = useNavigate();
 
-  function openModal() {
-    setModalIsOpen(true);
-  }
-  function closeModal() {
-    setModalIsOpen(false);
-  }
-
-  function openUnconcludeModal() {
-    setModalUnconclude(true);
-  }
-
-  function closeUnconcludeModal() {
-    setModalUnconclude(false);
-  }
-
-  async function getPet() {
+  async function getConsults() {
     try {
-      const response = await api.get(`/pets/history/${id}`);
-      setPets(response.data);
+      const response = await api.get(`/pet/old/history/consults/${id}`);
+      setConsultOldPet(response.data.oldConsults);
     } catch (error) {
       console.log(error);
     }
   }
 
-  async function unclocludeQueue(queueId: number) {
-    const data = {
-      masterPassword,
-      unconcludeObs,
-      userId: user.id,
-      queueId,
-    };
-    if (user.role != "MASTER") {
-      toast.warning("Função apenas de usuário MASTER!");
-    } else {
-      await api.put("/queue/unconclude", data);
-      toast.success("Consulta desconcluida!!");
-    }
+  async function getCustomer() {
+    const responseconsult = await api.get(`/pet/old/history/consults/${id}`);
+
+    const response = await api.get(
+      `/customers/${responseconsult.data.oldConsults.customer_id}`
+    );
+    setCustomer(response.data.name);
   }
 
   useEffect(() => {
-    getPet();
+    getConsults();
+    getCustomer();
   }, []);
 
   return (
@@ -144,7 +59,7 @@ export function MedicineRecords() {
         <Flex w="100%" height="10vh" bgColor="gray.200">
           <Flex align="center" gap="2">
             <Text m="2" fontSize="2xl" fontWeight="bold">
-              Prontuário
+              Prontuário do Sistema Antigo
             </Text>
             <Button
               colorScheme="teal"
@@ -161,11 +76,7 @@ export function MedicineRecords() {
             >
               Voltar
             </Button>
-            <Button
-              colorScheme="cyan"
-              leftIcon={<GiMedicines size={24} />}
-              onClick={() => openModal()}
-            >
+            <Button colorScheme="cyan" leftIcon={<GiMedicines size={24} />}>
               Histórico de medicação
             </Button>
           </Flex>
@@ -197,7 +108,7 @@ export function MedicineRecords() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={pets?.customer?.name}
+                          value={customer}
                         />
                       </Th>
                     </Tr>
@@ -210,7 +121,7 @@ export function MedicineRecords() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={`Nome: ${pets.name}, Raça: ${pets.race}, Peso: ${pets.weigth},  Sexo ${pets.sexo}, Cor: ${pets.corPet} `}
+                          value={`Nome: ${consultOldPet.name}, Raça: ${consultOldPet.race}, Peso: ${consultOldPet.weigth},  Sexo ${consultOldPet.sexo}, Cor: ${consultOldPet.corPet} `}
                         />
                       </Td>
                     </Tr>
@@ -230,7 +141,7 @@ export function MedicineRecords() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={pets.codPet}
+                          value={consultOldPet.codPet}
                         />
                       </Td>
                     </Tr>
@@ -281,12 +192,12 @@ export function MedicineRecords() {
 
               <Flex w="100%" h="100%" overflowY="auto">
                 <Flex direction="column" w="100%" h="100%">
-                  {pets?.medicineRecords?.petQueues.map((queue) => (
+                  {consultOldPet.petOldConsults?.map((consult) => (
                     <Flex
                       textAlign="center"
                       direction="column"
                       w="100%"
-                      key={queue.id}
+                      key={consult.id}
                     >
                       <Text
                         border="2px"
@@ -299,18 +210,16 @@ export function MedicineRecords() {
                         month: "2-digit",
                         hour: "2-digit",
                         minute: "2-digit",
-                      }).format(new Date(queue.queueEntry))} 
+                      }).format(new Date(consult.date))} 
                       - 
                       Saida: ${new Intl.DateTimeFormat("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
                         hour: "2-digit",
                         minute: "2-digit",
-                      }).format(new Date(queue.queueExit))}
+                      }).format(new Date(consult.date))}
                       -
-                      ${queue.queryType} - ${
-                        queue.responsibleVeterinarian
-                      }`}</Text>
+                      ${consult.consulType} - ${consult.vetName}`}</Text>
                       <Flex align="center" textAlign="center" gap="0">
                         <Text
                           borderY="2px"
@@ -332,16 +241,12 @@ export function MedicineRecords() {
                           w="80%"
                         >
                           {" "}
-                          {queue.petWeight}
+                          {consult.petWeight}
                         </Text>
                         <Button
                           maxH="38px"
                           borderRadius="0px"
                           colorScheme="red"
-                          onClick={() => {
-                            setEndQueueId(queue.id);
-                            openUnconcludeModal();
-                          }}
                         >
                           Desconcluir
                         </Button>
@@ -368,7 +273,8 @@ export function MedicineRecords() {
                           fontWeight="bold"
                           border="2px"
                           w="100%"
-                          defaultValue={queue.observations}
+                          //No momento não tem observações como retorno
+                          defaultValue={""}
                         />
                       </Flex>
                     </Flex>
@@ -408,7 +314,7 @@ export function MedicineRecords() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {pets.medicineRecords?.petVaccines?.map((vaccine) => (
+                    {/* {pets.medicineRecords?.petVaccines?.map((vaccine) => (
                       <Tr key={vaccine.id}>
                         {vaccine.isDone === true ? (
                           <Td borderY="1px solid black">{vaccine.name}</Td>
@@ -430,7 +336,7 @@ export function MedicineRecords() {
                           )}
                         </Td>
                       </Tr>
-                    ))}
+                    ))} */}
                   </Tbody>
                 </Table>
               </TableContainer>
@@ -465,7 +371,7 @@ export function MedicineRecords() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {pets.medicineRecords?.petSurgeries?.map((surgerie) => (
+                    {/* {pets.medicineRecords?.petSurgeries?.map((surgerie) => (
                       <Tr key={surgerie.id}>
                         {surgerie.status === "FINISHED" ? (
                           <Td borderY="1px solid black">{surgerie.name}</Td>
@@ -487,7 +393,7 @@ export function MedicineRecords() {
                           )}
                         </Td>
                       </Tr>
-                    ))}
+                    ))} */}
                   </Tbody>
                 </Table>
               </TableContainer>
@@ -523,7 +429,7 @@ export function MedicineRecords() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {pets.medicineRecords?.petExams?.map((exam) => (
+                    {/* {pets.medicineRecords?.petExams?.map((exam) => (
                       <Tr key={exam.id}>
                         {exam.doneExame === true ? (
                           <Td borderY="1px solid black">{exam.name}</Td>
@@ -543,7 +449,7 @@ export function MedicineRecords() {
                           )}
                         </Td>
                       </Tr>
-                    ))}
+                    ))} */}
                   </Tbody>
                 </Table>
               </TableContainer>
@@ -587,7 +493,7 @@ export function MedicineRecords() {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {pets.medicineRecords?.petBeds?.map((admission) => (
+                    {/* {pets.medicineRecords?.petBeds?.map((admission) => (
                       <Tr key={admission.id}>
                         <Td borderY="1px solid black">Internação</Td>
 
@@ -606,7 +512,7 @@ export function MedicineRecords() {
                           )}
                         </Td>
                       </Tr>
-                    ))}
+                    ))} */}
                   </Tbody>
                 </Table>
               </TableContainer>
@@ -614,40 +520,6 @@ export function MedicineRecords() {
           </Flex>
         </MedicineContainer>
       </Flex>
-      <GenericModal isOpen={modalIsOpen} onRequestClose={closeModal}>
-        <MedicinesHistory />
-      </GenericModal>
-      <GenericModal
-        isOpen={modalUnconclude}
-        onRequestClose={closeUnconcludeModal}
-      >
-        <Flex w={400} h={200} align="center" direction="column">
-          <Text fontWeight="bold">
-            Apenas MASTER's podem desconcluir consultas:
-          </Text>
-
-          <Textarea
-            onChange={(ev) => setUnconcludeObs(ev.target.value)}
-            border="1px"
-            placeholder="Opcional: Motivo Desconclusão "
-          />
-          <Input
-            mt="2"
-            onChange={(ev) => setMasterPassword(ev.target.value)}
-            border="1px"
-            name="masterPassword"
-            type="password"
-            placeholder="Senha usuário Master"
-          />
-          <Button
-            mt="4"
-            colorScheme="teal"
-            onClick={() => unclocludeQueue(endQueueId)}
-          >
-            Desconcluir
-          </Button>
-        </Flex>
-      </GenericModal>
     </ChakraProvider>
   );
 }
