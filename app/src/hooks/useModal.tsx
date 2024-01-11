@@ -1,27 +1,31 @@
-import { createContext, useState, ReactNode } from 'react';
+import { createContext, useState, ReactNode } from "react";
 
 type PropsContext = {
-    children: ReactNode;
-}
+  children: ReactNode;
+};
 
 interface ModalProps {
-    closeMedicineModal: () => void;
-    closeInstructionModal: () => void;
-    closeModal:  () => void;
-    closeAutorizationModal: () => void;
-    closeEndQueueModal: () => void;
-    modalWeigthPet: boolean;
-    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-    setModalWeigthPet: React.Dispatch<React.SetStateAction<boolean>>
-    setAutorizationModalOpen:React.Dispatch<React.SetStateAction<boolean>>
-    setMedicineModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-    setInstructionModalOpen: React.Dispatch<React.SetStateAction<boolean>>
-    setIsEndConsultQueue:  React.Dispatch<React.SetStateAction<boolean>>
-    isModalOpen: boolean;
-    isAutorizationModalOpen: boolean;
-    insInstructionsModalOpen: boolean;
-    isMedicineModalOpen: boolean;
-    isEndConsultQueue: boolean
+  closeMedicineModal: () => void;
+  closeInstructionModal: () => void;
+  closeModal: () => void;
+  closeAutorizationModal: () => void;
+  closeEndQueueModal: () => void;
+  closeMedicineRecordModal: () => void;
+
+  modalWeigthPet: boolean;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalWeigthPet: React.Dispatch<React.SetStateAction<boolean>>;
+  setAutorizationModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setMedicineModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setInstructionModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsEndConsultQueue: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsMedicineRecordOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isMedicineRecordOpen: boolean;
+  isModalOpen: boolean;
+  isAutorizationModalOpen: boolean;
+  insInstructionsModalOpen: boolean;
+  isMedicineModalOpen: boolean;
+  isEndConsultQueue: boolean;
 }
 // Criar um contexto
 export const ModalContext = createContext({} as ModalProps);
@@ -34,6 +38,11 @@ export const ModalProvider = ({ children }: PropsContext) => {
   const [isMedicineModalOpen, setMedicineModalOpen] = useState(false);
   const [modalWeigthPet, setModalWeigthPet] = useState(false);
   const [isEndConsultQueue, setIsEndConsultQueue] = useState(false);
+  const [isMedicineRecordOpen, setIsMedicineRecordOpen] = useState(false);
+
+  function closeMedicineRecordModal() {
+    setIsMedicineRecordOpen(false);
+  }
 
   function closeMedicineModal() {
     setMedicineModalOpen(false);
@@ -56,13 +65,16 @@ export const ModalProvider = ({ children }: PropsContext) => {
   return (
     <ModalContext.Provider
       value={{
+        isMedicineRecordOpen,
+        setIsMedicineRecordOpen,
+        closeMedicineRecordModal,
         closeMedicineModal,
         closeInstructionModal,
         closeModal,
         closeAutorizationModal,
-        modalWeigthPet, 
+        modalWeigthPet,
         setModalWeigthPet,
-        setAutorizationModalOpen, 
+        setAutorizationModalOpen,
         setInstructionModalOpen,
         setMedicineModalOpen,
         setIsModalOpen,
@@ -72,11 +84,10 @@ export const ModalProvider = ({ children }: PropsContext) => {
         isModalOpen,
         isEndConsultQueue,
         setIsEndConsultQueue,
-        closeEndQueueModal
+        closeEndQueueModal,
       }}
     >
       {children}
     </ModalContext.Provider>
   );
 };
-
