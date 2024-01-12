@@ -12,6 +12,7 @@ import {
   Input,
   Textarea,
   TableContainer,
+  Skeleton,
 } from "@chakra-ui/react";
 import { BiHome, GiMedicines, TbArrowBack } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,11 +20,76 @@ import { useState, useEffect } from "react";
 import { api } from "../../lib/axios";
 import { MedicineContainer } from "./style";
 import { OldConsults } from "../../interfaces";
+import { useQuery } from "react-query";
+
+
+export interface OldConsultsHistories {
+  id:             number;
+  CodCli:         number;
+  CodAnimal:      number;
+  name:           string;
+  especie:        string;
+  sexo:           string;
+  race:           string;
+  weigth:         string;
+  haveChip:       boolean;
+  corPet:         string;
+  sizePet:        string;
+  bornDate:       string;
+  dateAge:        null;
+  observations:   string;
+  customer_id:    number;
+  codPet:         string;
+  isCastred:      boolean;
+  debits:         string;
+  petOldConsults: PetOldConsult[];
+  customer:       Customer;
+}
+
+export interface Customer {
+  id:            number;
+  CodCli:        number;
+  name:          string;
+  adress:        string;
+  district:      string;
+  cep:           string;
+  neighbour:     string;
+  state:         string;
+  phone:         string;
+  tell:          null;
+  cpf:           string;
+  rg:            string;
+  email:         string;
+  birthday:      string;
+  balance:       number;
+  kindPerson:    string;
+  vetPreference: null;
+  howKnowUs:     null;
+}
+
+export interface PetOldConsult {
+  id:           number;
+  codConsulta:  number;
+  date:         Date;
+  startAt:      string;
+  endAt:        string;
+  vetId:        number;
+  vetName:      string;
+  petWeight:    number;
+  petName:      string;
+  customerName: string;
+  consulType:   string;
+  CodAnimal:    number;
+  CodCli:       number;
+  petsId:       number;
+  symptoms: string;
+  diagnostic: string;
+  request: string;
+}
 
 export function MedicineRecordOld() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
-  const [consultOldPet, setConsultOldPet] = useState({} as OldConsults);
-  const [customer, setCustomer] = useState("");
+  const [consultOldPet, setConsultOldPet] = useState({} as OldConsultsHistories);
   const user: {
     id: number;
     role: string;
@@ -32,26 +98,23 @@ export function MedicineRecordOld() {
 
   async function getConsults() {
     try {
-      const response = await api.get(`/pet/old/history/consults/${id}`);
-      setConsultOldPet(response.data.oldConsults);
+      
+      const response =  await api.get(`/pet/old/history/consults/${id}`)
+
+      return response.data
     } catch (error) {
       console.log(error);
     }
   }
 
-  async function getCustomer() {
-    const responseconsult = await api.get(`/pet/old/history/consults/${id}`);
 
-    const response = await api.get(
-      `/customers/${responseconsult.data.oldConsults.customer_id}`
-    );
-    setCustomer(response.data.name);
-  }
+  const { data } = useQuery('oldHistory', {
+    queryFn: () => getConsults(),
+    onSuccess: () => {
+      setConsultOldPet(data.oldConsults);
+    },
+  })
 
-  useEffect(() => {
-    getConsults();
-    getCustomer();
-  }, []);
 
   return (
     <ChakraProvider>
@@ -82,12 +145,15 @@ export function MedicineRecordOld() {
           </Flex>
         </Flex>
 
+        
+         
         <MedicineContainer>
           <Flex
             direction="column"
             shadow="4px 0px 10px -2px rgba(0, 0, 0, 0.2)"
             w="100%"
           >
+            
             <Flex
               p="4"
               gap={4}
@@ -108,7 +174,7 @@ export function MedicineRecordOld() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={customer}
+                          defaultValue={consultOldPet?.customer?.name}
                         />
                       </Th>
                     </Tr>
@@ -121,7 +187,7 @@ export function MedicineRecordOld() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={`Nome: ${consultOldPet.name}, Raça: ${consultOldPet.race}, Peso: ${consultOldPet.weigth},  Sexo ${consultOldPet.sexo}, Cor: ${consultOldPet.corPet} `}
+                          value={`${consultOldPet.name}, ${consultOldPet.race}, ${consultOldPet.weigth}Kgs, ${consultOldPet.sexo}, ${consultOldPet.corPet}`}
                         />
                       </Td>
                     </Tr>
@@ -141,7 +207,7 @@ export function MedicineRecordOld() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={consultOldPet.codPet}
+                          value={consultOldPet.CodAnimal}
                         />
                       </Td>
                     </Tr>
@@ -150,6 +216,9 @@ export function MedicineRecordOld() {
               </TableContainer>
             </Flex>
 
+
+
+            
             <Flex
               direction="column"
               w="100%"
@@ -189,7 +258,8 @@ export function MedicineRecordOld() {
                   Outra Unidade
                 </Button>
               </Flex>
-
+              
+        
               <Flex w="100%" h="100%" overflowY="auto">
                 <Flex direction="column" w="100%" h="100%">
                   {consultOldPet.petOldConsults?.map((consult) => (
@@ -208,16 +278,12 @@ export function MedicineRecordOld() {
                       >{`Entrada: ${new Intl.DateTimeFormat("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }).format(new Date(consult.date))} 
+                      }).format(new Date(consult.date))}: ${consult.startAt} 
                       - 
                       Saida: ${new Intl.DateTimeFormat("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }).format(new Date(consult.date))}
+                      }).format(new Date(consult.date))}: ${consult.endAt}
                       -
                       ${consult.consulType} - ${consult.vetName}`}</Text>
                       <Flex align="center" textAlign="center" gap="0">
@@ -229,7 +295,6 @@ export function MedicineRecordOld() {
                           h="38px"
                           w="20%"
                         >
-                          {" "}
                           Peso
                         </Text>
                         <Text
@@ -240,13 +305,13 @@ export function MedicineRecordOld() {
                           h="38px"
                           w="80%"
                         >
-                          {" "}
-                          {consult.petWeight}
+                          {consult.petWeight != 0 ? `${consult.petWeight}Kgs` : "Não informado"} 
                         </Text>
                         <Button
                           maxH="38px"
                           borderRadius="0px"
                           colorScheme="red"
+                          isDisabled
                         >
                           Desconcluir
                         </Button>
@@ -273,15 +338,80 @@ export function MedicineRecordOld() {
                           fontWeight="bold"
                           border="2px"
                           w="100%"
-                          //No momento não tem observações como retorno
-                          defaultValue={""}
+                         
+                          defaultValue={consult.symptoms}
                         />
+                        {
+                          consult.diagnostic.length >= 1  ? (<>
+                             <Text
+                          pl="40px"
+                          textAlign="left"
+                          border="2px"
+                          fontWeight="bold"
+                          fontSize="lg"
+                          bgColor="gray.300"
+                          py="4px"
+                          w="100%"
+                        >
+                          {" "}
+                          Diagnóstico
+                        </Text>
+                        <Textarea
+                          borderRadius="0"
+                          bgColor="white"
+                          fontSize="md"
+                          fontWeight="bold"
+                          border="2px"
+                          w="100%"
+                         
+                          defaultValue={consult.diagnostic}
+                        />
+                          </>) : (<></>)
+                        }
+                                   {
+                          consult.request.length >= 1  ? (<>
+                             <Text
+                          pl="40px"
+                          textAlign="left"
+                          border="2px"
+                          fontWeight="bold"
+                          fontSize="lg"
+                          bgColor="gray.300"
+                          py="4px"
+                          w="100%"
+                        >
+                          {" "}
+                          Solicitação
+                        </Text>
+                        <Textarea
+                          borderRadius="0"
+                          bgColor="white"
+                          fontSize="md"
+                          fontWeight="bold"
+                          border="2px"
+                          w="100%"
+                         
+                          defaultValue={consult.request}
+                        />
+                          </>) : (<></>)
+                        }
+                        
                       </Flex>
                     </Flex>
                   ))}
                 </Flex>
               </Flex>
+
             </Flex>
+
+
+
+
+
+
+
+
+
           </Flex>
           <Flex width="50%" direction="column" className="one">
             <Flex
@@ -519,6 +649,7 @@ export function MedicineRecordOld() {
             </Flex>
           </Flex>
         </MedicineContainer>
+   
       </Flex>
     </ChakraProvider>
   );

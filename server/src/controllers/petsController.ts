@@ -481,7 +481,8 @@ getPetOldHistoryConsults: async (request: FastifyRequest<{Params: {petId: string
 
         const oldConsults = await prisma.pets.findUnique({
           where: {CodAnimal: parseInt(petId)}, include: {
-            petOldConsults: true
+            petOldConsults: true,
+            customer:  true
           }
         })
 

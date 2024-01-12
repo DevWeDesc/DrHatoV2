@@ -7,6 +7,7 @@ import { PopulateEspecies } from "./transformExcellEspecies.mjs";
 import { PopulateInstructions } from "./transformExcellInstructs.mjs";
 import { PopulateMGroups } from "./transformExcellMGroups.mjs";
 import { PopulateMedicines } from "./transformExcellMedicines.mjs";
+import { PopulateOldConsults } from "./transformExcellOldConsults.mjs";
 import { PopulatePets } from "./transformExcellPet.mjs";
 import { PopulateProcedures } from "./transformExcellProced.mjs";
 import { PopulateRaces } from "./transformExcellRaces.mjs";
@@ -35,6 +36,7 @@ export async function PopulateDataBase() {
         await PopulateRaces();
         await PopulateInstructions();
         await PopulateInstructAlta();
+        await PopulateOldConsults()
 
         console.log("Todo Banco Populado com Sucesso!")
         
