@@ -90,12 +90,17 @@ model OldConsults {
   id           Int       @id @default(autoincrement())
   codConsulta  Int?
   date         DateTime?
+  startAt      String?
+  endAt        String?
   vetId        Int?
   vetName      String?
   petWeight    Float?
   petName      String?
   customerName String?
   consulType   String?
+  symptoms     String?
+  request      String?
+  diagnostic   String?
   CodAnimal    Int
   CodCli       Int
   Pets         Pets?     @relation(fields: [petsId], references: [CodAnimal])
