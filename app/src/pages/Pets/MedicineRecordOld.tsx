@@ -12,15 +12,13 @@ import {
   Input,
   Textarea,
   TableContainer,
-  Skeleton,
 } from "@chakra-ui/react";
 import { BiHome, GiMedicines, TbArrowBack } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
 import { api } from "../../lib/axios";
 import { MedicineContainer } from "./style";
-import { OldConsults } from "../../interfaces";
 import { useQuery } from "react-query";
+import { LoadingSpinner } from "../../components/Loading";
 
 
 export interface OldConsultsHistories {
@@ -87,33 +85,58 @@ export interface PetOldConsult {
   request: string;
 }
 
+interface OldExamsHistorie {
+  id:         number;
+  name:       string;
+  vetId:      number;
+  codConsult: number;
+  codExam:    number;
+  codAnimal:  number;
+  codCli:     number;
+  madeAt:     Date;
+  vetName:    string;
+  obsOne:     string;
+  obsTwo:     string;
+  metodology: string;
+  image:      boolean;
+  laboratory: boolean;
+  petsId:     number;
+}
+
 export function MedicineRecordOld() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
-  const [consultOldPet, setConsultOldPet] = useState({} as OldConsultsHistories);
-  const user: {
-    id: number;
-    role: string;
-  } = JSON.parse(localStorage.getItem("user") as string);
   const navigate = useNavigate();
 
-  async function getConsults() {
+  async function getConsults(): Promise<OldConsultsHistories> {
     try {
-      
       const response =  await api.get(`/pet/old/history/consults/${id}`)
 
-      return response.data
+      if(!response) {
+        throw new Error()
+      }
+
+      return response.data.oldConsults
     } catch (error) {
-      console.log(error);
+      throw error
+    }
+  }
+
+  async function getOldExamsHistorie(): Promise<OldExamsHistorie[]> {
+    try {
+      const response =  await api.get(`/exams/historie/old/${id}`)
+      return  response.data.examsHistorie
+    } catch (error) {
+        throw error
     }
   }
 
 
-  const { data } = useQuery('oldHistory', {
-    queryFn: () => getConsults(),
-    onSuccess: () => {
-      setConsultOldPet(data.oldConsults);
-    },
-  })
+  const { data: consultsData, isLoading: consultsLoading } = useQuery('oldHistory', {queryFn: getConsults})
+  const { data: examsData, isLoading: examsLoading } = useQuery('oldExams', {queryFn: getOldExamsHistorie})
+
+  if(consultsLoading || examsLoading) {
+    return <LoadingSpinner/>
+  }
 
 
   return (
@@ -174,7 +197,7 @@ export function MedicineRecordOld() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          defaultValue={consultOldPet?.customer?.name}
+                          defaultValue={consultsData?.customer?.name}
                         />
                       </Th>
                     </Tr>
@@ -187,7 +210,7 @@ export function MedicineRecordOld() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={`${consultOldPet.name}, ${consultOldPet.race}, ${consultOldPet.weigth}Kgs, ${consultOldPet.sexo}, ${consultOldPet.corPet}`}
+                          value={`${consultsData?.name}, ${consultsData?.race}, ${consultsData?.weigth}Kgs, ${consultsData?.sexo}, ${consultsData?.corPet}`}
                         />
                       </Td>
                     </Tr>
@@ -207,7 +230,7 @@ export function MedicineRecordOld() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={consultOldPet.CodAnimal}
+                          defaultValue={consultsData?.CodAnimal}
                         />
                       </Td>
                     </Tr>
@@ -262,7 +285,7 @@ export function MedicineRecordOld() {
         
               <Flex w="100%" h="100%" overflowY="auto">
                 <Flex direction="column" w="100%" h="100%">
-                  {consultOldPet.petOldConsults?.map((consult) => (
+                  {consultsData?.petOldConsults?.map((consult) => (
                     <Flex
                       textAlign="center"
                       direction="column"
@@ -549,41 +572,6 @@ export function MedicineRecordOld() {
               >
                 <Text fontWeight="bold">EXAMES</Text>
               </Flex>
-              <TableContainer>
-                <Table variant="striped">
-                  <Thead>
-                    <Tr>
-                      <Th>Tipo</Th>
-                      <Th></Th>
-                      <Th borderLeft="2px solid black">Data</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {/* {pets.medicineRecords?.petExams?.map((exam) => (
-                      <Tr key={exam.id}>
-                        {exam.doneExame === true ? (
-                          <Td borderY="1px solid black">{exam.name}</Td>
-                        ) : (
-                          <Td borderY="1px solid black">{exam.name}</Td>
-                        )}
-                        <Td borderY="1px solid black"></Td>
-
-                        <Td
-                          borderY="1px solid black"
-                          borderLeft="2px solid black"
-                        >
-                          {new Intl.DateTimeFormat("pt-BR").format(
-                            new Date(
-                              exam.requesteData ? exam.requesteData : Date.now()
-                            )
-                          )}
-                        </Td>
-                      </Tr>
-                    ))} */}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-
               <Flex
                 w="100%"
                 height="38px"
@@ -600,6 +588,38 @@ export function MedicineRecordOld() {
                   Verde/Pronto
                 </Text>
               </Flex>
+              <TableContainer w="100%">
+                <Table  variant="unstyled">
+                  <Thead>
+                    <Tr>
+                      <Th>Tipo</Th>
+                      
+                      <Th borderLeft="2px solid black">Data</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                     {examsData?.map((exam) => (
+                      <Tr bgColor="green.200" key={exam.id}>
+                 
+                      <Td borderY="1px solid black">{exam.name}</Td>
+                    
+                        <Td
+                          borderY="1px solid black"
+                          borderLeft="2px solid black"
+                        >
+                          {new Intl.DateTimeFormat("pt-BR").format(
+                            new Date(
+                              exam.madeAt ? exam.madeAt : Date.now()
+                            )
+                          )}
+                        </Td>
+                      </Tr>
+                    ))} 
+                  </Tbody>
+                </Table>
+              </TableContainer>
+
+          
             </Flex>
             <Flex height="50%" w="100%" textAlign="center" direction="column">
               <Flex

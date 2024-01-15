@@ -20,7 +20,6 @@ import {
   Input,
   Select,
 } from "@chakra-ui/react";
-import { Input as AdminInput } from "../../components/admin/Input";
 import { AiFillTags, BiHome, TbArrowBack } from "react-icons/all";
 import { toast } from "react-toastify";
 
@@ -31,7 +30,6 @@ import {
   WorkSpaceHeader,
 } from "../Vets/styles";
 import { PetProps } from "../Pets/details";
-import { DbContext } from "../../contexts/DbContext";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { CreatePetsForm } from "../../components/Forms/CreatePetsForm";
 
@@ -56,8 +54,11 @@ type VetsProps = {
   consultName: string;
 }
 
+
+
 export function CustomerDetails() {
   const { id } = useParams<{ id: string }>();
+  const user = JSON.parse(localStorage.getItem("user") as string);
   const navigate = useNavigate();
   const [petId, setPetId] = useState("");
   const [userVets, setUserVets] = useState<VetsProps[]>([])
@@ -118,26 +119,18 @@ export function CustomerDetails() {
 
   async function setPetInQueue() {
     try {
-      const formattedData = new Date();
-      const processData = new Intl.DateTimeFormat().format(formattedData);
-      const formatter = new Intl.DateTimeFormat([], {
-        timeZone: "America/Sao_Paulo",
-        hour: "numeric",
-        minute: "numeric",
-      });
-      const currentDateTime = formatter.format(new Date());
 
       const data = {
         vetPreference: vetPreference,
         queryType: queryType,
-        queueEntry: formattedData,
-        petIsInQueue: true,
+        openedBy: user.consultName.length >= 1 ? user.consultName : `${user.name} - Id: ${user.id}`,
         moreInfos: moreInfos,
-        queueOur: currentDateTime,
       };
+
+
       if (!!queryType && !!petSelected.id && !!vetPreference) {
         await api.put(`queue/${petSelected.id}`, data);
-    
+        navigate("/Recepcao/Change")
         toast.success("Pet colocado na fila com sucesso!");
       } else {
         toast.error(`Selecione Pet/Tipo de Atendimento/Veterinário`);

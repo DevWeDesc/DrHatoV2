@@ -3,7 +3,7 @@ import { examsController } from '../controllers/examsController'
 
 export async function examsRoutes(app: FastifyInstance) {
     app.get('/exams/:id', examsController.getById)
-    app.delete('/petexam/:id/:accId/:examPrice', examsController.removePetExam)
+    app.delete('/petexam/:id/:accId/:examPrice/:linkedDebitId', examsController.removePetExam)
     app.get('/exams/old/detail/:examId', examsController.getExamDetailById)
     app.get('/exams/old/all', examsController.getAllExams)
     app.get('/exams/old/:examName', examsController.getByName)

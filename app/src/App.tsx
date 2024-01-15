@@ -1,3 +1,8 @@
+import { ReactQueryDevtools } from 'react-query/devtools'
+import {
+  QueryClient,
+  QueryClientProvider,
+} from "react-query";
 import { ThemeProvider } from "styled-components";
 import { BrowserRouter } from "react-router-dom";
 import { defaultTheme } from "./styles/themes/default";
@@ -8,9 +13,10 @@ import { ToastContainer } from "react-toastify";
 import { Router } from "./Router";
 import { BoxContextProvider } from "./contexts/BoxContext";
 import { ModalProvider } from "./hooks/useModal";
-
+const queryClient = new QueryClient();
 function App() {
   return (
+    <QueryClientProvider client={queryClient}>
     <ChakraProvider theme={defaultTheme}>
       <DbContextProvider>
         <BoxContextProvider>
@@ -26,6 +32,8 @@ function App() {
         </BoxContextProvider>
       </DbContextProvider>
     </ChakraProvider>
+    <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
 
