@@ -457,7 +457,10 @@ export const petsController = {
       const {petId} = request.params
 
      const response = await prisma.pets.findUnique({
-        where: {id: parseInt(petId)}, include: {medicineRecords: {select: {petBeds: {include :{hospDiary: true}}, petExams: true, petQueues: true, petSurgeries: true, petVaccines: true}}, customer: true}
+        where: {id: parseInt(petId)}, include: 
+        {medicineRecords: {select: {petBeds: {include :{hospDiary: true}}, petExams: true, petConsults: true, petSurgeries: true, petVaccines: true}}, customer: {
+          include: {pets: true}
+        }}
       }) 
 
       reply.send(response)

@@ -17,7 +17,7 @@ import { BiHome, GiMedicines, TbArrowBack } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../lib/axios";
 import { MedicineContainer } from "./style";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { LoadingSpinner } from "../../components/Loading";
 
 
@@ -106,6 +106,7 @@ interface OldExamsHistorie {
 export function MedicineRecordOld() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate();
+
 
   async function getConsults(): Promise<OldConsultsHistories> {
     try {
@@ -301,11 +302,13 @@ export function MedicineRecordOld() {
                       >{`Entrada: ${new Intl.DateTimeFormat("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
+                        year: '2-digit'
                       }).format(new Date(consult.date))}: ${consult.startAt} 
                       - 
                       Saida: ${new Intl.DateTimeFormat("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
+                        year: '2-digit'
                       }).format(new Date(consult.date))}: ${consult.endAt}
                       -
                       ${consult.consulType} - ${consult.vetName}`}</Text>
@@ -559,6 +562,54 @@ export function MedicineRecordOld() {
             className="two"
             borderLeft="1px solid black"
           >
+           
+            <Flex height="50%" w="100%" textAlign="center" direction="column">
+              <Flex
+                w="100%"
+                height="38px"
+                bgColor="gray.600"
+                textColor="white"
+                align="center"
+                justify="center"
+                borderTop="1px solid black"
+              >
+                <Text fontWeight="bold">Outros Pets</Text>
+              </Flex>
+              <TableContainer>
+                <Table variant="striped">
+                  <Thead>
+                    <Tr>
+                      <Th>Nome</Th>
+        
+                      <Th borderX="2px solid black">Data</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {/* {pets.medicineRecords?.petBeds?.map((admission) => (
+                      <Tr key={admission.id}>
+                        <Td borderY="1px solid black">Internação</Td>
+
+                        <Td borderY="1px solid black"></Td>
+
+                        <Td
+                          borderY="1px solid black"
+                          borderLeft="2px solid black"
+                        >
+                          {new Intl.DateTimeFormat("pt-BR").format(
+                            new Date(
+                              admission?.entryOur
+                                ? admission.entryOur
+                                : Date.now()
+                            )
+                          )}
+                        </Td>
+                      </Tr>
+                    ))} */}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </Flex>
+
             <Flex height="50%" w="100%" textAlign="center" direction="column">
               <Flex
                 w="100%"
@@ -620,52 +671,6 @@ export function MedicineRecordOld() {
               </TableContainer>
 
           
-            </Flex>
-            <Flex height="50%" w="100%" textAlign="center" direction="column">
-              <Flex
-                w="100%"
-                height="38px"
-                bgColor="gray.600"
-                textColor="white"
-                align="center"
-                justify="center"
-                borderTop="1px solid black"
-              >
-                <Text fontWeight="bold">INTERNAÇÕES</Text>
-              </Flex>
-              <TableContainer>
-                <Table variant="striped">
-                  <Thead>
-                    <Tr>
-                      <Th>Tipo</Th>
-                      <Th></Th>
-                      <Th borderX="2px solid black">Data</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {/* {pets.medicineRecords?.petBeds?.map((admission) => (
-                      <Tr key={admission.id}>
-                        <Td borderY="1px solid black">Internação</Td>
-
-                        <Td borderY="1px solid black"></Td>
-
-                        <Td
-                          borderY="1px solid black"
-                          borderLeft="2px solid black"
-                        >
-                          {new Intl.DateTimeFormat("pt-BR").format(
-                            new Date(
-                              admission?.entryOur
-                                ? admission.entryOur
-                                : Date.now()
-                            )
-                          )}
-                        </Td>
-                      </Tr>
-                    ))} */}
-                  </Tbody>
-                </Table>
-              </TableContainer>
             </Flex>
           </Flex>
         </MedicineContainer>

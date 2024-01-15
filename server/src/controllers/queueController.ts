@@ -47,7 +47,6 @@ export const queueController = {
     const ParamsSchema = z.object({
       petId: z.coerce.number(), 
       queueUUID: z.string().uuid(), 
-      queueId: z.coerce.number(),
       customerId: z.coerce.number(),
     })
     const QueueSchema = z.object({
@@ -58,7 +57,7 @@ export const queueController = {
       petWeight: z.string().optional(),
       
     })
-    const {petId, queueUUID, queueId, customerId} = ParamsSchema.parse(request.params)
+    const {petId, queueUUID, customerId} = ParamsSchema.parse(request.params)
     const { responsibleVeterinarianId, responsibleVeterinarian, petWeight
     } = QueueSchema.parse(request.body)
     try { 
@@ -103,10 +102,13 @@ export const queueController = {
       
 
     } catch (error) {
+      console.log(error)
+
         if(error instanceof ResourceNotFoundError) {
           reply.status(404).send({message: error.message})
         }
-        reply.status(400).send({message: { error}})
+          console.log(error)
+        //reply.status(400).send({message: { error}})
     }
 
   },
@@ -209,10 +211,12 @@ export const queueController = {
      
       const {diagnostic, request: DiagnosticRequest, symptoms} = BodyParams.parse(request.body)
 
-        await prisma.openedConsultsForPet.update({
+
+
+      await prisma.openedConsultsForPet.update({
         where:{id: queueId}, data: {
-          diagnostic,
           symptoms,
+          diagnostic,
           request: DiagnosticRequest
         }
       })
@@ -227,6 +231,35 @@ export const queueController = {
       reply.status(404).send({
         message: error
       })
+    }
+  },
+
+
+  getQueueDiagnostics: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const GetParams = z.object({
+        queueId: z.string().uuid()
+      })
+
+      const {queueId} = GetParams.parse(request.params)
+
+      const diagnostic = await prisma.openedConsultsForPet.findUnique({where: {id: queueId}, select: {
+        diagnostic: true,
+        symptoms: true,
+        request: true
+      }})
+
+      reply.send({
+        diagnostic
+      })
+
+
+    } catch (error) {
+
+      reply.status(404).send({
+        message: error
+      })
+      console.error(error)
     }
   }
 

@@ -52,28 +52,34 @@ export class VetsMenuSearch {
              })
             break;
             case !!isFinished:
-            const res = await prisma.queuesForPet.findMany({
-                where: {queueIsDone: true, medicine
+            const res = await prisma.openedConsultsForPet.findMany({
+
+
+                where: {isClosed: true, 
+                    MedicineRecord
                 :{ pet: {OR:
                     [
                         {name: {contains: petName}},
                         {customer: {name: {contains: customerName}}},
                         {codPet: {contains: petCode}}
                     ]
-                }}}, include:{medicine: {include: {pet: {select: {name: true, id: true, weigth: true ,codPet: true ,customer: {select: {name: true, cpf: true}}}}}}}
+                }}}, 
+                
+
+                include:{MedicineRecord: {include: {pet: {select: {name: true, id: true, weigth: true ,CodAnimal: true ,customer: {select: {name: true, cpf: true}}}}}}}
             }) 
             
             data = res.map((res) => {
                 let data = {
-                    id: res.medicine.pet.id,
-                    name: res.petName,
-                    codPet: res.medicine.pet.codPet,
-                    finished: res.queueExit,
+                    id: res.MedicineRecord?.pet.id,
+                    name: res.MedicineRecord?.pet?.name,
+                    codPet: res.MedicineRecord?.pet?.CodAnimal,
+                    finished: res.closedDate,
                     customer: {
-                        name: res.medicine.pet.customer.name,
-                        cpf:res.medicine.pet.customer.cpf
+                        name: res.MedicineRecord?.pet?.customer?.name,
+                        cpf:res.MedicineRecord?.pet?.customer?.cpf
                     },
-                    responsible: res.responsibleVeterinarian
+                    responsible: res.clodedByVetName
                 }
                 return data
             })
