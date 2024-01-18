@@ -17,7 +17,7 @@ type body = {
   RequestedByVetId: number;
   RequestedByVetName: string;
   InAdmission: boolean;
-}
+};
 
 export const proceduresController = {
   createProcedure: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -37,7 +37,6 @@ export const proceduresController = {
       sector_id,
     } = ProcedureSchema.parse(request.body);
     try {
-     
       await prisma.procedures.create({
         data: {
           name,
@@ -52,8 +51,7 @@ export const proceduresController = {
           applicableMale,
           maxAge,
           minAge,
-          sector: {connect: {id: parseInt(sector_id)}}
-    
+          sector: { connect: { id: parseInt(sector_id) } },
         },
       });
       reply.status(201).send("Procedimento criado!");
@@ -63,161 +61,158 @@ export const proceduresController = {
     }
   },
 
-  getProcedures: async (request: FastifyRequest<{Querystring: { page: string; sex?: string;}}>, reply: FastifyReply) => {
+  getProcedures: async (
+    request: FastifyRequest<{ Querystring: { page: string; sex?: string } }>,
+    reply: FastifyReply
+  ) => {
     try {
-            // Obtenha o número da página atual a partir da solicitação.
-            const currentPage = Number(request.query.page) || 1;
-            const animalSex = request.query.sex || null;
-            // Obtenha o número total de usuários.
-            const totalProceds = await prisma.procedures.count();
-        
-            // Calcule o número de páginas.
-            const totalPages = Math.ceil(totalProceds / 35);
+      // Obtenha o número da página atual a partir da solicitação.
+      const currentPage = Number(request.query.page) || 1;
+      const animalSex = request.query.sex || null;
+      // Obtenha o número total de usuários.
+      const totalProceds = await prisma.procedures.count();
 
-        if(animalSex != null && animalSex == "Macho") {
-          const procedures = await prisma.procedures.findMany({
-            skip: (currentPage - 1) * 35,
-            take: 35,
-            where: {
-              applicableMale: true,
-              applicableFemale: false
-            },
-            include: {
-              groups: { select: { name: true } },
-              sector: { select: { name: true } },
-              appicableEspecies: true
-            },
-          });
-          
-          reply.send({totalPages, totalProceds,  currentPage, procedures });
-        } else if(animalSex != null && animalSex == "Femea") {
-          const procedures = await prisma.procedures.findMany({
-            skip: (currentPage - 1) * 35,
-            take: 35,
-            where: {
-              applicableFemale: true,
-              applicableMale: false,
-            },
-            include: {
-              groups: { select: { name: true } },
-              sector: { select: { name: true } },
-              appicableEspecies: true
-            },
-          });
+      // Calcule o número de páginas.
+      const totalPages = Math.ceil(totalProceds / 35);
 
-          reply.send({totalPages, totalProceds,  currentPage, procedures });
-        } else {
-          const procedures = await prisma.procedures.findMany({
-            skip: (currentPage - 1) * 35,
-            take: 35,
-            include: {
-              groups: { select: { name: true } },
-              sector: { select: { name: true } },
-              appicableEspecies: true
-            },
-          });
-          
-          reply.send({totalPages, totalProceds,  currentPage, procedures });
-        }
-        
+      if (animalSex != null && animalSex == "Macho") {
+        const procedures = await prisma.procedures.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            applicableMale: true,
+            applicableFemale: false,
+          },
+          include: {
+            groups: { select: { name: true } },
+            sector: { select: { name: true } },
+            appicableEspecies: true,
+          },
+        });
 
+        reply.send({ totalPages, totalProceds, currentPage, procedures });
+      } else if (animalSex != null && animalSex == "Femea") {
+        const procedures = await prisma.procedures.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            applicableFemale: true,
+            applicableMale: false,
+          },
+          include: {
+            groups: { select: { name: true } },
+            sector: { select: { name: true } },
+            appicableEspecies: true,
+          },
+        });
+
+        reply.send({ totalPages, totalProceds, currentPage, procedures });
+      } else {
+        const procedures = await prisma.procedures.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          include: {
+            groups: { select: { name: true } },
+            sector: { select: { name: true } },
+            appicableEspecies: true,
+          },
+        });
+
+        reply.send({ totalPages, totalProceds, currentPage, procedures });
+      }
     } catch (error) {
       console.log(error);
       reply.status(400).send({ message: error });
     }
   },
 
-  queryProcedureByName: async (request: FastifyRequest<{Querystring: {q: string, page: string; sex?: string}}>, reply: FastifyReply) => {
+  queryProcedureByName: async (
+    request: FastifyRequest<{
+      Querystring: { q: string; page: string; sex?: string };
+    }>,
+    reply: FastifyReply
+  ) => {
     try {
-            const currentPage = Number(request.query.page) || 1;
-            const animalSex = request.query.sex || null;
-   
-           const {q} = request.query
+      const currentPage = Number(request.query.page) || 1;
+      const animalSex = request.query.sex || null;
 
-           if(animalSex != null && animalSex == "Macho") {
+      const { q } = request.query;
 
-                     const totalProceds = await prisma.procedures.count({
-                      where: {
-                        name: {contains: q},
-                        applicableMale: true,
-                        applicableFemale: false
-                      },
-                     });
-       
-                     const totalPages = Math.ceil(totalProceds / 35);
-                     
-            const procedures = await prisma.procedures.findMany({
-              skip: (currentPage - 1) * 35,
-              take: 35,
-              where: {
-                name: {contains: q},
-                applicableMale: true,
-                applicableFemale: false
-              },
-              include: {
-                groups: { select: { name: true } },
-                sector: { select: { name: true } },
-                appicableEspecies: true
-              },
-            });
-            
-            reply.send({totalPages, totalProceds,  currentPage, procedures });
-          } else if(animalSex != null && animalSex == "Femea") {
-            const totalProceds = await prisma.procedures.count({
-              where: {
-                name: {contains: q},
-                applicableMale: false,
-                applicableFemale: true
-              },
-             });
+      if (animalSex != null && animalSex == "Macho") {
+        const totalProceds = await prisma.procedures.count({
+          where: {
+            name: { contains: q },
+            applicableMale: true,
+            applicableFemale: false,
+          },
+        });
 
-             const totalPages = Math.ceil(totalProceds / 35);
-            
-            const procedures = await prisma.procedures.findMany({
-              skip: (currentPage - 1) * 35,
-              take: 35,
-              where: {
-                name: {contains: q},
-                applicableFemale: true,
-                applicableMale: false,
-              },
-              include: {
-                groups: { select: { name: true } },
-                sector: { select: { name: true } },
-                appicableEspecies: true
-              },
-            });
-  
-            reply.send({totalPages, totalProceds,  currentPage, procedures });
-          } else {
-            const totalProceds = await prisma.procedures.count({
-              where: {name: {contains: q}}
-            });
+        const totalPages = Math.ceil(totalProceds / 35);
 
-             const totalPages = Math.ceil(totalProceds / 35);
-            const procedures = await prisma.procedures.findMany({
-              skip: (currentPage - 1) * 35,
-              take: 35,
-              where: {name: {contains: q}}
-              
-            })
-      
-      
-            reply.send({
-              totalProceds,
-              totalPages,
-              currentPage,
-              procedures
-            })
-          }
+        const procedures = await prisma.procedures.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            name: { contains: q },
+            applicableMale: true,
+            applicableFemale: false,
+          },
+          include: {
+            groups: { select: { name: true } },
+            sector: { select: { name: true } },
+            appicableEspecies: true,
+          },
+        });
 
-           
-    
-    } catch (error) {
-      
-    }
+        reply.send({ totalPages, totalProceds, currentPage, procedures });
+      } else if (animalSex != null && animalSex == "Femea") {
+        const totalProceds = await prisma.procedures.count({
+          where: {
+            name: { contains: q },
+            applicableMale: false,
+            applicableFemale: true,
+          },
+        });
+
+        const totalPages = Math.ceil(totalProceds / 35);
+
+        const procedures = await prisma.procedures.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            name: { contains: q },
+            applicableFemale: true,
+            applicableMale: false,
+          },
+          include: {
+            groups: { select: { name: true } },
+            sector: { select: { name: true } },
+            appicableEspecies: true,
+          },
+        });
+
+        reply.send({ totalPages, totalProceds, currentPage, procedures });
+      } else {
+        const totalProceds = await prisma.procedures.count({
+          where: { name: { contains: q } },
+        });
+
+        const totalPages = Math.ceil(totalProceds / 35);
+        const procedures = await prisma.procedures.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: { name: { contains: q } },
+        });
+
+        reply.send({
+          totalProceds,
+          totalPages,
+          currentPage,
+          procedures,
+        });
+      }
+    } catch (error) {}
   },
-
 
   getWithId: async (
     request: FastifyRequest<{ Params: params }>,
@@ -230,7 +225,7 @@ export const proceduresController = {
         include: {
           groups: { select: { name: true } },
           sector: { select: { name: true } },
-          appicableEspecies: true
+          appicableEspecies: true,
         },
       });
       reply.send(procedure);
@@ -240,7 +235,7 @@ export const proceduresController = {
     }
   },
 
-  editProcedure:   async (
+  editProcedure: async (
     request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
   ) => {
@@ -255,72 +250,74 @@ export const proceduresController = {
       sector_id,
     } = ProcedureSchema.parse(request.body);
 
-      try {
-        await prisma.procedures.update({where: {id: parseInt(id)}, data: {
+    try {
+      await prisma.procedures.update({
+        where: { id: parseInt(id) },
+        data: {
           name,
           price,
           available,
           observations,
           applicationInterval,
-   
-        }})
-      } catch (error) {
-        
-      }
+        },
+      });
+    } catch (error) {}
   },
-  
+
   deleteProcedure: async (
     request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
   ) => {
-    const{ id} = request.params
+    const { id } = request.params;
     try {
-      await prisma.procedures.delete({where: {id: parseInt(id)}})
-      reply.status(204).send("Procedimento deletado!")
+      await prisma.procedures.delete({ where: { id: parseInt(id) } });
+      reply.status(204).send("Procedimento deletado!");
     } catch (error) {
-      reply.status(400).send("Falha ao deletar procedimento!")
-      console.log(error)
+      reply.status(400).send("Falha ao deletar procedimento!");
+      console.log(error);
     }
   },
 
-  setProcedureInPet: async(request: FastifyRequest<{Params: params, Body: body}>, reply: FastifyReply) => {
-    const actualDate = getFormattedDateTime()
-    const {procedureId, petId,  accId, queueId} = request.params
-    const {RequestedByVetId, RequestedByVetName, InAdmission} = request.body
+  setProcedureInPet: async (
+    request: FastifyRequest<{ Params: params; Body: body }>,
+    reply: FastifyReply
+  ) => {
+    const actualDate = getFormattedDateTime();
+    const { procedureId, petId, accId, queueId } = request.params;
+    const { RequestedByVetId, RequestedByVetName, InAdmission } = request.body;
     try {
-      const procedure = await prisma.procedures.findUnique({where: {id: parseInt(procedureId)}})
-      
-      if(!procedure) return
-        
-      if(InAdmission === true) {
+      const procedure = await prisma.procedures.findUnique({
+        where: { id: parseInt(procedureId) },
+      });
+
+      if (!procedure) return;
+
+      if (InAdmission === true) {
         await prisma.petConsultsDebits.create({
           data: {
-            OpenedAdmissionsForPet: {connect: {id: queueId}},
+            OpenedAdmissionsForPet: { connect: { id: queueId } },
             isProcedure: true,
             name: procedure.name,
             price: procedure.price,
             itemId: procedure.id,
             RequestedByVetId,
             RequestedByVetName,
-  
-          }
-        })
+          },
+        });
       } else {
         await prisma.petConsultsDebits.create({
           data: {
-            OpenedConsultsForPet: {connect: {id: queueId}},
+            OpenedConsultsForPet: { connect: { id: queueId } },
             isProcedure: true,
             name: procedure.name,
             price: procedure.price,
             itemId: procedure.id,
             RequestedByVetId,
             RequestedByVetName,
-  
-          }
-        })
+          },
+        });
       }
 
-      
       await prisma.proceduresForPet.create({
         data: {
           name: procedure.name,
@@ -329,101 +326,111 @@ export const proceduresController = {
           price: procedure.price,
           applicationInterval: procedure.applicationInterval,
           requestedDate: actualDate,
-          medicine: {connect: {petId: parseInt(petId)}}
-        }
-      })
-      
-      await accumulatorService.addPriceToAccum(procedure?.price, accId)
-      reply.status(200).send("Procedimento adicionado com sucesso!")
-      
- 
-      
+          medicine: { connect: { petId: parseInt(petId) } },
+        },
+      });
+
+      await accumulatorService.addPriceToAccum(procedure?.price, accId);
+      reply.status(200).send("Procedimento adicionado com sucesso!");
     } catch (error) {
-      reply.status(400).send({message: error})
-      console.log(error)
+      reply.status(400).send({ message: error });
+      console.log(error);
     }
   },
 
-  deleteProcedureOfPet: async (request: FastifyRequest<{Params: { id: string; procedPrice: string; accId: string;}}>, reply: FastifyReply) => {
+  deleteProcedureOfPet: async (
+    request: FastifyRequest<{
+      Params: { id: string; procedPrice: string; accId: string };
+    }>,
+    reply: FastifyReply
+  ) => {
     try {
+      const { id, procedPrice, accId } = request.params;
 
-      const { id, procedPrice, accId} = request.params
-
-
-      await accumulatorService.removePriceToAccum(Number(procedPrice), accId)
+      await accumulatorService.removePriceToAccum(Number(procedPrice), accId);
 
       await prisma.proceduresForPet.delete({
-        where: {id: parseInt(id)}
-      })
+        where: { id: parseInt(id) },
+      });
 
-    
-      reply.send("Procedimento deletado com sucesso!").status(203)
-      
-      reply.status(200)
+      reply.send("Procedimento deletado com sucesso!").status(203);
+
+      reply.status(200);
     } catch (error) {
-        console.log(error)
-        reply.send({message: error})
+      console.log(error);
+      reply.send({ message: error });
     }
   },
 
-  setEspecieInProcedure: async (request: FastifyRequest<{Params: { procedureId: string, especieId: string}}>, reply: FastifyReply) => {
+  setEspecieInProcedure: async (
+    request: FastifyRequest<{
+      Params: { procedureId: string; especieId: string };
+    }>,
+    reply: FastifyReply
+  ) => {
     try {
-      const {procedureId, especieId} = request.params
+      const { procedureId, especieId } = request.params;
 
       await prisma.procedures.update({
-        where: {id: parseInt(procedureId)}, data: {
+        where: { id: parseInt(procedureId) },
+        data: {
           appicableEspecies: {
-            connect: {id: parseInt(especieId)},
-          }
-        }
-      })
+            connect: { id: parseInt(especieId) },
+          },
+        },
+      });
 
-      reply.status(201)
-
+      reply.status(201);
     } catch (error) {
-
-      reply.send(error).status(400)
-
+      reply.send(error).status(400);
     }
   },
 
-  setAllEspeciesInProcedure: async (request: FastifyRequest<{Params: { procedureId: string, especieId: string}}>, reply: FastifyReply) => {
+  setAllEspeciesInProcedure: async (
+    request: FastifyRequest<{
+      Params: { procedureId: string; especieId: string };
+    }>,
+    reply: FastifyReply
+  ) => {
     try {
-      const {procedureId} = request.params
+      const { procedureId } = request.params;
 
       const especies = await prisma.especies.findMany();
 
       for (const especie of especies) {
-       await prisma.procedures.update({where: {id: parseInt(procedureId)}, data: {appicableEspecies: {connect: {id: especie.id}}}})
+        await prisma.procedures.update({
+          where: { id: parseInt(procedureId) },
+          data: { appicableEspecies: { connect: { id: especie.id } } },
+        });
       }
 
-      reply.status(201).send("Todas especies setadas!")
-
+      reply.status(201).send("Todas especies setadas!");
     } catch (error) {
-
-      reply.send(error).status(400)
-
+      reply.send(error).status(400);
     }
   },
 
-  removeAllEspeciesInProcedure: async (request: FastifyRequest<{Params: { procedureId: string, especieId: string}}>, reply: FastifyReply) => {
+  removeAllEspeciesInProcedure: async (
+    request: FastifyRequest<{
+      Params: { procedureId: string; especieId: string };
+    }>,
+    reply: FastifyReply
+  ) => {
     try {
-      const {procedureId} = request.params
+      const { procedureId } = request.params;
 
       const especies = await prisma.especies.findMany();
 
       for (const especie of especies) {
-       await prisma.procedures.update({where: {id: parseInt(procedureId)}, data: {appicableEspecies: {disconnect: {id: especie.id}}}})
+        await prisma.procedures.update({
+          where: { id: parseInt(procedureId) },
+          data: { appicableEspecies: { disconnect: { id: especie.id } } },
+        });
       }
 
-      reply.status(201).send("Todas especies Removidas!")
-
+      reply.status(201).send("Todas especies Removidas!");
     } catch (error) {
-
-      reply.send(error).status(400)
-
+      reply.send(error).status(400);
     }
   },
-
-
 };
