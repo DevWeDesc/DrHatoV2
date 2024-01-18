@@ -108,7 +108,8 @@ export const petsController = {
             name: exams.name,
             price: exams.price,
             doneExam: exams.doneExame,
-           
+            linkedConsultId: exams.linkedConsultDebitId,
+            linkedAdmissionId: exams.LinkedAdmissionDebitId,
             onePart: exams.onePart,
             twoPart: exams.twoPart,
             byText: exams.byReport
@@ -243,45 +244,40 @@ export const petsController = {
     try {
       const pets = await prisma.pets.findMany({
         where: {
-          queue: { petIsInQueue: true }
+          medicineRecords: {
+            petConsults: { some: {
+              isClosed: false
+            }}
+          }
         },
         include: {
-          queue: {
-            select: {
-              id: true,
-              vetPreference: true,
-              queryType: true,
-              queueEntry: true,
-              petIsInQueue: true,
-              queueExit: true,
-              queueOur: true,
-              moreInfos: true,
-              openConsultId: true,
-            }
+          medicineRecords: {
+            include: { petConsults: true}
           },
+  
           customer: { select: { name: true, vetPreference: true, cpf: true } }
         }
       })
 
-      const totalInQueue = await prisma.queues.count({
-        where: { petIsInQueue: true }
+      const totalInQueue = await prisma.openedConsultsForPet.count({
+        where: { isClosed: false }
       })
+
       const response = pets.map(pet => {
         let data = {
           name: pet.name,
           id: pet.id,
           customerName: pet.customer.name,
-          vetPreference: pet.queue?.vetPreference ?? "Sem preferência",
-          queueId: pet.queue?.id,
-          consultUniqueId: pet.queue?.openConsultId,
+          vetPreference: pet.medicineRecords?.petConsults[0]?.vetPreference ?? "Sem preferência",
+          queueId: pet.medicineRecords?.petConsults[0]?.id,
+          openedBy: pet.medicineRecords?.petConsults[0]?.openedBy,
           codPet: pet.CodAnimal,
-          queueEntry: pet.queue?.queueEntry ?? new Date(),
-          ouor: pet.queue?.queueOur,
+          queueEntry: pet.medicineRecords?.petConsults[0]?.openedDate,
           especie: pet.especie,
-          more: pet.queue?.moreInfos,
+          more: pet.medicineRecords?.petConsults[0]?.observations,
           race: pet.race,
           customerCpf: pet.customer.cpf,
-          queryType: pet.queue?.queryType,
+          queryType: pet.medicineRecords?.petConsults[0]?.consultType,
           totalInQueue
         }
         return data
@@ -289,6 +285,7 @@ export const petsController = {
 
       return reply.send({ response, totalInQueue })
     } catch (error) {
+      console.error(error)
       reply.status(404).send(error)
     }
   },
@@ -300,24 +297,21 @@ export const petsController = {
 
       const pets = await prisma.pets.findMany({
         where: {
-          queue: { petIsInQueue: true },
-          AND: {
-            queue: {vetPreference: {contains: vetName}}
-          }
+            medicineRecords: {
+              petConsults: { some: {
+                isClosed: false
+              }}
+            },
+            AND: {
+              medicineRecords: {petConsults: {some: {
+                vetPreference: {contains: vetName}
+              }}}
+            },
+      
         },
         include: {
-          queue: {
-            select: {
-              id: true,
-              vetPreference: true,
-              queryType: true,
-              queueEntry: true,
-              petIsInQueue: true,
-              queueExit: true,
-              queueOur: true,
-              moreInfos: true,
-              openConsultId: true,
-            }
+          medicineRecords: {
+            include: { petConsults: true}
           },
           customer: { select: { name: true, vetPreference: true, cpf: true } }
         }
@@ -331,17 +325,16 @@ export const petsController = {
           name: pet.name,
           id: pet.id,
           customerName: pet.customer.name,
-          vetPreference: pet.queue?.vetPreference ?? "Sem preferência",
-          queueId: pet.queue?.id,
-          consultUniqueId: pet.queue?.openConsultId,
+          vetPreference: pet.medicineRecords?.petConsults[0]?.vetPreference ?? "Sem preferência",
+          queueId: pet.medicineRecords?.petConsults[0]?.id,
+          openedBy: pet.medicineRecords?.petConsults[0]?.openedBy,
           codPet: pet.CodAnimal,
-          queueEntry: pet.queue?.queueEntry ?? new Date(),
-          ouor: pet.queue?.queueOur,
+          queueEntry: pet.medicineRecords?.petConsults[0]?.openedDate,
           especie: pet.especie,
-          more: pet.queue?.moreInfos,
+          more: pet.medicineRecords?.petConsults[0]?.observations,
           race: pet.race,
           customerCpf: pet.customer.cpf,
-          queryType: pet.queue?.queryType,
+          queryType: pet.medicineRecords?.petConsults[0]?.consultType,
           totalInQueue
         }
         return data
@@ -464,7 +457,10 @@ export const petsController = {
       const {petId} = request.params
 
      const response = await prisma.pets.findUnique({
-        where: {id: parseInt(petId)}, include: {medicineRecords: {select: {petBeds: {include :{hospDiary: true}}, petExams: true, petQueues: true, petSurgeries: true, petVaccines: true}}, customer: true}
+        where: {id: parseInt(petId)}, include: 
+        {medicineRecords: {select: {petBeds: {include :{hospDiary: true}}, petExams: true, petConsults: true, petSurgeries: true, petVaccines: true}}, customer: {
+          include: {pets: true}
+        }}
       }) 
 
       reply.send(response)

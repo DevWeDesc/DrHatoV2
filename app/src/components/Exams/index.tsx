@@ -86,7 +86,9 @@ export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
 
   async function deleteExam(
     examId: string | number,
-    examPrice: string | number
+    examPrice: string | number,
+    linkedDebitId: number | null
+
   ) {
     try {
       const confirmation = window.confirm(
@@ -95,7 +97,7 @@ export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
 
       if (confirmation === true) {
         await api.delete(
-          `/petexam/${examId}/${petDetails.totalAcc.id}/${examPrice}`
+          `/petexam/${examId}/${petDetails.totalAcc.id}/${examPrice}/${linkedDebitId}`
         );
         setReloadData(true);
         toast.warning("Deletado com sucesso!");
@@ -214,7 +216,7 @@ export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
                     <Button
                       colorScheme="red"
                       isDisabled={exam.doneExam}
-                      onClick={() => deleteExam(exam.id, exam.price)}
+                      onClick={() => deleteExam(exam.id, exam.price, exam.linkedConsultId != null ? exam.linkedConsultId : exam.linkedAdmissionId)}
                     >
                       EXCLUIR ?
                     </Button>

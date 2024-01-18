@@ -164,8 +164,8 @@ export function SetPetExam() {
       }
 
  
-     //await api.patch(`/reportexam/${id}`, data)
-     //toast.success('Exame laudado com sucesso!')
+     await api.patch(`/reportexam/${id}`, data)
+     toast.success('Exame laudado com sucesso!')
      navigate("/Labs/Exames")
     } catch (error) {
       console.log(error)

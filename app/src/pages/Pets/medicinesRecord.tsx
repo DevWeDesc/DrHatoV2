@@ -41,6 +41,11 @@ interface PetProps {
   bornDate: string;
   customer: {
     name: string;
+    pets: Array<{
+      id: number
+      name: string
+      race: string
+    }>
   };
   codPet: string;
 
@@ -55,14 +60,17 @@ interface PetProps {
       requesteData: string;
       doneExame: boolean;
     }>;
-    petQueues: Array<{
-      id: number;
-      queueEntry: string;
-      queueExit: string;
-      queryType: string;
-      responsibleVeterinarian: string;
+    petConsults: Array<{
+      id: string;
+      openedDate: Date ;
+      closedDate: Date | null;
+      consultType: string;
+      vetPreference: string;
       petWeight: string;
       observations: string;
+      symptoms: string;
+			request: string;
+			diagnostic: string;
     }>;
     petSurgeries: Array<{
       id: number;
@@ -87,7 +95,7 @@ export function MedicineRecords() {
   const [modalUnconclude, setModalUnconclude] = useState(false);
   const [masterPassword, setMasterPassword] = useState("");
   const [unconcludeObs, setUnconcludeObs] = useState("");
-  const [endQueueId, setEndQueueId] = useState(0);
+  const [endQueueId, setEndQueueId] = useState("");
   const [pets, setPets] = useState({} as PetProps);
   const user: {
     id: number;
@@ -119,7 +127,7 @@ export function MedicineRecords() {
     }
   }
 
-  async function unclocludeQueue(queueId: number) {
+  async function unclocludeQueue(queueId: string) {
     const data = {
       masterPassword,
       unconcludeObs,
@@ -281,7 +289,7 @@ export function MedicineRecords() {
 
               <Flex w="100%" h="100%" overflowY="auto">
                 <Flex direction="column" w="100%" h="100%">
-                  {pets?.medicineRecords?.petQueues.map((queue) => (
+                  {pets?.medicineRecords?.petConsults?.map((queue) => (
                     <Flex
                       textAlign="center"
                       direction="column"
@@ -299,17 +307,17 @@ export function MedicineRecords() {
                         month: "2-digit",
                         hour: "2-digit",
                         minute: "2-digit",
-                      }).format(new Date(queue.queueEntry))} 
+                      }).format(new Date(queue.openedDate))} 
                       - 
-                      Saida: ${new Intl.DateTimeFormat("pt-BR", {
+                      Saida: ${queue.closedDate != null ? new Intl.DateTimeFormat("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
                         hour: "2-digit",
                         minute: "2-digit",
-                      }).format(new Date(queue.queueExit))}
+                      }).format(new Date(queue.closedDate)) : "Em aberto"}
                       -
-                      ${queue.queryType} - ${
-                        queue.responsibleVeterinarian
+                      ${queue.consultType} - ${
+                        queue.vetPreference
                       }`}</Text>
                       <Flex align="center" textAlign="center" gap="0">
                         <Text
@@ -332,7 +340,7 @@ export function MedicineRecords() {
                           w="80%"
                         >
                           {" "}
-                          {queue.petWeight}
+                          {queue.petWeight != null ? `${queue.petWeight}Kgs` : "Não informado"} 
                         </Text>
                         <Button
                           maxH="38px"
@@ -346,7 +354,7 @@ export function MedicineRecords() {
                           Desconcluir
                         </Button>
                       </Flex>
-
+                      
                       <Flex direction="column">
                         <Text
                           pl="40px"
@@ -368,9 +376,66 @@ export function MedicineRecords() {
                           fontWeight="bold"
                           border="2px"
                           w="100%"
-                          defaultValue={queue.observations}
+                         
+                          defaultValue={queue.symptoms}
                         />
+                        {
+                          queue?.diagnostic?.length >= 1  ? (<>
+                             <Text
+                          pl="40px"
+                          textAlign="left"
+                          border="2px"
+                          fontWeight="bold"
+                          fontSize="lg"
+                          bgColor="gray.300"
+                          py="4px"
+                          w="100%"
+                        >
+                          {" "}
+                          Diagnóstico
+                        </Text>
+                        <Textarea
+                          borderRadius="0"
+                          bgColor="white"
+                          fontSize="md"
+                          fontWeight="bold"
+                          border="2px"
+                          w="100%"
+                         
+                          defaultValue={queue.diagnostic}
+                        />
+                          </>) : (<></>)
+                        }
+                                   {
+                          queue?.request?.length >= 1  ? (<>
+                             <Text
+                          pl="40px"
+                          textAlign="left"
+                          border="2px"
+                          fontWeight="bold"
+                          fontSize="lg"
+                          bgColor="gray.300"
+                          py="4px"
+                          w="100%"
+                        >
+                          {" "}
+                          Solicitação
+                        </Text>
+                        <Textarea
+                          borderRadius="0"
+                          bgColor="white"
+                          fontSize="md"
+                          fontWeight="bold"
+                          border="2px"
+                          w="100%"
+                         
+                          defaultValue={queue.request}
+                        />
+                          </>) : (<></>)
+                        }
+                        
                       </Flex>
+
                     </Flex>
                   ))}
                 </Flex>
@@ -500,6 +565,47 @@ export function MedicineRecords() {
             className="two"
             borderLeft="1px solid black"
           >
+         
+            <Flex height="50%" w="100%" textAlign="center" direction="column">
+              <Flex
+                w="100%"
+                height="38px"
+                bgColor="gray.600"
+                textColor="white"
+                align="center"
+                justify="center"
+                borderTop="1px solid black"
+              >
+                <Text fontWeight="bold">Outros Pets</Text>
+              </Flex>
+              <TableContainer>
+                <Table variant="unstyled">
+                  <Thead>
+                    <Tr>
+                      <Th>Nome</Th>
+                     
+                      <Th borderX="2px solid black">Raça</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {pets?.customer?.pets.map((pet) => (
+                      <Tr border="2px" bgColor="gray.200" key={pet.id}>
+                        
+
+                        <Td borderY="1px solid black">{pet.name}</Td>
+
+                        <Td
+                          borderY="1px solid black"
+                          borderLeft="2px solid black"
+                        >
+                          {pet.race}
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </Flex>
             <Flex height="50%" w="100%" textAlign="center" direction="column">
               <Flex
                 w="100%"
@@ -512,25 +618,40 @@ export function MedicineRecords() {
                 borderTop="1px solid black"
               >
                 <Text fontWeight="bold">EXAMES</Text>
+                
+              </Flex>
+              <Flex
+                w="100%"
+                height="38px"
+                bgColor="gray.100"
+                gap={2}
+                align="center"
+                justify="space-evenly"
+                borderTop="1px solid black"
+              >
+                <Text fontWeight="bold" color="red">
+                  Vermelhos/Por Fazer
+                </Text>
+                <Text fontWeight="bold" color="green">
+                  Verde/Pronto
+                </Text>
               </Flex>
               <TableContainer>
-                <Table variant="striped">
+                <Table variant="unstyled">
                   <Thead>
                     <Tr>
                       <Th>Tipo</Th>
-                      <Th></Th>
+                     
                       <Th borderLeft="2px solid black">Data</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {pets.medicineRecords?.petExams?.map((exam) => (
-                      <Tr key={exam.id}>
-                        {exam.doneExame === true ? (
+                      <Tr bgColor="green.200" key={exam.id}>
+                
                           <Td borderY="1px solid black">{exam.name}</Td>
-                        ) : (
-                          <Td borderY="1px solid black">{exam.name}</Td>
-                        )}
-                        <Td borderY="1px solid black"></Td>
+                     
+                      
 
                         <Td
                           borderY="1px solid black"
@@ -548,68 +669,7 @@ export function MedicineRecords() {
                 </Table>
               </TableContainer>
 
-              <Flex
-                w="100%"
-                height="38px"
-                bgColor="gray.100"
-                gap={2}
-                align="center"
-                justify="space-evenly"
-                borderTop="1px solid black"
-              >
-                <Text fontWeight="bold" color="red">
-                  Vermelhos/Por Fazer
-                </Text>
-                <Text fontWeight="bold" color="green">
-                  Verde/Pronto
-                </Text>
-              </Flex>
-            </Flex>
-            <Flex height="50%" w="100%" textAlign="center" direction="column">
-              <Flex
-                w="100%"
-                height="38px"
-                bgColor="gray.600"
-                textColor="white"
-                align="center"
-                justify="center"
-                borderTop="1px solid black"
-              >
-                <Text fontWeight="bold">INTERNAÇÕES</Text>
-              </Flex>
-              <TableContainer>
-                <Table variant="striped">
-                  <Thead>
-                    <Tr>
-                      <Th>Tipo</Th>
-                      <Th></Th>
-                      <Th borderX="2px solid black">Data</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {pets.medicineRecords?.petBeds?.map((admission) => (
-                      <Tr key={admission.id}>
-                        <Td borderY="1px solid black">Internação</Td>
-
-                        <Td borderY="1px solid black"></Td>
-
-                        <Td
-                          borderY="1px solid black"
-                          borderLeft="2px solid black"
-                        >
-                          {new Intl.DateTimeFormat("pt-BR").format(
-                            new Date(
-                              admission?.entryOur
-                                ? admission.entryOur
-                                : Date.now()
-                            )
-                          )}
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              </TableContainer>
+          
             </Flex>
           </Flex>
         </MedicineContainer>

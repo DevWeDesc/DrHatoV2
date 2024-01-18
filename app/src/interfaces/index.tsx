@@ -131,6 +131,8 @@ export interface ExamsProps {
   onePart: boolean;
   twoPart: boolean;
   coleted?: number;
+  linkedConsultId: number | null
+	linkedAdmissionId: number | null
 }
 
 export interface VacinnesProps {

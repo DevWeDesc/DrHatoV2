@@ -279,7 +279,7 @@ export function MenuVet() {
                                           key={pet?.id}
                                           cursor="pointer"
                                           
-                                          onClick={() => navigate(`/Vets/Workspace/${pet?.id}/${pet.consultUniqueId}`)}
+                                          onClick={() => navigate(`/Vets/Workspace/${pet?.id}/${pet.queueId}`)}
                                         >
                                           <Td>
                                             <Text colorScheme="whatsapp">
@@ -315,7 +315,7 @@ export function MenuVet() {
                             <Th>Animal</Th>
                             <Th>Código</Th>
                             <Th>Data</Th>
-                            <Th>Hora</Th>
+                           
                             <Th>Preferência</Th>
                             <Th>Especialidade</Th>
                           </Tr>
@@ -327,7 +327,7 @@ export function MenuVet() {
                        
                               key={pet.id}
                               cursor="pointer"
-                              onClick={() => navigate(`/Vets/Workspace/${pet.id}/${pet.consultUniqueId}`)}
+                              onClick={() => navigate(`/Vets/Workspace/${pet.id}/${pet.queueId}`)}
                             >
                               <Td>
                                 <Text colorScheme="whatsapp">{pet.customerCpf}</Text>
@@ -343,9 +343,9 @@ export function MenuVet() {
                               </Td>
                               <Td>{pet.codPet}</Td>
                               <Td>{new Intl.DateTimeFormat("pt-BR",{ month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).format(new Date(pet?.queueEntry))}</Td>
-                              <Td>{pet.ouor}</Td>
+                             
                               <Td>
-                              {pet.vetPreference == user.consultName ? pet.vetPreference : "Sem preferência"}
+                              {pet.vetPreference == user.consultName ? pet.vetPreference : pet.vetPreference}
                               </Td>
                               <Td>0</Td>
                             </Tr>

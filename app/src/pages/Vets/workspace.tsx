@@ -44,8 +44,8 @@ import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
 import { SetMedicineInPet } from "../../components/Medicine/SetMedicineInPet";
 import { VetInstructions } from "./WorkSpaceVets/instructions";
 import { EndConsults } from "./WorkSpaceVets/endconsults";
-import { validateCpf } from "../../helpers/validateCpf";
 import { CardMedicineRecord } from "../../components/CardMedicineRecord/CardMedicineRecord";
+import { ThrowDiagnoisticsInConsult } from "./WorkSpaceComponents/ThrowDiagnoticsInConsult";
 type OpenExamProps = {
   isMultiPart: boolean;
   isReportByText: boolean;
@@ -82,11 +82,8 @@ export function WorkSpaceVet() {
   const [handleViewComponent, setHandleViewComponent] = useState("");
   const [petWeigth, setPetWeigth] = useState("");
   const [reloadData, setReloadData] = useState(false);
-  const [viewComponentPrint, setViewComponentPrint] = useState("");
-  const [PdfDiagnostic, setPdfDiagnostic] = useState("");
-  const [PdfPrescrition, setPdfPrescrition] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
-  const [petObservations, setPetObservations] = useState("");
+
 
   const handleChangePet = async (newPetId: number) => {
     navigate(`/Vets/Workspace/${newPetId}`);
@@ -150,69 +147,24 @@ export function WorkSpaceVet() {
   const handleCloseQuery = async () => {
     try {
       const data = {
-        queryType: pet.queue.queryType,
-        queueEntry: pet.queue.queueEntry,
-        queueExit: new Date(),
-        debitOnThisQuery: Number(pet.totalAcc.price),
         responsibleVeterinarian: user.consultName,
-        petName: pet.name,
+        responsibleVeterinarianId: user.id,
         petWeight: pet.weigth,
-        observations: petObservations,
       };
 
+
       await api.put(
-        `/endqueue/${id}/${pet.recordId}/${pet.queue.id}/${pet.customerId}`,
+        `/endqueue/${id}/${queueId}/${pet.customerId}`,
         data
       );
-      console.log(data);
-      toast.success("Consulta finalizada com sucesso!!");
-      navigate("/Vets/Menu");
+ 
+       toast.success("Consulta finalizada com sucesso!!");
+       navigate("/Vets/Menu");
     } catch (error) {
       toast.error("Falha ao encerrar consulta!!");
       console.log(error);
     }
   };
-
-  let ComponentPrint;
-  switch (true) {
-    case viewComponentPrint == "Diagnóstico":
-      ComponentPrint = (
-        <div>
-          <Textarea
-            minW="45.7rem"
-            minH="12.5rem"
-            value={PdfDiagnostic}
-            onChange={(e) => setPdfDiagnostic(e.target.value)}
-          />
-        </div>
-      );
-      break;
-    case viewComponentPrint == "Prescrição":
-      ComponentPrint = (
-        <Textarea
-          minW="45.7rem"
-          minH="12.5rem"
-          value={PdfPrescrition}
-          onChange={(e) => setPdfPrescrition(e.target.value)}
-        />
-      );
-
-      break;
-    case viewComponentPrint == "Solicitar Exame":
-      ComponentPrint = (
-        <Textarea
-          minW="45.7rem"
-          minH="12.5rem"
-          defaultValue={"Observações nesta consulta"}
-          onChange={(e) => setPetObservations(e.target.value)}
-        />
-      );
-
-      break;
-    default:
-      ComponentPrint = <Text>Nenhuma informação a ser exibida</Text>;
-      break;
-  }
 
   let viewComponent;
   switch (true) {
@@ -679,33 +631,8 @@ export function WorkSpaceVet() {
             </Flex>
           </Flex>
           <div className="div3">
-            <HStack spacing={4} m="2" w="100%">
-              <Button
-                w="25%"
-                colorScheme="whatsapp"
-                onClick={() => setViewComponentPrint("Diagnóstico")}
-              >
-                Diagnóstico
-              </Button>
-              <Button
-                w="25%"
-                colorScheme="whatsapp"
-                onClick={() => setViewComponentPrint("Prescrição")}
-              >
-                Prescrição
-              </Button>
-              <Button w="25%" colorScheme="whatsapp">
-                Sintomas
-              </Button>
-              <Button
-                onClick={() => setViewComponentPrint("Solicitar Exame")}
-                w="25%"
-                colorScheme="whatsapp"
-              >
-                Observações
-              </Button>
-            </HStack>
-            <Flex>{ComponentPrint}</Flex>
+    
+                <ThrowDiagnoisticsInConsult />
           </div>
           <div className="div4">
             <Flex justify="space-between" gap="2" m="2">
@@ -766,11 +693,11 @@ export function WorkSpaceVet() {
               w="25%"
               mr="3"
               py="6"
-              onClick={() => {
-                viewComponentPrint === "Diagnóstico"
-                  ? handleCreateInstruction(PdfDiagnostic)
-                  : handleCreateInstruction(PdfPrescrition);
-              }}
+              // onClick={() => {
+              //   viewComponentPrint === "Diagnóstico"
+              //     ? handleCreateInstruction(PdfDiagnostic)
+              //     : handleCreateInstruction(PdfPrescrition);
+              // }}
             >
               Imprimir Receita
             </Button>
