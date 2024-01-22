@@ -19,14 +19,13 @@ type query = {
 };
 
 type body = {
-    RequestedByVetId: number;
-    RequestedByVetName: string;
-    RequestedCrm: string;
-    isAdmission: boolean;
-}
+  RequestedByVetId: number;
+  RequestedByVetName: string;
+  RequestedCrm: string;
+  isAdmission: boolean;
+};
 
 export const examsController = {
-
   getById: async (
     request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
@@ -36,9 +35,9 @@ export const examsController = {
       const exam = await prisma.oldExams.findUnique({
         where: { codexam: parseInt(id) },
         include: {
-            partExams: {
-              include: {examsDetails: true}
-            }
+          partExams: {
+            include: { examsDetails: true },
+          },
         },
       });
 
@@ -49,37 +48,65 @@ export const examsController = {
     }
   },
 
-
-  removePetExam: async (
-    request: FastifyRequest,
-    reply: FastifyReply
-  ) => {
-   
+  removePetExam: async (request: FastifyRequest, reply: FastifyReply) => {
     const DeleteExamForPetSchema = z.object({
-      id: z.coerce.number(), 
-      accId: z.coerce.number(), 
-      examPrice: z.any(), 
-      linkedDebitId: z.coerce.number(), 
-    })
+      id: z.coerce.number(),
+      accId: z.coerce.number(),
+      examPrice: z.any(),
+      linkedDebitId: z.coerce.number(),
+    });
     try {
-    
-      const { id, accId, examPrice, linkedDebitId} = DeleteExamForPetSchema.parse(request.params);
+      const { id, accId, examPrice, linkedDebitId } =
+        DeleteExamForPetSchema.parse(request.params);
 
       await accumulatorService.removePriceToAccum(Number(examPrice), accId);
 
       await prisma.petConsultsDebits.delete({
         where: {
-          id: linkedDebitId
-        }
-      })
+          id: linkedDebitId,
+        },
+      });
 
       await prisma.examsForPet.delete({
         where: { id: id },
       });
 
+      reply.status(203).send({
+        message: "Deletado com sucesso!",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  removePetProcedure: async (request: FastifyRequest, reply: FastifyReply) => {
+    const DeleteProcedureForPetSchema = z.object({
+      id: z.coerce.number(),
+      accId: z.coerce.number(),
+      procedurePrice: z.any(),
+      linkedDebitId: z.coerce.number(),
+    });
+    try {
+      const { id, accId, procedurePrice, linkedDebitId } =
+        DeleteProcedureForPetSchema.parse(request.params);
+
+      await accumulatorService.removePriceToAccum(
+        Number(procedurePrice),
+        accId
+      );
+
+      await prisma.petConsultsDebits.delete({
+        where: {
+          id: linkedDebitId,
+        },
+      });
+
+      await prisma.proceduresForPet.delete({
+        where: { id: id },
+      });
 
       reply.status(203).send({
-        message: 'Deletado com sucesso!'
+        message: "Deletado com sucesso!",
       });
     } catch (error) {
       console.log(error);
@@ -204,95 +231,101 @@ export const examsController = {
     }
   },
 
-  setExamInPet: async (    request: FastifyRequest<{
-    Params: params;
-    Querystring: query;
-    Body: body
-  }>,
-  reply: FastifyReply) => {
+  setExamInPet: async (
+    request: FastifyRequest<{
+      Params: params;
+      Querystring: query;
+      Body: body;
+    }>,
+    reply: FastifyReply
+  ) => {
     try {
+      const { examId, petId, accId, queueId } = request.params;
+      const {
+        RequestedByVetId,
+        RequestedByVetName,
+        RequestedCrm,
+        isAdmission,
+      } = request.body;
+      const exam = await prisma.oldExams.findUnique({
+        where: { codexam: parseInt(examId) },
+      });
 
-        const {examId, petId, accId, queueId} = request.params
-        const { RequestedByVetId, RequestedByVetName, RequestedCrm, isAdmission} = request.body
-        const exam = await prisma.oldExams.findUnique({where: {codexam: parseInt(examId)}})
+      if (!exam) return;
 
-        if(!exam) return
-
-        if(isAdmission === true) {
-          await prisma.petConsultsDebits.create({
+      if (isAdmission === true) {
+        await prisma.petConsultsDebits
+          .create({
             data: {
-                OpenedAdmissionsForPet: {connect: {id: queueId}},
-                isExam: true,
-                name: exam.name,
-                price: exam.price,
-                itemId: exam.codexam,
-                RequestedByVetId,
-                RequestedByVetName,
-        
-            }
-        }).then(async (res) => {
-          await prisma.examsForPet.create({
-            data: {
+              OpenedAdmissionsForPet: { connect: { id: queueId } },
+              isExam: true,
               name: exam.name,
               price: exam.price,
-              doneExame: false,
-              twoPart: exam.twoPart,
-              onePart: exam.onePart,
-              byReport: exam.byReport,
-              requesteData: new Date(),
-              requestedFor: RequestedByVetName,
-              requestedCrm: RequestedCrm,
-              examsType: exam.defaultLab ? ['lab'] : ['image'],
-              medicine: { connect: { petId: parseInt(petId) } },
-              LinkedAdmissionDebitId: res.id 
+              itemId: exam.codexam,
+              RequestedByVetId,
+              RequestedByVetName,
             },
-          });
-        })
-        } else {
-          await prisma.petConsultsDebits.create({
-            data: {
-                OpenedConsultsForPet: {connect: {id: queueId}},
-                isExam: true,
+          })
+          .then(async (res) => {
+            await prisma.examsForPet.create({
+              data: {
                 name: exam.name,
                 price: exam.price,
-                itemId: exam.codexam,
-                RequestedByVetId,
-                RequestedByVetName,
-
-            }
-        }).then(async (res) => {
-          await prisma.examsForPet.create({
+                doneExame: false,
+                twoPart: exam.twoPart,
+                onePart: exam.onePart,
+                byReport: exam.byReport,
+                requesteData: new Date(),
+                requestedFor: RequestedByVetName,
+                requestedCrm: RequestedCrm,
+                examsType: exam.defaultLab ? ["lab"] : ["image"],
+                medicine: { connect: { petId: parseInt(petId) } },
+                LinkedAdmissionDebitId: res.id,
+              },
+            });
+          });
+      } else {
+        await prisma.petConsultsDebits
+          .create({
             data: {
+              OpenedConsultsForPet: { connect: { id: queueId } },
+              isExam: true,
               name: exam.name,
               price: exam.price,
-              doneExame: false,
-              twoPart: exam.twoPart,
-              onePart: exam.onePart,
-              byReport: exam.byReport,
-              requesteData: new Date(),
-              requestedFor: RequestedByVetName,
-              requestedCrm: RequestedCrm,
-              examsType: exam.defaultLab ? ['lab'] : ['image'],
-              medicine: { connect: { petId: parseInt(petId) } },
-              linkedConsultDebitId: res.id 
+              itemId: exam.codexam,
+              RequestedByVetId,
+              RequestedByVetName,
             },
+          })
+          .then(async (res) => {
+            await prisma.examsForPet.create({
+              data: {
+                name: exam.name,
+                price: exam.price,
+                doneExame: false,
+                twoPart: exam.twoPart,
+                onePart: exam.onePart,
+                byReport: exam.byReport,
+                requesteData: new Date(),
+                requestedFor: RequestedByVetName,
+                requestedCrm: RequestedCrm,
+                examsType: exam.defaultLab ? ["lab"] : ["image"],
+                medicine: { connect: { petId: parseInt(petId) } },
+                linkedConsultDebitId: res.id,
+              },
+            });
           });
-        })
-        }
+      }
 
-        
-        await accumulatorService.addPriceToAccum(exam.price, accId);
+      await accumulatorService.addPriceToAccum(exam.price, accId);
 
-        reply.status(201).send({
-          message: "Exame adicionado com sucesso!"
-        })
-   
-        
+      reply.status(201).send({
+        message: "Exame adicionado com sucesso!",
+      });
     } catch (error) {
-    reply.send({
+      reply.send({
         error,
       });
     }
-  }
-
-}
+  },
+};
