@@ -62,7 +62,7 @@ export function Reports() {
                       Relatórios de Especialidades
                     </Button>
                   </Link>
-                  <Link to="/Reports/Exams">
+                  <Link to="/Reports/Type/Exams">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Relatórios de Exames
                     </Button>
@@ -112,7 +112,7 @@ export function Reports() {
                       Frequência de Clientes
                     </Button>
                   </Link>
-                  <Link to="/Reports">
+                  <Link to="/Reports/Type/Vets">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Relatório por Veterinário 2023
                     </Button>
@@ -130,7 +130,7 @@ export function Reports() {
                       Comissôes Visualizar Caixas
                     </Button>
                   </Link>
-                  <Link to="/Reports">
+                  <Link to="/Reports/Type/FinanceSector">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Relatório Financeiro por Setor
                     </Button>
