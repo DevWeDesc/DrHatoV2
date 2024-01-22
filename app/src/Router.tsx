@@ -112,6 +112,7 @@ import { MultiPartExamResultPdf } from "./components/ReactPdfComp/MultiPartExamR
 import { ByTextExamResultPdf } from "./components/ReactPdfComp/ByTextExamResultPdf";
 import { InstructionsPdf } from "./components/ReactPdfComp/InstructionsPdf";
 import { MedicineRecordOld } from "./pages/Pets/MedicineRecordOld";
+import { VetReports } from "./pages/Reports/Vet/VetReports";
 
 export function Router() {
   return (
@@ -355,6 +356,7 @@ export function Router() {
           <Route path="/Surgeries/" element={<Surgeries />} />
           <Route path="/Surgeries/:id" element={<SurgeriesDetails />} />
           <Route path="/Customer/Balance/:id" element={<BalanceHistory />} />
+          <Route path="/Reports/Type/:typeReports" element={<VetReports />} />
         </Route>
       </Routes>
     </AuthContextProvider>
