@@ -191,24 +191,26 @@ model Procedures {
 }
 
 model ProceduresForPet {
-  id                  Int            @id @default(autoincrement())
-  name                String
-  price               Decimal?
-  priceTwo            Decimal?
-  priceThree          Decimal?
-  priceFour           Decimal?
-  categoryOld         String?
-  minAge              Int?
-  maxAge              Int?
-  applicationInterval String?
-  available           Boolean
-  observations        String?
-  group_id            Int?
-  sector_id           Int?
-  requestedDate       DateTime?
-  isDone              Boolean?       @default(false)
-  medicine_id         Int
-  medicine            MedicineRecord @relation(fields: [medicine_id], references: [id])
+  id                     Int            @id @default(autoincrement())
+  name                   String
+  price                  Decimal?
+  priceTwo               Decimal?
+  priceThree             Decimal?
+  priceFour              Decimal?
+  categoryOld            String?
+  minAge                 Int?
+  maxAge                 Int?
+  applicationInterval    String?
+  available              Boolean
+  observations           String?
+  group_id               Int?
+  sector_id              Int?
+  requestedDate          DateTime?
+  isDone                 Boolean?       @default(false)
+  medicine_id            Int
+  linkedConsultDebitId   Int?             @unique
+  LinkedAdmissionDebitId Int?             @unique
+  medicine               MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
 
 model Groups {
@@ -654,4 +656,9 @@ model PartDetails {
   minAgesThree     String?
   maxAgesThree     String?
   parts            Int?
+}
+
+model PaymentsType {
+  id  Int @id @default(autoincrement())
+  typePayment String @unique
 }
