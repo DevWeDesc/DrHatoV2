@@ -23,7 +23,7 @@ import { boxRoutes } from "./routes/box.routes";
 import { accountsRoutes } from "./routes/accounts.routes";
 import { medicinesRoutes } from "./routes/medicines.routes";
 import { oldSystemHistorieRoutes } from "./routes/oldsystem.historie.routes";
-import { paymentsRoutes } from "./routes/payments.routes";
+import { paymentsTypeRoutes } from "./routes/paymentsType.routes";
 
 export const app = fastify();
 
@@ -50,7 +50,7 @@ app.register(boxRoutes);
 app.register(accountsRoutes);
 app.register(medicinesRoutes);
 app.register(oldSystemHistorieRoutes);
-app.register(paymentsRoutes);
+app.register(paymentsTypeRoutes);
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {
