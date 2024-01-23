@@ -131,8 +131,8 @@ export interface ExamsProps {
   onePart: boolean;
   twoPart: boolean;
   coleted?: number;
-  linkedConsultId: number | null
-	linkedAdmissionId: number | null
+  linkedConsultId: number | null;
+  linkedAdmissionId: number | null;
 }
 
 export interface VacinnesProps {
@@ -187,6 +187,8 @@ type ProceduresProps = {
   price: number;
   available: boolean;
   requestedDate: Date;
+  linkedConsultId: number | null;
+  linkedAdmissionId: number | null;
 };
 
 type KennelProps = {
