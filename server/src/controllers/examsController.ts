@@ -79,40 +79,6 @@ export const examsController = {
     }
   },
 
-  removePetProcedure: async (request: FastifyRequest, reply: FastifyReply) => {
-    const DeleteProcedureForPetSchema = z.object({
-      id: z.coerce.number(),
-      accId: z.coerce.number(),
-      procedurePrice: z.any(),
-      linkedDebitId: z.coerce.number(),
-    });
-    try {
-      const { id, accId, procedurePrice, linkedDebitId } =
-        DeleteProcedureForPetSchema.parse(request.params);
-
-      await accumulatorService.removePriceToAccum(
-        Number(procedurePrice),
-        accId
-      );
-
-      await prisma.petConsultsDebits.delete({
-        where: {
-          id: linkedDebitId,
-        },
-      });
-
-      await prisma.proceduresForPet.delete({
-        where: { id: id },
-      });
-
-      reply.status(203).send({
-        message: "Deletado com sucesso!",
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  },
-
   finishPetExam: async (
     request: FastifyRequest<{ Params: { id: string } }>,
     reply: FastifyReply

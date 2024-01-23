@@ -4,6 +4,7 @@ import { ValidationContract } from "../validators/userContract";
 import { getFormattedDateTime } from "../utils/getCurrentDate";
 import { accumulatorService } from "../services/accumulatorService";
 import { prisma } from "../interface/PrismaInstance";
+import { z } from "zod";
 
 type params = {
   id: string;
@@ -293,42 +294,73 @@ export const proceduresController = {
       if (!procedure) return;
 
       if (InAdmission === true) {
-        await prisma.petConsultsDebits.create({
-          data: {
-            OpenedAdmissionsForPet: { connect: { id: queueId } },
-            isProcedure: true,
-            name: procedure.name,
-            price: procedure.price,
-            itemId: procedure.id,
-            RequestedByVetId,
-            RequestedByVetName,
-          },
-        });
+        await prisma.petConsultsDebits
+          .create({
+            data: {
+              OpenedAdmissionsForPet: { connect: { id: queueId } },
+              isProcedure: true,
+              name: procedure.name,
+              price: procedure.price,
+              itemId: procedure.id,
+              RequestedByVetId,
+              RequestedByVetName,
+            },
+          })
+          .then(async (res) => {
+            await prisma.proceduresForPet.create({
+              data: {
+                name: procedure.name,
+                available: procedure.available,
+                observations: procedure.observations,
+                price: procedure.price,
+                applicationInterval: procedure.applicationInterval,
+                requestedDate: actualDate,
+                linkedConsultDebitId: res.id,
+                medicine: { connect: { petId: parseInt(petId) } },
+              },
+            });
+          });
       } else {
-        await prisma.petConsultsDebits.create({
-          data: {
-            OpenedConsultsForPet: { connect: { id: queueId } },
-            isProcedure: true,
-            name: procedure.name,
-            price: procedure.price,
-            itemId: procedure.id,
-            RequestedByVetId,
-            RequestedByVetName,
-          },
-        });
+        await prisma.petConsultsDebits
+          .create({
+            data: {
+              OpenedConsultsForPet: { connect: { id: queueId } },
+              isProcedure: true,
+              name: procedure.name,
+              price: procedure.price,
+              itemId: procedure.id,
+              RequestedByVetId,
+              RequestedByVetName,
+            },
+          })
+          .then(async (res) => {
+            await prisma.proceduresForPet.create({
+              data: {
+                name: procedure.name,
+                available: procedure.available,
+                observations: procedure.observations,
+                price: procedure.price,
+                applicationInterval: procedure.applicationInterval,
+                requestedDate: actualDate,
+                linkedConsultDebitId: res.id,
+                medicine: { connect: { petId: parseInt(petId) } },
+              },
+            });
+          });
       }
 
-      await prisma.proceduresForPet.create({
-        data: {
-          name: procedure.name,
-          available: procedure.available,
-          observations: procedure.observations,
-          price: procedure.price,
-          applicationInterval: procedure.applicationInterval,
-          requestedDate: actualDate,
-          medicine: { connect: { petId: parseInt(petId) } },
-        },
-      });
+      // await prisma.proceduresForPet.create({
+      //   data: {
+      //     name: procedure.name,
+      //     available: procedure.available,
+      //     observations: procedure.observations,
+      //     price: procedure.price,
+      //     applicationInterval: procedure.applicationInterval,
+      //     requestedDate: actualDate,
+      //     linkedConsultDebitId: res.is,
+      //     medicine: { connect: { petId: parseInt(petId) } },
+      //   },
+      // });
 
       await accumulatorService.addPriceToAccum(procedure?.price, accId);
       reply.status(200).send("Procedimento adicionado com sucesso!");
@@ -338,27 +370,64 @@ export const proceduresController = {
     }
   },
 
-  deleteProcedureOfPet: async (
-    request: FastifyRequest<{
-      Params: { id: string; procedPrice: string; accId: string };
-    }>,
+  // deleteProcedureOfPet: async (
+  //   request: FastifyRequest<{
+  //     Params: { id: string; procedPrice: string; accId: string };
+  //   }>,
+  //   reply: FastifyReply
+  // ) => {
+  //   try {
+  //     const { id, procedPrice, accId } = request.params;
+
+  //     await accumulatorService.removePriceToAccum(Number(procedPrice), accId);
+
+  //     await prisma.proceduresForPet.delete({
+  //       where: { id: parseInt(id) },
+  //     });
+
+  //     reply.send("Procedimento deletado com sucesso!").status(203);
+
+  //     reply.status(200);
+  //   } catch (error) {
+  //     console.log(error);
+  //     reply.send({ message: error });
+  //   }
+  // },
+
+  removePetProcedure: async (
+    request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
   ) => {
+    const DeleteProcedureForPetSchema = z.object({
+      id: z.coerce.number(),
+      accId: z.coerce.number(),
+      procedurePrice: z.any(),
+      linkedDebitId: z.coerce.number(),
+    });
     try {
-      const { id, procedPrice, accId } = request.params;
+      const { id, accId, procedurePrice, linkedDebitId } =
+        DeleteProcedureForPetSchema.parse(request.params);
 
-      await accumulatorService.removePriceToAccum(Number(procedPrice), accId);
+      await accumulatorService.removePriceToAccum(
+        Number(procedurePrice),
+        accId
+      );
 
-      await prisma.proceduresForPet.delete({
-        where: { id: parseInt(id) },
+      await prisma.petConsultsDebits.delete({
+        where: {
+          id: linkedDebitId,
+        },
       });
 
-      reply.send("Procedimento deletado com sucesso!").status(203);
+      await prisma.proceduresForPet.delete({
+        where: { id: id },
+      });
 
-      reply.status(200);
+      reply.status(203).send({
+        message: "Deletado com sucesso!",
+      });
     } catch (error) {
       console.log(error);
-      reply.send({ message: error });
     }
   },
 
