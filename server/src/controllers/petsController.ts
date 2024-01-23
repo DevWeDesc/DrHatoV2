@@ -1,6 +1,6 @@
-import { FastifyRequest, FastifyReply } from 'fastify'
-import { petSchema } from '../schemas/schemasValidator'
-import { prisma } from '../interface/PrismaInstance'
+import { FastifyRequest, FastifyReply } from "fastify";
+import { petSchema } from "../schemas/schemasValidator";
+import { prisma } from "../interface/PrismaInstance";
 
 export const petsController = {
   getAllPets: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -9,23 +9,23 @@ export const petsController = {
         include: {
           queue: { select: { id: true, queryType: true, vetPreference: true } },
           medicineRecords: { include: { petQueues: true } },
-          customer: { select: { name: true } }
-        }
-      })
-      return reply.send(pets)
+          customer: { select: { name: true } },
+        },
+      });
+      return reply.send(pets);
     } catch (error) {
-      reply.status(404).send(error)
+      reply.status(404).send(error);
     }
   },
 
   getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
-    const { id }: any = request.params
+    const { id }: any = request.params;
     try {
       const pet = await prisma.pets.findUnique({
         where: { id: parseInt(id) },
         include: {
           customer: {
-            select: { name: true, id: true, balance: true, pets: true }
+            select: { name: true, id: true, balance: true, pets: true },
           },
           medicineRecords: {
             select: {
@@ -36,8 +36,11 @@ export const petsController = {
               petVaccines: true,
               petSurgeries: true,
               petProcedures: true,
-              petBeds: { where: { isCompleted: false },include: {hospDiary: true} }
-            }
+              petBeds: {
+                where: { isCompleted: false },
+                include: { hospDiary: true },
+              },
+            },
           },
           queue: {
             select: {
@@ -47,8 +50,8 @@ export const petsController = {
               moreInfos: true,
               queueOur: true,
               queueEntry: true,
-              petIsInQueue: true
-            }
+              petIsInQueue: true,
+            },
           },
           bed: {
             select: {
@@ -58,13 +61,11 @@ export const petsController = {
               kennel: { select: { name: true, price: true } },
               dailyRate: true,
               mustFasting: true,
-
             },
-            
           },
-          priceAccumulator: { select: { id: true, accumulator: true } }
-        }
-      })
+          priceAccumulator: { select: { id: true, accumulator: true } },
+        },
+      });
 
       const petData = {
         id: pet?.id,
@@ -72,12 +73,12 @@ export const petsController = {
         debits: pet?.debits,
         customerName: pet?.customer.name,
         customerId: pet?.customer.id,
-        customerPets: pet?.customer.pets?.map(pet => {
+        customerPets: pet?.customer.pets?.map((pet) => {
           let petsData = {
             id: pet.id,
-            name: pet.name
-          }
-          return petsData
+            name: pet.name,
+          };
+          return petsData;
         }),
         especie: pet?.especie,
         sexo: pet?.sexo,
@@ -99,9 +100,9 @@ export const petsController = {
           entry: pet?.bed?.entryOur,
           kennelName: pet?.bed?.kennel,
           fasting: pet?.bed?.mustFasting,
-          price: pet?.bed?.kennel?.price
+          price: pet?.bed?.kennel?.price,
         },
-        exams: pet?.medicineRecords?.petExams.map(exams => {
+        exams: pet?.medicineRecords?.petExams.map((exams) => {
           let examData = {
             id: exams.id,
             requestedData: exams.requesteData,
@@ -112,62 +113,64 @@ export const petsController = {
             linkedAdmissionId: exams.LinkedAdmissionDebitId,
             onePart: exams.onePart,
             twoPart: exams.twoPart,
-            byText: exams.byReport
-          }
-          return examData
+            byText: exams.byReport,
+          };
+          return examData;
         }),
-        vaccines: pet?.medicineRecords?.petVaccines.map(vaccine => {
+        vaccines: pet?.medicineRecords?.petVaccines.map((vaccine) => {
           let vacineData = {
             id: vaccine.id,
             name: vaccine.name,
             price: vaccine.price,
             requestedDate: vaccine.requestedDate,
-            applicableDate: vaccine.applicationDate
-          }
-          return vacineData
+            applicableDate: vaccine.applicationDate,
+          };
+          return vacineData;
         }),
-        surgeries: pet?.medicineRecords?.petSurgeries.map(surgerie => {
+        surgeries: pet?.medicineRecords?.petSurgeries.map((surgerie) => {
           let surgeriesData = {
             id: surgerie.id,
             name: surgerie.name,
             price: surgerie.price,
             requestedDate: surgerie.requestedDate,
             completedDate: surgerie.completedDate,
-            surgerieStatus: surgerie.status
-          }
-          return surgeriesData
+            surgerieStatus: surgerie.status,
+          };
+          return surgeriesData;
         }),
-        procedures: pet?.medicineRecords?.petProcedures.map(procedure => {
+        procedures: pet?.medicineRecords?.petProcedures.map((procedure) => {
           let procedureData = {
             id: procedure.id,
             name: procedure.name,
             price: procedure.price,
             available: procedure.available,
-            requested: procedure.requestedDate
-          }
-          return procedureData
+            requested: procedure.requestedDate,
+            linkedConsultId: procedure.linkedConsultDebitId,
+            linkedAdmissionId: procedure.LinkedAdmissionDebitId,
+          };
+          return procedureData;
         }),
-        admissions: pet?.medicineRecords?.petBeds.map(bed => {
+        admissions: pet?.medicineRecords?.petBeds.map((bed) => {
           let bedData = {
             id: bed.id,
             entry: bed.entryOur,
             exit: bed.exitOur,
             totalDebit: bed.totalDebt,
             fasting: bed.mustFasting,
-            observations: bed.hospDiary
-          }
-          return bedData
+            observations: bed.hospDiary,
+          };
+          return bedData;
         }),
         queue: pet?.queue,
         queueHistory: pet?.medicineRecords?.petQueues,
         totalAcc: {
           id: pet?.priceAccumulator?.id,
-          price: pet?.priceAccumulator?.accumulator
-        }
-      }
-      return reply.send(petData)
+          price: pet?.priceAccumulator?.accumulator,
+        },
+      };
+      return reply.send(petData);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
 
@@ -182,19 +185,19 @@ export const petsController = {
       isCastred,
       corPet,
       bornDate,
-      observations
-    } = petSchema.parse(request.body)
+      observations,
+    } = petSchema.parse(request.body);
 
-    const { id }: any = request.params
+    const { id }: any = request.params;
 
     try {
       const petAlreadyExists = await prisma.pets.findFirst({
-        where: { name: name }
-      })
+        where: { name: name },
+      });
 
       if (petAlreadyExists) {
-        reply.status(404).send('Pet already exists')
-        return
+        reply.status(404).send("Pet already exists");
+        return;
       }
 
       await prisma.pets.create({
@@ -211,32 +214,32 @@ export const petsController = {
           observations,
           customer: {
             connect: {
-              id: parseInt(id)
-            }
+              id: parseInt(id),
+            },
           },
           queue: {
             create: {
-              vetPreference: '',
-              queryType: '',
-              queueEntry: null
-            }
+              vetPreference: "",
+              queryType: "",
+              queueEntry: null,
+            },
           },
           medicineRecords: {
             create: {
-              observations: ['']
-            }
+              observations: [""],
+            },
           },
           priceAccumulator: {
             create: {
-              accumulator: 0
-            }
-          }
-        }
-      })
+              accumulator: 0,
+            },
+          },
+        },
+      });
 
-      reply.status(201).send('Sucesso')
+      reply.status(201).send("Sucesso");
     } catch (error) {
-      reply.send('FALHA')
+      reply.send("FALHA");
     }
   },
 
@@ -245,30 +248,34 @@ export const petsController = {
       const pets = await prisma.pets.findMany({
         where: {
           medicineRecords: {
-            petConsults: { some: {
-              isClosed: false
-            }}
-          }
+            petConsults: {
+              some: {
+                isClosed: false,
+              },
+            },
+          },
         },
         include: {
           medicineRecords: {
-            include: { petConsults: true}
+            include: { petConsults: true },
           },
-  
-          customer: { select: { name: true, vetPreference: true, cpf: true } }
-        }
-      })
+
+          customer: { select: { name: true, vetPreference: true, cpf: true } },
+        },
+      });
 
       const totalInQueue = await prisma.openedConsultsForPet.count({
-        where: { isClosed: false }
-      })
+        where: { isClosed: false },
+      });
 
-      const response = pets.map(pet => {
+      const response = pets.map((pet) => {
         let data = {
           name: pet.name,
           id: pet.id,
           customerName: pet.customer.name,
-          vetPreference: pet.medicineRecords?.petConsults[0]?.vetPreference ?? "Sem preferência",
+          vetPreference:
+            pet.medicineRecords?.petConsults[0]?.vetPreference ??
+            "Sem preferência",
           queueId: pet.medicineRecords?.petConsults[0]?.id,
           openedBy: pet.medicineRecords?.petConsults[0]?.openedBy,
           codPet: pet.CodAnimal,
@@ -278,54 +285,63 @@ export const petsController = {
           race: pet.race,
           customerCpf: pet.customer.cpf,
           queryType: pet.medicineRecords?.petConsults[0]?.consultType,
-          totalInQueue
-        }
-        return data
-      })
+          totalInQueue,
+        };
+        return data;
+      });
 
-      return reply.send({ response, totalInQueue })
+      return reply.send({ response, totalInQueue });
     } catch (error) {
-      console.error(error)
-      reply.status(404).send(error)
+      console.error(error);
+      reply.status(404).send(error);
     }
   },
 
-  petsByVetQueue: async (request: FastifyRequest< {Params: { vetName: string}}>, reply: FastifyReply) => {
+  petsByVetQueue: async (
+    request: FastifyRequest<{ Params: { vetName: string } }>,
+    reply: FastifyReply
+  ) => {
     try {
-
-      const { vetName } = request.params
+      const { vetName } = request.params;
 
       const pets = await prisma.pets.findMany({
         where: {
+          medicineRecords: {
+            petConsults: {
+              some: {
+                isClosed: false,
+              },
+            },
+          },
+          AND: {
             medicineRecords: {
-              petConsults: { some: {
-                isClosed: false
-              }}
+              petConsults: {
+                some: {
+                  vetPreference: { contains: vetName },
+                },
+              },
             },
-            AND: {
-              medicineRecords: {petConsults: {some: {
-                vetPreference: {contains: vetName}
-              }}}
-            },
-      
+          },
         },
         include: {
           medicineRecords: {
-            include: { petConsults: true}
+            include: { petConsults: true },
           },
-          customer: { select: { name: true, vetPreference: true, cpf: true } }
-        }
-      })
+          customer: { select: { name: true, vetPreference: true, cpf: true } },
+        },
+      });
 
       const totalInQueue = await prisma.queues.count({
-        where: { petIsInQueue: true }
-      })
-      const response = pets.map(pet => {
+        where: { petIsInQueue: true },
+      });
+      const response = pets.map((pet) => {
         let data = {
           name: pet.name,
           id: pet.id,
           customerName: pet.customer.name,
-          vetPreference: pet.medicineRecords?.petConsults[0]?.vetPreference ?? "Sem preferência",
+          vetPreference:
+            pet.medicineRecords?.petConsults[0]?.vetPreference ??
+            "Sem preferência",
           queueId: pet.medicineRecords?.petConsults[0]?.id,
           openedBy: pet.medicineRecords?.petConsults[0]?.openedBy,
           codPet: pet.CodAnimal,
@@ -335,14 +351,14 @@ export const petsController = {
           race: pet.race,
           customerCpf: pet.customer.cpf,
           queryType: pet.medicineRecords?.petConsults[0]?.consultType,
-          totalInQueue
-        }
-        return data
-      })
+          totalInQueue,
+        };
+        return data;
+      });
 
-      return reply.send({ response, totalInQueue })
+      return reply.send({ response, totalInQueue });
     } catch (error) {
-      reply.status(404).send(error)
+      reply.status(404).send(error);
     }
   },
 
@@ -351,157 +367,177 @@ export const petsController = {
     reply: FastifyReply
   ) => {
     try {
-      const { petId, weight } = request.params
+      const { petId, weight } = request.params;
 
       await prisma.pets.update({
         where: { id: parseInt(petId) },
         data: {
-          weigth: weight
-        }
-      })
+          weigth: weight,
+        },
+      });
     } catch (error) {
-      reply.send(error)
-      console.log(error)
+      reply.send(error);
+      console.log(error);
     }
   },
 
-  getPetBedHistory: async (request: FastifyRequest<{ Params: {petId: string}}>, reply: FastifyReply) => {
-    const { petId } = request.params
+  getPetBedHistory: async (
+    request: FastifyRequest<{ Params: { petId: string } }>,
+    reply: FastifyReply
+  ) => {
+    const { petId } = request.params;
     try {
-       const pet = await prisma .pets.findUnique({
-          where: {id:  parseInt(petId)}, include: {
-            medicineRecords: {include:{ 
-              petBeds: true
+      const pet = await prisma.pets.findUnique({
+        where: { id: parseInt(petId) },
+        include: {
+          medicineRecords: {
+            include: {
+              petBeds: true,
+            },
+          },
+        },
+      });
 
-            }}
-          }
-        })
-
-        reply.send(pet)
+      reply.send(pet);
     } catch (error) {
-      console.log(error)
-      reply.send(error)
+      console.log(error);
+      reply.send(error);
     }
   },
 
-  createEspecie: async (request: FastifyRequest<{ Body: {name: string}}>, reply: FastifyReply) => {
+  createEspecie: async (
+    request: FastifyRequest<{ Body: { name: string } }>,
+    reply: FastifyReply
+  ) => {
     try {
-        const {name} = request.body
+      const { name } = request.body;
 
-        await prisma.especies.create({
-          data: {name}
-        })
-        reply.status(201).send("Created successfully")
+      await prisma.especies.create({
+        data: { name },
+      });
+      reply.status(201).send("Created successfully");
     } catch (error) {
-      console.error(error)
-      reply.send(error)
+      console.error(error);
+      reply.send(error);
     }
   },
 
   getEspecies: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const especies = await prisma.especies.findMany({
-        include: {race: true}
-      })
+        include: { race: true },
+      });
 
-      reply.send(especies)
+      reply.send(especies);
     } catch (error) {
-      console.log(error)
-      reply.send(error)
+      console.log(error);
+      reply.send(error);
     }
   },
 
-  createRaces: async (request: FastifyRequest<{
-    Body: { name: string, espId: number}
-  }>, reply: FastifyReply) => {
+  createRaces: async (
+    request: FastifyRequest<{
+      Body: { name: string; espId: number };
+    }>,
+    reply: FastifyReply
+  ) => {
     try {
+      const { name, espId } = request.body;
 
-      const { name, espId } = request.body
-      
       await prisma.races.create({
-        data: {name, Especies: {
-          connect: { id: espId}
-        }}
-      })
+        data: {
+          name,
+          Especies: {
+            connect: { id: espId },
+          },
+        },
+      });
 
-      reply.status(201).send('Race created successfully')
+      reply.status(201).send("Race created successfully");
     } catch (error) {
-      console.log(error)
-      reply.send(error)
+      console.log(error);
+      reply.send(error);
     }
   },
 
-  getEspeciesById: async (request: FastifyRequest<{Params: {espId: string}}>, reply: FastifyReply) => {
-      try {
-
-        const {espId} = request.params
-
-       const esp =  await prisma.especies.findUnique({
-          where: {id: parseInt(espId)},
-          include: {race: true}
-        })
-
-
-        reply.send({
-          esp
-        })
-      } catch (error) {
-        console.log(error)
-        reply.send({message: error})
-      }
-  },
-
-
-  getAllPetHistory: async (request: FastifyRequest<{Params: {petId: string}}>, reply: FastifyReply) => {
+  getEspeciesById: async (
+    request: FastifyRequest<{ Params: { espId: string } }>,
+    reply: FastifyReply
+  ) => {
     try {
-      const {petId} = request.params
+      const { espId } = request.params;
 
-     const response = await prisma.pets.findUnique({
-        where: {id: parseInt(petId)}, include: 
-        {medicineRecords: {select: {petBeds: {include :{hospDiary: true}}, petExams: true, petConsults: true, petSurgeries: true, petVaccines: true}}, customer: {
-          include: {pets: true}
-        }}
-      }) 
+      const esp = await prisma.especies.findUnique({
+        where: { id: parseInt(espId) },
+        include: { race: true },
+      });
 
-      reply.send(response)
-
+      reply.send({
+        esp,
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      reply.send({ message: error });
     }
-},
+  },
 
+  getAllPetHistory: async (
+    request: FastifyRequest<{ Params: { petId: string } }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const { petId } = request.params;
 
-getPetOldHistoryConsults: async (request: FastifyRequest<{Params: {petId: string}}>, reply: FastifyReply) => {
-  try { 
-    const { petId} = request.params
+      const response = await prisma.pets.findUnique({
+        where: { id: parseInt(petId) },
+        include: {
+          medicineRecords: {
+            select: {
+              petBeds: { include: { hospDiary: true } },
+              petExams: true,
+              petConsults: true,
+              petSurgeries: true,
+              petVaccines: true,
+            },
+          },
+          customer: {
+            include: { pets: true },
+          },
+        },
+      });
 
-        const oldConsults = await prisma.pets.findUnique({
-          where: {CodAnimal: parseInt(petId)}, include: {
-            petOldConsults: true,
-            customer:  true
-          }
-        })
+      reply.send(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
 
+  getPetOldHistoryConsults: async (
+    request: FastifyRequest<{ Params: { petId: string } }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const { petId } = request.params;
 
-        if(!oldConsults) {
-          reply.status(404).send("sem histórico para esse animal!")
-        }
+      const oldConsults = await prisma.pets.findUnique({
+        where: { CodAnimal: parseInt(petId) },
+        include: {
+          petOldConsults: true,
+          customer: true,
+        },
+      });
 
-        reply.send({
-          oldConsults
-        })
+      if (!oldConsults) {
+        reply.status(404).send("sem histórico para esse animal!");
+      }
 
-
-  } catch (error) {
-
-    reply.send({
-      message: error
-    })
-
-  }
-}
-
-
-
-
-}
+      reply.send({
+        oldConsults,
+      });
+    } catch (error) {
+      reply.send({
+        message: error,
+      });
+    }
+  },
+};
