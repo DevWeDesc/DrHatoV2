@@ -136,11 +136,14 @@ export interface ExamsProps {
 }
 
 export interface VacinnesProps {
+  // linkedDebitId(id: number, price: number, linkedDebitId: number): void;
   id: number;
   name: string;
   price: number;
   doneExam: boolean;
   requestedDate: Date | string;
+  linkedDebitId: number;
+  linkedConsultId: number;
 }
 
 enum SurgerieStatus {
@@ -156,6 +159,7 @@ export interface SugeriesProps {
   scheduledDate?: Date;
   completedDate?: Date;
   surgerieStatus: string;
+  linkedConsultId: number;
 }
 
 type QueuePetOn = {
