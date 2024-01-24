@@ -124,6 +124,8 @@ export const petsController = {
             price: vaccine.price,
             requestedDate: vaccine.requestedDate,
             applicableDate: vaccine.applicationDate,
+            linkedConsultId: vaccine.linkedConsultDebitId,
+            linkedAdmissionId: vaccine.LinkedAdmissionDebitId,
           };
           return vacineData;
         }),
@@ -135,6 +137,8 @@ export const petsController = {
             requestedDate: surgerie.requestedDate,
             completedDate: surgerie.completedDate,
             surgerieStatus: surgerie.status,
+            linkedConsultId: surgerie.linkedConsultDebitId,
+            linkedAdmissionId: surgerie.LinkedAdmissionDebitId,
           };
           return surgeriesData;
         }),
