@@ -125,39 +125,54 @@ export const surgeriesController = {
       }
 
       if (isAdmission === true) {
-        await prisma.petConsultsDebits.create({
-          data: {
-            OpenedAdmissionsForPet: { connect: { id: queueId } },
-            isSurgerie: true,
-            name: surgerie.name,
-            price: surgerie.price,
-            itemId: surgerie.id,
-            RequestedByVetId,
-            RequestedByVetName,
-          },
-        });
+        await prisma.petConsultsDebits
+          .create({
+            data: {
+              OpenedAdmissionsForPet: { connect: { id: queueId } },
+              isSurgerie: true,
+              name: surgerie.name,
+              price: surgerie.price,
+              itemId: surgerie.id,
+              RequestedByVetId,
+              RequestedByVetName,
+            },
+          })
+          .then(async (res) => {
+            await prisma.surgeriesForPet.create({
+              data: {
+                name: surgerie.name,
+                status: "STARTED",
+                price: surgerie.price,
+                medicine: { connect: { petId: parseInt(petId) } },
+                linkedConsultDebitId: res.id,
+              },
+            });
+          });
       } else {
-        await prisma.petConsultsDebits.create({
-          data: {
-            OpenedConsultsForPet: { connect: { id: queueId } },
-            isSurgerie: true,
-            name: surgerie.name,
-            price: surgerie.price,
-            itemId: surgerie.id,
-            RequestedByVetId,
-            RequestedByVetName,
-          },
-        });
+        await prisma.petConsultsDebits
+          .create({
+            data: {
+              OpenedConsultsForPet: { connect: { id: queueId } },
+              isSurgerie: true,
+              name: surgerie.name,
+              price: surgerie.price,
+              itemId: surgerie.id,
+              RequestedByVetId,
+              RequestedByVetName,
+            },
+          })
+          .then(async (res) => {
+            await prisma.surgeriesForPet.create({
+              data: {
+                name: surgerie.name,
+                status: "STARTED",
+                price: surgerie.price,
+                medicine: { connect: { petId: parseInt(petId) } },
+                linkedConsultDebitId: res.id,
+              },
+            });
+          });
       }
-
-      await prisma.surgeriesForPet.create({
-        data: {
-          name: surgerie.name,
-          status: "STARTED",
-          price: surgerie.price,
-          medicine: { connect: { petId: parseInt(petId) } },
-        },
-      });
 
       await accumulatorService.addPriceToAccum(Number(surgerie.price), accId);
       reply.send("Cirurgia adiciona ao pet com sucesso").status(200);
@@ -183,15 +198,17 @@ export const surgeriesController = {
 
       await accumulatorService.removePriceToAccum(Number(sugPrice), accId);
 
-      await prisma.surgeriesForPet.delete({
-        where: { id: id },
-      });
-
-      await prisma.petConsultsDebits.delete({
-        where: {
-          id: linkedDebitId,
-        },
-      });
+      await prisma.petConsultsDebits
+        .delete({
+          where: {
+            id: linkedDebitId,
+          },
+        })
+        .then(async () => {
+          await prisma.surgeriesForPet.delete({
+            where: { linkedConsultDebitId: linkedDebitId },
+          });
+        });
 
       reply.status(203).send({
         message: "Deletado com sucesso!",
