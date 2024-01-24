@@ -347,6 +347,8 @@ model VaccinesForPet {
   isDone          Boolean?       @default(false)
   medicine_id     Int
   medicine        MedicineRecord @relation(fields: [medicine_id], references: [id])
+  linkedConsultDebitId Int? @unique
+  LinkedAdmissionDebitId Int? @unique
 }
 
 //  ------------- VACINES -------------  //
@@ -376,6 +378,8 @@ model SurgeriesForPet {
   surgeriesReport SurgeriesReports?
   medicine_id     Int
   medicine        MedicineRecord    @relation(fields: [medicine_id], references: [id])
+  linkedConsultDebitId Int? @unique
+  LinkedAdmissionDebitId Int? @unique
 }
 
 model OpenededAdmissionsForPet {
