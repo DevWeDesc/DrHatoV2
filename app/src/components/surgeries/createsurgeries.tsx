@@ -21,7 +21,6 @@ import { toast } from "react-toastify";
 import { PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
 
-
 interface SugeriesProps {
   id: number;
   name: string;
@@ -31,86 +30,103 @@ interface SugeriesProps {
 type SurgerieVetProps = {
   InAdmission: boolean;
   admissionQueueId?: string;
-}
+};
 
-export function Createsurgeries({InAdmission, admissionQueueId} : SurgerieVetProps) {
+export function Createsurgeries({
+  InAdmission,
+  admissionQueueId,
+}: SurgerieVetProps) {
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
-    const [sugeries, setSugeries] = useState<SugeriesProps[]>([])
-    const [reloadData, setReloadData] = useState(false);
-    const [pagination, setPagination] = useState(1);
-    const user = JSON.parse(localStorage.getItem("user") as string);
-    const navigate = useNavigate();
-     const { id, queueId } = useParams<{ id: string; queueId: string; }>();
+  const [sugeries, setSugeries] = useState<SugeriesProps[]>([]);
+  const [reloadData, setReloadData] = useState(false);
+  const [pagination, setPagination] = useState(1);
+  const user = JSON.parse(localStorage.getItem("user") as string);
+  const navigate = useNavigate();
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
 
-async function getPetData() {
-  const pet = await api.get(`/pets/${id}`);
-  setPetDetails(pet.data)
-}
-    async function GetData() {
-      try {
-        const sugeries = await api.get(`/surgeries?page=${pagination}&sex=${petDetails.sexo}`)
-        setSugeries(sugeries.data.surgeries)
-      } catch (error) {
-        console.error(error)
-      }
+  async function getPetData() {
+    const pet = await api.get(`/pets/${id}`);
+    setPetDetails(pet.data);
+  }
+  async function GetData() {
+    try {
+      const sugeries = await api.get(
+        `/surgeries?page=${pagination}&sex=${petDetails.sexo}`
+      );
+      setSugeries(sugeries.data.surgeries);
+    } catch (error) {
+      console.error(error);
     }
+  }
 
+  useEffect(() => {
+    getPetData();
+  }, []);
 
-    useEffect(() => {
-      getPetData()
-    }, [])
+  useEffect(() => {}, [GetData()]);
 
-    useEffect(() => {},[
-      GetData()
-    ])
-
-    useEffect(() => {
-      if (reloadData === true) {
-        GetData()
-        setReloadData(false); // Reseta o estado para evitar chamadas infinitas
-      }
-    }, [reloadData])
-
-
-    async function setSugeriesInPet (surgerieId: number)  {
-      try {
-        const data = {
-          RequestedByVetId: user.id, 
-          RequestedByVetName: user.consultName, 
-          isAdmission: InAdmission
-        };
-
-        if (InAdmission === true) {
-          await api.post(`surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`, data)
-          setReloadData(true);
-          toast.success("Cirurgia adicionada - Internações")
-        } else {
-          await api.post(`surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`, data)
-          setReloadData(true);
-          toast.success("Cirurgia adicionada - Veterinários")
-        }
-      
-      } catch (error) {
-        toast.error("Falha ao cadastrar Cirurgia!")
-      }
+  useEffect(() => {
+    if (reloadData === true) {
+      GetData();
+      setReloadData(false); // Reseta o estado para evitar chamadas infinitas
     }
-  
-    const handleDeleteSugerie = async (did: number, sugPrice: string | number) => {
-      try {
-        const confirm = window.confirm("DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?")
+  }, [reloadData]);
 
-        if(confirm === true )
-        {
-          await api.delete(`/surgeries/${did}/${petDetails.totalAcc.id}/${sugPrice}`).then((res) => {
+  async function setSugeriesInPet(surgerieId: number) {
+    try {
+      const data = {
+        RequestedByVetId: user.id,
+        RequestedByVetName: user.consultName,
+        isAdmission: InAdmission,
+      };
+
+      if (InAdmission === true) {
+        await api.post(
+          `surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
+          data
+        );
+        setReloadData(true);
+        toast.success("Cirurgia adicionada - Internações");
+      } else {
+        await api.post(
+          `surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
+          data
+        );
+        setReloadData(true);
+        toast.success("Cirurgia adicionada - Veterinários");
+      }
+    } catch (error) {
+      toast.error("Falha ao cadastrar Cirurgia!");
+    }
+  }
+
+  const handleDeleteSugerie = async (
+    did: number,
+    sugPrice: string | number,
+    linkedConsultId: number
+  ) => {
+    try {
+      const confirm = window.confirm(
+        "DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
+      );
+
+      if (confirm === true) {
+        await api
+          .delete(
+            `/petsurgery/${did}/${petDetails.totalAcc.id}/${sugPrice}/${linkedConsultId}`
+          )
+          .then((res) => {
             setReloadData(true);
-           toast.warning("EXCLUIDO COM SUCESSO") 
-          })
-        } else { return}
-      } catch (error) {
-       toast.error("FALHA AO PROCESSAR EXCLUSÃO")
-       console.log(error)
+            toast.warning("EXCLUIDO COM SUCESSO");
+          });
+      } else {
+        return;
       }
+    } catch (error) {
+      toast.error("FALHA AO PROCESSAR EXCLUSÃO");
+      console.log(error);
     }
+  };
 
   return (
     <ChakraProvider>
@@ -136,39 +152,59 @@ async function getPetData() {
             Agendamento de Cirurgias
           </Text>
           <Flex
-              bg="gray.200"
-              border="1px solid black"
-              fontSize="20"
-              w="65vw"
-              h="25vh"
-            
-            >
-                   <TableContainer width="100%" height="100%" overflowY="auto">
-                <Table>
+            bg="gray.200"
+            border="1px solid black"
+            fontSize="20"
+            w="65vw"
+            h="25vh"
+          >
+            <TableContainer width="100%" height="100%" overflowY="auto">
+              <Table>
                 <Thead>
                   <Tr>
-                      <Th fontWeight="black" color="black"  fontSize="md" >NOME</Th>
-                      <Th fontWeight="black" color="black"  fontSize="md" >VALOR</Th>
-                      <Th fontWeight="black" color="black"  fontSize="md" >EXCLUIR?</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-          {
-            petDetails.surgeries?.map((surgerie) => (
+                    <Th fontWeight="black" color="black" fontSize="md">
+                      NOME
+                    </Th>
+                    <Th fontWeight="black" color="black" fontSize="md">
+                      VALOR
+                    </Th>
+                    <Th fontWeight="black" color="black" fontSize="md">
+                      EXCLUIR?
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {petDetails.surgeries?.map((surgerie) => (
                     <Tr key={surgerie.id}>
                       <Td>{surgerie.name}</Td>
-                      <Td>{new Intl.NumberFormat("pt-BR", {style:'currency', currency: 'BRL'}).format(Number(surgerie.price))}</Td>
-                      <Td><Button colorScheme="red" 
-                      isDisabled={surgerie.surgerieStatus === "FINISHED"}
-                      onClick={() => handleDeleteSugerie(surgerie.id, surgerie.price)} >EXCLUIR</Button></Td>
+                      <Td>
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(Number(surgerie.price))}
+                      </Td>
+                      <Td>
+                        <Button
+                          colorScheme="red"
+                          isDisabled={surgerie.surgerieStatus === "FINISHED"}
+                          onClick={() =>
+                            handleDeleteSugerie(
+                              surgerie.id,
+                              surgerie.price,
+                              surgerie.linkedConsultId
+                            )
+                          }
+                        >
+                          EXCLUIR
+                        </Button>
+                      </Td>
                     </Tr>
-            ) )
-          }
-           </Tbody>
-           </Table>
-              </TableContainer>
-         </Flex>
-          <Flex direction="column" h="65vh" >
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Flex>
+          <Flex direction="column" h="65vh">
             <Text
               bg="gray.700"
               fontSize="2xl"
@@ -186,48 +222,67 @@ async function getPetData() {
               <Flex>
                 <Input borderColor="black" rounded="0" w="20vw" bg="white" />
                 <HStack>
-                <Button color="white" rounded="0" colorScheme="twitter">
-                  Procurar
-                </Button>
-
-         
+                  <Button color="white" rounded="0" colorScheme="twitter">
+                    Procurar
+                  </Button>
                 </HStack>
-           
               </Flex>
             </Flex>
-           
-              <TableContainer overflowY="auto">
-                <Table>
-                  <Thead>
-                    <Tr>
-                    
-                      <Th>Cirurgia</Th>
-                      <Th>Até 6kg</Th>
-                      <Th>7kg á 15kg</Th>
-                      <Th>16kg á 35kg</Th>
-                      <Th>35kg+</Th>
-                      <Th>Incluir</Th>
+
+            <TableContainer overflowY="auto">
+              <Table>
+                <Thead>
+                  <Tr>
+                    <Th>Cirurgia</Th>
+                    <Th>Até 6kg</Th>
+                    <Th>7kg á 15kg</Th>
+                    <Th>16kg á 35kg</Th>
+                    <Th>35kg+</Th>
+                    <Th>Incluir</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {sugeries.map((sugerie) => (
+                    <Tr key={sugerie.id}>
+                      <Td>{sugerie.name}</Td>
+                      <Td>
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(Number(sugerie?.price))}
+                      </Td>
+                      <Td>
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(Number(sugerie?.price))}
+                      </Td>
+                      <Td>
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(Number(sugerie?.price))}
+                      </Td>
+                      <Td>
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(Number(sugerie?.price))}
+                      </Td>
+                      <Td>
+                        <Button
+                          onClick={() => setSugeriesInPet(sugerie.id)}
+                          colorScheme="whatsapp"
+                        >
+                          Incluir
+                        </Button>
+                      </Td>
                     </Tr>
-                  </Thead>
-                  <Tbody>
-                    {
-                      sugeries.map((sugerie) => (
-                        <Tr key={sugerie.id}>
-                        <Td>{sugerie.name}</Td>
-                        <Td>{ new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL'}).format(Number(sugerie?.price)) }</Td>
-                        <Td>{ new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL'}).format(Number(sugerie?.price))}</Td>
-                        <Td>{ new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL'}).format(Number(sugerie?.price)) }</Td>
-                        <Td>{ new Intl.NumberFormat("pt-BR", { style: 'currency', currency: 'BRL'}).format(Number(sugerie?.price)) }</Td>
-                        <Td><Button onClick={() =>setSugeriesInPet(sugerie.id)} colorScheme="whatsapp">Incluir</Button></Td>
-                      </Tr>
-                      ))
-                    }
-                 
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </Flex>
-   
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Flex>
         </Flex>
 
         <Flex direction="column" w="35vw" border="1px solid black">
