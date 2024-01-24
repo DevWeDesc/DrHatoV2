@@ -68,40 +68,56 @@ export const vaccinesController = {
     }
     try {
       if (isAdmission === true) {
-        await prisma.petConsultsDebits.create({
-          data: {
-            OpenedAdmissionsForPet: { connect: { id: queueId } },
-            isVaccine: true,
-            name: vaccine.name,
-            price: vaccine.price,
-            itemId: vaccine.id,
-            RequestedByVetId,
-            RequestedByVetName,
-          },
-        });
+        await prisma.petConsultsDebits
+          .create({
+            data: {
+              OpenedAdmissionsForPet: { connect: { id: queueId } },
+              isVaccine: true,
+              name: vaccine.name,
+              price: vaccine.price,
+              itemId: vaccine.id,
+              RequestedByVetId,
+              RequestedByVetName,
+            },
+          })
+          .then(async (res) => {
+            await prisma.vaccinesForPet.create({
+              data: {
+                name: vaccine?.name,
+                price: vaccine?.price,
+                description: vaccine?.description,
+                requestedDate: new Date(),
+                medicine: { connect: { petId: parseInt(petId) } },
+                linkedConsultDebitId: res.id,
+              },
+            });
+          });
       } else {
-        await prisma.petConsultsDebits.create({
-          data: {
-            OpenedConsultsForPet: { connect: { id: queueId } },
-            isVaccine: true,
-            name: vaccine.name,
-            price: vaccine.price,
-            itemId: vaccine.id,
-            RequestedByVetId,
-            RequestedByVetName,
-          },
-        });
+        await prisma.petConsultsDebits
+          .create({
+            data: {
+              OpenedConsultsForPet: { connect: { id: queueId } },
+              isVaccine: true,
+              name: vaccine.name,
+              price: vaccine.price,
+              itemId: vaccine.id,
+              RequestedByVetId,
+              RequestedByVetName,
+            },
+          })
+          .then(async (res) => {
+            await prisma.vaccinesForPet.create({
+              data: {
+                name: vaccine?.name,
+                price: vaccine?.price,
+                description: vaccine?.description,
+                requestedDate: new Date(),
+                medicine: { connect: { petId: parseInt(petId) } },
+                linkedConsultDebitId: res.id,
+              },
+            });
+          });
       }
-
-      await prisma.vaccinesForPet.create({
-        data: {
-          name: vaccine?.name,
-          price: vaccine?.price,
-          description: vaccine?.description,
-          requestedDate: new Date(),
-          medicine: { connect: { petId: parseInt(petId) } },
-        },
-      });
 
       await accumulatorService.addPriceToAccum(vaccine?.price, accId);
 
@@ -124,15 +140,17 @@ export const vaccinesController = {
 
       await accumulatorService.removePriceToAccum(Number(vaccinePrice), accId);
 
-      await prisma.petConsultsDebits.delete({
-        where: {
-          id: linkedDebitId,
-        },
-      });
-
-      await prisma.vaccinesForPet.delete({
-        where: { id: id },
-      });
+      await prisma.petConsultsDebits
+        .delete({
+          where: {
+            id: linkedDebitId,
+          },
+        })
+        .then(async () => {
+          await prisma.vaccinesForPet.delete({
+            where: { id: id },
+          });
+        });
 
       reply.status(203).send({
         message: "Deletado com sucesso!",
