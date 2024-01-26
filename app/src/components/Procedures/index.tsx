@@ -107,17 +107,17 @@ export default function ProceduresVets({
         InAdmission,
       };
 
-      const validateEspecie = procedures
-        .find((p) => p.id === procedureId)
-        ?.appicableEspecies?.some((e) => e.name === petDetails.especie);
+      // const validateEspecie = procedures
+      //   .find((p) => p.id === procedureId)
+      //   ?.appicableEspecies?.some((e) => e.name === petDetails.especie);
 
-      console.log("VALIDATE ESP", validateEspecie);
+      // console.log("VALIDATE ESP", validateEspecie);
 
-      if (validateEspecie === false) {
-        return toast.warning(
-          "Essa especie não e permitida para esse procedimento!"
-        );
-      }
+      // if (validateEspecie === false) {
+      //   return toast.warning(
+      //     "Essa especie não e permitida para esse procedimento!"
+      //   );
+      // }
 
       if (InAdmission === true) {
         await api.post(
