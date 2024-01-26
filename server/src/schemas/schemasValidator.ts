@@ -27,7 +27,7 @@ export const petSchema = z.object({
   bornDate: z.string(),
   observations: z.string().optional(),
   rga: z.number().optional(),
-})
+});
 
 export const createCustomer = z.object({
   name: z.string(),
@@ -45,9 +45,8 @@ export const createCustomer = z.object({
   howKnowUs: z.string().optional(),
   kindPerson: z.string().optional(),
   state: z.string().optional(),
-  neighbour: z.string().optional()
-
- })
+  neighbour: z.string().optional(),
+});
 export const UserSchema = z.object({
   email: z.string().email(),
   name: z.string().optional(),
@@ -56,22 +55,31 @@ export const UserSchema = z.object({
   userType: z.any(),
   userIsVet: z.boolean().optional(),
   crmv: z.string().optional(),
-  role: z.enum(["MASTER", "ADMIN", "MANAGER","VETERINARIAN", "LABORATORY", "RECEPTIONIST", "UNDEFINED" ]).optional()
-})
- 
+  role: z
+    .enum([
+      "MASTER",
+      "ADMIN",
+      "MANAGER",
+      "VETERINARIAN",
+      "LABORATORY",
+      "RECEPTIONIST",
+      "UNDEFINED",
+    ])
+    .optional(),
+});
+
 export const VaccineSchema = z.object({
   name: z.string(),
   price: z.number(),
-  description: z.string()
-})
-
+  description: z.string(),
+});
 
 export const AdmissionSchema = z.object({
   name: z.string(),
   totalBeds: z.number(),
   price: z.number().optional(),
-  description: z.string().optional()
-})
+  description: z.string().optional(),
+});
 
 export const BedSchema = z.object({
   petId: z.number(),
@@ -82,11 +90,11 @@ export const BedSchema = z.object({
   entryOur: z.date().optional(),
   dailyRate: z.number().optional(),
   recordId: z.number(),
-})
+});
 
 export const QueueSchema = z.object({
   vetPreference: z.string().optional(),
-  queueEntry:  z.any().optional(),
+  queueEntry: z.any().optional(),
   queueExit: z.any().optional(),
   queueOur: z.string().optional(),
   debitOnThisQuery: z.number().optional(),
@@ -98,19 +106,18 @@ export const QueueSchema = z.object({
   petWeight: z.string().optional(),
   observations: z.string().optional(),
   openedBy: z.string().optional(),
-  
-})
+});
 
-export const ExamsType = ["lab", "image"]
+export const ExamsType = ["lab", "image"];
 
 export const sectorSchema = z.object({
   id: z.number(),
-  name: z.string()
-})
+  name: z.string(),
+});
 export const searchSchema = z.object({
   name: z.string(),
   adress: z.string(),
-})
+});
 
 export const ExamSchema = z.object({
   name: z.string(),
@@ -122,36 +129,36 @@ export const ExamSchema = z.object({
   description: z.string().optional(),
   ageRange: z.string().array().optional(),
   doneExame: z.boolean().optional().default(false),
-  characters: z.any().optional()
-})
-
+  characters: z.any().optional(),
+});
 
 export const GroupSchema = z.object({
-  name: z.string()
-})
+  name: z.string(),
+});
 
 export const ProcedureSchema = z.object({
   name: z.string(),
   price: z.any(),
   applicationInterval: z.string(),
   available: z.boolean(),
-  observations:  z.string(),   
+  observations: z.string(),
   applicableFemale: z.boolean().optional(),
   applicableMale: z.boolean().optional(),
   sector_id: z.any(),
-  priceTwo   : z.any().optional(),
-  priceThree : z.any().optional(),
+  priceTwo: z.any().optional(),
+  priceThree: z.any().optional(),
   priceFour: z.any().optional(),
   minAge: z.any().optional(),
   maxAge: z.any().optional(),
-})
+});
 
 export const SearchSchema = z.object({
-          initialDate: z.date().optional(),
-          finalDate: z.date().optional(),
-          customerName: z.string().optional(),
-          codPet: z.string().optional(),
-          petName: z.string().optional(),
-          isHospitalized: z.string().optional(),
-          isFinished: z.string().optional(),
-        })
+  initialDate: z.date().optional(),
+  finalDate: z.date().optional(),
+  customerName: z.string().optional(),
+  codPet: z.string().optional(),
+  petName: z.string().optional(),
+  isHospitalized: z.string().optional(),
+  isFinished: z.string().optional(),
+  typePaymentClient: z.string().optional(),
+});

@@ -15,6 +15,7 @@ import {
   MenuButton,
   MenuList,
   Button,
+  Grid,
 } from "@chakra-ui/react";
 import { ReactNode, useContext, useEffect, useState } from "react";
 import { Header } from "../../../components/admin/Header";
@@ -22,7 +23,7 @@ import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
 import { BiCalendarPlus, AiFillEdit } from "react-icons/all";
 import { AdminContainer } from "../../AdminDashboard/style";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { DbContext } from "../../../contexts/DbContext";
 import { StyledBox } from "../../../components/Header/style";
 import { MdPets as Burger } from "react-icons/all";
@@ -32,6 +33,7 @@ import { PaymentsSearch } from "../../../components/Search/paymentsSearch";
 import { BsReception4 } from "react-icons/bs";
 import { PetDetaisl } from "../../../interfaces";
 import { ICustomer } from "../../../interfaces";
+import { LoadingSpinner } from "../../../components/Loading";
 
 interface QueueProps {
   response: [];
@@ -45,20 +47,39 @@ export function BoxPayments() {
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [totalInQueue, setTotalInQueue] = useState(0 as any);
   const [totalCustomer, setTotalCustomer] = useState([]);
+  const [pagination, setPagination] = useState(0);
+  const [refresh, setRefresh] = useState(true);
   const navigate = useNavigate();
-  useEffect(() => {
-    async function getQueue() {
-      const response = await api.get("/pets/queue");
-      const total = await api.get("/pets/queue");
-      const Pets = await api.get("/pets");
-      const customers = await api.get("/customers");
-      setTotalCustomer(customers.data);
-      setTotalInQueue(total.data);
-      setInQueue(response.data.response);
-      setPetTotal(Pets.data);
+
+  async function getQueue() {
+    const response = await api.get("/pets/queue");
+    const total = await api.get("/pets/queue");
+    const Pets = await api.get(`/pets?page=${pagination}`);
+    const customers = await api.get("/customers");
+    setTotalCustomer(customers.data);
+    setTotalInQueue(total.data);
+    setInQueue(response.data.response);
+    setPetTotal(Pets.data);
+  }
+
+  const nextPage = () => {
+    setPagination((prev) => prev + 1);
+    setRefresh(true);
+  };
+
+  const beforePage = () => {
+    if (pagination > 0) {
+      setPagination((prev) => prev - 1);
+      setRefresh(true);
     }
-    getQueue();
-  }, [inQueue.length]);
+  };
+
+  useEffect(() => {
+    if (refresh) {
+      getQueue();
+      setRefresh(false);
+    }
+  }, [inQueue.length, refresh, petTotal]);
 
   console.log(petTotal);
 
@@ -71,6 +92,7 @@ export function BoxPayments() {
   };
 
   let typeTable: ReactNode;
+
   switch (true) {
     case Object.keys(dataCustomer).length >= 1:
       typeTable = (
@@ -272,7 +294,9 @@ export function BoxPayments() {
         </Table>
       );
       break;
-    case petTotal.length >= 1:
+
+    // Usada na tela de Recepção/Caixa/Pagamentos
+    case petTotal != null && petTotal.length > 1:
       typeTable = (
         <Table colorScheme="blackAlpha">
           <Thead>
@@ -287,7 +311,7 @@ export function BoxPayments() {
           </Thead>
 
           <Tbody>
-            {petTotal.map((pet: PetDetaisl) => (
+            {petTotal?.map((pet: PetDetaisl) => (
               <Tr
                 key={pet.id}
                 cursor="pointer"
@@ -390,6 +414,11 @@ export function BoxPayments() {
       );
       break;
   }
+
+  if (petTotal.length == 0) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -416,9 +445,29 @@ export function BoxPayments() {
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
                 <PaymentsSearch path="filtredquery" />
-                <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
-                  <>TOTAL NA FILA: {totalCustomer.length}</>
-                </Button>
+                <Grid templateColumns="repeat(3, 1fr)" gap={5}>
+                  <div />
+                  <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
+                    <>TOTAL NA FILA: {totalCustomer.length}</>
+                  </Button>
+                  <Flex alignItems="center" gap={2}>
+                    <Button
+                      colorScheme="yellow"
+                      onClick={beforePage}
+                      fontSize={14}
+                    >
+                      Página Anterior
+                    </Button>
+                    <Text fontWeight="bold">{pagination}</Text>
+                    <Button
+                      colorScheme="yellow"
+                      onClick={nextPage}
+                      fontSize={14}
+                    >
+                      Próxima página
+                    </Button>
+                  </Flex>
+                </Grid>
                 <Flex textAlign="center" justify="center" w="80%">
                   {typeTable}
                 </Flex>

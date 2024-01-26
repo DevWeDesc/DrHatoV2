@@ -1,18 +1,40 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { petSchema } from "../schemas/schemasValidator";
 import { prisma } from "../interface/PrismaInstance";
+import { z } from "zod";
 
 export const petsController = {
   getAllPets: async (request: FastifyRequest, reply: FastifyReply) => {
+    const PetsSchema = z.object({
+      page: z.string(),
+    });
+
+    const { page = 0 }: any = request.query;
+
+    const pageTotals = (await prisma.pets.count()) / 30;
+
+    const cursorReference = Number(page) === 0 ? 1 : 30 * page;
+
     try {
       const pets = await prisma.pets.findMany({
+        skip: Number(page),
+        take: 30,
+        cursor: {
+          id: cursorReference,
+        },
         include: {
           queue: { select: { id: true, queryType: true, vetPreference: true } },
           medicineRecords: { include: { petQueues: true } },
           customer: { select: { name: true } },
         },
+        orderBy: {
+          id: "asc",
+        },
       });
-      return reply.send(pets);
+      return reply.send(
+        pets
+        // pageInfos: { pageTotals: pageTotals, paginationActual: page },
+      );
     } catch (error) {
       reply.status(404).send(error);
     }

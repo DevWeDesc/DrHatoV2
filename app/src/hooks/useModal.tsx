@@ -11,6 +11,7 @@ interface ModalProps {
   closeAutorizationModal: () => void;
   closeEndQueueModal: () => void;
   closeMedicineRecordModal: () => void;
+  closeCustomerDetailsModal: () => void;
 
   modalWeigthPet: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,12 +21,15 @@ interface ModalProps {
   setInstructionModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsEndConsultQueue: React.Dispatch<React.SetStateAction<boolean>>;
   setIsMedicineRecordOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsCustomerDetailsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+
   isMedicineRecordOpen: boolean;
   isModalOpen: boolean;
   isAutorizationModalOpen: boolean;
   insInstructionsModalOpen: boolean;
   isMedicineModalOpen: boolean;
   isEndConsultQueue: boolean;
+  isCustomerDetailsOpen: boolean;
 }
 // Criar um contexto
 export const ModalContext = createContext({} as ModalProps);
@@ -39,6 +43,7 @@ export const ModalProvider = ({ children }: PropsContext) => {
   const [modalWeigthPet, setModalWeigthPet] = useState(false);
   const [isEndConsultQueue, setIsEndConsultQueue] = useState(false);
   const [isMedicineRecordOpen, setIsMedicineRecordOpen] = useState(false);
+  const [isCustomerDetailsOpen, setIsCustomerDetailsOpen] = useState(false);
 
   function closeMedicineRecordModal() {
     setIsMedicineRecordOpen(false);
@@ -60,6 +65,10 @@ export const ModalProvider = ({ children }: PropsContext) => {
 
   function closeEndQueueModal() {
     setIsEndConsultQueue(false);
+  }
+
+  function closeCustomerDetailsModal() {
+    setIsCustomerDetailsOpen(false);
   }
 
   return (
@@ -85,6 +94,9 @@ export const ModalProvider = ({ children }: PropsContext) => {
         isEndConsultQueue,
         setIsEndConsultQueue,
         closeEndQueueModal,
+        closeCustomerDetailsModal,
+        setIsCustomerDetailsOpen,
+        isCustomerDetailsOpen,
       }}
     >
       {children}

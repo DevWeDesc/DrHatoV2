@@ -4,7 +4,7 @@ import { TbArrowBack } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router";
 import { AdminContainer } from "../../pages/AdminDashboard/style";
 import { WorkSpaceHeader } from "../../pages/Vets/styles";
-import VaccinesVets from "../Vaccines";
+import { Vaccines } from "../../pages/Vets/WorkSpaceVets/vaccines";
 
 export default function VaccinesAdmission() {
   const navigate = useNavigate();
@@ -49,7 +49,8 @@ export default function VaccinesAdmission() {
           </WorkSpaceHeader>
           <Flex w="100%" mx="auto">
             <Box w="100%" borderRadius={8}>
-              <VaccinesVets InAdmission={true} admissionQueueId={queueId} />
+              <Vaccines InAdmission admissionQueueId={queueId} />
+              {/* <VaccinesVets InAdmission={true} admissionQueueId={queueId} /> */}
             </Box>
           </Flex>
         </Flex>

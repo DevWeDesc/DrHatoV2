@@ -27,7 +27,16 @@ interface VaccinesProps {
   price: number;
   description: string;
 }
-export function Vaccines() {
+
+type VaccineComponentProps = {
+  InAdmission?: boolean;
+  admissionQueueId?: string;
+};
+
+export function Vaccines({
+  InAdmission,
+  admissionQueueId,
+}: VaccineComponentProps) {
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [vaccines, setVaccines] = useState<VaccinesProps[]>([]);
   const [reloadData, setReloadData] = useState(false);
@@ -48,15 +57,29 @@ export function Vaccines() {
   async function setVaccineInPet(vaccineId: number) {
     try {
       const data = {
-        RequestedByVetId: user.id,
+        VetId: user.id,
         RequestedByVetName: user.consultName,
+        RequestedCrm: user.crm,
+        isAdmission: InAdmission,
+        // RequestedByVetId: user.id,
+        // RequestedByVetName: user.consultName,
+        // InAdmission: InAdmission,
       };
-      await api.post(
-        `/vaccinepet/${vaccineId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
-        data
-      );
-      setReloadData(true);
-      toast.success("Vacina criada com Sucesso");
+      if (InAdmission) {
+        await api.post(
+          `/vaccinepet/${vaccineId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
+          data
+        );
+        setReloadData(true);
+        toast.success("Vacina criada com Sucesso");
+      } else {
+        await api.post(
+          `/vaccinepet/${vaccineId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
+          data
+        );
+        setReloadData(true);
+        toast.success("Vacina criada com Sucesso");
+      }
     } catch (error) {
       toast.error("Falha ao cadastrar Vacina!");
     }
@@ -64,7 +87,8 @@ export function Vaccines() {
 
   async function deleteVaccine(
     vaccineId: string | number,
-    vaccPrice: string | number
+    vaccPrice: string | number,
+    linkedDebitId: number
   ) {
     try {
       const confirmation = window.confirm(
@@ -72,11 +96,14 @@ export function Vaccines() {
       );
 
       if (confirmation === true) {
-        await api.delete(
-          `/vaccinepet/${vaccineId}/${petDetails.totalAcc.id}/${vaccPrice}`
-        );
-        setReloadData(true);
-        toast.warning("Deletado com sucesso!");
+        await api
+          .delete(
+            `petvaccine/${vaccineId}/${petDetails.totalAcc.id}/${vaccPrice}/${linkedDebitId}`
+          )
+          .then(() => {
+            setReloadData(true);
+            toast.warning("Excluido com sucesso");
+          });
       } else {
         return;
       }
@@ -100,28 +127,31 @@ export function Vaccines() {
   return (
     <ChakraProvider>
       <Flex width="100vw" height="100vh" bgColor="white" direction="column">
-        <Flex w="100%" height="10vh" bgColor="gray.200">
-          <Flex align="center" gap="2">
-            <Text m="2" fontSize="2xl" fontWeight="bold">
-              Vacinas
-            </Text>
-            <Button
-              colorScheme="teal"
-              leftIcon={<BiHome size={24} />}
-              onClick={() => navigate("/Home")}
-            >
-              Home
-            </Button>
+        {!InAdmission && (
+          <Flex w="100%" height="10vh" bgColor="gray.200">
+            <Flex align="center" gap="2">
+              <Text m="2" fontSize="2xl" fontWeight="bold">
+                Vacinas
+              </Text>
+              <Button
+                colorScheme="teal"
+                leftIcon={<BiHome size={24} />}
+                onClick={() => navigate("/Home")}
+              >
+                Home
+              </Button>
 
-            <Button
-              colorScheme="yellow"
-              leftIcon={<TbArrowBack size={24} />}
-              onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
-            >
-              Voltar
-            </Button>
+              <Button
+                colorScheme="yellow"
+                leftIcon={<TbArrowBack size={24} />}
+                onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
+              >
+                Voltar
+              </Button>
+            </Flex>
           </Flex>
-        </Flex>
+        )}
+
         <Flex height="90vh" w="100%">
           <Flex direction="column" height="100%" width="60%" bgColor="gray.100">
             <Flex height="40%" width="100%" direction="column">
@@ -210,7 +240,10 @@ export function Vaccines() {
                         <Td>
                           <Button
                             colorScheme="whatsapp"
-                            onClick={() => setVaccineInPet(vaccine.id)}
+                            onClick={() => {
+                              // console.log(vaccine.id);
+                              setVaccineInPet(vaccine.id);
+                            }}
                           >
                             Incluir
                           </Button>
@@ -258,8 +291,11 @@ export function Vaccines() {
                         <Td>
                           <Button
                             onClick={() => {
-                              console.log(vaccine.id);
-                              // deleteVaccine(vaccine.id, vaccine.price)
+                              deleteVaccine(
+                                vaccine.id,
+                                vaccine.price,
+                                vaccine.linkedConsultId
+                              );
                             }}
                             w="89px"
                             colorScheme="red"
