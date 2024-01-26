@@ -13,122 +13,132 @@ import {
   HStack,
   VStack,
   Checkbox,
-  FormLabel
-} from '@chakra-ui/react'
-import {  useEffect, useState } from 'react'
-import { Header } from '../../components/admin/Header'
-import { GenericLink } from '../../components/Sidebars/GenericLink'
-import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
-import { AiOutlineSearch, BiLeftArrow, BiRightArrow } from 'react-icons/all'
-import { AdminContainer } from '../AdminDashboard/style'
-import { useNavigate } from 'react-router-dom'
-import { api } from '../../lib/axios'
-import { Input } from '../../components/admin/Input'
+  FormLabel,
+} from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Header } from "../../components/admin/Header";
+import { GenericLink } from "../../components/Sidebars/GenericLink";
+import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
+import { AiOutlineSearch, BiLeftArrow, BiRightArrow } from "react-icons/all";
+import { AdminContainer } from "../AdminDashboard/style";
+import { useNavigate } from "react-router-dom";
+import { api } from "../../lib/axios";
+import { Input } from "../../components/admin/Input";
 
 export function MenuVet() {
-  const [petName, setPetName] = useState('')
-  const [codPet, setCodPet] = useState('')
-  const [customerName, setCustomerName] = useState('')
-  const [isFinishied, setIsFinishied] = useState(false)
-  const [isAddmited, setIsAddmited] = useState(false)
-  const [showAllVets, setShowAllVets] = useState(false)
-  const [pagination, SetPagination] = useState(1)
-  const [numberOfPages, setNumberOfPages] = useState(0)
-  const [totalInQueue, setTotalInQueue] = useState(0 as any)
-  const [petsByVetPreference, setPetsByVetPreference] = useState([])
-  const [petData, setPetData] = useState([] as any)
+  const [petName, setPetName] = useState("");
+  const [codPet, setCodPet] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [isFinishied, setIsFinishied] = useState(false);
+  const [isAddmited, setIsAddmited] = useState(false);
+  const [showAllVets, setShowAllVets] = useState(false);
+  const [pagination, SetPagination] = useState(1);
+  const [numberOfPages, setNumberOfPages] = useState(0);
+  const [totalInQueue, setTotalInQueue] = useState(0 as any);
+  const [petsByVetPreference, setPetsByVetPreference] = useState([]);
+  const [petData, setPetData] = useState([] as any);
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
 
-
   async function getQueueVetPreference() {
-    if(showAllVets === true) {
-      const response = await api.get('/pets/queue')
-      setTotalInQueue(response.data)
-      setPetsByVetPreference(response.data.response)
+    if (showAllVets === true) {
+      const response = await api.get("/pets/queue");
+      setTotalInQueue(response.data);
+      setPetsByVetPreference(response.data.response);
     } else {
-      const response = await api.get(`/pets/queue/preference/${user.consultName}`)
-      setPetsByVetPreference(response.data.response)
+      const response = await api.get(
+        `/pets/queue/preference/${user.consultName}`
+      );
+      setPetsByVetPreference(response.data.response);
     }
-
   }
 
   function incrementPage() {
-    SetPagination(prevCount => pagination < numberOfPages ? prevCount + 1 : numberOfPages);
+    SetPagination((prevCount) =>
+      pagination < numberOfPages ? prevCount + 1 : numberOfPages
+    );
   }
 
   function decrementPage() {
-    SetPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+    SetPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
   }
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   async function searchDataVet() {
     switch (true) {
       case petName?.length >= 1:
-        await api.get(`vetmenusearch/${pagination}?petName=${petName}`).then(res => {
-          setPetData(res.data.data)
-          setNumberOfPages(res.data.totalPages)
-        })
-        break
+        await api
+          .get(`vetmenusearch/${pagination}?petName=${petName}`)
+          .then((res) => {
+            setPetData(res.data.data);
+            setNumberOfPages(res.data.totalPages);
+          });
+        break;
       case customerName?.length >= 1:
         await api
           .get(`vetmenusearch/${pagination}?customerName=${customerName}`)
-          .then(res => {
-            setPetData(res.data.data)
-            setNumberOfPages(res.data.totalPages)
-          })
-        break
+          .then((res) => {
+            setPetData(res.data.data);
+            setNumberOfPages(res.data.totalPages);
+          });
+        break;
       case isFinishied === true:
-        await api.get(`vetmenusearch?/${pagination}isFinished=true`).then(res => {
-          setPetData(res.data)
-          console.log(res.data.data)
-        })
-        break
-        case isAddmited === true:
-          await api.get(`vetmenusearch/${pagination}?isAddmited=true`).then(res => {
-            setPetData(res.data.data)
-          })
+        await api
+          .get(`vetmenusearch?/${pagination}isFinished=true`)
+          .then((res) => {
+            setPetData(res.data);
+            console.log(res.data.data);
+          });
+        break;
+      case isAddmited === true:
+        await api
+          .get(`vetmenusearch/${pagination}?isAddmited=true`)
+          .then((res) => {
+            setPetData(res.data.data);
+          });
         break;
     }
   }
 
- const handleGetDataWithParams =  async () => {
-
-  switch(true) {
-    case !!codPet:
-        await api.get(`searchcodpet/${codPet}`).then(res => {
-          setPetData(res.data)
-        })
-        break
-    case isFinishied === true:
-      await api.get(`vetmenusearch/${pagination}?isFinished=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
-      {  setPetData(res.data.data);
-
-      })
-    break
-    case isAddmited === true:
-      await api.get(`vetmenusearch/${pagination}?isAddmited=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
-      {  setPetData(res.data.data);
-      })
-    break
-  }
-      
-  }
-
-
+  const handleGetDataWithParams = async () => {
+    switch (true) {
+      case !!codPet:
+        await api.get(`searchcodpet/${codPet}`).then((res) => {
+          setPetData(res.data);
+        });
+        break;
+      case isFinishied === true:
+        await api
+          .get(
+            `vetmenusearch/${pagination}?isFinished=true&initialDate=${initialDate}&finalDate=${finalDate}`
+          )
+          .then((res) => {
+            setPetData(res.data.data);
+          });
+        break;
+      case isAddmited === true:
+        await api
+          .get(
+            `vetmenusearch/${pagination}?isAddmited=true&initialDate=${initialDate}&finalDate=${finalDate}`
+          )
+          .then((res) => {
+            setPetData(res.data.data);
+          });
+        break;
+    }
+  };
 
   useEffect(() => {
-    getQueueVetPreference()
-  }, [showAllVets])
+    getQueueVetPreference();
+  }, [showAllVets]);
 
   useEffect(() => {
-    searchDataVet()
-  }, [petName, codPet, customerName, isFinishied, isAddmited, pagination])
+    searchDataVet();
+  }, [petName, codPet, customerName, isFinishied, isAddmited, pagination]);
 
-
- 
+  console.log(petData);
 
   return (
     <ChakraProvider>
@@ -145,8 +155,8 @@ export function MenuVet() {
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
               <Flex mb="8" gap="8" direction="column" align="center">
-                <Flex direction="column"> 
-                  <Flex align="center" justify="center" gap="8" w="960px" >
+                <Flex direction="column">
+                  <Flex align="center" justify="center" gap="8" w="960px">
                     <HStack spacing={8}>
                       <Input
                         name="initialDate"
@@ -154,52 +164,51 @@ export function MenuVet() {
                         label="data inicial"
                         type="date"
                       />
-                      <Input 
-                      name="finalDate" 
-                      onChange={(ev) => setFinalDate(ev.target.value)}
-                      label="data final" 
-                      type="date" />
+                      <Input
+                        name="finalDate"
+                        onChange={(ev) => setFinalDate(ev.target.value)}
+                        label="data final"
+                        type="date"
+                      />
                       <HStack align="center">
                         <VStack>
-                        <FormLabel>Finalizados</FormLabel>
-                        <Checkbox
-                          onChange={ev =>
-                            ev.target.checked === true
-                              ? setIsFinishied(true)
-                              : setIsFinishied(false)
-                          }
-                          border="2px"
-                          size="lg"
-                        />
-
+                          <FormLabel>Finalizados</FormLabel>
+                          <Checkbox
+                            onChange={(ev) =>
+                              ev.target.checked === true
+                                ? setIsFinishied(true)
+                                : setIsFinishied(false)
+                            }
+                            border="2px"
+                            size="lg"
+                          />
                         </VStack>
-                      
-                          <VStack>
+
+                        <VStack>
                           <FormLabel>Internados</FormLabel>
-                        <Checkbox
-                         onChange={ev =>
-                          ev.target.checked === true
-                            ? setIsAddmited(true)
-                            : setIsAddmited(false)
-                        }
-                        
-                        border="2px" size="lg" />
+                          <Checkbox
+                            onChange={(ev) =>
+                              ev.target.checked === true
+                                ? setIsAddmited(true)
+                                : setIsAddmited(false)
+                            }
+                            border="2px"
+                            size="lg"
+                          />
+                        </VStack>
 
-                          </VStack>
-
-                          <VStack w={160}  >
+                        <VStack w={160}>
                           <FormLabel>Todos Veterinários</FormLabel>
-                        <Checkbox
-                         onChange={ev =>
-                          ev.target.checked === true
-                            ? setShowAllVets(true)
-                            : setShowAllVets(false)
-                        }
-                        
-                        border="2px" size="lg" />
-
-                          </VStack>
-                    
+                          <Checkbox
+                            onChange={(ev) =>
+                              ev.target.checked === true
+                                ? setShowAllVets(true)
+                                : setShowAllVets(false)
+                            }
+                            border="2px"
+                            size="lg"
+                          />
+                        </VStack>
                       </HStack>
                     </HStack>
                   </Flex>
@@ -208,19 +217,19 @@ export function MenuVet() {
                     <Input
                       name="codPet"
                       value={codPet}
-                      onChange={ev => setCodPet(ev.target.value)}
+                      onChange={(ev) => setCodPet(ev.target.value)}
                       label="Código do Animal"
                     />
                     <Input
                       name="petName"
                       value={petName}
-                      onChange={ev => setPetName(ev.target.value)}
+                      onChange={(ev) => setPetName(ev.target.value)}
                       label="Nome do Animal"
                     />
                     <Input
                       name="customerName"
                       value={customerName}
-                      onChange={ev => setCustomerName(ev.target.value)}
+                      onChange={(ev) => setCustomerName(ev.target.value)}
                       label="Nome do Cliente"
                     />
                   </HStack>
@@ -228,138 +237,168 @@ export function MenuVet() {
                     onClick={handleGetDataWithParams}
                     mt="4"
                     colorScheme="whatsapp"
-                    
                   >
                     FILTRAR
                   </Button>
                 </Flex>
                 <Flex gap={8}>
-                <Button colorScheme="teal" onClick={() => navigate('/Queue')}>
-                  <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
-                </Button>
-                <Button colorScheme="whatsapp">
-                  Total Paginas: {numberOfPages}
-                </Button>
-                <Button colorScheme="whatsapp">
-                  Pagina Atual: {pagination}
-                </Button>
-                <Button colorScheme="whatsapp" gap={4} onClick={() => decrementPage()} >
-                  <BiLeftArrow/>
-                  Página Anterior
-                </Button>
-                <Button colorScheme="whatsapp" gap={4} onClick={() => incrementPage()}>
-                  Próxima Página
-                  <BiRightArrow/>
-                </Button>
+                  <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
+                    <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
+                  </Button>
+                  <Button colorScheme="whatsapp">
+                    Total Paginas: {numberOfPages}
+                  </Button>
+                  <Button colorScheme="whatsapp">
+                    Pagina Atual: {pagination}
+                  </Button>
+                  <Button
+                    colorScheme="whatsapp"
+                    gap={4}
+                    onClick={() => decrementPage()}
+                  >
+                    <BiLeftArrow />
+                    Página Anterior
+                  </Button>
+                  <Button
+                    colorScheme="whatsapp"
+                    gap={4}
+                    onClick={() => incrementPage()}
+                  >
+                    Próxima Página
+                    <BiRightArrow />
+                  </Button>
                 </Flex>
-               
-                <Flex textAlign="center" h={300} justify="center" overflowY="auto">
 
-                            
-             
-                    {
-                      petData.length >=1 ? (
-                        <Table colorScheme="blackAlpha">
-                                  <Thead>
-                                    <Tr>
-                                      <Th>CPF</Th>
-                                      <Th>Cliente</Th>
-                                      <Th>Animal</Th>
-                                      <Th>Cod</Th>
-                                      <Th>Peso</Th>
-                                      <Th>Preferência</Th>
-                                    
-                                    </Tr>
-                                  </Thead>
-                      
-                                  <Tbody>
-                                    {petData?.map(
-                                      (pet: any) => (
-                                        <Tr
-                                          key={pet?.id}
-                                          cursor="pointer"
-                                          
-                                          onClick={() => navigate(`/Vets/Workspace/${pet?.id}/${pet.queueId}`)}
-                                        >
-                                          <Td>
-                                            <Text colorScheme="whatsapp">
-                                              {pet?.customer.cpf ? pet.customer.cpf : "Não encontrado"}
-                                            </Text>
-                                          </Td>
-                      
-                                          <Td>{pet?.customer.name ? pet.customer.name : "Não encontrado"}</Td>
-                      
-                                          <Td
-                                          
-                                           
-                                          >
-                                            {pet?.name ? pet.name : "Não encontrado"}
-                                          </Td>
-                                          <Td>
-                                            {pet?.CodAnimal  ? pet.CodAnimal : "Não encontrado"}
-                                          </Td>
-                                          <Td>{pet?.weigth}</Td>
-                                          <Td> {pet.customer.vetPreference == user.consultName ? pet.vetPreference : "Sem preferência"}</Td>
-                                          
-                                        </Tr>
-                                      )
-                                    )}
-                                  </Tbody>
-                                </Table>
-                      ) : (
-                        <Table  colorScheme="blackAlpha">
-                        <Thead>
-                          <Tr>
-                            <Th>CPF</Th>
-                            <Th>Cliente</Th>
-                            <Th>Animal</Th>
-                            <Th>Código</Th>
-                            <Th>Data</Th>
-                           
-                            <Th>Preferência</Th>
-                            <Th>Especialidade</Th>
+                <Flex
+                  textAlign="center"
+                  h={300}
+                  justify="center"
+                  overflowY="auto"
+                >
+                  {petData.length >= 1 ? (
+                    <Table colorScheme="blackAlpha">
+                      <Thead>
+                        <Tr>
+                          <Th>CPF</Th>
+                          <Th>Cliente</Th>
+                          <Th>Animal</Th>
+                          <Th>Cod</Th>
+                          <Th>Peso</Th>
+                          <Th>Preferência</Th>
+                        </Tr>
+                      </Thead>
+
+                      <Tbody>
+                        {petData?.map((pet: any) => (
+                          <Tr
+                            key={pet?.id}
+                            cursor="pointer"
+                            onClick={() =>
+                              navigate(
+                                `/Vets/Workspace/${pet?.id}/${
+                                  pet.queueId != undefined && pet.queueId
+                                    ? pet.queueId
+                                    : pet.randomUUID
+                                }`
+                              )
+                            }
+                          >
+                            <Td>
+                              <Text colorScheme="whatsapp">
+                                {pet?.customer.cpf
+                                  ? pet.customer.cpf
+                                  : "Não encontrado"}
+                              </Text>
+                            </Td>
+
+                            <Td>
+                              {pet?.customer.name
+                                ? pet.customer.name
+                                : "Não encontrado"}
+                            </Td>
+
+                            <Td>{pet?.name ? pet.name : "Não encontrado"}</Td>
+                            <Td>
+                              {pet?.CodAnimal
+                                ? pet.CodAnimal
+                                : "Não encontrado"}
+                            </Td>
+                            <Td>{pet?.weigth}</Td>
+                            <Td>
+                              {" "}
+                              {pet.customer.vetPreference == user.consultName
+                                ? pet.vetPreference
+                                : "Sem preferência"}
+                            </Td>
                           </Tr>
-                        </Thead>
-            
-                        <Tbody>
-                          {petsByVetPreference.map((pet: any) => (
+                        ))}
+                      </Tbody>
+                    </Table>
+                  ) : (
+                    <Table colorScheme="blackAlpha">
+                      <Thead>
+                        <Tr>
+                          <Th>CPF</Th>
+                          <Th>Cliente</Th>
+                          <Th>Animal</Th>
+                          <Th>Código</Th>
+                          <Th>Data</Th>
+
+                          <Th>Preferência</Th>
+                          <Th>Especialidade</Th>
+                        </Tr>
+                      </Thead>
+
+                      <Tbody>
+                        {petsByVetPreference
+                          .map((pet: any) => (
                             <Tr
-                       
                               key={pet.id}
                               cursor="pointer"
-                              onClick={() => navigate(`/Vets/Workspace/${pet.id}/${pet.queueId}`)}
+                              onClick={() =>
+                                navigate(
+                                  `/Vets/Workspace/${pet.id}/${pet.queueId}`
+                                )
+                              }
                             >
                               <Td>
-                                <Text colorScheme="whatsapp">{pet.customerCpf}</Text>
+                                <Text colorScheme="whatsapp">
+                                  {pet.customerCpf}
+                                </Text>
                               </Td>
-            
+
                               <Td>{pet.customerName}</Td>
-            
+
                               <Td
                                 cursor="pointer"
-                                onClick={() => navigate(`/Vets/Workspace/${pet.id}`)}
+                                onClick={() =>
+                                  navigate(`/Vets/Workspace/${pet.id}`)
+                                }
                               >
                                 {pet.name}
                               </Td>
                               <Td>{pet.codPet}</Td>
-                              <Td>{new Intl.DateTimeFormat("pt-BR",{ month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}).format(new Date(pet?.queueEntry))}</Td>
-                             
                               <Td>
-                              {pet.vetPreference == user.consultName ? pet.vetPreference : pet.vetPreference}
+                                {new Intl.DateTimeFormat("pt-BR", {
+                                  month: "2-digit",
+                                  day: "2-digit",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }).format(new Date(pet?.queueEntry))}
+                              </Td>
+
+                              <Td>
+                                {pet.vetPreference == user.consultName
+                                  ? pet.vetPreference
+                                  : pet.vetPreference}
                               </Td>
                               <Td>0</Td>
                             </Tr>
-                          )).reverse() 
-                          }
-                        </Tbody>
-                      </Table>
-                      )
-                    }
-
-
-
-
-                  
+                          ))
+                          .reverse()}
+                      </Tbody>
+                    </Table>
+                  )}
                 </Flex>
               </Flex>
             </Box>
@@ -367,5 +406,5 @@ export function MenuVet() {
         </Flex>
       </AdminContainer>
     </ChakraProvider>
-  )
+  );
 }
