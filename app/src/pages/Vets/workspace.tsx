@@ -20,6 +20,7 @@ import {
   Input,
   Text,
   Flex,
+  Grid,
 } from "@chakra-ui/react";
 import {
   AiFillMedicineBox,
@@ -32,7 +33,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState, ChangeEvent, useContext } from "react";
 import { api } from "../../lib/axios";
-import { PetDetaisl } from "../../interfaces";
+import { ICustomer, PetDetaisl } from "../../interfaces";
 import { toast } from "react-toastify";
 import { Textarea } from "@chakra-ui/react";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
@@ -78,12 +79,22 @@ export function WorkSpaceVet() {
     isMedicineRecordOpen,
     setIsMedicineRecordOpen,
     closeMedicineRecordModal,
+    closeCustomerDetailsModal,
+    setIsCustomerDetailsOpen,
+    isCustomerDetailsOpen,
   } = useContext(ModalContext);
   const [handleViewComponent, setHandleViewComponent] = useState("");
   const [petWeigth, setPetWeigth] = useState("");
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
+  const [customerDetails, setCustomerDetails] = useState({} as ICustomer);
 
+  const GetDetailsCustomerById = async (id: number) => {
+    const customer = await api.get(`/customers/${id}`);
+    setCustomerDetails(customer.data);
+    console.log(customer);
+    setIsCustomerDetailsOpen(true);
+  };
 
   const handleChangePet = async (newPetId: number) => {
     navigate(`/Vets/Workspace/${newPetId}`);
@@ -152,14 +163,10 @@ export function WorkSpaceVet() {
         petWeight: pet.weigth,
       };
 
+      await api.put(`/endqueue/${id}/${queueId}/${pet.customerId}`, data);
 
-      await api.put(
-        `/endqueue/${id}/${queueId}/${pet.customerId}`,
-        data
-      );
- 
-       toast.success("Consulta finalizada com sucesso!!");
-       navigate("/Vets/Menu");
+      toast.success("Consulta finalizada com sucesso!!");
+      navigate("/Vets/Menu");
     } catch (error) {
       toast.error("Falha ao encerrar consulta!!");
       console.log(error);
@@ -464,6 +471,8 @@ export function WorkSpaceVet() {
                   fontWeight="bold"
                   textAlign="center"
                   bgColor="gray.100"
+                  cursor="pointer"
+                  onClick={() => GetDetailsCustomerById(Number(pet.customerId))}
                 >
                   {pet.customerName}
                 </Text>
@@ -631,8 +640,7 @@ export function WorkSpaceVet() {
             </Flex>
           </Flex>
           <div className="div3">
-    
-                <ThrowDiagnoisticsInConsult />
+            <ThrowDiagnoisticsInConsult />
           </div>
           <div className="div4">
             <Flex justify="space-between" gap="2" m="2">
@@ -713,6 +721,32 @@ export function WorkSpaceVet() {
           </Flex>
         </WorkSpaceFooter>
       </WorkSpaceContainer>
+
+      <GenericModal
+        isOpen={isCustomerDetailsOpen}
+        onRequestClose={closeCustomerDetailsModal}
+      >
+        <Text textAlign="center" fontWeight="bold" fontSize="2xl" pb={10}>
+          {" "}
+          Informações de cliente
+        </Text>
+        <Grid templateColumns="repeat(2, 1fr)" rowGap={2} px={5}>
+          <Text fontWeight="bold">Nome do Cliente</Text>
+          <Text>{customerDetails?.name}</Text>
+          <Text fontWeight="bold">RG do Cliente</Text>
+          <Text>{customerDetails?.rg}</Text>
+          <Text fontWeight="bold">CPF do Cliente</Text>
+          <Text>{customerDetails?.cpf}</Text>
+          <Text fontWeight="bold">CEP do Cliente</Text>
+          <Text>{customerDetails?.cep}</Text>
+          <Text fontWeight="bold">Endereço</Text>
+          <Text>{customerDetails?.adress}</Text>
+          <Text fontWeight="bold">Email do Cliente</Text>
+          <Text>{customerDetails?.email}</Text>
+          <Text fontWeight="bold">Telefone do Cliente</Text>
+          <Text>{customerDetails?.phone}</Text>
+        </Grid>
+      </GenericModal>
 
       <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
         <Flex direction="column" gap="4" border="2px" m="4" p="4" rounded={8}>
