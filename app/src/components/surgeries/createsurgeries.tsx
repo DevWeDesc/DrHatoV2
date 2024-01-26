@@ -38,7 +38,7 @@ export function Createsurgeries({
 }: SurgerieVetProps) {
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [sugeries, setSugeries] = useState<SugeriesProps[]>([]);
-  const [reloadData, setReloadData] = useState(false);
+  const [reloadData, setReloadData] = useState(true);
   const [pagination, setPagination] = useState(1);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const navigate = useNavigate();
@@ -60,15 +60,13 @@ export function Createsurgeries({
   }
 
   useEffect(() => {
-    getPetData();
+    GetData();
   }, []);
-
-  useEffect(() => {}, [GetData()]);
 
   useEffect(() => {
     if (reloadData === true) {
-      GetData();
-      setReloadData(false); // Reseta o estado para evitar chamadas infinitas
+      getPetData();
+      setReloadData(false);
     }
   }, [reloadData]);
 
