@@ -8,6 +8,7 @@ import {
   VStack,
   Checkbox,
   FormLabel,
+  Grid,
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
@@ -35,6 +36,9 @@ export function PaymentsSearch({ path }: UniversalSearchProps) {
     let response;
 
     switch (true) {
+      case !!values.typePaymentClient:
+        response = await api.get(`filtredquery?typePayment=${values.name}`);
+        setDataCustomer(response?.data);
       case !!values.name:
         response = await api.get(`filtredquery?name=${values.name}`);
         setDataCustomer(response?.data);
@@ -82,10 +86,31 @@ export function PaymentsSearch({ path }: UniversalSearchProps) {
                 {...register("finalData")}
                 name="finalData"
               />
-              <Flex pl="4" direction="column" gap={4}>
+              <Grid
+                templateColumns="repeat(2, 1fr)"
+                pl="4"
+                pt="8"
+                alignItems="end"
+                columnGap={4}
+              >
                 <HStack>
-                  <Checkbox borderColor="gray.900" />
-                  <FormLabel>FINALIZADOS</FormLabel>
+                  <Checkbox
+                    value={"CRÉDITO"}
+                    borderColor="gray.900"
+                    {...register("typePaymentClient")}
+                    name="typePaymentClient"
+                  />
+                  <FormLabel pt="2">CRÉDITOS</FormLabel>
+                </HStack>
+                <HStack>
+                  <Checkbox
+                    defaultChecked
+                    value={"DÉBITO"}
+                    borderColor="gray.900"
+                    {...register("typePaymentClient")}
+                    name="typePaymentClient"
+                  />
+                  <FormLabel pt="2">DÉBITOS</FormLabel>
                 </HStack>
                 <HStack>
                   <Checkbox
@@ -93,9 +118,17 @@ export function PaymentsSearch({ path }: UniversalSearchProps) {
                     {...register("isHospitalized")}
                     name="isHospitalized"
                   />
-                  <FormLabel>INTERNADOS</FormLabel>
+                  <FormLabel pt="2">FINALIZADOS</FormLabel>
                 </HStack>
-              </Flex>
+                <HStack>
+                  <Checkbox
+                    borderColor="gray.900"
+                    {...register("isHospitalized")}
+                    name="isHospitalized"
+                  />
+                  <FormLabel pt="2">INTERNADOS</FormLabel>
+                </HStack>
+              </Grid>
             </HStack>
             <HStack>
               <Input
