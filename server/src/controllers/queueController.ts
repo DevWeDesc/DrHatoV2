@@ -1,9 +1,10 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../interface/PrismaInstance";
 import {QueueSchema } from "../schemas/schemasValidator";
-import { petContract } from "../interface/PetContractInstance";
 import bcrypt from "bcrypt";
 import { z } from "zod";
+import { GetDebitsInConsultsService } from "../services/GetDebitsInConsultsService";
+import { ResourceNotFoundError } from "../errors/ResouceNotFoundError";
 type params = {
     id: string;
     petId: string;
@@ -12,34 +13,29 @@ type params = {
     customerId: string;
     date: string;
   }
-
-  type body = {
-    masterPassword: string;
-    userId: number;
-    unconcludeObs: string;
-    queueId: number;
-  }
-
 export const queueController = {
     setPetInQueue: async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
-        const {queueEntry, queryType, vetPreference, petIsInQueue, moreInfos, queueOur} = QueueSchema.parse(request.body)
+        const {queryType, vetPreference, moreInfos, openedBy} = QueueSchema.parse(request.body)
         const { id } = request.params
         try { 
 
             await prisma.openedConsultsForPet.create({
               data: {
-                openedDate: queueEntry,
+                openedDate: new Date(),
                 consultType: queryType,
+                vetPreference,
+                isClosed: false,
+                observations: moreInfos,
+                openedBy,
                 MedicineRecord: {
                   connect: {petId: parseInt(id)}
                 }
               }
-            }).then(async (res) => {
-              await prisma.queues.update({where: {id: parseInt(id) }, data: {queueEntry, queryType, vetPreference,petIsInQueue, moreInfos, queueOur, 
-              openConsultId: res.id } })
             })
 
-           reply.status(200).send("Status da fila Atualizada")
+           reply.status(200).send({
+            message: "Fila iniciada com sucesso!"
+           })
         } catch (error) {
          console.error(error)
         reply.status(400).send({message: { error}})
@@ -47,48 +43,72 @@ export const queueController = {
     },
 
 
-  finishQueueOfPet:  async (request: FastifyRequest<{Params: params}>, reply: FastifyReply) => {
-    const {petId, recordId, queueId, customerId} = request.params
-    const {queueEntry, queryType, queueExit, debitOnThisQuery, responsibleVeterinarian, petName,
-      petWeight, observations
+  finishQueueOfPet:  async (request: FastifyRequest, reply: FastifyReply) => {
+    const ParamsSchema = z.object({
+      petId: z.coerce.number(), 
+      queueUUID: z.string().uuid(), 
+      customerId: z.coerce.number(),
+    })
+    const QueueSchema = z.object({
+      vetPreference: z.string().optional(),
+      responsibleVeterinarianId:  z.number().optional(),
+      debitOnThisQuery: z.number().optional(),
+      responsibleVeterinarian: z.string().optional(),
+      petWeight: z.string().optional(),
+      
+    })
+    const {petId, queueUUID, customerId} = ParamsSchema.parse(request.params)
+    const { responsibleVeterinarianId, responsibleVeterinarian, petWeight
     } = QueueSchema.parse(request.body)
     try { 
-
-     // await petContract.verifyIfIsPossibleEndQueue(recordId, 'Exame em aberto, não possivel é encerrar consulta.')
-
-      if(petContract.hadError()){
-        reply.status(400).send(petContract.showErrors()[0])
-        petContract.clearErrors()
-        return
-      } 
       
-        await prisma.customer.update({
-          where: {id: parseInt(customerId)},data : {
-              customerAccount: {update: {debits: {increment: Number(debitOnThisQuery)}}}
-          }
-        })
-  
+        const getDebitsInConsultService = new GetDebitsInConsultsService()
 
-          await  prisma.pets.update({
-              where: { id: parseInt(petId)},data: {priceAccumulator: {update: {accumulator: 0}}}
-          })
-  
-          await prisma.queuesForPet.create({
-              data: {queryType, queueEntry,observations,petWeight, queueExit, queueIsDone: true,debitOnThisQuery,petName, responsibleVeterinarian, medicine:{ connect: {id: parseInt(recordId)}}}
-          })
-          
-          await prisma.queues.update({
-              where: {id: parseInt(queueId)}, data: {queryType: null, queueEntry: null, queueExit: null, moreInfos: null, vetPreference: null, petIsInQueue: false}
-          })
-  
-      
-          reply.send('Fila atualizada')
-      
+        const {debits, total } = await getDebitsInConsultService.execute({queueId: queueUUID})
 
+          await prisma.openedConsultsForPet.update({
+            where: {
+              id: queueUUID
+            }, data: {
+                clodedByVetName: responsibleVeterinarian,
+                closedByVetId: responsibleVeterinarianId,
+                closedDate: new Date(),
+                isClosed: true,
+                petWeight: petWeight,
+                totaLDebits: total,
+                symptoms: debits[0].symptoms,
+                request: debits[0].request,
+                diagnostic: debits[0].diagnostic,
+                observations: debits[0].observations
+              }
+          }) 
+
+
+          await prisma.customer.update({
+            where: {id: customerId},data : {
+                customerAccount: {update: {debits: {increment: Number(total)}}}
+            }
+          })
+    
+  
+            await  prisma.pets.update({
+                where: { id: petId},data: {priceAccumulator: {update: {accumulator: 0}}}
+            })
+      
+      
+          reply.status(201).send({
+            message: "Fila encerrada com sucesso!"
+          })
+      
 
     } catch (error) {
-        console.log(error)
-        reply.status(400).send({message: { error}})
+      console.log(error)
+
+        if(error instanceof ResourceNotFoundError) {
+          reply.status(404).send({message: error.message})
+        }
+          console.log(error)
+        //reply.status(400).send({message: { error}})
     }
 
   },
@@ -171,6 +191,75 @@ export const queueController = {
       console.log(error)
       reply.send(error)
 
+    }
+  },
+
+
+  updateQueueDiagnostics: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const GetParams = z.object({
+        queueId: z.string().uuid()
+      })
+     
+      const BodyParams = z.object({
+        symptoms :    z.string().optional(),
+        request   :   z.string().optional(),
+        diagnostic :  z.string().optional(),
+      })
+
+      const {queueId} = GetParams.parse(request.params)
+     
+      const {diagnostic, request: DiagnosticRequest, symptoms} = BodyParams.parse(request.body)
+
+
+
+      await prisma.openedConsultsForPet.update({
+        where:{id: queueId}, data: {
+          symptoms,
+          diagnostic,
+          request: DiagnosticRequest
+        }
+      })
+
+
+      reply.status(200).send({
+        message: "Consulta atualizada"
+      })
+      
+    } catch (error) {
+       
+      reply.status(404).send({
+        message: error
+      })
+    }
+  },
+
+
+  getQueueDiagnostics: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const GetParams = z.object({
+        queueId: z.string().uuid()
+      })
+
+      const {queueId} = GetParams.parse(request.params)
+
+      const diagnostic = await prisma.openedConsultsForPet.findUnique({where: {id: queueId}, select: {
+        diagnostic: true,
+        symptoms: true,
+        request: true
+      }})
+
+      reply.send({
+        diagnostic
+      })
+
+
+    } catch (error) {
+
+      reply.status(404).send({
+        message: error
+      })
+      console.error(error)
     }
   }
 

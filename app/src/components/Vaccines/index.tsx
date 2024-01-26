@@ -28,10 +28,12 @@ interface VaccinesProps {
 type VaccinesVetProps = {
   InAdmission: boolean;
   admissionQueueId?: string;
-}
+};
 
-
-export default function VaccinesVets({InAdmission, admissionQueueId} : VaccinesVetProps) {
+export default function VaccinesVets({
+  InAdmission,
+  admissionQueueId,
+}: VaccinesVetProps) {
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [vaccines, setVaccines] = useState<VaccinesProps[]>([]);
   const [vaccineId, setVaccineId] = useState(0);
@@ -51,39 +53,49 @@ export default function VaccinesVets({InAdmission, admissionQueueId} : VaccinesV
     }
   }
 
-
   async function setVaccineInPet() {
     try {
       const data = {
-        RequestedByVetId: user.id, 
-        RequestedByVetName: user.consultName, 
+        RequestedByVetId: user.id,
+        RequestedByVetName: user.consultName,
         RequestedCrm: user.crm,
-        isAdmission: InAdmission
+        isAdmission: InAdmission,
       };
 
-      if(InAdmission === true) {
-        await api.post(`/vaccinepet/${vaccineId}/${petDetails.recordId}/${petDetails.totalAcc.id}/${admissionQueueId}`, data);
+      if (InAdmission === true) {
+        await api.post(
+          `/vaccinepet/${vaccineId}/${petDetails.recordId}/${petDetails.totalAcc.id}/${admissionQueueId}`,
+          data
+        );
         setReloadData(true);
         toast.success("Vacina adicionada - Internações");
       } else {
-        await api.post(`/vaccinepet/${vaccineId}/${petDetails.recordId}/${petDetails.totalAcc.id}/${queueId}`, data);
+        await api.post(
+          `/vaccinepet/${vaccineId}/${petDetails.recordId}/${petDetails.totalAcc.id}/${queueId}`,
+          data
+        );
         setReloadData(true);
         toast.success("Vacina adicionada - Veterinários");
       }
-     
     } catch (error) {
       toast.error("Falha ao cadastrar Vacina!");
     }
   }
 
-  async function deleteVaccine(vaccineId: string | number, vaccPrice: string | number) {
+  async function deleteVaccine(
+    vaccineId: string | number,
+    vaccPrice: string | number,
+    linkedDebitId: number
+  ) {
     try {
       const confirmation = window.confirm(
         "DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
       );
 
       if (confirmation === true) {
-        await api.delete(`/vaccinepet/${vaccineId}/${petDetails.totalAcc.id}/${vaccPrice}`);
+        await api.delete(
+          `/petvaccine/${vaccineId}/${petDetails.totalAcc.id}/${vaccPrice}/${linkedDebitId}`
+        );
         setReloadData(true);
         toast.warning("Deletado com sucesso!");
       } else {
@@ -217,7 +229,20 @@ export default function VaccinesVets({InAdmission, admissionQueueId} : VaccinesV
                     <Td>{vaccine.requestedDate.toString()}</Td>
                     <Td>{vaccine.name}</Td>
                     <Td color="red">A FAZER</Td>
-                    <Td><Button colorScheme="red" onClick={() => deleteVaccine(vaccine.id, vaccine.price)}>Excluir</Button></Td>
+                    <Td>
+                      <Button
+                        colorScheme="red"
+                        onClick={() => {
+                          deleteVaccine(
+                            vaccine.id,
+                            vaccine.price,
+                            vaccine.linkedDebitId
+                          );
+                        }}
+                      >
+                        Excluir
+                      </Button>
+                    </Td>
                   </Tr>
                 ))}
               </Tbody>

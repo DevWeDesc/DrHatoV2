@@ -111,6 +111,11 @@
 
 
 #### BUGS e Correções  ####
+[] - EXCLUIR VACINAS DA CONSULTS DEBITS(LINKED ID)
+[] - EXCLUIR CIRURGIAS DA CONSULTS DEBITS(LINKED ID)
+[] - EXCLUIR PROCEDIMENTOS DA CONSULTS DEBITS(LINKED ID)
+[] - REFAZER EXCLUSÃO MEDICAMENTO DA CONSULTS DEBITS(LINKED ID)
+[] - EDITAR PESO DO PET NA CONSULTA QUE ELE ESTÁ TAMBÉM
 [X] - Tabela exames duplicando
 [X] - Ajustar cadastro de pets campo idade
 [X] - Valores já prédefinidos dos exames que já existem

@@ -1,4 +1,5 @@
 import { PopulateOldExams } from "./CadExamsOld.mjs";
+import { PopulateOldExamsHistorie } from "./CadExamsOldHistory.mjs";
 import { PopulateOldCaractersExams } from "./CadPartDetailsOld.mjs";
 import { PopulatePartDetails } from "./CadPartExamsOld.mjs";
 import { PopulateUsers } from "./transformExcell.mjs";
@@ -37,6 +38,7 @@ export async function PopulateDataBase() {
         await PopulateInstructions();
         await PopulateInstructAlta();
         await PopulateOldConsults()
+        await PopulateOldExamsHistorie ()
 
         console.log("Todo Banco Populado com Sucesso!")
         

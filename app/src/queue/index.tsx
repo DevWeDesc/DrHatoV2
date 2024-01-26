@@ -33,13 +33,20 @@ interface PetsInQueue {
   vetPreference: string;
 }
 
+type VetsProps = {
+  username: string;
+  id: number;
+  consultName: string;
+}
+
 export function QueueSistem() {
   const [petsInQueue, setPetsInQueue] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [queryType, setQueryType] = useState("");
+  const user = JSON.parse(localStorage.getItem("user") as string);
   const [vetPreference, setVetPreference] = useState("");
   const navigate = useNavigate();
-  const { vets } = useContext(DbContext);
+  const [userVets, setUserVets] = useState<VetsProps[]>([])
   function openModal() {
     setIsModalOpen(true);
   }
@@ -47,47 +54,50 @@ export function QueueSistem() {
     setIsModalOpen(false);
   }
 
+  async function loadVets() {
+    const response = await api.get(`/users/vets`);
+    setUserVets(response.data.vets);
+  }
+
   async function setPetInQueue(id: string | number) {
     try {
-      const formattedData = new Date();
-      const processData = new Intl.DateTimeFormat().format(formattedData);
-      const formatter = new Intl.DateTimeFormat([], {
-        timeZone: "America/Sao_Paulo",
-        hour: "numeric",
-        minute: "numeric",
-      });
-      const currentDateTime = formatter.format(new Date());
-
       const data = {
         vetPreference: vetPreference,
         queryType: queryType,
-        queueEntry: processData,
-        petIsInQueue: true,
-        queueOur: currentDateTime,
+        openedBy: user.consultName.length >= 1 ? user.consultName : `${user.name} - Id: ${user.id}`,
+        moreInfos: ""
       };
 
       await api.put(`queue/${id}`, data);
       toast.success("Pet atualizado na fila com sucesso!");
-      navigate(0);
+      navigate('/Recepcao/Consultas');
     } catch (error) {
       toast.error("Falha ao colocar na fila");
     }
   }
 
-  const path = useLocation();
-  useEffect(() => {
-    async function GetPetQueue() {
-      try {
-        const response = await api.get("/pets/queue");
-        setPetsInQueue(response.data.response);
-      } catch (error) {
-        toast.error("Falha ao carregar Fila.");
-      }
-    }
 
+  async function GetPetQueue() {
+    try {
+      const response = await api.get("/pets/queue");
+      setPetsInQueue(response.data.response);
+    } catch (error) {
+      toast.error("Falha ao carregar Fila.");
+    }
+  }
+
+  const path = useLocation();
+
+
+  useEffect(() => {
+
+    loadVets()  
     GetPetQueue();
   }, []);
-  console.log(petsInQueue);
+
+
+
+
   let queue;
   switch (true) {
     case path.pathname === "/Recepcao/Change":
@@ -130,14 +140,15 @@ export function QueueSistem() {
                             <Flex
                               direction="column"
                               overflow="auto"
-                              height="100%"
+                              h={600}
                             >
                               <Text mt="4" fontWeight="bold" pb="2">
                                 SELECIONAR VETERINARIO
                               </Text>
 
-                              {vets.map((vet) => (
+                              {userVets.map((vet) => (
                                 <RadioGroup
+                                 
                                   key={vet.id}
                                   onChange={setVetPreference}
                                   value={vetPreference}
@@ -147,9 +158,9 @@ export function QueueSistem() {
                                       mb="2"
                                       borderColor="teal.800"
                                       colorScheme="green"
-                                      value={vet.username.toString()}
+                                      value={vet.consultName.toString()}
                                     >
-                                      {vet.username}
+                                      {vet.consultName}
                                     </Radio>
                                   </Flex>
                                 </RadioGroup>

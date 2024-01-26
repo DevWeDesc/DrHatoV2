@@ -45,13 +45,16 @@ export function Vaccines() {
     }
   }
 
-  async function setVaccineInPet(vaccineId:number) {
+  async function setVaccineInPet(vaccineId: number) {
     try {
       const data = {
-        RequestedByVetId: user.id, 
-        RequestedByVetName: user.consultName, 
+        RequestedByVetId: user.id,
+        RequestedByVetName: user.consultName,
       };
-      await api.post(`/vaccinepet/${vaccineId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`, data);
+      await api.post(
+        `/vaccinepet/${vaccineId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
+        data
+      );
       setReloadData(true);
       toast.success("Vacina criada com Sucesso");
     } catch (error) {
@@ -59,14 +62,19 @@ export function Vaccines() {
     }
   }
 
-  async function deleteVaccine(vaccineId: string | number, vaccPrice: string | number) {
+  async function deleteVaccine(
+    vaccineId: string | number,
+    vaccPrice: string | number
+  ) {
     try {
       const confirmation = window.confirm(
         "DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
       );
 
       if (confirmation === true) {
-        await api.delete(`/vaccinepet/${vaccineId}/${petDetails.totalAcc.id}/${vaccPrice}`);
+        await api.delete(
+          `/vaccinepet/${vaccineId}/${petDetails.totalAcc.id}/${vaccPrice}`
+        );
         setReloadData(true);
         toast.warning("Deletado com sucesso!");
       } else {
@@ -149,7 +157,6 @@ export function Vaccines() {
                 align="center"
                 justify="center"
               >
-         
                 <Flex align="center" gap="2" p="4">
                   <Button colorScheme="teal">FILTRAR</Button>
                   <Input name="filter" placeholder="Nome da Vacina" />
@@ -175,13 +182,39 @@ export function Vaccines() {
                   <Tbody>
                     {vaccines.map((vaccine) => (
                       <Tr key={vaccine.id}>
-                   
                         <Td>{vaccine.name}</Td>
-                        <Td>{ new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency'}).format(vaccine?.price) }</Td>
-                        <Td>{ new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency'}).format(vaccine?.price) }</Td>
-                        <Td>{ new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency'}).format(vaccine?.price) }</Td>
-                        <Td>{ new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency'}).format(vaccine?.price) }</Td>
-                        <Td><Button colorScheme="whatsapp" onClick={() => setVaccineInPet(vaccine.id)}>Incluir</Button></Td>
+                        <Td>
+                          {new Intl.NumberFormat("pt-BR", {
+                            currency: "BRL",
+                            style: "currency",
+                          }).format(vaccine?.price)}
+                        </Td>
+                        <Td>
+                          {new Intl.NumberFormat("pt-BR", {
+                            currency: "BRL",
+                            style: "currency",
+                          }).format(vaccine?.price)}
+                        </Td>
+                        <Td>
+                          {new Intl.NumberFormat("pt-BR", {
+                            currency: "BRL",
+                            style: "currency",
+                          }).format(vaccine?.price)}
+                        </Td>
+                        <Td>
+                          {new Intl.NumberFormat("pt-BR", {
+                            currency: "BRL",
+                            style: "currency",
+                          }).format(vaccine?.price)}
+                        </Td>
+                        <Td>
+                          <Button
+                            colorScheme="whatsapp"
+                            onClick={() => setVaccineInPet(vaccine.id)}
+                          >
+                            Incluir
+                          </Button>
+                        </Td>
                       </Tr>
                     ))}
                   </Tbody>
@@ -208,17 +241,32 @@ export function Vaccines() {
                     <Tr>
                       <Th>DATA SOLICITADA</Th>
                       <Th>VACINAS</Th>
-                      
+
                       <Th>Cancelar?</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {petDetails.vaccines?.map((vaccine) => (
                       <Tr key={vaccine.id}>
-                        <Td>{new Intl.DateTimeFormat('pt-BR').format(new Date(vaccine?.requestedDate))}</Td>
+                        <Td>
+                          {new Intl.DateTimeFormat("pt-BR").format(
+                            new Date(vaccine?.requestedDate)
+                          )}
+                        </Td>
                         <Td>{vaccine.name}</Td>
-                        
-                        <Td><Button onClick={() => deleteVaccine(vaccine.id, vaccine.price)} w="89px" colorScheme="red">Excluir</Button></Td>
+
+                        <Td>
+                          <Button
+                            onClick={() => {
+                              console.log(vaccine.id);
+                              // deleteVaccine(vaccine.id, vaccine.price)
+                            }}
+                            w="89px"
+                            colorScheme="red"
+                          >
+                            Excluir
+                          </Button>
+                        </Td>
                       </Tr>
                     ))}
                   </Tbody>

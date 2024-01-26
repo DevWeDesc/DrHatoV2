@@ -22,22 +22,24 @@ import { api } from "../../lib/axios";
 type ExamsVetProps = {
   InAdmission: boolean;
   admissionQueueId?: string;
-}
+};
 
 type ExamsDTO = {
   codexam: number;
   name: string;
   price: number;
-}
+};
 
-export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
-  const { id , queueId} = useParams<{ id: string; queueId: string; }>();
+export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [exams, setExams] = useState<ExamsDTO[]>([]);
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [examName, setExamName] = useState("");
   const [searchByLetter, setSearchByLetter] = useState("");
+
+  // console.log(user);
 
   async function getPetExams() {
     const response = await api.get(`/pets/${id}`);
@@ -56,29 +58,34 @@ export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
     const response = await api.get(`/exams/old/letter/${searchByLetter}`);
     setExams(response.data);
   }
-  
+
   async function setOldExamInPet(examId: number) {
     try {
       const data = {
-        RequestedByVetId: user.id, 
-        RequestedByVetName: user.consultName, 
+        RequestedByVetId: user.id,
+        RequestedByVetName: user.consultName,
         RequestedCrm: user.crm,
-        isAdmission: InAdmission 
+        isAdmission: InAdmission,
       };
 
-
-      if(InAdmission === true) {
+      if (InAdmission === true) {
         await api.post(
-          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,data);
+          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
+          data
+        );
+        console.log(
+          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`
+        );
         setReloadData(true);
         toast.success("Exame adicionado Ala Internação!");
       } else {
         await api.post(
-          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,data);
+          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
+          data
+        );
         setReloadData(true);
         toast.success("Exame adicionado Ala Veterinários");
       }
-
     } catch (error) {
       toast.error("Falha ao cadastrar exame!");
     }
@@ -86,7 +93,8 @@ export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
 
   async function deleteExam(
     examId: string | number,
-    examPrice: string | number
+    examPrice: string | number,
+    linkedDebitId: number | null
   ) {
     try {
       const confirmation = window.confirm(
@@ -95,7 +103,7 @@ export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
 
       if (confirmation === true) {
         await api.delete(
-          `/petexam/${examId}/${petDetails.totalAcc.id}/${examPrice}`
+          `/petexam/${examId}/${petDetails.totalAcc.id}/${examPrice}/${linkedDebitId}`
         );
         setReloadData(true);
         toast.warning("Deletado com sucesso!");
@@ -214,7 +222,16 @@ export function ExamsVet({InAdmission, admissionQueueId}: ExamsVetProps) {
                     <Button
                       colorScheme="red"
                       isDisabled={exam.doneExam}
-                      onClick={() => deleteExam(exam.id, exam.price)}
+                      onClick={() => {
+                        console.log(exam);
+                        deleteExam(
+                          exam.id,
+                          exam.price,
+                          exam.linkedConsultId != null
+                            ? exam.linkedConsultId
+                            : exam.linkedAdmissionId
+                        );
+                      }}
                     >
                       EXCLUIR ?
                     </Button>

@@ -97,6 +97,7 @@ export const QueueSchema = z.object({
   petIsInQueue: z.boolean().optional(),
   petWeight: z.string().optional(),
   observations: z.string().optional(),
+  openedBy: z.string().optional(),
   
 })
 

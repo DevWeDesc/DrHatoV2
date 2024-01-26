@@ -131,14 +131,19 @@ export interface ExamsProps {
   onePart: boolean;
   twoPart: boolean;
   coleted?: number;
+  linkedConsultId: number | null;
+  linkedAdmissionId: number | null;
 }
 
 export interface VacinnesProps {
+  // linkedDebitId(id: number, price: number, linkedDebitId: number): void;
   id: number;
   name: string;
   price: number;
   doneExam: boolean;
   requestedDate: Date | string;
+  linkedDebitId: number;
+  linkedConsultId: number;
 }
 
 enum SurgerieStatus {
@@ -154,6 +159,7 @@ export interface SugeriesProps {
   scheduledDate?: Date;
   completedDate?: Date;
   surgerieStatus: string;
+  linkedConsultId: number;
 }
 
 type QueuePetOn = {
@@ -185,6 +191,8 @@ type ProceduresProps = {
   price: number;
   available: boolean;
   requestedDate: Date;
+  linkedConsultId: number | null;
+  linkedAdmissionId: number | null;
 };
 
 type KennelProps = {
