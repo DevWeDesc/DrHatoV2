@@ -299,6 +299,7 @@ export interface PetDetaisl {
   surgeries: SugeriesProps[];
   procedures: ProceduresProps[];
   customerPets: customerPetsProps[];
+  consultsPet: ConsultsPetDetails[];
   medicineRecords: MedicineRecordsProps;
   bedInfos: BedInfosProps;
   isBusy: boolean;
@@ -308,6 +309,17 @@ export interface PetDetaisl {
   customer: { name: string };
   queueHistory: QueueHistoryProps[];
 }
+
+export type ConsultsPetDetails = {
+  id: string;
+  openedDate: string;
+  openedBy: string;
+  vetPreference: string;
+  consultType: string;
+  medicineRecordId: number;
+  clientIsVip: boolean;
+};
+
 type QueueHistoryProps = {
   id: number;
   queueEntry: Date;
