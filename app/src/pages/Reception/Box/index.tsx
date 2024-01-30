@@ -1,11 +1,7 @@
-import {
-  Text,
-  ChakraProvider,
-  Flex,
-} from "@chakra-ui/react";
+import { Text, ChakraProvider, Flex } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { AdminContainer } from "../../AdminDashboard/style";
-import {  TbReportMoney } from "react-icons/tb";
+import { TbReportMoney } from "react-icons/tb";
 import { Header } from "../../../components/admin/Header";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
@@ -19,26 +15,40 @@ import { ConfirmationDialog } from "../../../components/dialogConfirmComponent/C
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { BoxContext } from "../../../contexts/BoxContext";
+import { AxiosResponse } from "axios";
+import { Message } from "react-hook-form";
+
+type resTypeBox = {
+  Message: string;
+  status: number;
+};
 
 export function BoxReception() {
-  const {fatherBox,dailyBox, setReloadData} = useContext(BoxContext)
+  const { fatherBox, dailyBox, setReloadData } = useContext(BoxContext);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") as string);
+
   async function handleCloseBox() {
     try {
       const data = {
-        entryValues: 1000, 
-        exitValues: 500, 
-        closedBy: user.username
-      }
-      await api.put(`/closehistbox/${fatherBox.id}/${dailyBox.id}`, data).then(() => {
-        setReloadData(true)
-        navigate("/Recepcao")
-        toast.success("Caixa fechado com sucesso!")
-      })
-    
+        entryValues: 1000,
+        exitValues: 500,
+        closedBy: user.username,
+      };
+
+      let fatherBoxValue = Number(fatherBox.id) - 1;
+      await api
+        .put(`/closehistbox/${fatherBoxValue}/${dailyBox.id}`, data)
+        .then((res: any) => {
+          setReloadData(true);
+          navigate("/Recepcao");
+          toast.success("Caixa fechado com sucesso!");
+          console.log(res.respose.data);
+        });
     } catch (error) {
-      toast.error("Falha no fechamento de caixa")
+      toast.warning(
+        "Não é possivel fechar o caixa, pois tem débitos em aberto!"
+      );
     }
   }
 
@@ -62,14 +72,14 @@ export function BoxReception() {
               <Text fontWeight="bold" fontSize="2xxl" mt="6">
                 OPÇÕES DO CAIXA
               </Text>
-               <ConfirmationDialog 
-                disabled={false}  
-                buttonTitle="Fechar caixa" 
-                icon={< TbReportMoney size={28}/>}  
+              <ConfirmationDialog
+                disabled={false}
+                buttonTitle="Fechar caixa"
+                icon={<TbReportMoney size={28} />}
                 whatIsConfirmerd="Tem certeza que vai fechar o caixa?"
                 describreConfirm="Fechar o caixa registra todos valores de entrada e saída da data de hoje, sendo uma operação irreversivel que ficará salva no histórico."
                 callbackFn={() => handleCloseBox()}
-               />
+              />
               <GenericLink
                 name="Despesas"
                 icon={TbCashBanknoteOff}
@@ -83,11 +93,7 @@ export function BoxReception() {
             </GenericSidebar>
             {/* <Sidebar /> */}
 
-           <OpenedBox/> 
-            
-
-          
-           
+            <OpenedBox />
           </Flex>
         </Flex>
       </AdminContainer>
