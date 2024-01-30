@@ -51,6 +51,7 @@ export const petsController = {
           },
           medicineRecords: {
             select: {
+              petConsults: true,
               petExams: true,
               petQueues: true,
               observations: true,
@@ -186,6 +187,18 @@ export const petsController = {
             observations: bed.hospDiary,
           };
           return bedData;
+        }),
+        consultsPet: pet?.medicineRecords?.petConsults.map((consult) => {
+          let consultPet = {
+            id: consult.id,
+            openedDate: consult.openedDate,
+            openedBy: consult.openedBy,
+            vetPreference: consult.vetPreference,
+            consultType: consult.consultType,
+            medicineRecordId: consult.medicineRecordId,
+            clientIsVip: consult.clientIsVip,
+          };
+          return consultPet;
         }),
         queue: pet?.queue,
         queueHistory: pet?.medicineRecords?.petQueues,
