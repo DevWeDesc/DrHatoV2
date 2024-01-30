@@ -273,6 +273,7 @@ model OpenedConsultsForPet {
   consultDebits    PetConsultsDebits[]
   MedicineRecord   MedicineRecord?     @relation(fields: [medicineRecordId], references: [id])
   medicineRecordId Int?
+  clientIsVip Boolean? @default(false)
 }
 
 //  ------------- ADMISSIONS -------------   //
@@ -447,6 +448,15 @@ model HospVetBox {
   exitValues       Decimal?
   boxIsOpen        Boolean?         @default(false)
   historyBox       HospBoxHistory[]
+  returnsClientBox ReturnsClientBox[]
+}
+
+model ReturnsClientBox{
+  id Int @id @unique
+  idHospVetBox Int?
+  hospVetBox HospVetBox? @relation(fields: [idHospVetBox], references: [id])
+  idCustomer Int?
+  authorId Int
 }
 
 model HospBoxHistory {
@@ -472,6 +482,7 @@ model CustomerAccount {
   customerId    Int                 @unique
   customer      Customer            @relation(fields: [customerId], references: [id])
   installments  InstallmentsDebts[]
+  clientIsVip Boolean? @default(false)
 }
 
 model InstallmentsDebts {
