@@ -21,6 +21,8 @@ import {
   Text,
   Flex,
   Grid,
+  Radio,
+  Checkbox,
 } from "@chakra-ui/react";
 import {
   AiFillMedicineBox,
@@ -33,7 +35,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState, ChangeEvent, useContext } from "react";
 import { api } from "../../lib/axios";
-import { ICustomer, PetDetaisl } from "../../interfaces";
+import { ConsultsPetDetails, ICustomer, PetDetaisl } from "../../interfaces";
 import { toast } from "react-toastify";
 import { Textarea } from "@chakra-ui/react";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
@@ -88,6 +90,9 @@ export function WorkSpaceVet() {
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [customerDetails, setCustomerDetails] = useState({} as ICustomer);
+  const [consultDetails, setConsultDetails] = useState(
+    {} as ConsultsPetDetails
+  );
 
   const GetDetailsCustomerById = async (id: number) => {
     const customer = await api.get(`/customers/${id}`);
@@ -140,17 +145,20 @@ export function WorkSpaceVet() {
     }
   };
 
-  async function getPetDetails() {
-    const response = await api.get(`/pets/${id}`);
-    setPet(response.data);
+  async function getDetailsInformations() {
+    await api.get(`/pets/${id}`).then(async (res) => {
+      setPet(res.data);
+      const resConsult = await api.get(`/queue/details/${queueId}`);
+      setConsultDetails(resConsult.data);
+    });
   }
   useEffect(() => {
-    getPetDetails();
+    getDetailsInformations();
   }, []);
 
   useEffect(() => {
     if (reloadData === true) {
-      getPetDetails();
+      getDetailsInformations();
       setReloadData(false); // Reseta o estado para evitar chamadas infinitas
     }
   }, [reloadData]);
@@ -171,6 +179,19 @@ export function WorkSpaceVet() {
       toast.error("Falha ao encerrar consulta!!");
       console.log(error);
     }
+  };
+
+  const handleClientIsVip = async () => {
+    let value = false;
+
+    !consultDetails.clientIsVip && (value = true);
+
+    await api
+      .put(`/queue/setClientIsVip/${queueId}/${pet.customerId}/${value}`)
+      .then(() => {
+        toast.success("Cliente Vip atualizado com sucesso!");
+      });
+    setReloadData(true);
   };
 
   let viewComponent;
@@ -745,6 +766,14 @@ export function WorkSpaceVet() {
           <Text>{customerDetails?.email}</Text>
           <Text fontWeight="bold">Telefone do Cliente</Text>
           <Text>{customerDetails?.phone}</Text>
+          <Text fontWeight="bold">Cliente é vip?</Text>
+          <Checkbox
+            onChange={handleClientIsVip}
+            value={consultDetails.clientIsVip ? "Sim" : "Não"}
+            defaultChecked={consultDetails.clientIsVip}
+          >
+            {consultDetails.clientIsVip ? "Sim" : "Não"}
+          </Checkbox>
         </Grid>
       </GenericModal>
 
