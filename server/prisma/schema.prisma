@@ -208,8 +208,8 @@ model ProceduresForPet {
   requestedDate          DateTime?
   isDone                 Boolean?       @default(false)
   medicine_id            Int
-  linkedConsultDebitId   Int?             @unique
-  LinkedAdmissionDebitId Int?             @unique
+  linkedConsultDebitId   Int?           @unique
+  LinkedAdmissionDebitId Int?           @unique
   medicine               MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
 
@@ -273,7 +273,7 @@ model OpenedConsultsForPet {
   consultDebits    PetConsultsDebits[]
   MedicineRecord   MedicineRecord?     @relation(fields: [medicineRecordId], references: [id])
   medicineRecordId Int?
-  clientIsVip Boolean? @default(false)
+  clientIsVip      Boolean?            @default(false)
 }
 
 //  ------------- ADMISSIONS -------------   //
@@ -339,17 +339,17 @@ model Vaccines {
 }
 
 model VaccinesForPet {
-  id              Int            @id @default(autoincrement())
-  name            String
-  price           Decimal
-  description     String
-  requestedDate   DateTime
-  applicationDate DateTime?
-  isDone          Boolean?       @default(false)
-  medicine_id     Int
-  medicine        MedicineRecord @relation(fields: [medicine_id], references: [id])
-  linkedConsultDebitId Int? @unique
-  LinkedAdmissionDebitId Int? @unique
+  id                     Int            @id @default(autoincrement())
+  name                   String
+  price                  Decimal
+  description            String
+  requestedDate          DateTime
+  applicationDate        DateTime?
+  isDone                 Boolean?       @default(false)
+  medicine_id            Int
+  medicine               MedicineRecord @relation(fields: [medicine_id], references: [id])
+  linkedConsultDebitId   Int?           @unique
+  LinkedAdmissionDebitId Int?           @unique
 }
 
 //  ------------- VACINES -------------  //
@@ -370,17 +370,17 @@ enum SurgerieStatus {
 }
 
 model SurgeriesForPet {
-  id              Int               @id @default(autoincrement())
-  name            String
-  price           Decimal
-  requestedDate   DateTime          @default(now())
-  completedDate   DateTime?
-  status          SurgerieStatus?   @default(STARTED)
-  surgeriesReport SurgeriesReports?
-  medicine_id     Int
-  medicine        MedicineRecord    @relation(fields: [medicine_id], references: [id])
-  linkedConsultDebitId Int? @unique
-  LinkedAdmissionDebitId Int? @unique
+  id                     Int               @id @default(autoincrement())
+  name                   String
+  price                  Decimal
+  requestedDate          DateTime          @default(now())
+  completedDate          DateTime?
+  status                 SurgerieStatus?   @default(STARTED)
+  surgeriesReport        SurgeriesReports?
+  medicine_id            Int
+  medicine               MedicineRecord    @relation(fields: [medicine_id], references: [id])
+  linkedConsultDebitId   Int?              @unique
+  LinkedAdmissionDebitId Int?              @unique
 }
 
 model OpenededAdmissionsForPet {
@@ -441,22 +441,27 @@ model PricesAccumulator {
 }
 
 model HospVetBox {
-  id               Int              @id @default(autoincrement())
+  id               Int                @id @default(autoincrement())
   name             String
   movimentedValues Decimal?
   entryValues      Decimal?
   exitValues       Decimal?
-  boxIsOpen        Boolean?         @default(false)
+  boxIsOpen        Boolean?           @default(false)
   historyBox       HospBoxHistory[]
   returnsClientBox ReturnsClientBox[]
 }
 
-model ReturnsClientBox{
-  id Int @id @unique
-  idHospVetBox Int?
-  hospVetBox HospVetBox? @relation(fields: [idHospVetBox], references: [id])
-  idCustomer Int?
-  authorId Int
+model ReturnsClientBox {
+  id              Int                @id @unique @default(autoincrement())
+  idHospVetBox    Int?
+  hospVetBox      HospVetBox?        @relation(fields: [idHospVetBox], references: [id])
+  idCustomer      Int?
+  customerAccount CustomerAccount?   @relation(fields: [idCustomer], references: [id])
+  idInstallment   Int?               @unique
+  installment     InstallmentsDebts? @relation(fields: [idInstallment], references: [id])
+  reasonForReturn String
+  value           String
+  date            DateTime           @default(now())
 }
 
 model HospBoxHistory {
@@ -475,18 +480,19 @@ model HospBoxHistory {
 }
 
 model CustomerAccount {
-  id            Int                 @id @default(autoincrement())
-  accountNumber Int?
-  debits        Decimal?
-  credits       Decimal?
-  customerId    Int                 @unique
-  customer      Customer            @relation(fields: [customerId], references: [id])
-  installments  InstallmentsDebts[]
-  clientIsVip Boolean? @default(false)
+  id               Int                 @id @default(autoincrement())
+  accountNumber    Int?
+  debits           Decimal?
+  credits          Decimal?
+  customerId       Int                 @unique
+  customer         Customer            @relation(fields: [customerId], references: [id])
+  installments     InstallmentsDebts[]
+  returnsClientBox ReturnsClientBox[]
+  clientIsVip      Boolean?            @default(false)
 }
 
 model InstallmentsDebts {
-  id                 Int             @id @default(autoincrement())
+  id                 Int               @id @default(autoincrement())
   debitName          String?
   totalDebit         Decimal?
   paymentType        String?
@@ -494,9 +500,10 @@ model InstallmentsDebts {
   installmentAmount  Int?
   amountInstallments Decimal?
   customerId         Int
-  customerAccount    CustomerAccount @relation(fields: [customerId], references: [id])
+  customerAccount    CustomerAccount   @relation(fields: [customerId], references: [id])
   boxHistoryId       Int
-  boxHistory         HospBoxHistory  @relation(fields: [boxHistoryId], references: [id])
+  boxHistory         HospBoxHistory    @relation(fields: [boxHistoryId], references: [id])
+  returnClient       ReturnsClientBox?
 }
 
 model Transaction {
@@ -674,6 +681,6 @@ model PartDetails {
 }
 
 model PaymentsType {
-  id  Int @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   typePayment String @unique
 }
