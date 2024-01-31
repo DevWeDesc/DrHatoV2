@@ -1,6 +1,8 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { z } from "zod";
 import { prisma } from "../interface/PrismaInstance";
+import { randomInt } from "crypto";
+import { send } from "process";
 
 const boxSchema = z.object({
   name: z.string().optional(),
@@ -18,6 +20,96 @@ type params = {
 };
 
 export const boxController = {
+  createReturnsBoxByUser: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
+    const paramsSchema = z.object({
+      boxId: z.string(),
+      customerId: z.string(),
+      installmentId: z.string(),
+    });
+
+    const { boxId, customerId, installmentId } = paramsSchema.parse(
+      request.params
+    );
+
+    const bodySchema = z.object({
+      reasonForReturn: z.string(),
+      value: z.string(),
+    });
+    const { reasonForReturn, value } = bodySchema.parse(request.body);
+
+    try {
+      var returnCreated = await prisma.returnsClientBox.create({
+        data: {
+          reasonForReturn: reasonForReturn,
+          value: value,
+          idInstallment: Number(installmentId),
+          idHospVetBox: Number(boxId),
+          idCustomer: Number(customerId),
+        },
+      });
+      reply.status(201).send(returnCreated);
+    } catch (err) {
+      reply.status(400).send(err);
+    }
+  },
+
+  getAllReturns: async (request: FastifyRequest, reply: FastifyReply) => {
+    const allReturns = await prisma.returnsClientBox.findMany({
+      include: {
+        customerAccount: { include: { customer: true } },
+        hospVetBox: true,
+        installment: true,
+      },
+    });
+
+    reply.status(200).send(allReturns);
+  },
+
+  getAllDebits: async (request: FastifyRequest, reply: FastifyReply) => {
+    var installments = await prisma.installmentsDebts.findMany({
+      include: { customerAccount: true },
+    });
+
+    try {
+      reply.status(200).send(installments);
+    } catch (err) {
+      reply.status(400).send(err);
+    }
+  },
+
+  getDebitsByBox: async (request: FastifyRequest, reply: FastifyReply) => {
+    const DebitsByBoxSchema = z.object({
+      boxId: z.string(),
+    });
+
+    const { boxId } = DebitsByBoxSchema.parse(request.params);
+
+    var installments = await prisma.installmentsDebts.findMany({
+      where: { boxHistoryId: Number(boxId) },
+      include: { customerAccount: { include: { customer: true } } },
+    });
+
+    var usersInInstallments = await prisma.customer.findMany({
+      where: {
+        customerAccount: {
+          installments: { some: { boxHistoryId: Number(boxId) } },
+        },
+      },
+      include: { customerAccount: { include: { installments: true } } },
+    });
+
+    try {
+      reply
+        .status(200)
+        .send({ Installments: installments, customers: usersInInstallments });
+    } catch (err) {
+      reply.status(400).send(err);
+    }
+  },
+
   createVetBox: async (request: FastifyRequest, reply: FastifyReply) => {
     const { name, boxIsOpen } = boxSchema.parse(request.body);
     try {
