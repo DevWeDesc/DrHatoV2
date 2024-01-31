@@ -339,6 +339,7 @@ type AccountProps = {
   credits: number;
   installments: InstallmentsProps[];
 };
+
 type InstallmentsProps = {
   id: number;
   debitName: string;
@@ -403,4 +404,30 @@ export interface PetOldConsult {
   CodAnimal: number;
   CodCli: number;
   petsId: number;
+}
+
+export interface IDocBox {
+  Installments: Installments[];
+  customers: ICustomer[];
+}
+
+export interface Installments {
+  id: number;
+  debitName: null | string;
+  totalDebit: number;
+  paymentType: string;
+  paymentDate: string;
+  installmentAmount: number;
+  amountInstallments: string;
+  customerId: number;
+  boxHistoryId: number;
+  customerAccount: {
+    id: number;
+    accountNumber: number;
+    debits: string;
+    credits: string;
+    customerId: number;
+    clientIsVip: null | boolean;
+    customer: ICustomer;
+  };
 }
