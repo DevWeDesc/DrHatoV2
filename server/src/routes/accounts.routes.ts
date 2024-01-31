@@ -9,6 +9,4 @@ export async function accountsRoutes(app: FastifyInstance) {
     "/account/installments/:customerId/:histBoxId",
     accountController.payInInstallments
   );
-  app.get("/account/debitsAll", accountController.getAllDebits);
-  app.get("/account/debitByBox/:boxId", accountController.getDebitsByBox);
 }

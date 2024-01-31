@@ -11,48 +11,6 @@ type params = {
 };
 
 export const accountController = {
-  getAllDebits: async (request: FastifyRequest, reply: FastifyReply) => {
-    var installments = await prisma.installmentsDebts.findMany({
-      include: { customerAccount: true },
-    });
-
-    try {
-      reply.status(200).send(installments);
-    } catch (err) {
-      reply.status(400).send(err);
-    }
-  },
-
-  getDebitsByBox: async (request: FastifyRequest, reply: FastifyReply) => {
-    const DebitsByBoxSchema = z.object({
-      boxId: z.string(),
-    });
-
-    const { boxId } = DebitsByBoxSchema.parse(request.params);
-
-    var installments = await prisma.installmentsDebts.findMany({
-      where: { boxHistoryId: Number(boxId) },
-      include: { customerAccount: true },
-    });
-
-    var usersInInstallments = await prisma.customer.findMany({
-      where: {
-        customerAccount: {
-          installments: { some: { boxHistoryId: Number(boxId) } },
-        },
-      },
-      include: { customerAccount: { include: { installments: true } } },
-    });
-
-    try {
-      reply
-        .status(200)
-        .send({ Installments: installments, customers: usersInInstallments });
-    } catch (err) {
-      reply.status(400).send(err);
-    }
-  },
-
   creditAccount: async (
     request: FastifyRequest<{ Params: params; Body: { values: number } }>,
     reply: FastifyReply
