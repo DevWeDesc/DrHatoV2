@@ -184,7 +184,7 @@ export function WorkSpaceVet() {
   const handleClientIsVip = async () => {
     let value = false;
 
-    !consultDetails.clientIsVip && (value = true);
+    !consultDetails?.clientIsVip && (value = true);
 
     await api
       .put(`/queue/setClientIsVip/${queueId}/${pet.customerId}/${value}`)
@@ -769,10 +769,10 @@ export function WorkSpaceVet() {
           <Text fontWeight="bold">Cliente é vip?</Text>
           <Checkbox
             onChange={handleClientIsVip}
-            value={consultDetails.clientIsVip ? "Sim" : "Não"}
-            defaultChecked={consultDetails.clientIsVip}
+            value={consultDetails?.clientIsVip ? "Sim" : "Não"}
+            defaultChecked={consultDetails?.clientIsVip}
           >
-            {consultDetails.clientIsVip ? "Sim" : "Não"}
+            {consultDetails?.clientIsVip ? "Sim" : "Não"}
           </Checkbox>
         </Grid>
       </GenericModal>
