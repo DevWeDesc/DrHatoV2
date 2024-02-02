@@ -177,11 +177,20 @@ export const customerController = {
           },
         },
         transaction: true,
-        customerAccount: { include: { installments: true } },
+        customerAccount: {
+          include: {
+            consultsForPet: { include: { consultDebits: true } },
+            installments: {
+              include: {
+                consult: { include: { consultDebits: true } },
+                admission: true,
+              },
+            },
+          },
+        },
       },
     });
 
     reply.send(customer);
   },
-
 };
