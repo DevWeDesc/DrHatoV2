@@ -1,4 +1,25 @@
-import {Box,ChakraProvider,Flex,Table, Tr,Td,Thead,Tbody,Th,Button,TableContainer,Input,Select, Text, VStack, NumberInput, NumberInputField, NumberInputStepper, NumberIncrementStepper, NumberDecrementStepper,} from "@chakra-ui/react";
+import {
+  Box,
+  ChakraProvider,
+  Flex,
+  Table,
+  Tr,
+  Td,
+  Thead,
+  Tbody,
+  Th,
+  Button,
+  TableContainer,
+  Input,
+  Select,
+  Text,
+  VStack,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+} from "@chakra-ui/react";
 import { Input as SInput } from "../../../components/admin/Input";
 import { Header } from "../../../components/admin/Header";
 import { AdminContainer } from "../../AdminDashboard/style";
@@ -19,14 +40,14 @@ import { BoxContext } from "../../../contexts/BoxContext";
 
 export function BoxNewPayments() {
   const [customers, setCostumers] = useState({} as ICustomer);
-  const {fatherBox} = useContext(BoxContext)
-  const navigate = useNavigate()
+  const { fatherBox } = useContext(BoxContext);
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [typePayment, setTypePayment] = useState("")
-  const [valueTotal, setValueTotal] = useState(0)
-  const [installments, setInstallments] = useState(0)
-  const [paymentType, setPaymentType] = useState("")
-  const handleChange = (installments: number) => setInstallments(installments)
+  const [typePayment, setTypePayment] = useState("");
+  const [valueTotal, setValueTotal] = useState(0);
+  const [installments, setInstallments] = useState(0);
+  const [paymentType, setPaymentType] = useState("");
+  const handleChange = (installments: number) => setInstallments(installments);
   const { id } = useParams<{ id: string }>();
 
   function openModal() {
@@ -48,99 +69,120 @@ export function BoxNewPayments() {
       debitName: "",
       totalDebit: Number(valueTotal),
       installmentAmount: Number(installments),
-      paymentType: `${typePayment}: ${installments}x`
-    }
+      paymentType: `${typePayment}: ${installments}x`,
+    };
 
     try {
-      if(valueTotal > customers.customerAccount?.debits){
-        toast.warning("Valor ultrapassa débito do cliente!")
+      if (valueTotal > customers.customerAccount?.debits) {
+        toast.warning("Valor ultrapassa débito do cliente!");
         return;
       }
-      await api.post(`/account/installments/${customers.id}/${fatherBox.id}`, data)
-      toast.success("Parcelamento realizado com sucesso!")
-      navigate(`/Recepcao/Caixa/Pagamentos/${customers.id}`)
+      await api.post(
+        `/account/installments/${customers.id}/${fatherBox.id}`,
+        data
+      );
+      toast.success("Parcelamento realizado com sucesso!");
+      navigate(`/Recepcao/Caixa/Pagamentos/${customers.id}`);
     } catch (error) {
-      console.log(error)
-      toast.error("Falha ao realizar pagamento!")
+      console.log(error);
+      toast.error("Falha ao realizar pagamento!");
     }
   }
 
-    const customerDebit = customers.customerAccount?.debits ? new Intl.NumberFormat('pt-BR',{style: 'currency', currency: 'BRL'}).format(customers.customerAccount?.debits) : 0
-    let paymentForm;
-    switch(true) {
-      case paymentType === "Crédito":
-        paymentForm = (
-          <Flex w="100%" h="100%" align="center" justify="center" direction="column">
-            <Text fontWeight="black" fontSize="1xl" >Débitos totais: {customerDebit}</Text>
-            
-            <VStack>
-            <Text fontWeight="black" fontSize="1xl">Valor a pagar:</Text>
-            <SInput defaultValue={valueTotal} onChange={(ev) => setValueTotal(Number(ev.target.value))}  step="0.01"   border="2px" placeholder="Valor a pagar não precisa ser o débito total" w={390} name="toPay" type="number" />
+  const customerDebit = customers.customerAccount?.debits
+    ? new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }).format(customers.customerAccount?.debits)
+    : 0;
+  let paymentForm;
+  switch (true) {
+    case paymentType === "Crédito":
+      paymentForm = (
+        <Flex
+          w="100%"
+          h="100%"
+          align="center"
+          justify="center"
+          direction="column"
+        >
+          <Text fontWeight="black" fontSize="1xl">
+            Débitos totais: {customerDebit}
+          </Text>
 
-            <Text fontWeight="black" fontSize="1xl">Débito será parcelado?, quantidade de parcelas: </Text>
-              <NumberInput
-               min={1} max={24} 
-              value={installments} 
-              //@ts-ignore 
-               onChange={handleChange}
-             
-             
-              >
-              <NumberInputField  
-            
-              border="2px" placeholder="Número de parcelas" />
+          <VStack>
+            <Text fontWeight="black" fontSize="1xl">
+              Valor a pagar:
+            </Text>
+            <SInput
+              defaultValue={valueTotal}
+              onChange={(ev) => setValueTotal(Number(ev.target.value))}
+              step="0.01"
+              border="2px"
+              placeholder="Valor a pagar não precisa ser o débito total"
+              w={390}
+              name="toPay"
+              type="number"
+            />
+
+            <Text fontWeight="black" fontSize="1xl">
+              Débito será parcelado?, quantidade de parcelas:{" "}
+            </Text>
+            <NumberInput
+              min={1}
+              max={24}
+              value={installments}
+              //@ts-ignore
+              onChange={handleChange}
+            >
+              <NumberInputField border="2px" placeholder="Número de parcelas" />
               <NumberInputStepper>
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />
               </NumberInputStepper>
             </NumberInput>
 
+            <Text fontWeight="black" fontSize="1xl">
+              Tipo de cartão usado:{" "}
+            </Text>
+            <Select
+              onChange={(ev) => setTypePayment(ev.target.value)}
+              mb="2"
+              border="2px"
+              placeholder="Bandeira ou Cartão usado"
+            >
+              <option value="Mastercard">Mastercard</option>
+              <option value="Elo">Elo</option>
+              <option value="Visa">Visa</option>
+              <option value="American Express">American Express</option>
+              <option value="Hipercard">Hipercard</option>
+              <option value=">Diners Club">Diners Club</option>
+              <option value="Maestro">Maestro</option>
+              <option value="Discover">Discover</option>
+            </Select>
 
-
-          <Text fontWeight="black" fontSize="1xl">Tipo de cartão usado: </Text>
-          <Select onChange={(ev) => setTypePayment(ev.target.value)} mb="2" border="2px" placeholder="Bandeira ou Cartão usado">
-              <option  value="Mastercard" >Mastercard</option>
-              <option  value="Elo" >Elo</option>
-              <option  value="Visa" >Visa</option>
-              <option  value="American Express" >American Express</option>
-              <option  value="Hipercard" >Hipercard</option>
-              <option  value=">Diners Club" >Diners Club</option>
-              <option  value="Maestro" >Maestro</option>
-              <option  value="Discover" >Discover</option>
-              
-        
-          </Select>
-
-              <ConfirmationDialog callbackFn={() => openInstallmentPayment()} icon={<BiMoney />} buttonTitle="Efetuar pagamento" whatIsConfirmerd="Confirme abaixo"  
+            <ConfirmationDialog
+              callbackFn={() => openInstallmentPayment()}
+              icon={<BiMoney />}
+              buttonTitle="Efetuar pagamento"
+              whatIsConfirmerd="Confirme abaixo"
               describreConfirm={`Valor pago: R$:${valueTotal} - N° de Parcelas: ${installments} - Cartão utilizado: ${typePayment}`}
-              disabled={false}/>
-            </VStack>
-               
-          </Flex>
-        )
+              disabled={false}
+            />
+          </VStack>
+        </Flex>
+      );
       break;
-      case paymentType === "Débito":
-        paymentForm = (
-          <h1>
-            Débito
-          </h1>
-        )
-        break;
-       case paymentType === "Dinheiro":
-        paymentForm = (
-          <h1>
-            Dinheiro
-          </h1>
-        )
-        break;
-        default:
-          paymentForm = (
-            <h1>
-              Falha estado
-            </h1>
-          )
-          break;
-    }
+    case paymentType === "Débito":
+      paymentForm = <h1>Débito</h1>;
+      break;
+    case paymentType === "Dinheiro":
+      paymentForm = <h1>Dinheiro</h1>;
+      break;
+    default:
+      paymentForm = <h1>Falha estado</h1>;
+      break;
+  }
 
   return (
     <ChakraProvider>
@@ -180,7 +222,8 @@ export function BoxNewPayments() {
                         bg="blue.800"
                         roundedTopStart="8px"
                       >
-                        Conta Corrente - {customers?.customerAccount?.accountNumber}
+                        Conta Corrente -{" "}
+                        {customers?.customerAccount?.accountNumber}
                       </Th>
                       <Th bg="blue.800"></Th>
                       <Th bg="blue.800"></Th>
@@ -289,7 +332,11 @@ export function BoxNewPayments() {
                           borderLeft="2px solid black"
                           h="12"
                           rounded="0"
-                          bgColor={customers?.customerAccount?.debits >= 1 ? "red.100" : "green.100" }
+                          bgColor={
+                            customers?.customerAccount?.debits >= 1
+                              ? "red.100"
+                              : "green.100"
+                          }
                           borderColor="black"
                           defaultValue={customers?.customerAccount?.debits}
                         ></Input>
@@ -328,10 +375,10 @@ export function BoxNewPayments() {
                           textAlign="center"
                           fontWeight="bold"
                         >
-                          <option > Selecione um tipo de pagamento</option>
+                          <option> Selecione um tipo de pagamento</option>
                           <option value="Débito"> Débito</option>
-                          <option  value="Crédito"> Crédito</option>
-                          <option  value="Dinheiro"> Dinheiro</option>
+                          <option value="Crédito"> Crédito</option>
+                          <option value="Dinheiro"> Dinheiro</option>
                         </Select>
                       </Td>
                       <Td textAlign="end" fontWeight="bold">
@@ -349,16 +396,19 @@ export function BoxNewPayments() {
                 </Table>
               </TableContainer>
               <Flex></Flex>
-              <Button  onClick={() => openModal()} w="100%" py="8" colorScheme="whatsapp">
+              <Button
+                onClick={() => openModal()}
+                w="100%"
+                py="8"
+                colorScheme="whatsapp"
+              >
                 Continuar
               </Button>
             </Box>
           </Flex>
         </Flex>
         <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-          <Flex  >
-              {paymentForm}
-          </Flex>
+          <Flex>{paymentForm}</Flex>
         </GenericModal>
       </AdminContainer>
     </ChakraProvider>

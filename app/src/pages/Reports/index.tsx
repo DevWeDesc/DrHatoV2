@@ -4,6 +4,7 @@ import {
   Button,
   ChakraProvider,
   Flex,
+  Grid,
   SimpleGrid,
   Text,
   theme,
@@ -23,14 +24,14 @@ export function Reports() {
             <SidebarRecords />
             <SimpleGrid flex="1" w="100%" align="flex-start" as={Flex}>
               <Flex
-                h="84vh"
+                // h="84vh"
                 justify="center"
                 gap="5"
                 maxH="44rem"
                 overflow="auto"
               >
-                <Flex direction="column" w="45%" gap="2">
-                  <Link to="/Reports/Comission">
+                <Grid gap="2" w="100%" gridTemplateColumns="repeat(2, 1fr)">
+                  {/* <Link to="/Reports/Comission">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Comissôes
                     </Button>
@@ -62,11 +63,7 @@ export function Reports() {
                       Relatórios de Especialidades
                     </Button>
                   </Link>
-                  <Link to="/Reports/Type/Exams">
-                    <Button colorScheme="twitter" w="100%" py="10">
-                      Relatórios de Exames
-                    </Button>
-                  </Link>
+               
                   <Link to="/Reports/SurgeriesCompleted">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Relatórios de Cirurgias Concluidas
@@ -77,11 +74,7 @@ export function Reports() {
                       Relatórios de Vacinas Não Tomadas
                     </Button>
                   </Link>
-                  <Link to="/Reports/ExamsVet">
-                    <Button colorScheme="twitter" w="100%" py="10">
-                      Relatórios de Exames por Veterinário
-                    </Button>
-                  </Link>
+                 
                   <Link to="/Reports/ExamsExtern">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Relatórios de Exames de clinicas e Veterinários Externos
@@ -112,22 +105,30 @@ export function Reports() {
                       Frequência de Clientes
                     </Button>
                   </Link>
+                  <Link to="/Reports">
+                  <Button colorScheme="twitter" w="100%" py="10">
+                  Relatório Tabela Fato
+                  </Button>
+                  </Link>
+                  
+                  <Link to="/Reports">
+                  <Button colorScheme="twitter" w="100%" py="10">
+                  Comissôes Visualizar Caixas
+                  </Button>
+                </Link> */}
+                  {/* <Link to="/Reports/ExamsVet">
+                    <Button colorScheme="twitter" w="100%" py="10">
+                      Relatórios de Exames por Veterinário
+                    </Button>
+                  </Link> */}
+                  <Link to="/Reports/Type/Exams">
+                    <Button colorScheme="twitter" w="100%" py="10">
+                      Relatórios de Exames
+                    </Button>
+                  </Link>
                   <Link to="/Reports/Type/Vets">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Relatório por Veterinário 2023
-                    </Button>
-                  </Link>
-                  <Link to="/Reports">
-                    <Button colorScheme="twitter" w="100%" py="10">
-                      Relatório Tabela Fato
-                    </Button>
-                  </Link>
-                </Flex>
-
-                <Flex direction="column" w="50%" gap="2">
-                  <Link to="/Reports">
-                    <Button colorScheme="twitter" w="100%" py="10">
-                      Comissôes Visualizar Caixas
                     </Button>
                   </Link>
                   <Link to="/Reports/Type/FinanceSector">
@@ -135,12 +136,12 @@ export function Reports() {
                       Relatório Financeiro por Setor
                     </Button>
                   </Link>
-                  <Link to="/Reports">
+                  {/* <Link to="/Reports">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Relatório de Clientes
                     </Button>
-                  </Link>
-                  <Link to="/Reports">
+                  </Link> */}
+                  {/* <Link to="/Reports">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Relatório de Veterinários
                     </Button>
@@ -149,13 +150,13 @@ export function Reports() {
                     <Button colorScheme="twitter" w="100%" py="10">
                       Indicações de Nutrição
                     </Button>
-                  </Link>
-                  <Link to="/Reports">
+                  </Link> */}
+                  {/* <Link to="/Reports">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Relatorio de Procedimentos
                     </Button>
-                  </Link>
-                  <Link to="/Reports">
+                  </Link> */}
+                  {/* <Link to="/Reports">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Exames Concluídos
                     </Button>
@@ -164,8 +165,8 @@ export function Reports() {
                     <Button colorScheme="twitter" w="100%" py="10">
                       Relatorio de Vacinas
                     </Button>
-                  </Link>
-                  <Link to="/Reports">
+                  </Link> */}
+                  {/* <Link to="/Reports">
                     <Button colorScheme="twitter" w="100%" py="10">
                       Vacinas Por Veterinário
                     </Button>
@@ -209,8 +210,8 @@ export function Reports() {
                     <Button colorScheme="twitter" w="100%" py="10">
                       Relatório Tabela Procedimento
                     </Button>
-                  </Link>
-                </Flex>
+                  </Link> */}
+                </Grid>
               </Flex>
             </SimpleGrid>
           </Flex>

@@ -75,10 +75,19 @@ export const queueController = {
       debitOnThisQuery: z.number().optional(),
       responsibleVeterinarian: z.string().optional(),
       petWeight: z.string().optional(),
+      consultId: z.string().optional(),
+      admissionId: z.string().optional(),
+      // accountId: z.number().optional(),
     });
     const { petId, queueUUID, customerId } = ParamsSchema.parse(request.params);
-    const { responsibleVeterinarianId, responsibleVeterinarian, petWeight } =
-      QueueSchema.parse(request.body);
+    const {
+      responsibleVeterinarianId,
+      responsibleVeterinarian,
+      petWeight,
+      consultId,
+      admissionId,
+      // accountId,
+    } = QueueSchema.parse(request.body);
     try {
       const getDebitsInConsultService = new GetDebitsInConsultsService();
 
@@ -101,13 +110,20 @@ export const queueController = {
           request: debits[0].request,
           diagnostic: debits[0].diagnostic,
           observations: debits[0].observations,
+          customerAccountId: customerId,
         },
       });
 
       await prisma.customer.update({
         where: { id: customerId },
         data: {
-          customerAccount: { update: { debits: { increment: Number(total) } } },
+          customerAccount: {
+            update: {
+              debits: { increment: Number(total) },
+              admissionId: admissionId,
+              consultId: consultId,
+            },
+          },
         },
       });
 
