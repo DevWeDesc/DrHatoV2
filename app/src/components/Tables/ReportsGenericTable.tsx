@@ -33,7 +33,7 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
                   <Th>Procedimento</Th>
                   <Th>Setor</Th>
                   <Th>Pet</Th>
-                  <Th>Espede</Th>
+                  <Th>Espécie</Th>
                   <Th>Valor</Th>
                   <Th>Veterinário</Th>
                 </Tr>
@@ -103,7 +103,7 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
                   <Th>Telefone2</Th>
                   <Th>Procedimento</Th>
                   <Th>Pet</Th>
-                  <Th>Espede</Th>
+                  <Th>Espécie</Th>
                   <Th>Valor</Th>
                   <Th>Veterinário</Th>
                   <Th>Setor</Th>
@@ -164,7 +164,7 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
               <Thead bg="gray.200">
                 <Tr>
                   <Th colSpan={7} textColor="black" fontWeight="bold">
-                    Acupuntura e Fisio
+                    Ambulatório
                   </Th>
                 </Tr>
                 <Tr>
@@ -173,19 +173,38 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
                   <Th>Qtd Int</Th>
                   <Th>Fat Amb</Th>
                   <Th>Fat Int</Th>
-                  <Th>Atd Total</Th>
+                  <Th>Qtd Total</Th>
                   <Th>Fat Total</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 <Tr>
-                  <Th>Reabilitação (Flor de Lotus)</Th>
-                  <Th>4</Th>
+                  <Th>Consulta</Th>
+                  <Th>433</Th>
+                  <Th>2</Th>
+                  <Th>57.217,40</Th>
+                  <Th>208</Th>
+                  <Th>435</Th>
+                  <Th>57.425,49</Th>
+                </Tr>
+                <Tr>
+                  <Th>Consulta Plantão (Após as 18hrs, Sábados e Feriados)</Th>
+                  <Th>335</Th>
                   <Th>0</Th>
-                  <Th>760,00</Th>
-                  <Th>0,00</Th>
-                  <Th>4</Th>
-                  <Th>760,00</Th>
+                  <Th>54.830,00</Th>
+                  <Th>0</Th>
+                  <Th>335</Th>
+                  <Th>54.830,00</Th>
+                </Tr>
+
+                <Tr>
+                  <Th>Aplicação SC (3 Medicações)</Th>
+                  <Th>297</Th>
+                  <Th>0</Th>
+                  <Th>30.267,60</Th>
+                  <Th>0</Th>
+                  <Th>297</Th>
+                  <Th>30.265,60</Th>
                 </Tr>
                 <Tr bg="gray.200">
                   <Th>Total</Th>
@@ -211,7 +230,7 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
                   <Th>Qtd Int</Th>
                   <Th>Fat Amb</Th>
                   <Th>Fat Int</Th>
-                  <Th>Atd Total</Th>
+                  <Th>Qtd Total</Th>
                   <Th>Fat Total</Th>
                 </Tr>
               </Thead>
