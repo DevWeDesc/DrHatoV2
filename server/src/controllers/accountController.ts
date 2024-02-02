@@ -47,13 +47,21 @@ export const accountController = {
         installmentAmount: number;
         debitName: string;
         paymentType: string;
+        consultId?: string;
+        admissionId?: string;
       };
     }>,
     reply: FastifyReply
   ) => {
     const { customerId, histBoxId } = request.params;
-    const { totalDebit, installmentAmount, debitName, paymentType } =
-      request.body;
+    const {
+      totalDebit,
+      installmentAmount,
+      debitName,
+      paymentType,
+      consultId,
+      admissionId,
+    } = request.body;
     try {
       await accountService.installmentDebit(
         customerId,
@@ -61,7 +69,9 @@ export const accountController = {
         totalDebit,
         installmentAmount,
         debitName,
-        paymentType
+        paymentType,
+        consultId,
+        admissionId
       );
       reply.send("Parcelado com sucesso!");
     } catch (error) {
