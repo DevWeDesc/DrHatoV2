@@ -1,13 +1,33 @@
-import { ChakraProvider, Flex, Button, Text } from "@chakra-ui/react";
+import {
+  ChakraProvider,
+  Flex,
+  Button,
+  Text,
+  Input,
+  SimpleGrid,
+} from "@chakra-ui/react";
 import { AdminContainer } from "../../AdminDashboard/style";
 import LogoHatoRelatorios from "../../../assets/logoHatoRelatórios.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import { TbArrowBack } from "react-icons/tb";
 import { ReportsGeneticTable } from "../../../components/Tables/ReportsGenericTable";
+import { useState } from "react";
+import { toast } from "react-toastify";
+
+interface IDataReport {
+  initialDate: Date | null;
+  finallyDate: Date | null;
+}
 
 export const GenericReports = () => {
   const navigate = useNavigate();
   const { typeReports } = useParams();
+  const [showTable, setShowTable] = useState(false);
+  const [DateReport, setDateReport] = useState({
+    initialDate: null,
+    finallyDate: null,
+  } as IDataReport);
+
   const TitleSection = () => {
     let title = "";
     switch (true) {
@@ -15,13 +35,24 @@ export const GenericReports = () => {
         title = "Ambulatório";
         break;
       case typeReports == "Exams":
-        title = "Valores contidos durante eo período: 01/01/2024 e 11/01/2024";
+        title = `Valores contidos durante eo período: ${DateReport.initialDate} e ${DateReport.finallyDate}`;
         break;
       default:
-        title =
-          "Faturamento por setor no período compreendido entre 01/01/2024 e 11/01/2024";
+        title = `Faturamento por setor no período compreendido entre ${DateReport.initialDate} e ${DateReport.finallyDate}.`;
     }
     return title;
+  };
+
+  const handleShowTable = () => {
+    const condition =
+      DateReport.initialDate == null && DateReport.finallyDate == null;
+
+    if (condition) {
+      toast.error("Insira a data de começo e final do relatório!");
+    } else {
+      console.log(DateReport);
+      setShowTable(true);
+    }
   };
 
   let title = TitleSection();
@@ -41,10 +72,108 @@ export const GenericReports = () => {
                   <span style={{ marginLeft: "10px" }}>Voltar</span>
                 </Button>
               </Flex>
-              <Text textAlign="center" fontWeight="bold">
-                {title}
-              </Text>
-              <ReportsGeneticTable tableType={`${typeReports}`} />
+              {showTable ? (
+                <>
+                  <Text textAlign="center" fontWeight="bold">
+                    {title}
+                  </Text>
+                  <ReportsGeneticTable tableType={`${typeReports}`} />
+                  <Button
+                    maxW="-webkit-max-content"
+                    px={21}
+                    py={7}
+                    colorScheme="whatsapp"
+                  >
+                    Exportar Excel
+                  </Button>
+                </>
+              ) : (
+                <SimpleGrid flex="1" w="100%" align="flex-start" as={Flex}>
+                  <Flex direction="column" w="100%" h="100%" p="8">
+                    <Flex direction="column" border="2px solid black">
+                      <Text
+                        textAlign="center"
+                        fontSize="18"
+                        px="4"
+                        my="4"
+                        fontWeight="bold"
+                      >
+                        Insira as Datas de inicio e fim para visualizar o
+                        relatório!!
+                      </Text>
+                      <Flex
+                        borderY="1px solid black"
+                        borderTop="2px solid black"
+                        alignItems="center"
+                      >
+                        <Text
+                          fontSize="18"
+                          px="4"
+                          fontWeight="bold"
+                          py="4"
+                          w="20%"
+                        >
+                          Data Inicial
+                        </Text>
+                        <Input
+                          borderColor="black"
+                          rounded="0"
+                          height="100%"
+                          borderX="2px solid black"
+                          borderTop="2px solid black"
+                          type="date"
+                          fontWeight="bold"
+                          onChange={(ev) =>
+                            setDateReport({
+                              ...DateReport,
+                              initialDate: new Intl.DateTimeFormat(
+                                "pt-BR"
+                              ).format(new Date(ev.target.value)),
+                            })
+                          }
+                        />
+                      </Flex>
+                      <Flex borderY="1px solid black" alignItems="center">
+                        <Text
+                          fontSize="18"
+                          px="4"
+                          fontWeight="bold"
+                          py="4"
+                          w="20%"
+                        >
+                          Data Final
+                        </Text>
+                        <Input
+                          type="date"
+                          borderColor="black"
+                          rounded="0"
+                          borderX="2px solid black"
+                          height="100%"
+                          fontWeight="bold"
+                          onChange={(ev) =>
+                            setDateReport({
+                              ...DateReport,
+                              finallyDate: new Intl.DateTimeFormat(
+                                "pt-BR"
+                              ).format(new Date(ev.target.value)),
+                            })
+                          }
+                        />
+                      </Flex>
+                      <Button
+                        colorScheme="facebook"
+                        fontWeight="bold"
+                        fontSize="20"
+                        py="8"
+                        rounded="0"
+                        onClick={handleShowTable}
+                      >
+                        Visualizar
+                      </Button>
+                    </Flex>
+                  </Flex>
+                </SimpleGrid>
+              )}
             </Flex>
           </Flex>
         </Flex>
