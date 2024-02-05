@@ -15,8 +15,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 interface IDataReport {
-  initialDate: Date | null;
-  finallyDate: Date | null;
+  initialDate: Date | null | string;
+  finallyDate: Date | null | string;
 }
 
 export const GenericReports = () => {
@@ -45,7 +45,7 @@ export const GenericReports = () => {
 
   const handleShowTable = () => {
     const condition =
-      DateReport.initialDate == null && DateReport.finallyDate == null;
+      DateReport.initialDate == null || DateReport.finallyDate == null;
 
     if (condition) {
       toast.error("Insira a data de começo e final do relatório!");
