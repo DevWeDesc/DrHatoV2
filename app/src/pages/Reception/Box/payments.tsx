@@ -15,13 +15,14 @@ import { useEffect, useState } from "react";
 import { Header } from "../../../components/admin/Header";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
-import { BiCalendarPlus, AiFillEdit } from "react-icons/all";
+import { BiCalendarPlus, AiFillEdit, CiStar, FaStar } from "react-icons/all";
 import { AdminContainer } from "../../AdminDashboard/style";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../lib/axios";
 import { PaymentsSearch } from "../../../components/Search/paymentsSearch";
 import { BsReception4 } from "react-icons/bs";
 import { LoadingSpinner } from "../../../components/Loading";
+import { useQuery } from "react-query";
 
 interface QueueProps {
   response: [];
@@ -29,25 +30,21 @@ interface QueueProps {
 }
 
 export function BoxPayments() {
-  const [totalPayments, setTotaPayments] = useState([]);
-  const [refresh, setRefresh] = useState(true);
   const navigate = useNavigate();
 
   async function getQueue() {
-    const payment = await api.get("/account/debitsAll");
-    setTotaPayments(payment.data);
+    const response = await api.get("/debitaccounts");
+    return response.data
   }
 
-  useEffect(() => {
-    if (refresh) {
-      getQueue();
-      setRefresh(false);
-    }
-  }, [refresh]);
+  const {data, isLoading } = useQuery('accountDebits', {
+    queryFn: getQueue
+  })
 
-  if (totalPayments.length == 0) {
-    return <LoadingSpinner />;
+  if(isLoading) {
+    return <LoadingSpinner/>
   }
+
 
   return (
     <ChakraProvider>
@@ -102,16 +99,16 @@ export function BoxPayments() {
                   <Table colorScheme="blackAlpha">
                     <Thead>
                       <Tr>
-                        <Th>Cliente </Th>
-                        <Th>Nome</Th>
-                        <Th>Valor</Th>
-                        <Th>Data</Th>
-                        <Th>Meio de pagamento</Th>
+                        <Th>Conta</Th>
+                        <Th>Cliente</Th>
+                        <Th>Valor em débito</Th>
+                        <Th>ID: Consulta/Internação</Th>
+                        <Th>Cliente Vip ?</Th>
                       </Tr>
                     </Thead>
 
                     <Tbody>
-                      {totalPayments?.map((payment: any) => (
+                      {data?.map((payment: any) => (
                         <Tr
                           key={payment?.id}
                           cursor="pointer"
@@ -121,18 +118,15 @@ export function BoxPayments() {
                             )
                           }
                         >
-                          <Td>{payment?.customerId}</Td>
-                          <Td>{payment?.id}</Td>
+                            <Td>{payment?.customerAccount?.accountNumber}</Td>
+                          <Td>{payment?.name}</Td>
+                        
 
-                          <Td>{payment?.amountInstallments.concat(",00")}</Td>
-
-                          <Td>
-                            {new Intl.DateTimeFormat("pt-BR").format(
-                              new Date(payment.paymentDate)
-                            )}
-                          </Td>
-
-                          <Td>{payment?.paymentType}</Td>
+                          <Td>{new Intl.NumberFormat('pt-BR', 
+                          {style: 'currency', currency: 'BRL'}).format(payment?.customerAccount?.debits)}</Td>
+                          <Td>{payment?.customerAccount?.consultId}</Td>
+                          <Td>{payment?.customerAccount?.clientIsVip ? <FaStar color="red" size={32} /> : <FaStar color="orange" size={32} />}</Td>
+                  
                         </Tr>
                       ))}
                     </Tbody>

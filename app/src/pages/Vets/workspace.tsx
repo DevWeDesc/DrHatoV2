@@ -106,14 +106,6 @@ export function WorkSpaceVet() {
     setReloadData(true);
   };
 
-  function handleCreateInstruction(text: string) {
-    const docDefinition: TDocumentDefinitions = {
-      content: [`${text}`],
-      pageMargins: [50, 50],
-      pageSize: "A4",
-    };
-    pdfMake.createPdf(docDefinition).open();
-  }
 
   function handleOpenResultExams({
     isOnePart,
@@ -148,6 +140,9 @@ export function WorkSpaceVet() {
   async function getDetailsInformations() {
     await api.get(`/pets/${id}`).then(async (res) => {
       setPet(res.data);
+      if(queueId == "Sem consulta aberta") {
+        return toast.error("Impossivel concluir consulta neste animal sem consulta aberta")
+      }
       const resConsult = await api.get(`/queue/details/${queueId}`);
       setConsultDetails(resConsult.data);
     });
@@ -165,6 +160,9 @@ export function WorkSpaceVet() {
 
   const handleCloseQuery = async () => {
     try {
+
+     
+
       const data = {
         responsibleVeterinarian: user.consultName,
         responsibleVeterinarianId: user.id,
@@ -421,6 +419,7 @@ export function WorkSpaceVet() {
                     PRONTUÁRIO DO PET
                   </Button>
                   <Button
+                  isDisabled={queueId != "Sem consulta aberta" ? false : true}
                     colorScheme="red"
                     height={8}
                     onClick={() => setIsEndConsultQueue(true)}

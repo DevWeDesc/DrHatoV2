@@ -586,7 +586,7 @@ export function BoxPaymentsDetails() {
                     <Tr>
                       <Td fontWeight="bold"> Data da consulta</Td>
                       <Td>
-                        {new Intl.DateTimeFormat("sp-BR", {
+                        {new Intl.DateTimeFormat("pt-BR", {
                           day: "2-digit",
                           month: "2-digit",
                           year: "2-digit",
@@ -641,8 +641,10 @@ export function BoxPaymentsDetails() {
                         Total
                       </Td>
                       <Td>
-                        R${" "}
-                        {installmentSelected?.amountInstallments?.concat(",00")}
+                        {new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(installmentSelected?.amountInstallments)}
+
+                         
+                         x{installmentSelected.installmentAmount}
                       </Td>
                     </Tr>
                   </Tbody>

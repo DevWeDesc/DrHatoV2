@@ -179,13 +179,13 @@ export const customerController = {
         transaction: true,
         customerAccount: {
           include: {
-            consultsForPet: { include: { consultDebits: true } },
             installments: {
               include: {
                 consult: { include: { consultDebits: true } },
                 admission: true,
               },
             },
+            consultsForPet: { include: { consultDebits: true } },
           },
         },
       },
