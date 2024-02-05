@@ -51,8 +51,8 @@ export function BoxPaymentsDetails() {
     case typePayment === false:
       typePaymentShow = (
         <>
-          {client?.customerAccount?.installments.length >= 1 ? (
-            client?.customerAccount?.installments.map((installment) => (
+          {client?.customerAccount?.installments?.length >= 1 ? (
+            client?.customerAccount?.installments?.map((installment) => (
               <Tr
                 key={installment.id}
                 onClick={() => {
@@ -577,7 +577,7 @@ export function BoxPaymentsDetails() {
                   <Tbody>
                     <Tr>
                       <Td fontWeight="bold"> Nome do cliente</Td>
-                      <Td>{client.name}</Td>
+                      <Td>{client?.name}</Td>
                     </Tr>
                     <Tr>
                       <Td fontWeight="bold">Nome do Animal</Td>
@@ -627,12 +627,12 @@ export function BoxPaymentsDetails() {
                     </Tr>
                     {installmentSelected?.consult?.consultDebits?.map(
                       (data: any) => (
-                        <Tr key={data.id}>
+                        <Tr key={data?.id}>
                           <Td>1</Td>
-                          <Td>{data.name}</Td>
-                          <Td>{data.price.concat(",00")}</Td>
+                          <Td>{data?.name}</Td>
+                          <Td>{data?.price.concat(",00")}</Td>
                           <Td>0%</Td>
-                          <Td>{data.price.concat(",00")}</Td>
+                          <Td>{data?.price.concat(",00")}</Td>
                         </Tr>
                       )
                     )}
@@ -642,7 +642,7 @@ export function BoxPaymentsDetails() {
                       </Td>
                       <Td>
                         R${" "}
-                        {installmentSelected?.amountInstallments.concat(",00")}
+                        {installmentSelected?.amountInstallments?.concat(",00")}
                       </Td>
                     </Tr>
                   </Tbody>

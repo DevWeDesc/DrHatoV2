@@ -169,6 +169,7 @@ export function WorkSpaceVet() {
         responsibleVeterinarian: user.consultName,
         responsibleVeterinarianId: user.id,
         petWeight: pet.weigth,
+        consultId: queueId,
       };
 
       await api.put(`/endqueue/${id}/${queueId}/${pet.customerId}`, data);
