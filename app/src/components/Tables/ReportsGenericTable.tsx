@@ -43,30 +43,30 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
                   <Td>01/01/24</Td>
                   <Td>15:25:28</Td>
                   <Td>1</Td>
-                  <Td>Luiz Fernando</Td>
-                  <Td>lufegarda@terra.com.br</Td>
-                  <Td>(11) 9143-6323</Td>
-                  <Td>(11) 99143-6323</Td>
-                  <Td>Aplicação SC 3 Medicações</Td>
-                  <Td>Ambulatório</Td>
-                  <Td>Thomas 35823</Td>
+                  <Td>Lucas Marques</Td>
+                  <Td>locas@terra.com.br</Td>
+                  <Td>(11) 9143-6334</Td>
+                  <Td>(11) 99143-6233</Td>
+                  <Td>V10</Td>
+                  <Td>Vacinas</Td>
+                  <Td>DEXTER</Td>
                   <Td>Felina</Td>
-                  <Td>110,00</Td>
+                  <Td>90,00</Td>
                   <Td>Renata Sguilaro</Td>
                 </Tr>
                 <Tr>
                   <Td>01/01/24</Td>
                   <Td>15:25:28</Td>
                   <Td>1</Td>
-                  <Td>Luiz Fernando</Td>
-                  <Td>lufegarda@terra.com.br</Td>
-                  <Td>(11) 9143-6323</Td>
-                  <Td>(11) 99143-6323</Td>
-                  <Td>Aplicação SC 3 Medicações</Td>
-                  <Td>Ambulatório</Td>
-                  <Td>Thomas 35823</Td>
+                  <Td>Lucas Marques</Td>
+                  <Td>locas@terra.com.br</Td>
+                  <Td>(11) 9143-6334</Td>
+                  <Td>(11) 99143-6233</Td>
+                  <Td>V10</Td>
+                  <Td>Vacinas</Td>
+                  <Td>DEXTER</Td>
                   <Td>Felina</Td>
-                  <Td>110,00</Td>
+                  <Td>90,00</Td>
                   <Td>Renata Sguilaro</Td>
                 </Tr>
                 <Tr>
@@ -112,7 +112,6 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
               <Tbody>
                 <Tr>
                   <Td>01/01/24</Td>
-                  <Td>15:25:28</Td>
                   <Td>1</Td>
                   <Td>Luiz Fernando</Td>
                   <Td>lufegarda@terra.com.br</Td>
@@ -126,9 +125,8 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
                 </Tr>
                 <Tr>
                   <Td>01/01/24</Td>
-                  <Td>15:25:28</Td>
                   <Td>1</Td>
-                  <Td>Luiz Fernando</Td>
+                  <Td>Luana Vieira Mendes</Td>
                   <Td>lufegarda@terra.com.br</Td>
                   <Td>(11) 9143-6323</Td>
                   <Td>(11) 99143-6323</Td>
@@ -140,13 +138,12 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
                 </Tr>
                 <Tr>
                   <Td>01/01/24</Td>
-                  <Td>15:25:28</Td>
                   <Td>1</Td>
-                  <Td>Luiz Fernando</Td>
-                  <Td>lufegarda@terra.com.br</Td>
-                  <Td>(11) 9143-6323</Td>
+                  <Td>Andreia da Silva Tamanaha</Td>
+                  <Td>Andreiatamanaha17@gmail.com</Td>
+                  <Td>(11) 98058-5882</Td>
                   <Td>(11) 99143-6323</Td>
-                  <Td>Aplicação SC 3 Medicações</Td>
+                  <Td>Hemograma Canino Adulto</Td>
                   <Td>Ambulatório</Td>
                   <Td>Thomas 35823</Td>
                   <Td>Felina</Td>
@@ -221,7 +218,7 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
               <Thead bg="gray.200">
                 <Tr>
                   <Th colSpan={7} textColor="black" fontWeight="bold">
-                    Ambulatório
+                    Anestesia
                   </Th>
                 </Tr>
                 <Tr>
@@ -236,31 +233,78 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
               </Thead>
               <Tbody>
                 <Tr>
-                  <Th>Consulta (Dias de semana)</Th>
-                  <Th>86</Th>
-                  <Th>0</Th>
-                  <Th>18.060,00</Th>
-                  <Th>0,00</Th>
-                  <Th>86</Th>
-                  <Th>18.060,00</Th>
+                  <Th>Anestesia inalatória (Baixa complexidade)</Th>
+                  <Th>8</Th>
+                  <Th>3</Th>
+                  <Th>2.454,00</Th>
+                  <Th>1.339,00</Th>
+                  <Th>11</Th>
+                  <Th>3.793,00</Th>
                 </Tr>
                 <Tr>
-                  <Th>Consulta (Dias de semana)</Th>
-                  <Th>86</Th>
+                  <Th>Sedação</Th>
+                  <Th>6</Th>
                   <Th>0</Th>
-                  <Th>18.060,00</Th>
+                  <Th>604</Th>
                   <Th>0,00</Th>
-                  <Th>86</Th>
-                  <Th>18.060,00</Th>
+                  <Th>6</Th>
+                  <Th>604</Th>
                 </Tr>
                 <Tr>
-                  <Th>Consulta (Dias de semana)</Th>
-                  <Th>86</Th>
+                  <Th>Anestesia Inalatória Grupo 1 - PETLOVE</Th>
+                  <Th>1</Th>
                   <Th>0</Th>
-                  <Th>18.060,00</Th>
+                  <Th>402</Th>
                   <Th>0,00</Th>
-                  <Th>86</Th>
-                  <Th>18.060,00</Th>
+                  <Th>1</Th>
+                  <Th>402</Th>
+                </Tr>
+              </Tbody>
+            </Table>
+            <Table mt={10} variant="striped" colorScheme="gray">
+              <Thead bg="gray.200">
+                <Tr>
+                  <Th colSpan={7} textColor="black" fontWeight="bold">
+                    Cardiologia
+                  </Th>
+                </Tr>
+                <Tr>
+                  <Th>Procedimento</Th>
+                  <Th>Qtd Amb</Th>
+                  <Th>Qtd Int</Th>
+                  <Th>Fat Amb</Th>
+                  <Th>Fat Int</Th>
+                  <Th>Qtd Total</Th>
+                  <Th>Fat Total</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                <Tr>
+                  <Th>ECG</Th>
+                  <Th>85</Th>
+                  <Th>3</Th>
+                  <Th>12.949,00</Th>
+                  <Th>471</Th>
+                  <Th>88</Th>
+                  <Th>13.420,00</Th>
+                </Tr>
+                <Tr>
+                  <Th>ECO</Th>
+                  <Th>10</Th>
+                  <Th>0</Th>
+                  <Th>1.260,00</Th>
+                  <Th>0,00</Th>
+                  <Th>10</Th>
+                  <Th>2.216,00</Th>
+                </Tr>
+                <Tr>
+                  <Th>ECO - MOBILIVET (até as 18 horas)</Th>
+                  <Th>5</Th>
+                  <Th>1</Th>
+                  <Th>2.216,00</Th>
+                  <Th>240</Th>
+                  <Th>6</Th>
+                  <Th>1.500,00</Th>
                 </Tr>
               </Tbody>
             </Table>
