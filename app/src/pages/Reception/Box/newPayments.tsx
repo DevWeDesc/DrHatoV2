@@ -70,6 +70,7 @@ export function BoxNewPayments() {
       totalDebit: Number(valueTotal),
       installmentAmount: Number(installments),
       paymentType: `${typePayment}: ${installments}x`,
+      consultId: customers.customerAccount.consultId
     };
 
     try {

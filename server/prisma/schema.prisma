@@ -421,6 +421,7 @@ model PetConsultsDebits {
   id                       Int                       @id @default(autoincrement())
   name                     String?
   price                    Decimal?
+  sectorId                 Int?
   itemId                   Int?
   isAdmissions             Boolean?
   isExam                   Boolean?
