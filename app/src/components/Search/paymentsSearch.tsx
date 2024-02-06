@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { DbContext } from "../../contexts/DbContext";
 import convertData from "../../helpers/convertData";
+import { FaStar } from "react-icons/fa";
 
 interface UniversalSearchProps {
   path: string;
@@ -112,22 +113,8 @@ export function PaymentsSearch({ path }: UniversalSearchProps) {
                   />
                   <FormLabel pt="2">DÉBITOS</FormLabel>
                 </HStack>
-                <HStack>
-                  <Checkbox
-                    borderColor="gray.900"
-                    {...register("isHospitalized")}
-                    name="isHospitalized"
-                  />
-                  <FormLabel pt="2">FINALIZADOS</FormLabel>
-                </HStack>
-                <HStack>
-                  <Checkbox
-                    borderColor="gray.900"
-                    {...register("isHospitalized")}
-                    name="isHospitalized"
-                  />
-                  <FormLabel pt="2">INTERNADOS</FormLabel>
-                </HStack>
+   
+              
               </Grid>
             </HStack>
             <HStack>
@@ -153,7 +140,24 @@ export function PaymentsSearch({ path }: UniversalSearchProps) {
                   Filtrar
                 </Button>
               </Flex>
+              
             </HStack>
+                <Flex direction="row" align="center" justify="center" gap={8}  >
+                  <Text>Legenda:</Text>
+          
+                  <HStack>        <Text>Vip</Text>
+                  <FaStar color="orange" /></HStack>
+           
+    
+                  <HStack><Text>Não Vip</Text>
+                  <FaStar color="red" />
+                  </HStack>
+
+                
+                 
+                  
+                  
+                </Flex>
           </VStack>
         </FormControl>
       </Flex>

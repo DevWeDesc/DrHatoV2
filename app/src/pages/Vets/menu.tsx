@@ -298,7 +298,7 @@ export function MenuVet() {
                                 `/Vets/Workspace/${pet?.id}/${
                                   pet.queueId != undefined && pet.queueId
                                     ? pet.queueId
-                                    : pet.randomUUID
+                                    : "Sem consulta aberta"
                                 }`
                               )
                             }

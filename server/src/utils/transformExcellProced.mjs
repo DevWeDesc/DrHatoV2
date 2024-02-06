@@ -25,6 +25,7 @@ const filteredData = data.map(procedure => ({
     available          :   procedure.Disponivel,
     observations       :   "",
     sector_id          :   procedure.setor,
+    group_id           :   procedure.CategoriaProcedimento
   }));
 
  export async function PopulateProcedures () {

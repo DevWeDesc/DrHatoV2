@@ -333,6 +333,7 @@ type QueueHistoryProps = {
   medicine_id: number;
 };
 type AccountProps = {
+  consultId: string
   id: number;
   accountNumber: number;
   debits: number;
