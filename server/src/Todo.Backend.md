@@ -1,4 +1,5 @@
-### RFS (Requisitos funcionais) ###
+### RFS (Requisitos funcionais)
+
 [x] - Cadastro de Clientes (CRUD)
 [x] - Cadastro de Usuários (CRUD)
 [x] - Cadastro de Pets (CRUD)
@@ -18,55 +19,51 @@
 [X] - Histórico Cirurgia do Pet
 [X] - Histórico do Caixa
 [X] - Prontuário completo do Pet
-[] - Cadastro de tipos de pagamentos (CRUD)
+[X] - Cadastro de tipos de pagamentos (CRUD) - X VINICIUS
 [X] - Cadastro de especies (CRUD)
 [X] - Cadastro de raças (CRUD)
 [X] - Cadastro de Exames com Números de Tabelas (CRUD)
 [X] - Sistema Internação
-[X] - Sistema de Filas 
-[] - Sistema Etiquetas 
+[X] - Sistema de Filas
+[] - Sistema Etiquetas
 [X] - Impressão do exame concluido via PDF
 
+### Regras de negócio
 
-
-
-
-### Regras de negócio ####
 [X] - Não deve ter cadastros para usuários duplicados
 [X] - Não deve ter cadastros para clientes duplicados
 [X] - Não deve ter cadastros para pets duplicados
 [x] - Deve haver tipos de usuários(Admin, Recepção, Veterinários, etc..)
 [X] - Deve haver separação de interface(front) por tipo de usuário  
-[X] - Usuários do tipo "Veterinários" podem cadastrar exames para pets 
-[X] - Usuários do tipo "Veterinários" podem cadastrar cirurgias para pets 
-[X] - Usuários do tipo "Veterinários" podem cadastrar vacinas para pets 
-[X] - Usuários do tipo "Veterinários" podem internar pets 
-[X] - Usuários do tipo "Veterinários" podem encerrar atendimento dos pets 
-[X] - Usuários do tipo "Recepção" podem cadastrar pets 
-[X] - Usuários do tipo "Recepção" podem abrir atendimento para pets 
+[X] - Usuários do tipo "Veterinários" podem cadastrar exames para pets
+[X] - Usuários do tipo "Veterinários" podem cadastrar cirurgias para pets
+[X] - Usuários do tipo "Veterinários" podem cadastrar vacinas para pets
+[X] - Usuários do tipo "Veterinários" podem internar pets
+[X] - Usuários do tipo "Veterinários" podem encerrar atendimento dos pets
+[X] - Usuários do tipo "Recepção" podem cadastrar pets
+[X] - Usuários do tipo "Recepção" podem abrir atendimento para pets
 [X] - Usuários do tipo "Recepção" podem cadastrar clientes novos  
-[X] - Usuários do tipo "Recepção" podem atualizar dados dos cientes 
+[X] - Usuários do tipo "Recepção" podem atualizar dados dos cientes
 [X] - Usuários do tipo "Recepção" podem abrir e fechar caixa
 [X] - Usuários do tipo "Recepção" podem cobrar débitos dos cientes
 [X] - Usuários do tipo "Recepção" podem alterar tipos de atendimento
-[] - Usuários do tipo "Recepção" podem retirar valores do caixa
-[] - Usuários do tipo "Recepção" podem realizar devoluções
+[] - Usuários do tipo "Recepção" podem retirar valores do caixa - X VINICIUS
+[] - Usuários do tipo "Recepção" podem realizar devoluções - X VINICIUS
 [x] - Encerrar atendimentos deve ser lançado débito para o cliente dono do animal
 [X] - Deve ser Possivel configurar valores na internação
 [x] - Internação tem divisão por dois periodos de 12 horas e cobrar meio periodo a cada 12 horas
-[X] - Configurar Exames com caractéristicas 
-[X] - Configurar Exames com quantidades de tabelas 
+[X] - Configurar Exames com caractéristicas
+[X] - Configurar Exames com quantidades de tabelas
 [X] - Laboratório mostrar tabela conforme o exame e suas referências
 [X] - Laboratório deve concluir exames
 [] - Possibilidade de escolher unidade em banco unificado
 [X] - Conclusão de cirurgias com laudo técnico
 [] - Configuração de Eventos do Sistema para painel Administrativo
 [] - Edição livre de referências do Exame
-[X] - Internação possui diário 
+[X] - Internação possui diário
 
+### RFNs(Requisitos não-funcionais)
 
-
-### RFNs(Requisitos não-funcionais) ###
 [X] - Senhas encriptadas
 [X] - Autenticação por JWT
 [X] - Motor de Busca Veterinários
@@ -76,27 +73,27 @@
 [X] - Dados devem ser persistidos em banco Postgres
 [] - Implementação de Refresh Token
 [] - Autorização por RBCA
- 
 
+### MELHORIAS
 
-### MELHORIAS ###
 [] - Sistema de Notificações
 [] - Sistema de Lembretes
 [] - Sistema de Agenda de trabalho
 [] - Sistema HelpDesk Interno
 
+### ARQUITETURA INTERNA
 
-### ARQUITETURA INTERNA ### 
 [] - Padronizar interfaces e contratos entre front/back
 [] - Atualizar Tipagens e ajustar as que estão com any
 [] - Reajustar pastas e padronizações front
 [] - Converter chamadas API para React Query(objetivo tirar todos useEffect que chama API)
-[] - Refatorar arquitetura back-end com SOLID 
+[] - Refatorar arquitetura back-end com SOLID
 
-## DILAN IMPORTANTE ##
+## DILAN IMPORTANTE
+
 [] - REFINAR SISTEMA FINANCEIRO
 [] - DIMINUIR USO DE CONTEXTOS
-[] - CACHEAR CHAMADAS BACKEND (REACT QUERY) 
+[] - CACHEAR CHAMADAS BACKEND (REACT QUERY)
 [] - AJUSTAR PASTAS/ROTAS/COMPONENTS (Bagunçados pelo Vinicius)
 [X] - COLOCAR POPULATE AUTORIZAÇÕES/INSTRUÇÕES
 [] - SEARCH EXAMS ADMIN E REFAZER O CRUD.
@@ -107,24 +104,17 @@
 [] - PODER REMOVER DIRETO DA CONSULTA O DÉBITO/ PODER REMOVER DIRETO DA INTERNAÇÃO
 [] - MESMA LÓGICA PROCEDIMENTOS PARA EDIÇÃO E CAD DE EXAMES
 [] - CRIAR VALIDAÇÕES NA HORA DE INTERNAR ANIMAL, INTERNAR APENAS NO CANIL SELECIONADO, E PULAR ETAPAS APENAS AO CUMPRIR ANTERIOR.
- 
 
+#### BUGS e Correções
 
-#### BUGS e Correções  ####
-[] - EXCLUIR VACINAS DA CONSULTS DEBITS(LINKED ID)
-[] - EXCLUIR CIRURGIAS DA CONSULTS DEBITS(LINKED ID)
-[] - EXCLUIR PROCEDIMENTOS DA CONSULTS DEBITS(LINKED ID)
-[] - REFAZER EXCLUSÃO MEDICAMENTO DA CONSULTS DEBITS(LINKED ID)
-[] - EDITAR PESO DO PET NA CONSULTA QUE ELE ESTÁ TAMBÉM
 [X] - Tabela exames duplicando
 [X] - Ajustar cadastro de pets campo idade
 [X] - Valores já prédefinidos dos exames que já existem
 [] - ENCERRAMENTO DE QUEUE.
-[X] -  VERIFICAR PORQUE EXAME DUAS PARTES NÃO COMPUTOU QUEM LAUDOU
+[X] - VERIFICAR PORQUE EXAME DUAS PARTES NÃO COMPUTOU QUEM LAUDOU
 
+### To do Solicitado Dr Daniel
 
-
-### To do Solicitado Dr Daniel ###
 [X] - correção por pesquisa no nome busca inteligente
 [X] - Mascara no CPF e busca inteligente
 [X] - Validação do CPF como encontrar a regra
@@ -155,17 +145,16 @@
 [X] - Visualização de todos os veterinarios (usuario master vê toda a fila)
 [x] - Preferencia = Só aparece para a preferencia
 [x] - prontuario e pet descer a linha
-[X] -  vacinas para cachorro e vacinas para gato (separar)
+[X] - vacinas para cachorro e vacinas para gato (separar)
 OBS: Não tem separação por especies nas vacinas, na verdade nem vacinas tem.
 todas vacinas atuais do sistema antigo são procedimentos. solução incluir sistema de especies pra vacina também, já inclui nos Procedimentos, ou utilizar as vacinas dos procedimentos que já estão protegidas pelas especies.
-[X] -  Procedimento para cachorro e vacinas para gato (separar)
+[X] - Procedimento para cachorro e vacinas para gato (separar)
 OBS: Acrescentado sistema de Especies, um procedimento só vai poder ser lançado nas especies permitidas pelo Dr.
-[x] -  Ao adicionar os procedimentos trazer especies permitidas
-[x] -  Filtro no cadastro de procedimentos e vacinas
-[x] -  Formularios (encontrar o PDF), instruções do proprietário (melhorar tamanho da letra)
-[X] -  Cadastro de endereço mascara complemento e numero
-[X] -  Tela de exames: colocar o botão de laudados (concluidos) e visualizar o laudo.
-OBS: Sistema antigo de laudar não funcionava a opção de laudo externo, e também tem onde baixar o laudo externo, isso entra como melhoria(dando autorização eu faço). 
-[X] -  verificar a impressão: Ajustar os exames e laudos no pdf
-[X] -  Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)
-
+[x] - Ao adicionar os procedimentos trazer especies permitidas
+[x] - Filtro no cadastro de procedimentos e vacinas
+[x] - Formularios (encontrar o PDF), instruções do proprietário (melhorar tamanho da letra)
+[X] - Cadastro de endereço mascara complemento e numero
+[X] - Tela de exames: colocar o botão de laudados (concluidos) e visualizar o laudo.
+OBS: Sistema antigo de laudar não funcionava a opção de laudo externo, e também tem onde baixar o laudo externo, isso entra como melhoria(dando autorização eu faço).
+[X] - verificar a impressão: Ajustar os exames e laudos no pdf
+[X] - Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)

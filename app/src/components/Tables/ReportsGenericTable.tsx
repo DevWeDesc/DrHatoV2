@@ -41,7 +41,7 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
               <Tbody>
                 <Tr>
                   <Td>01/01/24</Td>
-                  <Td>15:25:28</Td>
+                  <T                                           d>15:25:28</Td>
                   <Td>1</Td>
                   <Td>Lucas Marques</Td>
                   <Td>locas@terra.com.br</Td>
