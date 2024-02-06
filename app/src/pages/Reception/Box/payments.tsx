@@ -34,17 +34,16 @@ export function BoxPayments() {
 
   async function getQueue() {
     const response = await api.get("/debitaccounts");
-    return response.data
+    return response.data;
   }
 
-  const {data, isLoading } = useQuery('accountDebits', {
-    queryFn: getQueue
-  })
+  const { data, isLoading } = useQuery("accountDebits", {
+    queryFn: getQueue,
+  });
 
-  if(isLoading) {
-    return <LoadingSpinner/>
+  if (isLoading) {
+    return <LoadingSpinner />;
   }
-
 
   return (
     <ChakraProvider>
@@ -113,20 +112,26 @@ export function BoxPayments() {
                           key={payment?.id}
                           cursor="pointer"
                           onClick={() =>
-                            navigate(
-                              `/Recepcao/Caixa/Pagamentos/${payment.customerId}`
-                            )
+                            navigate(`/Recepcao/Caixa/Pagamentos/${payment.id}`)
                           }
                         >
-                            <Td>{payment?.customerAccount?.accountNumber}</Td>
+                          <Td>{payment?.customerAccount?.accountNumber}</Td>
                           <Td>{payment?.name}</Td>
-                        
 
-                          <Td>{new Intl.NumberFormat('pt-BR', 
-                          {style: 'currency', currency: 'BRL'}).format(payment?.customerAccount?.debits)}</Td>
+                          <Td>
+                            {new Intl.NumberFormat("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            }).format(payment?.customerAccount?.debits)}
+                          </Td>
                           <Td>{payment?.customerAccount?.consultId}</Td>
-                          <Td>{payment?.customerAccount?.clientIsVip ? <FaStar color="red" size={32} /> : <FaStar color="orange" size={32} />}</Td>
-                  
+                          <Td>
+                            {payment?.customerAccount?.clientIsVip ? (
+                              <FaStar color="red" size={32} />
+                            ) : (
+                              <FaStar color="orange" size={32} />
+                            )}
+                          </Td>
                         </Tr>
                       ))}
                     </Tbody>
