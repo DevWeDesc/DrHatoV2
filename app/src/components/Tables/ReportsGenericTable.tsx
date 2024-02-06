@@ -3,11 +3,14 @@ import {
   Thead,
   Tr,
   Tbody,
-  Td,
   ChakraProvider,
   Table,
   Th,
+  Td,
 } from "@chakra-ui/react";
+import { ReportsVetData } from "../../mocks/ReportsVetData";
+import { ReportFinanceData } from "../../mocks/ReportsFinance";
+import { ReportsExamsData } from "../../mocks/ReportsExams";
 
 type ReportsVetTableType = {
   tableType: string;
@@ -39,51 +42,23 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td>01/01/24</Td>
-                  <Td>15:25:28</Td>
-                  <Td>1</Td>
-                  <Td>Lucas Marques</Td>
-                  <Td>locas@terra.com.br</Td>
-                  <Td>(11) 9143-6334</Td>
-                  <Td>(11) 99143-6233</Td>
-                  <Td>V10</Td>
-                  <Td>Vacinas</Td>
-                  <Td>DEXTER</Td>
-                  <Td>Felina</Td>
-                  <Td>90,00</Td>
-                  <Td>Renata Sguilaro</Td>
-                </Tr>
-                <Tr>
-                  <Td>01/01/24</Td>
-                  <Td>15:25:28</Td>
-                  <Td>1</Td>
-                  <Td>Lucas Marques</Td>
-                  <Td>locas@terra.com.br</Td>
-                  <Td>(11) 9143-6334</Td>
-                  <Td>(11) 99143-6233</Td>
-                  <Td>V10</Td>
-                  <Td>Vacinas</Td>
-                  <Td>DEXTER</Td>
-                  <Td>Felina</Td>
-                  <Td>90,00</Td>
-                  <Td>Renata Sguilaro</Td>
-                </Tr>
-                <Tr>
-                  <Td>01/01/24</Td>
-                  <Td>15:25:28</Td>
-                  <Td>1</Td>
-                  <Td>Luiz Fernando</Td>
-                  <Td>lufegarda@terra.com.br</Td>
-                  <Td>(11) 9143-6323</Td>
-                  <Td>(11) 99143-6323</Td>
-                  <Td>Aplicação SC 3 Medicações</Td>
-                  <Td>Ambulatório</Td>
-                  <Td>Thomas 35823</Td>
-                  <Td>Felina</Td>
-                  <Td>110,00</Td>
-                  <Td>Renata Sguilaro</Td>
-                </Tr>
+                {ReportsVetData.map((report, index) => (
+                  <Tr key={index}>
+                    <Td>{report.Data}</Td>
+                    <Td>{report.Hora}</Td>
+                    <Td>{report.Quantidade}</Td>
+                    <Td>{report.Nome_proprietário}</Td>
+                    <Td>{report.Email}</Td>
+                    <Td>{report.Telefone}</Td>
+                    <Td>{report.Telefone2}</Td>
+                    <Td>{report.Procedimento}</Td>
+                    <Td>{report.Setor}</Td>
+                    <Td>{report.Pet}</Td>
+                    <Td>{report.Especie}</Td>
+                    <Td>{report.Valor}</Td>
+                    <Td>{report.Veterinário}</Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </TableContainer>
@@ -110,45 +85,22 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td>01/01/24</Td>
-                  <Td>1</Td>
-                  <Td>Luiz Fernando</Td>
-                  <Td>lufegarda@terra.com.br</Td>
-                  <Td>(11) 9143-6323</Td>
-                  <Td>(11) 99143-6323</Td>
-                  <Td>Aplicação SC 3 Medicações</Td>
-                  <Td>Ambulatório</Td>
-                  <Td>Thomas 35823</Td>
-                  <Td>Felina</Td>
-                  <Td>110,00</Td>
-                </Tr>
-                <Tr>
-                  <Td>01/01/24</Td>
-                  <Td>1</Td>
-                  <Td>Luana Vieira Mendes</Td>
-                  <Td>lufegarda@terra.com.br</Td>
-                  <Td>(11) 9143-6323</Td>
-                  <Td>(11) 99143-6323</Td>
-                  <Td>Aplicação SC 3 Medicações</Td>
-                  <Td>Ambulatório</Td>
-                  <Td>Thomas 35823</Td>
-                  <Td>Felina</Td>
-                  <Td>110,00</Td>
-                </Tr>
-                <Tr>
-                  <Td>01/01/24</Td>
-                  <Td>1</Td>
-                  <Td>Andreia da Silva Tamanaha</Td>
-                  <Td>Andreiatamanaha17@gmail.com</Td>
-                  <Td>(11) 98058-5882</Td>
-                  <Td>(11) 99143-6323</Td>
-                  <Td>Hemograma Canino Adulto</Td>
-                  <Td>Ambulatório</Td>
-                  <Td>Thomas 35823</Td>
-                  <Td>Felina</Td>
-                  <Td>110,00</Td>
-                </Tr>
+                {ReportsExamsData.map((report, index) => (
+                  <Tr key={index}>
+                    <Td>{report.Data}</Td>
+                    <Td>{report.Quantidade}</Td>
+                    <Td>{report.NomeProprietario}</Td>
+                    <Td>{report.Email}</Td>
+                    <Td>{report.Telefone}</Td>
+                    <Td>{report.Telefone2}</Td>
+                    <Td>{report.Procedimento}</Td>
+                    <Td>{report.Pet}</Td>
+                    <Td>{report.Especie}</Td>
+                    <Td>{report.Valor}</Td>
+                    <Td>{report.Veterinario}</Td>
+                    <Td>{report.Setor}</Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </TableContainer>
@@ -157,157 +109,105 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
       case tableType == "FinanceSector":
         TableContent = (
           <TableContainer>
-            <Table variant="striped" colorScheme="gray">
-              <Thead bg="gray.200">
-                <Tr>
-                  <Th colSpan={7} textColor="black" fontWeight="bold">
-                    Ambulatório
-                  </Th>
-                </Tr>
-                <Tr>
-                  <Th>Procedimento</Th>
-                  <Th>Qtd Amb</Th>
-                  <Th>Qtd Int</Th>
-                  <Th>Fat Amb</Th>
-                  <Th>Fat Int</Th>
-                  <Th>Qtd Total</Th>
-                  <Th>Fat Total</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Th>Consulta</Th>
-                  <Th>433</Th>
-                  <Th>2</Th>
-                  <Th>57.217,40</Th>
-                  <Th>208</Th>
-                  <Th>435</Th>
-                  <Th>57.425,49</Th>
-                </Tr>
-                <Tr>
-                  <Th>Consulta Plantão (Após as 18hrs, Sábados e Feriados)</Th>
-                  <Th>335</Th>
-                  <Th>0</Th>
-                  <Th>54.830,00</Th>
-                  <Th>0</Th>
-                  <Th>335</Th>
-                  <Th>54.830,00</Th>
-                </Tr>
-
-                <Tr>
-                  <Th>Aplicação SC (3 Medicações)</Th>
-                  <Th>297</Th>
-                  <Th>0</Th>
-                  <Th>30.267,60</Th>
-                  <Th>0</Th>
-                  <Th>297</Th>
-                  <Th>30.265,60</Th>
-                </Tr>
-                <Tr bg="gray.200">
-                  <Th>Total</Th>
-                  <Th fontSize={14}>4</Th>
-                  <Th fontSize={14}>0</Th>
-                  <Th fontSize={14}>760,00</Th>
-                  <Th fontSize={14}>0,00</Th>
-                  <Th fontSize={14}>4</Th>
-                  <Th fontSize={14}>760,00</Th>
-                </Tr>
-              </Tbody>
-            </Table>
-            <Table mt={10} variant="striped" colorScheme="gray">
-              <Thead bg="gray.200">
-                <Tr>
-                  <Th colSpan={7} textColor="black" fontWeight="bold">
-                    Anestesia
-                  </Th>
-                </Tr>
-                <Tr>
-                  <Th>Procedimento</Th>
-                  <Th>Qtd Amb</Th>
-                  <Th>Qtd Int</Th>
-                  <Th>Fat Amb</Th>
-                  <Th>Fat Int</Th>
-                  <Th>Qtd Total</Th>
-                  <Th>Fat Total</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Th>Anestesia inalatória (Baixa complexidade)</Th>
-                  <Th>8</Th>
-                  <Th>3</Th>
-                  <Th>2.454,00</Th>
-                  <Th>1.339,00</Th>
-                  <Th>11</Th>
-                  <Th>3.793,00</Th>
-                </Tr>
-                <Tr>
-                  <Th>Sedação</Th>
-                  <Th>6</Th>
-                  <Th>0</Th>
-                  <Th>604</Th>
-                  <Th>0,00</Th>
-                  <Th>6</Th>
-                  <Th>604</Th>
-                </Tr>
-                <Tr>
-                  <Th>Anestesia Inalatória Grupo 1 - PETLOVE</Th>
-                  <Th>1</Th>
-                  <Th>0</Th>
-                  <Th>402</Th>
-                  <Th>0,00</Th>
-                  <Th>1</Th>
-                  <Th>402</Th>
-                </Tr>
-              </Tbody>
-            </Table>
-            <Table mt={10} variant="striped" colorScheme="gray">
-              <Thead bg="gray.200">
-                <Tr>
-                  <Th colSpan={7} textColor="black" fontWeight="bold">
-                    Cardiologia
-                  </Th>
-                </Tr>
-                <Tr>
-                  <Th>Procedimento</Th>
-                  <Th>Qtd Amb</Th>
-                  <Th>Qtd Int</Th>
-                  <Th>Fat Amb</Th>
-                  <Th>Fat Int</Th>
-                  <Th>Qtd Total</Th>
-                  <Th>Fat Total</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Th>ECG</Th>
-                  <Th>85</Th>
-                  <Th>3</Th>
-                  <Th>12.949,00</Th>
-                  <Th>471</Th>
-                  <Th>88</Th>
-                  <Th>13.420,00</Th>
-                </Tr>
-                <Tr>
-                  <Th>ECO</Th>
-                  <Th>10</Th>
-                  <Th>0</Th>
-                  <Th>1.260,00</Th>
-                  <Th>0,00</Th>
-                  <Th>10</Th>
-                  <Th>2.216,00</Th>
-                </Tr>
-                <Tr>
-                  <Th>ECO - MOBILIVET (até as 18 horas)</Th>
-                  <Th>5</Th>
-                  <Th>1</Th>
-                  <Th>2.216,00</Th>
-                  <Th>240</Th>
-                  <Th>6</Th>
-                  <Th>1.500,00</Th>
-                </Tr>
-              </Tbody>
-            </Table>
+            {ReportFinanceData.Ambulatorio && (
+              <Table variant="striped" colorScheme="gray">
+                <Thead bg="gray.200">
+                  <Tr>
+                    <Th colSpan={7} textColor="black" fontWeight="bold">
+                      Ambulatório
+                    </Th>
+                  </Tr>
+                  <Tr>
+                    <Th>Procedimento</Th>
+                    <Th>Qtd Amb</Th>
+                    <Th>Qtd Int</Th>
+                    <Th>Fat Amb</Th>
+                    <Th>Fat Int</Th>
+                    <Th>Qtd Total</Th>
+                    <Th>Fat Total</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {ReportFinanceData.Ambulatorio.map((report, index) => (
+                    <Tr key={index}>
+                      <Th>{report.Procedimento}</Th>
+                      <Th>{report["Qtd Amb"]}</Th>
+                      <Th>{report["Qtd Int"]}</Th>
+                      <Th>{report["Fat Amb"]}</Th>
+                      <Th>{report["Fat Int"]}</Th>
+                      <Th>{report["Qtd Total"]}</Th>
+                      <Th>{report["Fat Total"]}</Th>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            )}
+            {ReportFinanceData.Anestesia && (
+              <Table mt={10} variant="striped" colorScheme="gray">
+                <Thead bg="gray.200">
+                  <Tr>
+                    <Th colSpan={7} textColor="black" fontWeight="bold">
+                      Anestesia
+                    </Th>
+                  </Tr>
+                  <Tr>
+                    <Th>Procedimento</Th>
+                    <Th>Qtd Amb</Th>
+                    <Th>Qtd Int</Th>
+                    <Th>Fat Amb</Th>
+                    <Th>Fat Int</Th>
+                    <Th>Qtd Total</Th>
+                    <Th>Fat Total</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {ReportFinanceData.Anestesia.map((report, index) => (
+                    <Tr key={index}>
+                      <Th>{report.Procedimento}</Th>
+                      <Th>{report["Qtd Amb"]}</Th>
+                      <Th>{report["Qtd Int"]}</Th>
+                      <Th>{report["Fat Amb"]}</Th>
+                      <Th>{report["Fat Int"]}</Th>
+                      <Th>{report["Qtd Total"]}</Th>
+                      <Th>{report["Fat Total"]}</Th>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            )}
+            {ReportFinanceData.Cardiologia && (
+              <Table mt={10} variant="striped" colorScheme="gray">
+                <Thead bg="gray.200">
+                  <Tr>
+                    <Th colSpan={7} textColor="black" fontWeight="bold">
+                      Cardiologia
+                    </Th>
+                  </Tr>
+                  <Tr>
+                    <Th>Procedimento</Th>
+                    <Th>Qtd Amb</Th>
+                    <Th>Qtd Int</Th>
+                    <Th>Fat Amb</Th>
+                    <Th>Fat Int</Th>
+                    <Th>Qtd Total</Th>
+                    <Th>Fat Total</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {ReportFinanceData.Cardiologia.map((report, index) => (
+                    <Tr key={index}>
+                      <Th>{report.Procedimento}</Th>
+                      <Th>{report["Qtd Amb"]}</Th>
+                      <Th>{report["Qtd Int"]}</Th>
+                      <Th>{report["Fat Amb"]}</Th>
+                      <Th>{report["Fat Int"]}</Th>
+                      <Th>{report["Qtd Total"]}</Th>
+                      <Th>{report["Fat Total"]}</Th>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            )}
           </TableContainer>
         );
         break;

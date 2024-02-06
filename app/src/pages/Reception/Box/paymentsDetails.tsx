@@ -641,10 +641,11 @@ export function BoxPaymentsDetails() {
                         Total
                       </Td>
                       <Td>
-                        {new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(installmentSelected?.amountInstallments)}
-
-                         
-                         x{installmentSelected.installmentAmount}
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(installmentSelected?.amountInstallments)}
+                        x{installmentSelected.installmentAmount}
                       </Td>
                     </Tr>
                   </Tbody>

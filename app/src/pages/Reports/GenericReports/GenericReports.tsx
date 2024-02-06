@@ -13,6 +13,10 @@ import { TbArrowBack } from "react-icons/tb";
 import { ReportsGeneticTable } from "../../../components/Tables/ReportsGenericTable";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { ReportsExamsData } from "../../../mocks/ReportsExams";
+import { ReportsVetData } from "../../../mocks/ReportsVetData";
+import { ReportFinanceData } from "../../../mocks/ReportsFinance";
+import { CSVLink } from "react-csv";
 
 interface IDataReport {
   initialDate: Date | null | string;
@@ -43,6 +47,25 @@ export const GenericReports = () => {
     return title;
   };
 
+  const DataCSVExport = () => {
+    let Data: any = [];
+    switch (true) {
+      case typeReports == "Vets":
+        Data = ReportsVetData;
+        break;
+      case typeReports == "Exams":
+        Data = ReportsExamsData;
+        break;
+      default:
+        Data = [
+          ...ReportFinanceData.Ambulatorio,
+          ...ReportFinanceData.Anestesia,
+          ...ReportFinanceData.Cardiologia,
+        ];
+    }
+    return Data;
+  };
+
   const handleShowTable = () => {
     const condition =
       DateReport.initialDate == null || DateReport.finallyDate == null;
@@ -56,6 +79,7 @@ export const GenericReports = () => {
   };
 
   let title = TitleSection();
+  let dataCSV = DataCSVExport();
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -78,14 +102,17 @@ export const GenericReports = () => {
                     {title}
                   </Text>
                   <ReportsGeneticTable tableType={`${typeReports}`} />
-                  <Button
-                    maxW="-webkit-max-content"
-                    px={21}
-                    py={7}
-                    colorScheme="whatsapp"
-                  >
-                    Exportar Excel
-                  </Button>
+                  <CSVLink filename={`relatorio${typeReports}`} data={dataCSV}>
+                    <Button
+                      maxW="-webkit-max-content"
+                      px={21}
+                      py={7}
+                      colorScheme="whatsapp"
+                    >
+                      Exportar Excel
+                    </Button>
+                  </CSVLink>
+                  ;
                 </>
               ) : (
                 <SimpleGrid flex="1" w="100%" align="flex-start" as={Flex}>
