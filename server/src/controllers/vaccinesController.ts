@@ -78,6 +78,7 @@ export const vaccinesController = {
               itemId: vaccine.id,
               RequestedByVetId,
               RequestedByVetName,
+              sectorId: vaccine.sector_id,
             },
           })
           .then(async (res) => {
@@ -103,6 +104,7 @@ export const vaccinesController = {
               itemId: vaccine.id,
               RequestedByVetId,
               RequestedByVetName,
+              sectorId: vaccine.sector_id,
             },
           })
           .then(async (res) => {
