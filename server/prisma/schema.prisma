@@ -339,6 +339,7 @@ model Vaccines {
   disponible       Boolean?
   applicableMale   Boolean?
   applicableFemale Boolean?
+  sector_id        Int?
 }
 
 model VaccinesForPet {
@@ -364,6 +365,7 @@ model Surgeries {
   price              Decimal
   applicableToMale   Boolean?
   applicableToFemale Boolean?
+  sector_id          Int?
 }
 
 enum SurgerieStatus {
