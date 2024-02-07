@@ -135,6 +135,7 @@ export const surgeriesController = {
               itemId: surgerie.id,
               RequestedByVetId,
               RequestedByVetName,
+              sectorId: surgerie.sector_id,
             },
           })
           .then(async (res) => {
@@ -159,6 +160,7 @@ export const surgeriesController = {
               itemId: surgerie.id,
               RequestedByVetId,
               RequestedByVetName,
+              sectorId: surgerie.sector_id,
             },
           })
           .then(async (res) => {
