@@ -29,9 +29,11 @@ export const reportsController = {
         },
       });
 
+      //// E UM RELATORIO DE SETORES NAO MUDAR A LÓGICA, E PRA TRAZER O ID DO SETOR DO AMBULATORIO(CONSULTS).
+      /// ESSE SECTOR ID AINDA NÃO ESTÁ SENDO SALVO NO FRONT VOU PASSAR A LÓGICA DISSO AMANHÃ.
       const proceduresByConsults = consult.flatMap((consults) => {
         return consults.consultDebits.filter(
-          (c) => Number(c.consultOpenedId) !== 1
+          (c) => c.sectorId === 1
         );
       });
 
