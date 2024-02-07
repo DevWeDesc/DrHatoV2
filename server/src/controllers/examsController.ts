@@ -230,6 +230,7 @@ export const examsController = {
               itemId: exam.codexam,
               RequestedByVetId,
               RequestedByVetName,
+              sectorId: exam.sector,
             },
           })
           .then(async (res) => {
@@ -261,6 +262,7 @@ export const examsController = {
               itemId: exam.codexam,
               RequestedByVetId,
               RequestedByVetName,
+              sectorId: exam.sector,
             },
           })
           .then(async (res) => {
