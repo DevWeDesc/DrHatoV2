@@ -113,6 +113,7 @@ import { ByTextExamResultPdf } from "./components/ReactPdfComp/ByTextExamResultP
 import { InstructionsPdf } from "./components/ReactPdfComp/InstructionsPdf";
 import { MedicineRecordOld } from "./pages/Pets/MedicineRecordOld";
 import { GenericReports } from "./pages/Reports/GenericReports/GenericReports";
+import { TypePaymentsList } from "./pages/AdminDashboard/TypePayments";
 
 export function Router() {
   return (
@@ -178,6 +179,7 @@ export function Router() {
           <Route path="/Admin/OptionSistem" element={<OptionSistem />} />
           <Route path="/Admin/Especies" element={<AdminCadEspecies />} />
           <Route path="/Admin/Races/:espId" element={<AdminCadRaces />} />
+          <Route path="/Admin/TypesPayment" element={<TypePaymentsList />} />
           <Route path="/Autorizations" element={<GenerateAutorizations />} />
           <Route path="/Autorizations/Pdf/:id" element={<AutorizationsPdf />} />
           <Route path="/Instructions/Pdf/:id" element={<InstructionsPdf />} />
