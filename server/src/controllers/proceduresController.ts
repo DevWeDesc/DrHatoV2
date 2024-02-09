@@ -76,13 +76,12 @@ export const proceduresController = {
       // Calcule o número de páginas.
       const totalPages = Math.ceil(totalProceds / 35);
 
-      if (animalSex != null && animalSex == "Macho") {
+      if (animalSex === "Macho") {
         const procedures = await prisma.procedures.findMany({
           skip: (currentPage - 1) * 35,
           take: 35,
           where: {
             applicableMale: true,
-            applicableFemale: false,
           },
           include: {
             groups: { select: { name: true } },
@@ -92,13 +91,12 @@ export const proceduresController = {
         });
 
         reply.send({ totalPages, totalProceds, currentPage, procedures });
-      } else if (animalSex != null && animalSex == "Femea") {
+      } else if (animalSex === "Femea") {
         const procedures = await prisma.procedures.findMany({
           skip: (currentPage - 1) * 35,
           take: 35,
           where: {
             applicableFemale: true,
-            applicableMale: false,
           },
           include: {
             groups: { select: { name: true } },
@@ -139,12 +137,11 @@ export const proceduresController = {
 
       const { q } = request.query;
 
-      if (animalSex != null && animalSex == "Macho") {
+      if (animalSex === "Macho") {
         const totalProceds = await prisma.procedures.count({
           where: {
-            name: { contains: q },
+            name: { startsWith: q },
             applicableMale: true,
-            applicableFemale: false,
           },
         });
 
@@ -154,9 +151,8 @@ export const proceduresController = {
           skip: (currentPage - 1) * 35,
           take: 35,
           where: {
-            name: { contains: q },
+            name: { startsWith: q },
             applicableMale: true,
-            applicableFemale: false,
           },
           include: {
             groups: { select: { name: true } },
@@ -166,11 +162,10 @@ export const proceduresController = {
         });
 
         reply.send({ totalPages, totalProceds, currentPage, procedures });
-      } else if (animalSex != null && animalSex == "Femea") {
+      } else if (animalSex != null && animalSex === "Femea") {
         const totalProceds = await prisma.procedures.count({
           where: {
-            name: { contains: q },
-            applicableMale: false,
+            name: { startsWith: q },
             applicableFemale: true,
           },
         });
@@ -181,9 +176,8 @@ export const proceduresController = {
           skip: (currentPage - 1) * 35,
           take: 35,
           where: {
-            name: { contains: q },
+            name: { startsWith: q },
             applicableFemale: true,
-            applicableMale: false,
           },
           include: {
             groups: { select: { name: true } },
@@ -195,14 +189,14 @@ export const proceduresController = {
         reply.send({ totalPages, totalProceds, currentPage, procedures });
       } else {
         const totalProceds = await prisma.procedures.count({
-          where: { name: { contains: q } },
+          where: { name: { startsWith: q } },
         });
 
         const totalPages = Math.ceil(totalProceds / 35);
         const procedures = await prisma.procedures.findMany({
           skip: (currentPage - 1) * 35,
           take: 35,
-          where: { name: { contains: q } },
+          where: { name: { startsWith: q } },
         });
 
         reply.send({

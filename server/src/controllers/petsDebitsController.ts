@@ -77,11 +77,11 @@ getDebitsInAdmission: async (request: FastifyRequest<{ Params: params}>, reply: 
             where: {
                 id: queueId
             }, include: {
-                PetConsultsDebits: true
+                consultDebits: true
             }
         })
 
-        const total = debits[0].PetConsultsDebits.reduce((acc, total) => {
+        const total = debits[0].consultDebits.reduce((acc, total) => {
             acc.total +=  Number(total.price)
             return acc 
         }, { total: 0})

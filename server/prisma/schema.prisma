@@ -253,32 +253,6 @@ model QueuesForPet {
   medicine                MedicineRecord @relation(fields: [medicine_id], references: [id])
 }
 
-model OpenedConsultsForPet {
-  id                String              @id @default(uuid())
-  openedDate        DateTime            @default(now())
-  openedBy          String?
-  vetPreference     String?
-  closedDate        DateTime?
-  updatedDate       DateTime?
-  isClosed          Boolean?
-  closedByVetId     Int?
-  clodedByVetName   String?
-  petWeight         String?
-  observations      String?
-  consultType       String?
-  symptoms          String?
-  request           String?
-  diagnostic        String?
-  totaLDebits       Decimal?
-  consultDebits     PetConsultsDebits[]
-  MedicineRecord    MedicineRecord?     @relation(fields: [medicineRecordId], references: [id])
-  medicineRecordId  Int?
-  clientIsVip       Boolean?            @default(false)
-  customerAccountId Int?                @unique
-  customerAccount   CustomerAccount?    @relation(fields: [customerAccountId], references: [id])
-  InstallmentsDebts InstallmentsDebts?
-}
-
 //  ------------- ADMISSIONS -------------   //
 
 //  ------------- ADMISSIONS -------------   //
@@ -388,6 +362,32 @@ model SurgeriesForPet {
   LinkedAdmissionDebitId Int?              @unique
 }
 
+model OpenedConsultsForPet {
+  id                String              @id @default(uuid())
+  openedDate        DateTime            @default(now())
+  openedBy          String?
+  vetPreference     String?
+  closedDate        DateTime?
+  updatedDate       DateTime?
+  isClosed          Boolean?
+  closedByVetId     Int?
+  clodedByVetName   String?
+  petWeight         String?
+  observations      String?
+  consultType       String?
+  symptoms          String?
+  request           String?
+  diagnostic        String?
+  totaLDebits       Decimal?
+  consultDebits     PetConsultsDebits[]
+  MedicineRecord    MedicineRecord?     @relation(fields: [medicineRecordId], references: [id])
+  medicineRecordId  Int?
+  clientIsVip       Boolean?            @default(false)
+  customerAccountId Int?                @unique
+  customerAccount   CustomerAccount?    @relation(fields: [customerAccountId], references: [id])
+  InstallmentsDebts InstallmentsDebts?
+}
+
 model OpenededAdmissionsForPet {
   id                String              @id @default(uuid())
   openedDate        DateTime            @default(now())
@@ -399,7 +399,7 @@ model OpenededAdmissionsForPet {
   observations      String?
   consultType       String?
   totaLDebits       Decimal?
-  PetConsultsDebits PetConsultsDebits[]
+  consultDebits     PetConsultsDebits[]
   medicineRecordId  Int?
   MedicineRecord    MedicineRecord?     @relation(fields: [medicineRecordId], references: [id])
   customerAccountId Int?                @unique

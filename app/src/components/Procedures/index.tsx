@@ -47,26 +47,21 @@ export default function ProceduresVets({
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [procedures, setProcedures] = useState<ProceduresProps[]>([]);
   const [query, setQuery] = useState("");
-  const [pagination, SetPagination] = useState(1);
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
+  const [pagination, SetPagination] = useState(1)
   const [paginationInfos, setPaginationInfos] = useState({
     totalPages: 0,
     currentPage: 0,
-    totalProceds: 0,
-  });
-
+    totalProceds: 0
+  })
   function incrementPage() {
-    SetPagination((prevCount) =>
-      pagination < paginationInfos.totalPages
-        ? prevCount + 1
-        : paginationInfos.totalPages
-    );
+    SetPagination(prevCount => pagination < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
   }
 
   function decrementPage() {
-    SetPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
+    SetPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
   }
 
   async function GetPet() {
@@ -88,7 +83,7 @@ export default function ProceduresVets({
         setReloadData(true);
         break;
       default:
-        const procedures = await api.get(`/procedures?sex=${petDetails.sexo}`);
+        const procedures = await api.get(`/procedures?sex=${petDetails.sexo}&page=${pagination}`);
         setProcedures(procedures.data.procedures);
         setPaginationInfos({
           currentPage: procedures.data.currentPage,
@@ -164,28 +159,6 @@ export default function ProceduresVets({
       console.log(error);
     }
   }
-  // const excludeProcedureInPet = async (
-  //   id: number,
-  //   procedPrice: string | number
-  // ) => {
-  //   try {
-  //     const confirm = window.confirm(
-  //       "EXCLUIR E UMA OPERAÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
-  //     );
-  //     if (confirm === true) {
-  //       await api.delete(
-  //         `/proceduresfp/${id}/${petDetails.totalAcc.id}/${procedPrice}`
-  //       );
-  //       setReloadData(true);
-  //       toast.success("Procedimento excluido com sucesso!!");
-  //     } else {
-  //       return;
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error("Falha ao excluir procedimento!!");
-  //   }
-  // };
 
   useEffect(() => {
     GetData();
@@ -196,7 +169,7 @@ export default function ProceduresVets({
     GetPet();
     GetData();
     setReloadData(false); // Reseta o estado para evitar chamadas infinitas
-  }, [reloadData, query]);
+  }, [reloadData, query, pagination]);
 
   return (
     <>
