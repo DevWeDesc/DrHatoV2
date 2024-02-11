@@ -12,10 +12,11 @@ import { ReportsVetData } from "../../mocks/ReportsVetData";
 import { ReportFinanceData } from "../../mocks/ReportsFinance";
 import { ReportsExamsData } from "../../mocks/ReportsExams";
 import { useState } from "react";
+import { IReportResponse } from "../../interfaces";
 
 type ReportsVetTableType = {
   tableType: string;
-  dataReport: any;
+  dataReport: IReportResponse;
 };
 
 export const ReportsGeneticTable = ({
@@ -116,7 +117,7 @@ export const ReportsGeneticTable = ({
       case tableType == "FinanceSector":
         TableContent = (
           <TableContainer>
-            {dataReport?.reports?.map((data: any) => (
+            {dataReport?.reports?.map((data) => (
               <Table key={data?.id} variant="striped" colorScheme="gray">
                 <Thead bg="gray.200">
                   <Tr>
@@ -135,7 +136,7 @@ export const ReportsGeneticTable = ({
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {data?.report?.consults?.procedures?.map((procedure: any) => (
+                  {data?.report?.consults?.procedures?.map((procedure) => (
                     <Tr key={procedure.id}>
                       <Th>{procedure.name}</Th>
                       <Th>{procedure.quantity}</Th>
