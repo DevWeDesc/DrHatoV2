@@ -11,7 +11,7 @@ import LogoHatoRelatorios from "../../../assets/logoHatoRelatórios.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import { TbArrowBack } from "react-icons/tb";
 import { ReportsGeneticTable } from "../../../components/Tables/ReportsGenericTable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ReportsExamsData } from "../../../mocks/ReportsExams";
 import { ReportsVetData } from "../../../mocks/ReportsVetData";
@@ -19,6 +19,9 @@ import { ReportFinanceData } from "../../../mocks/ReportsFinance";
 import * as XLSX from 'xlsx';
 import { CSVLink } from "react-csv";
 import { api } from "../../../lib/axios";
+import { Toast } from "react-toastify/dist/components";
+import { IReportResponse } from "../../../interfaces";
+
 
 interface IDataReport {
   initialDate: Date | null | string;
@@ -35,6 +38,14 @@ export const GenericReports = () => {
     initialDate: null,
     finallyDate: null,
   } as IDataReport);
+  const [reportFinanceDataAPI, setReportFinanceDataAPI] = useState(
+    {} as IReportResponse
+  );
+  const formattedData = (date: string | Date | null | any) => {
+    return Intl.DateTimeFormat().format(new Date(date));
+  };
+  const initialDateFormated = formattedData(DateReport.initialDate);
+  const finallyDateFormated = formattedData(DateReport.finallyDate);
 
   const TitleSection = () => {
     let title = "";
@@ -43,10 +54,10 @@ export const GenericReports = () => {
         title = "Ambulatório";
         break;
       case typeReports == "Exams":
-        title = `Valores contidos durante eo período: ${DateReport.initialDate} e ${DateReport.finallyDate}`;
+        title = `Valores contidos durante eo período: ${initialDateFormated} e ${finallyDateFormated}`;
         break;
       default:
-        title = `Faturamento por setor no período compreendido entre ${DateReport.initialDate} e ${DateReport.finallyDate}.`;
+        title = `Faturamento por setor no período compreendido entre ${initialDateFormated} e ${finallyDateFormated}.`;
     }
     return title;
   };
@@ -80,6 +91,36 @@ export const GenericReports = () => {
       console.log(DateReport);
       setShowTable(true);
     }
+  };
+
+  const handelInitialDate = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    setDateReport({
+      ...DateReport,
+      initialDate: new Date(ev.target.value).toISOString(),
+    });
+  };
+
+  const handelFinalDate = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    setDateReport({
+      ...DateReport,
+      finallyDate: new Date(ev.target.value).toISOString(),
+    });
+  };
+
+  const GetFinanceSector = async () => {
+    const data = {
+      initialDate: DateReport.initialDate,
+      finalDate: DateReport.finallyDate,
+    };
+    await api
+      .post("/reports/sector", data)
+      .then((res) => {
+        setReportFinanceDataAPI(res.data);
+        toast.success("Relatório gerado com sucesso!");
+      })
+      .catch((error) => {
+        toast.error(error);
+      });
   };
 
   let title = TitleSection();
@@ -147,8 +188,16 @@ export const GenericReports = () => {
                   <Text textAlign="center" fontWeight="bold">
                     {title}
                   </Text>
+
+                  <ReportsGeneticTable
+                    dataReport={reportFinanceDataAPI}
+                    tableType={`${typeReports}`}
+                  />
+                  <CSVLink filename={`relatorio${typeReports}`} data={dataCSV}>
+                    <Button
                   <ReportsGeneticTable tableType={`${typeReports}`} />
                   <Button
+
                       maxW="-webkit-max-content"
                       px={21}
                       py={7}
@@ -198,14 +247,7 @@ export const GenericReports = () => {
                           borderTop="2px solid black"
                           type="date"
                           fontWeight="bold"
-                          onChange={(ev) =>
-                            setDateReport({
-                              ...DateReport,
-                              initialDate: new Intl.DateTimeFormat(
-                                "pt-BR"
-                              ).format(new Date(ev.target.value)),
-                            })
-                          }
+                          onChange={(ev) => handelInitialDate(ev)}
                         />
                       </Flex>
                       <Flex borderY="1px solid black" alignItems="center">
@@ -225,14 +267,7 @@ export const GenericReports = () => {
                           borderX="2px solid black"
                           height="100%"
                           fontWeight="bold"
-                          onChange={(ev) =>
-                            setDateReport({
-                              ...DateReport,
-                              finallyDate: new Intl.DateTimeFormat(
-                                "pt-BR"
-                              ).format(new Date(ev.target.value)),
-                            })
-                          }
+                          onChange={(ev) => handelFinalDate(ev)}
                         />
                       </Flex>
                       <Button
@@ -241,7 +276,10 @@ export const GenericReports = () => {
                         fontSize="20"
                         py="8"
                         rounded="0"
-                        onClick={handleShowTable}
+                        onClick={() => {
+                          GetFinanceSector();
+                          handleShowTable();
+                        }}
                       >
                         Visualizar
                       </Button>

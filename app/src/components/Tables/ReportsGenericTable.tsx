@@ -11,14 +11,22 @@ import {
 import { ReportsVetData } from "../../mocks/ReportsVetData";
 import { ReportFinanceData } from "../../mocks/ReportsFinance";
 import { ReportsExamsData } from "../../mocks/ReportsExams";
+import { useState } from "react";
+import { IReportResponse } from "../../interfaces";
 
 type ReportsVetTableType = {
   tableType: string;
+  dataReport: IReportResponse;
 };
 
-export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
+export const ReportsGeneticTable = ({
+  dataReport,
+  tableType,
+}: ReportsVetTableType) => {
+  console.table(dataReport);
   const TableTypes = () => {
     let TableContent: JSX.Element = <></>;
+    const [totalPayment, setTotalPayment] = useState([0]);
     switch (true) {
       case tableType == "Vets":
         TableContent = (
@@ -109,12 +117,12 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
       case tableType == "FinanceSector":
         TableContent = (
           <TableContainer>
-            {ReportFinanceData.Ambulatorio && (
-              <Table variant="striped" colorScheme="gray">
+            {dataReport?.reports?.map((data) => (
+              <Table key={data?.id} variant="striped" colorScheme="gray">
                 <Thead bg="gray.200">
                   <Tr>
                     <Th colSpan={7} textColor="black" fontWeight="bold">
-                      Ambulatório
+                      {data?.name}
                     </Th>
                   </Tr>
                   <Tr>
@@ -128,86 +136,20 @@ export const ReportsGeneticTable = ({ tableType }: ReportsVetTableType) => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {ReportFinanceData.Ambulatorio.map((report, index) => (
-                    <Tr key={index}>
-                      <Th>{report.Procedimento}</Th>
-                      <Th>{report["Qtd Amb"]}</Th>
-                      <Th>{report["Qtd Int"]}</Th>
-                      <Th>{report["Fat Amb"]}</Th>
-                      <Th>{report["Fat Int"]}</Th>
-                      <Th>{report["Qtd Total"]}</Th>
-                      <Th>{report["Fat Total"]}</Th>
+                  {data?.report?.consults?.procedures?.map((procedure) => (
+                    <Tr key={procedure.id}>
+                      <Th>{procedure.name}</Th>
+                      <Th>{procedure.quantity}</Th>
+                      <Th></Th>
+                      <Th>{procedure.quantity * Number(procedure.value)}</Th>
+                      <Th></Th>
+                      <Th>{procedure.quantity}</Th>
+                      <Th>{procedure.quantity * Number(procedure.value)}</Th>
                     </Tr>
                   ))}
                 </Tbody>
               </Table>
-            )}
-            {ReportFinanceData.Anestesia && (
-              <Table mt={10} variant="striped" colorScheme="gray">
-                <Thead bg="gray.200">
-                  <Tr>
-                    <Th colSpan={7} textColor="black" fontWeight="bold">
-                      Anestesia
-                    </Th>
-                  </Tr>
-                  <Tr>
-                    <Th>Procedimento</Th>
-                    <Th>Qtd Amb</Th>
-                    <Th>Qtd Int</Th>
-                    <Th>Fat Amb</Th>
-                    <Th>Fat Int</Th>
-                    <Th>Qtd Total</Th>
-                    <Th>Fat Total</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {ReportFinanceData.Anestesia.map((report, index) => (
-                    <Tr key={index}>
-                      <Th>{report.Procedimento}</Th>
-                      <Th>{report["Qtd Amb"]}</Th>
-                      <Th>{report["Qtd Int"]}</Th>
-                      <Th>{report["Fat Amb"]}</Th>
-                      <Th>{report["Fat Int"]}</Th>
-                      <Th>{report["Qtd Total"]}</Th>
-                      <Th>{report["Fat Total"]}</Th>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            )}
-            {ReportFinanceData.Cardiologia && (
-              <Table mt={10} variant="striped" colorScheme="gray">
-                <Thead bg="gray.200">
-                  <Tr>
-                    <Th colSpan={7} textColor="black" fontWeight="bold">
-                      Cardiologia
-                    </Th>
-                  </Tr>
-                  <Tr>
-                    <Th>Procedimento</Th>
-                    <Th>Qtd Amb</Th>
-                    <Th>Qtd Int</Th>
-                    <Th>Fat Amb</Th>
-                    <Th>Fat Int</Th>
-                    <Th>Qtd Total</Th>
-                    <Th>Fat Total</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {ReportFinanceData.Cardiologia.map((report, index) => (
-                    <Tr key={index}>
-                      <Th>{report.Procedimento}</Th>
-                      <Th>{report["Qtd Amb"]}</Th>
-                      <Th>{report["Qtd Int"]}</Th>
-                      <Th>{report["Fat Amb"]}</Th>
-                      <Th>{report["Fat Int"]}</Th>
-                      <Th>{report["Qtd Total"]}</Th>
-                      <Th>{report["Fat Total"]}</Th>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            )}
+            ))}
           </TableContainer>
         );
         break;

@@ -333,7 +333,7 @@ type QueueHistoryProps = {
   medicine_id: number;
 };
 type AccountProps = {
-  consultId: string
+  consultId: string;
   id: number;
   accountNumber: number;
   debits: number;
@@ -431,4 +431,41 @@ export interface Installments {
     clientIsVip: null | boolean;
     customer: ICustomer;
   };
+}
+
+interface IProcedure {
+  id: number;
+  name: string;
+  value: string;
+  quantity: number;
+}
+
+interface IConsults {
+  id: number;
+  procedures: IProcedure[];
+  consultsQuantity: number;
+  consultsInvoicing: number;
+}
+
+interface IAdmissions {
+  id: number;
+  procedures: IProcedure[];
+  consultsQuantity: number;
+  consultsInvoicing: number;
+}
+
+interface IReport {
+  id: number;
+  consults: IConsults;
+  admissions: IAdmissions;
+}
+
+interface IReportItem {
+  id: number;
+  name: string;
+  report: IReport;
+}
+
+export interface IReportResponse {
+  reports: IReportItem[];
 }
