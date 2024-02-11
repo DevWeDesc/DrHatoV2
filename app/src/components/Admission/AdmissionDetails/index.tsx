@@ -34,6 +34,7 @@ export default function DetailsAdmissions() {
   const { id , queueId} = useParams<{ id: string; queueId: string; }>();
   const navigate = useNavigate();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
+  const user = JSON.parse(localStorage.getItem("user") as string);
   const entryDate = petDetails.bedInfos?.entry;
 
   const totalDaily = moment(new Date()).diff(entryDate, "minutes");
@@ -83,6 +84,7 @@ export default function DetailsAdmissions() {
     const response = await api.get(`pets/${id}`);
     setPetDetails(response.data);
   }
+  console.log(queueId)
 
   useEffect(() => {
     getAdmissionDetails();
@@ -96,12 +98,17 @@ export default function DetailsAdmissions() {
 
       if (confirmation === true) {
         const data = {
+          queueId: queueId?.toString(),
           petId: Number(id),
+          responsibleVeterinarianId: user?.id,
+          responsibleVeterinarian: user?.consultName,
           bedId: petDetails?.bedInfos?.id,
-          admissionId: petDetails?.admissions[0].id,
+          admissionId: petDetails?.admissions[0]?.id,
           totalInAdmission: Number(petDetails.totalAcc?.price)
         };
-        await api.put("endadmission", data);
+
+        console.log(data)
+        await api.put("/endadmission", data);
         toast.success("Internação finalizada com Sucesso!");
         navigate("/Admissions");
       } else {

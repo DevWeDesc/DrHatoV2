@@ -241,7 +241,6 @@ export const proceduresController = {
       available,
       observations,
       applicationInterval,
-
       sector_id,
     } = ProcedureSchema.parse(request.body);
 
@@ -288,8 +287,7 @@ export const proceduresController = {
       if (!procedure) return;
 
       if (InAdmission === true) {
-        await prisma.petConsultsDebits
-          .create({
+        await prisma.petConsultsDebits.create({
             data: {
               OpenedAdmissionsForPet: { connect: { id: queueId } },
               isProcedure: true,
@@ -315,7 +313,7 @@ export const proceduresController = {
               },
             });
           });
-      } else {
+      } else if(InAdmission === false) {
         await prisma.petConsultsDebits
           .create({
             data: {
