@@ -2,7 +2,7 @@ import { ChakraProvider, Flex } from "@chakra-ui/react";
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { AdminContainer } from "../AdminDashboard/style";
-import { EditExams } from "../../components/administration/Exams/editExams";
+import { EditExams } from "../../components/Exams/editExams";
 
 export function ExamsEdit() {
   return (
