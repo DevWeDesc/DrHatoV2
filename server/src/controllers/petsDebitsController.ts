@@ -50,7 +50,7 @@ getDebitsInQueue: async (request: FastifyRequest<{ Params: params}>, reply: Fast
             }
         })
 
-        const total = debits[0].consultDebits.reduce((acc, total) => {
+        const total = debits[0]?.consultDebits?.reduce((acc, total) => {
             acc.total +=  Number(total.price)
             return acc 
         }, { total: 0})
@@ -81,7 +81,7 @@ getDebitsInAdmission: async (request: FastifyRequest<{ Params: params}>, reply: 
             }
         })
 
-        const total = debits[0].consultDebits.reduce((acc, total) => {
+        const total = debits[0]?.consultDebits?.reduce((acc, total) => {
             acc.total +=  Number(total.price)
             return acc 
         }, { total: 0})

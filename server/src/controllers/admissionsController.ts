@@ -3,6 +3,7 @@ import { AdmissionSchema, BedSchema } from "../schemas/schemasValidator";
 import { ValidationContract } from "../validators/userContract";
 import { z } from "zod";
 import { prisma } from "../interface/PrismaInstance";
+import { GetDebitsInConsultsService } from "../services/GetDebitsInConsultsService";
 const { getDiferrenceBetweenOurs } = require("../utils/countOurs");
 
 
@@ -134,16 +135,20 @@ export const admissionsController = {
     const FinishAdmissionSchema = z.object({
       petId: z.number().optional(),
       bedId: z.number().optional(),
+      queueId: z.string().uuid(),
       admissionId: z.number().optional(),
       totalInAdmission: z.number().optional(),
+      responsibleVeterinarianId: z.coerce.number(),
+      responsibleVeterinarian: z.string().optional(),
     });
-    const { petId, bedId, admissionId, totalInAdmission } = FinishAdmissionSchema.parse(
-      request.body
+    const { petId, bedId, admissionId, totalInAdmission, queueId, responsibleVeterinarianId, responsibleVeterinarian } = FinishAdmissionSchema.parse(
+    request.body
     );
     const actualDate = new Date();
     const bedDetails = await prisma.bed.findUnique({
       where: { id: bedId },
     });
+
     if (!bedDetails) {
       return; 
     }
@@ -193,9 +198,32 @@ export const admissionsController = {
         },
       });
 
-      await  prisma.pets.update({
-        where: { id: petId},data: {priceAccumulator: {update: {accumulator: 0}}}
-    })
+     const pet  = await prisma.pets.update({
+        where: { id: petId},data: {priceAccumulator: {update: {accumulator: 0}}},
+        include: {
+          customer: { include: {customerAccount: true}}
+        }
+       }) 
+
+
+       const getDebitsInConsultService = new GetDebitsInConsultsService();
+
+       const { total } = await getDebitsInConsultService.execute({
+        queueId,
+        isAdmission: true
+      });
+       await prisma.openededAdmissionsForPet.update({
+        where: {id: queueId}, data: {
+          closedDate: new Date(),
+          petWeight: pet.weigth,
+          totaLDebits: total,
+          isClosed: true,
+          closedByVetId: responsibleVeterinarianId,
+          clodedByVetName: responsibleVeterinarian,
+          customerAccountId: pet.customer?.customerAccount?.id
+          
+        }
+       })
 
       reply.send("Internação Encerrada com sucesso").status(202);
     } catch (error) {

@@ -395,6 +395,7 @@ model OpenededAdmissionsForPet {
   updatedDate       DateTime?
   isClosed          Boolean?
   closedByVetId     Int?
+  clodedByVetName   String?
   petWeight         String?
   observations      String?
   consultType       String?
