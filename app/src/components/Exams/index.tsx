@@ -18,6 +18,8 @@ import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 import { ExamsProps, PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
+import { useQuery } from "react-query";
+import { LoadingSpinner } from "../Loading";
 
 type ExamsVetProps = {
   InAdmission: boolean;
@@ -34,30 +36,45 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [exams, setExams] = useState<ExamsDTO[]>([]);
-  const [reloadData, setReloadData] = useState(false);
+  const [reloadData, setReloadData] = useState(true);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [examName, setExamName] = useState("");
   const [searchByLetter, setSearchByLetter] = useState("");
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["examsData"],
+    queryFn: async () => {
+      if (searchByLetter) {
+        return await api
+          .get(`/exams/old/letter/${searchByLetter}`)
+          .then((res) => res.data);
+      }
+      if (examName.length >= 1) {
+        return await api.get(`/exams/old/${examName}`).then((res) => res.data);
+      } else {
+        return await api.get("/exams/old/all").then((res) => res.data.exams);
+      }
+    },
+  });
 
-  // console.log(user);
+  // console.log(data);
 
   async function getPetExams() {
     const response = await api.get(`/pets/${id}`);
     setPetDetails(response.data);
 
-    const exams = await api.get("/exams/old/all");
-    setExams(exams.data.exams);
+    // const exams = await api.get("/exams/old/all");
+    // setExams(exams.data.exams);
   }
 
-  async function searchExamByName() {
-    const response = await api.get(`/exams/old/${examName}`);
-    setExams(response.data);
-  }
+  // async function searchExamByName() {
+  //   const response = await api.get(`/exams/old/${examName}`);
+  //   setExams(response.data);
+  // }
 
-  async function searchByFirstLetter() {
-    const response = await api.get(`/exams/old/letter/${searchByLetter}`);
-    setExams(response.data);
-  }
+  // async function searchByFirstLetter() {
+  //   const response = await api.get(`/exams/old/letter/${searchByLetter}`);
+  //   setExams(response.data);
+  // }
 
   async function setOldExamInPet(examId: number) {
     try {
@@ -146,8 +163,9 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
   ];
 
   useEffect(() => {
-    getPetExams();
-  }, []);
+    if (!!examName || searchByLetter)
+      refetch({ queryKey: ["examsData", examName, searchByLetter] });
+  }, [examName, searchByLetter]);
 
   useEffect(() => {
     if (reloadData === true) {
@@ -156,13 +174,21 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
     }
   }, [reloadData]);
 
-  useEffect(() => {
-    searchExamByName();
-  }, [examName]);
+  // useEffect(() => {
+  //   getPetExams();
+  // }, []);
 
-  useEffect(() => {
-    searchByFirstLetter();
-  }, [searchByLetter]);
+  // useEffect(() => {
+  //   searchExamByName();
+  // }, [examName]);
+
+  // useEffect(() => {
+  //   searchByFirstLetter();
+  // }, [searchByLetter]);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <>
@@ -296,7 +322,7 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
               </Tr>
             </Thead>
             <Tbody>
-              {exams.map((exam) => (
+              {data?.map((exam: ExamsDTO) => (
                 <Tr key={exam.codexam}>
                   <Td border="2px">{exam.name}</Td>
                   <Td border="2px">R$ {exam.price}</Td>
