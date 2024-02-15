@@ -5,8 +5,6 @@ import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 export const labsController = {
-
-
   getOpenExamsInLab: async (request:FastifyRequest, reply: FastifyReply) => {
     try {
       const exams = await prisma.examsForPet.findMany({
