@@ -11,11 +11,14 @@
 [x] Passo 12 - Adicionar a tela de filtrar o relatório antes.
 [EmDesenvolvimento] Passo 13 - Usar react pdf para tornar imprimivel.
 [x] Passo 14 - Adicionar botão na parte inferior dos relatórios em especifico para exportar excel.
-[] Passo 17 - Pagamentos listar quem está devendo.
-[] Passo 15 - Editar request de pagamentos.
-[] Passo 16 - Adicionar botão na parte inferior dos relatórios em especifico para exportar excel.
+[x] Passo 15 - Editar request de pagamentos.
+[x] Passo 16 - Adicionar botão na parte inferior dos relatórios em especifico para exportar excel.
+[x] Passo 17 - Pagamentos listar quem está devendo.
 
-<!-- Após completar as outras tarefas -->
-
-[] Passo 15 - Fazer relacionamento de installments Para ficar mais fácil o entendimento e aplicação.
-[] Passo 16 - Verificar installments, consultas dele pode ter apenas os procedimentos fechados no fechamento do pagamento.
+[x] Passo 18 - No prisma nas tabelas vaccines e surgeries adicionar o sector_id igual ao procedimentos.
+[x] Passo 19 - Mudar a população de dados adicionando o sectorId nos arquivos transformExcellVaccines.mjs e transformExcellSurgeries.mjs.
+[x] Passo 20 - Adicionar sectorId em todos os sets dos controllers exames, cirurgia e vacina.
+[x] Passo 21 - Consumir crud de tipos de pagamento no Front criando a página seguindo o padrão dos outros cadastros em administração.
+[x] Passo 22 - Mudar cadastro de exames com base no sistema antigo.
+[x] Passo 23 - Mudar Configurar exames para modelo do sistema antigo, primeiro Adicionar Nome da sessão, após adicionar a sessão renderizar Adicionar nova Caracteristica, para adição de nova Caracteristica.
+[][D] Passo 24 - Adicionar ReactQuery na tela de veterinarios na parte de exames para tirar o travamento.
