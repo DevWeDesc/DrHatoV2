@@ -308,7 +308,7 @@ export function Router() {
           />
           <Route path="/Recepcao/Caixa/Returns" element={<BoxReturns />} />
           <Route
-            path="/Recepcao/Caixa/Returns/:id"
+            path="/Recepcao/Caixa/Returns/:id/:linkedAdmissionId"
             element={<BoxReturnsDetails />}
           />
           <Route
