@@ -126,7 +126,7 @@ export function BoxPayments() {
                           </Td>
                           <Td>{payment?.customerAccount?.consultId}</Td>
                           <Td>
-                            {payment?.customerAccount?.clientIsVip ? (
+                            {!payment?.customerAccount?.clientIsVip ? (
                               <FaStar color="red" size={32} />
                             ) : (
                               <FaStar color="orange" size={32} />
