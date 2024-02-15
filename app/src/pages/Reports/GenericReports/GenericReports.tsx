@@ -166,7 +166,7 @@ export const GenericReports = () => {
   }
 
 
-  
+  console.log(reportFinanceDataAPI)
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -193,10 +193,10 @@ export const GenericReports = () => {
                     dataReport={reportFinanceDataAPI}
                     tableType={`${typeReports}`}
                   />
-                  <CSVLink filename={`relatorio${typeReports}`} data={dataCSV}>
+                 
                     <Button
-                  <ReportsGeneticTable tableType={`${typeReports}`} />
-                  <Button
+                
+   
 
                       maxW="-webkit-max-content"
                       px={21}

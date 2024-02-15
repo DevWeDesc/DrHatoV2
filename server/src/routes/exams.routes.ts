@@ -3,6 +3,7 @@ import { examsController } from "../controllers/examsController";
 
 export async function examsRoutes(app: FastifyInstance) {
   app.get("/exams/:id", examsController.getById);
+  app.post('/exams', examsController.createExam)
   app.delete(
     "/petexam/:id/:accId/:examPrice/:linkedDebitId",
     examsController.removePetExam
