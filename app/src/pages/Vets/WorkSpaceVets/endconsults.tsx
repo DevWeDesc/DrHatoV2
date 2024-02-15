@@ -50,7 +50,7 @@ export function EndConsults({handleCloseQuery, handleCloseAdmission, isAdmission
         const response = await api.get(`/debits/pets/admissions/${queueId}`)
         setConsultDebitsDetails(response.data.debits)
         setTotalDebits(response.data.total)
-      } else if (isAdmission === false) {
+      } else {
         const response = await api.get(`/debits/pets/consults/${queueId}`)
         setConsultDebitsDetails(response.data.debits)
         setTotalDebits(response.data.total)
@@ -90,7 +90,7 @@ export function EndConsults({handleCloseQuery, handleCloseAdmission, isAdmission
             </Thead>
             <Tbody>
                 {
-                  !!isAdmission ? consults?.consultDebits?.map((item) => (
+                  !isAdmission ? consults?.consultDebits?.map((item) => (
                     <Tr key={item.id}>
                      <Td>{item.name}</Td>
                      <Td>{new Intl.NumberFormat('pt-BR', {
@@ -101,7 +101,7 @@ export function EndConsults({handleCloseQuery, handleCloseAdmission, isAdmission
           hour: '2-digit', minute: '2-digit'}).format(new Date(item?.requestedDate))}</Td>
                                 <Td>{item.RequestedByVetName}</Td>
                     </Tr>
-                  )) :     consults?.PetConsultsDebits?.map((item) => (
+                  )) :     consults?.consultDebits?.map((item) => (
                     <Tr key={item.id}>
                      <Td>{item.name}</Td>
                      <Td>{new Intl.NumberFormat('pt-BR', {
