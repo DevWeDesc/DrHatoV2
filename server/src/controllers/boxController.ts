@@ -50,6 +50,18 @@ export const boxController = {
           idCustomer: Number(customerId),
         },
       });
+      await prisma.hospVetBox
+        .findUnique({
+          where: { id: parseInt(boxId) },
+        })
+        .then(async (res) => {
+          await prisma.hospVetBox.update({
+            where: { id: res?.id },
+            data: {
+              movimentedValues: Number(res?.movimentedValues) - Number(value),
+            },
+          });
+        });
       reply.status(201).send(returnCreated);
     } catch (err) {
       reply.status(400).send(err);

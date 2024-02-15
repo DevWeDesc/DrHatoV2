@@ -109,7 +109,9 @@ export function ClosedBox() {
               h="51px"
               w="40%"
               bgColor="white"
-              defaultValue={dailyBox.totalValues}
+              defaultValue={`R$ ${parseFloat(
+                dailyBox.totalValues.toString()
+              ).toFixed(2)}`}
               borderX="1px solid black"
               rounded="0"
             />
@@ -158,6 +160,9 @@ export function ClosedBox() {
               Total em dinheiro no caixa
             </Text>
             <Input
+              value={`R$ ${parseFloat(dailyBox.totalValues.toString()).toFixed(
+                2
+              )}`}
               h="51px"
               w="40%"
               bgColor="white"
@@ -170,6 +175,9 @@ export function ClosedBox() {
               Total em movimento
             </Text>
             <Input
+              value={`R$ ${parseFloat(
+                fatherBox.movimentedValues.toString()
+              ).toFixed(2)}`}
               h="51px"
               w="40%"
               bgColor="white"

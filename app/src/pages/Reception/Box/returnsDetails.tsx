@@ -26,19 +26,24 @@ import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
 import { BiHome } from "react-icons/bi";
 import { BsCashCoin, BsReception4 } from "react-icons/bs";
 import { GiCardDiscard } from "react-icons/gi";
+import { ICustomer } from "../../../interfaces";
 
 export function BoxReturnsDetails() {
-  const [customers, setCostumers] = useState([]);
-  const { id } = useParams<{ id: any }>();
+  const [customer, setCostumer] = useState({} as ICustomer);
+  const { id, linkedAdmissionId } = useParams<{
+    id: any;
+    linkedAdmissionId: any;
+  }>();
 
+  const customerInstallments = customer?.customerAccount?.installments?.find(
+    (data) => data.id == linkedAdmissionId
+  );
+
+  async function getCustomer() {
+    const response = await api.get(`/customers/${id}`);
+    setCostumer(response.data);
+  }
   useEffect(() => {
-    async function getCustomer() {
-      const response = await api.get(`/customers`);
-      const responseFiltered = response.data.filter((res: any) =>
-        res.id == id ? res : null
-      );
-      setCostumers(responseFiltered);
-    }
     getCustomer();
   }, []);
 
@@ -68,6 +73,7 @@ export function BoxReturnsDetails() {
                   <Thead>
                     <Tr>
                       <Th
+                        colSpan={4}
                         fontSize="18"
                         py="8"
                         color="black"
@@ -76,142 +82,141 @@ export function BoxReturnsDetails() {
                       >
                         Dados do Cliente
                       </Th>
+                      {/* <Th bg="blue.100" borderBottom="1px solid black">{}</Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                      <Th bg="blue.100" borderBottom="1px solid black"></Th> */}
                     </Tr>
                   </Thead>
-                  {customers?.map((user: any) => (
-                    <Tbody>
-                      <Tr border="1px solid black">
-                        <>
-                          {" "}
-                          <Td
-                            fontSize="18"
-                            fontWeight="bold"
-                            py="0"
-                            borderColor="black"
-                          >
-                            Cliente
-                          </Td>
-                          <Td py="0" borderColor="black">
-                            <Input
-                              borderLeft="2px solid black"
-                              bg="white"
-                              borderColor="black"
-                              value={user.name}
-                              rounded="0"
-                              pr="0"
-                              w="100%"
-                            />
-                          </Td>
-                        </>
 
+                  <Tbody>
+                    <Tr border="1px solid black">
+                      <>
+                        {" "}
                         <Td
-                          borderColor="black"
-                          py="0"
-                          pl="0"
-                          textAlign="end"
                           fontSize="18"
                           fontWeight="bold"
-                        >
-                          Endereço
-                        </Td>
-                        <Td py="0" pr="0" borderColor="black">
-                          <Input
-                            bg="white"
-                            borderColor="black"
-                            value={user.adress}
-                            rounded="0"
-                            pr="0"
-                            w="100%"
-                          />
-                        </Td>
-                      </Tr>
-                      <Tr border="1px solid black">
-                        <Td
                           py="0"
-                          fontSize="18"
-                          fontWeight="bold"
                           borderColor="black"
                         >
-                          Bairro
+                          Cliente
                         </Td>
                         <Td py="0" borderColor="black">
                           <Input
                             borderLeft="2px solid black"
                             bg="white"
                             borderColor="black"
-                            value={user.neighbour}
+                            value={customer?.name}
                             rounded="0"
                             pr="0"
                             w="100%"
                           />
                         </Td>
-                        <Td
+                      </>
+
+                      <Td
+                        borderColor="black"
+                        py="0"
+                        pl="0"
+                        textAlign="end"
+                        fontSize="18"
+                        fontWeight="bold"
+                      >
+                        Endereço
+                      </Td>
+                      <Td py="0" pr="0" borderColor="black">
+                        <Input
+                          bg="white"
                           borderColor="black"
-                          py="0"
-                          fontSize="18"
-                          fontWeight="bold"
-                          pl="0"
-                          textAlign="end"
-                        >
-                          CEP
-                        </Td>
-                        <Td py="0" pr="0" borderColor="black">
-                          <Input
-                            bg="white"
-                            borderColor="black"
-                            value={user.cep}
-                            rounded="0"
-                            pr="0"
-                            w="100%"
-                          />
-                        </Td>
-                      </Tr>
-                      <Tr border="1px solid black" p="0" m="0">
-                        <Td
-                          fontSize="18"
-                          fontWeight="bold"
-                          py="0"
+                          value={customer?.adress}
+                          rounded="0"
+                          pr="0"
+                          w="100%"
+                        />
+                      </Td>
+                    </Tr>
+                    <Tr border="1px solid black">
+                      <Td
+                        py="0"
+                        fontSize="18"
+                        fontWeight="bold"
+                        borderColor="black"
+                      >
+                        Bairro
+                      </Td>
+                      <Td py="0" borderColor="black">
+                        <Input
+                          borderLeft="2px solid black"
+                          bg="white"
                           borderColor="black"
-                        >
-                          Estado
-                        </Td>
-                        <Td py="0" borderColor="black">
-                          <Input
-                            borderLeft="2px solid black"
-                            bg="white"
-                            borderColor="black"
-                            value={user.district}
-                            rounded="0"
-                            pr="0"
-                            w="100%"
-                          />
-                        </Td>
-                        <Td
+                          value={customer?.neighbour}
+                          rounded="0"
+                          pr="0"
+                          w="100%"
+                        />
+                      </Td>
+                      <Td
+                        borderColor="black"
+                        py="0"
+                        fontSize="18"
+                        fontWeight="bold"
+                        pl="0"
+                        textAlign="end"
+                      >
+                        CEP
+                      </Td>
+                      <Td py="0" pr="0" borderColor="black">
+                        <Input
+                          bg="white"
                           borderColor="black"
-                          py="0"
-                          fontSize="18"
-                          fontWeight="bold"
-                          pl="0"
-                          textAlign="end"
-                        >
-                          Telefone
-                        </Td>
-                        <Td py="0" pr="0" borderColor="black">
-                          <Input
-                            bg="white"
-                            borderColor="black"
-                            value={user.phone}
-                            rounded="0"
-                            pr="0"
-                            w="100%"
-                          />
-                        </Td>
-                      </Tr>
-                    </Tbody>
-                  ))}
+                          value={customer?.cep?.toString()}
+                          rounded="0"
+                          pr="0"
+                          w="100%"
+                        />
+                      </Td>
+                    </Tr>
+                    <Tr border="1px solid black" p="0" m="0">
+                      <Td
+                        fontSize="18"
+                        fontWeight="bold"
+                        py="0"
+                        borderColor="black"
+                      >
+                        Estado
+                      </Td>
+                      <Td py="0" borderColor="black">
+                        <Input
+                          borderLeft="2px solid black"
+                          bg="white"
+                          borderColor="black"
+                          value={customer?.district}
+                          rounded="0"
+                          pr="0"
+                          w="100%"
+                        />
+                      </Td>
+                      <Td
+                        borderColor="black"
+                        py="0"
+                        fontSize="18"
+                        fontWeight="bold"
+                        pl="0"
+                        textAlign="end"
+                      >
+                        Telefone
+                      </Td>
+                      <Td py="0" pr="0" borderColor="black">
+                        <Input
+                          bg="white"
+                          borderColor="black"
+                          value={customer?.phone}
+                          rounded="0"
+                          pr="0"
+                          w="100%"
+                        />
+                      </Td>
+                    </Tr>
+                  </Tbody>
                 </Table>
               </TableContainer>
               <TableContainer>
@@ -219,6 +224,7 @@ export function BoxReturnsDetails() {
                   <Thead>
                     <Tr>
                       <Th
+                        colSpan={4}
                         fontSize="18"
                         py="8"
                         color="black"
@@ -227,9 +233,6 @@ export function BoxReturnsDetails() {
                       >
                         Dados da Devolução
                       </Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -245,10 +248,15 @@ export function BoxReturnsDetails() {
                       </Td>
                       <Td py="0" borderColor="black">
                         <Input
+                          value={new Intl.DateTimeFormat("Sp-BR", {
+                            year: "numeric",
+                            day: "2-digit",
+                            month: "2-digit",
+                          }).format(new Date())}
                           borderLeft="2px solid black"
                           bg="white"
                           borderColor="black"
-                          type="date"
+                          // type="date"
                           rounded="0"
                         />
                       </Td>
@@ -263,7 +271,15 @@ export function BoxReturnsDetails() {
                         Horário
                       </Td>
                       <Td borderColor="black" py="0" pr="0">
-                        <Input bg="white" borderColor="black" rounded="0" />
+                        <Input
+                          value={new Intl.DateTimeFormat("sp-BR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }).format(new Date())}
+                          bg="white"
+                          borderColor="black"
+                          rounded="0"
+                        />
                       </Td>
                     </Tr>
                     <Tr border="1px solid black">
@@ -277,6 +293,7 @@ export function BoxReturnsDetails() {
                       </Td>
                       <Td borderColor="black" py="0">
                         <Input
+                          value={customerInstallments?.boxHistoryId}
                           borderLeft="2px solid black"
                           bg="white"
                           borderColor="black"
@@ -294,7 +311,12 @@ export function BoxReturnsDetails() {
                         Valor
                       </Td>
                       <Td borderColor="black" py="0" pr="0">
-                        <Input bg="white" borderColor="black" rounded="0" />
+                        <Input
+                          value={`R$ ${customerInstallments?.amountInstallments},00`}
+                          bg="white"
+                          borderColor="black"
+                          rounded="0"
+                        />
                       </Td>
                     </Tr>
                     <Tr border="1px solid black">

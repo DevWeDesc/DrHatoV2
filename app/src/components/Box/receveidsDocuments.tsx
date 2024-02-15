@@ -78,7 +78,9 @@ export function ReceveidDocuments({
               <Tr
                 key={doc.id}
                 onClick={() =>
-                  navigate(`/Recepcao/Caixa/Returns/${doc.customerId}`)
+                  navigate(
+                    `/Recepcao/Caixa/Returns/${doc.customerId}/${doc.id}`
+                  )
                 }
               >
                 <Td style={{ border: "1px solid black" }}>{doc.paymentType}</Td>

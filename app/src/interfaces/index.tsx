@@ -349,6 +349,7 @@ type InstallmentsProps = {
   paymentDate: Date | number;
   installmentAmount: number;
   amountInstallments: number;
+  boxHistoryId: number;
 };
 export interface ICustomer {
   id: number;

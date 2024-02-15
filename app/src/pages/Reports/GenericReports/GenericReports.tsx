@@ -16,21 +16,18 @@ import { toast } from "react-toastify";
 import { ReportsExamsData } from "../../../mocks/ReportsExams";
 import { ReportsVetData } from "../../../mocks/ReportsVetData";
 import { ReportFinanceData } from "../../../mocks/ReportsFinance";
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
 import { CSVLink } from "react-csv";
 import { api } from "../../../lib/axios";
 import { Toast } from "react-toastify/dist/components";
 import { IReportResponse } from "../../../interfaces";
-
 
 interface IDataReport {
   initialDate: Date | null | string;
   finallyDate: Date | null | string;
 }
 
-
 export const GenericReports = () => {
-
   const navigate = useNavigate();
   const { typeReports } = useParams();
   const [showTable, setShowTable] = useState(false);
@@ -127,44 +124,44 @@ export const GenericReports = () => {
   let dataCSV = DataCSVExport();
 
   async function createExcellReport() {
-
     const data = {
       initialDate: "2024-02-09T13:15:46.541Z",
-      finalDate: "2024-02-10T13:15:46.541Z"
-    }
+      finalDate: "2024-02-10T13:15:46.541Z",
+    };
 
-    await api.post('/reports/sector', data).then((response) => {
+    await api.post("/reports/sector", data).then((response) => {
+      const reports = response.data.reports;
+      const procedures = reports.map((report: any, index: any) => {
+        return report.report.consults?.procedures.concat(
+          report.report.admissions?.procedures
+        );
+      });
 
-      const reports = response.data.reports
-      const procedures = reports.map((report: any, index: any)=> {
-          return report.report.consults?.procedures.concat(report.report.admissions?.procedures)
-      })
-
-      console.log(procedures)
-      const dados: any = [
-        
-                     ];
-    //@ts-ignore
-    reports.map((report, index) => {
+      console.log(procedures);
+      const dados: any = [];
+      //@ts-ignore
+      reports.map((report, index) => {
         dados.push(
           [report.name],
-          ['Procedimento', 'QTD AMB', 'QTD INT', 'FAT AMB', 'FAT INT', 'QTD TOTAL', 'FAT TOTAL'],
           [
-            procedures[index]?.name
-          ]
-   
-       );
-    });
+            "Procedimento",
+            "QTD AMB",
+            "QTD INT",
+            "FAT AMB",
+            "FAT INT",
+            "QTD TOTAL",
+            "FAT TOTAL",
+          ],
+          [procedures[index]?.name]
+        );
+      });
 
- 
-      
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(dados);
       XLSX.utils.book_append_sheet(wb, ws, "Relatório");
       XLSX.writeFile(wb, "Relatório.xlsx");
-    })
+    });
   }
-
 
   console.log(reportFinanceDataAPI)
   return (
@@ -188,7 +185,6 @@ export const GenericReports = () => {
                   <Text textAlign="center" fontWeight="bold">
                     {title}
                   </Text>
-
                   <ReportsGeneticTable
                     dataReport={reportFinanceDataAPI}
                     tableType={`${typeReports}`}
