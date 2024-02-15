@@ -30,6 +30,7 @@ import FileUpload from '../../components/FileUpload'
 import { toast } from 'react-toastify'
 import { LoadingSpinner } from '../../components/Loading'
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
+import moment from 'moment'
 
 interface ExamProps {
   id: number
@@ -68,10 +69,69 @@ interface ExamProps {
     }>
   }>
 }
+
+export interface PetProps {
+  id:              number;
+  CodCli:          number;
+  CodAnimal:       number;
+  name:            string;
+  especie:         string;
+  sexo:            string;
+  race:            string;
+  weigth:          string;
+  haveChip:        boolean;
+  corPet:          string;
+  sizePet:         string;
+  bornDate:        string;
+  dateAge:         null;
+  observations:    string;
+  customer_id:     number;
+  codPet:          string;
+  isCastred:       boolean;
+  debits:          string;
+  customer:        Customer;
+  medicineRecords: MedicineRecords;
+}
+
+export interface Customer {
+  name: string;
+}
+
+export interface MedicineRecords {
+  id:           number;
+  observations: string[];
+  petId:        number;
+  petExams:     PetExam[];
+}
+
+export interface PetExam {
+  id:                     number;
+  name:                   string;
+  price:                  string;
+  defaultMethodology:     null;
+  impressName:            null;
+  requesteData:           Date;
+  requestedFor:           string;
+  requestedCrm:           string;
+  responsibleForExam:     null;
+  responsibleForCrm:      null;
+  doneExame:              boolean;
+  onePart:                boolean;
+  twoPart:                boolean;
+  byReport:               boolean;
+  externalReport:         null;
+  medicine_id:            number;
+  linkedConsultDebitId:   number;
+  LinkedAdmissionDebitId: null;
+  examsType:              string[];
+  updatedAt:              Date;
+}
+
+
 export function SetPetExam() {
   const { id, examId } = useParams<{ id: string; examId: string }>()
   const user = JSON.parse(localStorage.getItem('user') as string)
-  const [pet, setPet] = useState({} as any)
+  const [pet, setPet] = useState({} as PetProps)
   const [disableRequest, setDisableRequest] = useState(false)
   const [textReport, setTextReport] = useState('')
   const [exam, setExam] = useState({} as ExamProps)
@@ -79,18 +139,21 @@ export function SetPetExam() {
   const navigate = useNavigate()
   async function Pets() {
     const pets = await api.get(`/labexam/${id}`)
-    setPet(pets.data.examDetails)
+    setPet(pets.data)
   }
   async function Exam() {
     const exam = await api.get(`/exams/${examId}`)
     setExam(exam.data)
   }
 
+ 
   useEffect(() => {
     Pets()
     Exam()
   }, [])
 
+
+  console.log(pet)
   const handleSetTextReport = async () => {
     try {
       const data = {
@@ -588,6 +651,8 @@ export function SetPetExam() {
       break
   }
 
+
+  const examRequestedData = moment(pet?.medicineRecords?.petExams.find((exam) => exam.name === exam.name)?.requesteData).toDate()
   return (
     <ChakraProvider>
       <Flex direction="column" h="100vh">
@@ -656,7 +721,7 @@ export function SetPetExam() {
                         borderColor={'black'}
                         bgColor="white"
                         w="100%"
-                        defaultValue={pet?.medicine?.pet?.customer?.name}
+                        defaultValue={pet?.customer?.name}
                       ></Input>
                     </Flex>
                     <Flex
@@ -677,7 +742,7 @@ export function SetPetExam() {
                         borderBottom={'0'}
                         borderRadius={'0'}
                         borderColor={'black'}
-                        defaultValue={pet?.medicine?.pet.name}
+                        defaultValue={pet?.name}
                         w="100%"
                       ></Input>
                     </Flex>
@@ -699,9 +764,9 @@ export function SetPetExam() {
                         borderBottom={'0'}
                         borderRadius={'0'}
                         borderColor={'black'}
-                        defaultValue={pet?.name}
+                        defaultValue={pet?.medicineRecords?.petExams.find((exam) => exam.name === exam.name)?.name}
                         w="50%"
-                      ></Input>
+                      />
                       <Text
                         padding={'7px 51px'}
                         border={'1px solid black'}
@@ -713,10 +778,11 @@ export function SetPetExam() {
                         bgColor="white"
                         borderBottom={'0'}
                         borderRadius={'0'}
-                        borderColor={'black'}
+                        borderColor={'black'} 
+                        defaultValue={pet?.medicineRecords?.petExams.find((exam) => exam.name === exam.name)?.requestedFor}
                         w="30%"
-                        defaultValue={pet?.requestedFor}
-                      ></Input>
+                        
+                      />
                     </Flex>
                     <Flex
                       alignItems={'center'}
@@ -732,18 +798,13 @@ export function SetPetExam() {
                       >
                         <strong> Data</strong>
                       </Text>
-                      <Text
+                      <Input
                         bgColor="white"
                         borderRadius={'0'}
                         borderColor={'black'}
                         w="50%"
-                      >
-                        {new Intl.DateTimeFormat('pt-BR').format(
-                          new Date(
-                            pet.requesteData ? pet.requesteData : Date.now()
-                          )
-                        )}
-                      </Text>
+                        defaultValue={new Intl.DateTimeFormat('pt-BR', {day: '2-digit', month: '2-digit', year: '2-digit'}).format(examRequestedData)}
+                       />
                       <Text
                         border={'1px solid black'}
                         padding={'7px 73px'}
@@ -755,9 +816,9 @@ export function SetPetExam() {
                         bgColor="white"
                         borderRadius={'0'}
                         borderColor={'black'}
-                        defaultValue={pet.requestedCrm}
+                       defaultValue={pet?.medicineRecords?.petExams.find((exam) => exam.name === exam.name)?.requestedCrm}
                         w="30%"
-                      ></Input>
+                   />
                     </Flex>
 
                     {typeTableView}

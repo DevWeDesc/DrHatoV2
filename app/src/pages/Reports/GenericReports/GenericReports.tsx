@@ -163,6 +163,7 @@ export const GenericReports = () => {
     });
   }
 
+  console.log(reportFinanceDataAPI)
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -188,21 +189,19 @@ export const GenericReports = () => {
                     dataReport={reportFinanceDataAPI}
                     tableType={`${typeReports}`}
                   />
-                  {/* <ReportsGeneticTable tableType={`${typeReports}`} /> */}
-                  <CSVLink
-                    filename={`relatorio${typeReports}`}
-                    data={dataCSV}
-                  ></CSVLink>
-                  {/* <Button */}
-                  <Button
-                    maxW="-webkit-max-content"
-                    px={21}
-                    py={7}
-                    colorScheme="whatsapp"
-                    onClick={() => createExcellReport()}
-                  >
-                    Exportar ExcelS
-                  </Button>
+                 
+                    <Button
+                
+   
+
+                      maxW="-webkit-max-content"
+                      px={21}
+                      py={7}
+                      colorScheme="whatsapp"
+                      onClick={() => createExcellReport()}
+                    >
+                      Exportar ExcelS
+                    </Button>
                   {/* <CSVLink filename={`relatorio${typeReports}`} data={dataCSV}>
                 
                   </CSVLink> */}

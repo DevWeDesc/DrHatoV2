@@ -296,4 +296,44 @@ export const examsController = {
       });
     }
   },
+
+
+  createExam: async (  request: FastifyRequest, reply: FastifyReply) => {
+    try {
+
+      const CreateExamSchema = z.object({
+        name: z.string(),
+        price: z.number(),
+        disponible: z.boolean(), 
+        onePart: z.boolean(),
+        twoPart: z.boolean(),
+        report: z.boolean(),
+        sector: z.coerce.number()
+      })
+      
+      const {disponible, name, onePart, price, report, twoPart, sector} = CreateExamSchema.parse(request.body)
+
+
+      await prisma.oldExams.create({
+        data: {
+          name,
+          price,
+          onePart,
+          twoPart,
+          byReport: report,
+          disponible,
+          sector
+
+        }
+      })
+
+      reply.status(201)
+
+    } catch (error) {
+
+      console.error(error)
+    }
+  }
+
+
 };

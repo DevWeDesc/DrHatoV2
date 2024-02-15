@@ -2,10 +2,9 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../interface/PrismaInstance";
 import { labService } from "../services/labsService";
 import { Prisma } from "@prisma/client";
+import { z } from "zod";
 
 export const labsController = {
-
-
   getOpenExamsInLab: async (request:FastifyRequest, reply: FastifyReply) => {
     try {
       const exams = await prisma.examsForPet.findMany({
@@ -372,6 +371,37 @@ export const labsController = {
     } catch (error) {
         console.log(error)
         reply.send(error)
+    }
+  },
+
+
+  getPetOpenedExamDetails: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const GetDetailsSchema = z.object({
+        petId: z.coerce.number()
+      })
+      const {petId} = GetDetailsSchema.parse(request.params)
+
+      const petDetails =  await prisma.pets.findUnique({
+        where: {
+          id: petId
+        },include: {
+          customer: {
+            select: {
+              name: true
+            }
+          },
+          medicineRecords: {
+            include: {petExams: {
+              where:{ doneExame: false}
+            }}
+          }
+        }
+      })
+
+      reply.send(petDetails)
+    } catch (error) {
+        console.error(error)
     }
   }
 

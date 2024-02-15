@@ -41,24 +41,38 @@ type ExamsDTO = {
 type CreateExamsDTO = {
   name: string;
   price: number;
-  available: boolean;
-  examsType: any;
+  disponible: boolean;
+  sector: number;
+  onePart: boolean;
+  twoPart: boolean;
+  report: boolean;
 };
 
+interface SectorsDto {
+  name: string;
+  id: number;
+}
 export function ListExams() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [exams, setExams] = useState<ExamsDTO[]>([]);
+  const [sectors, setSectors] = useState<SectorsDto[]>([])
 
   async function getExamesListData() {
     const exams = await api.get("/exams/old/all");
     setExams(exams.data.exams);
   }
 
+  async function getSectors () {
+    const sectors = await api.get('/sectors')
+    setSectors(sectors.data)
+  }
+
   const queryClient = useQueryClient();
   const { isLoading, error } = useQuery("adminExams", () => getExamesListData);
+  const { isLoading: sectorLoading, error: sectorError, data: sectorsData } = useQuery("sectors", () => getSectors);
   const { mutate } = useMutation(
-    (data: CreateExamsDTO) => api.post("exams", data),
+    (data: CreateExamsDTO) => api.post("/exams", data),
     {
       onSuccess: () => {
         queryClient.invalidateQueries("adminExams");
@@ -76,8 +90,11 @@ export function ListExams() {
       mutate({
         name: values.name,
         price: Number(values.price),
-        available: values.available,
-        examsType: values.examsType,
+        disponible: values.disponible,
+        onePart: values.onePart,
+        twoPart: values.twoPart,
+        report: values.report,
+        sector: values.sector
       });
     } catch (error) {
       console.error(error);
@@ -229,12 +246,13 @@ export function ListExams() {
                     <Input {...register("price")} name="price" />
                   </Td>
                 </Tr>
-                <Tr>
-                  <Td py={1}>Faixas Etárias</Td>
+                <Tr >
+                  <Td py={1}>Disponivel</Td>
                   <Td py={1}>
-                    <Input name="" />
+                    <Checkbox  border="2px" {...register("disponible")} name="disponible"  />
                   </Td>
                 </Tr>
+             
                 <Tr>
                   <Td py={1}>Setor</Td>
                   <Td py={1}>
@@ -244,7 +262,12 @@ export function ListExams() {
                         backgroundColor: "gray.100",
                         borderColor: "blackAlpha.800",
                       }}
+                      {...register("sector")}
+                      name="sector"
                     >
+                      {
+                       sectors.map((sector) => <option key={sector.id} value={sector.id}>{sector.name}</option>)
+                      }
                       <option value="Veterinário">Veterinário</option>
                       <option value="Laboratório">Laboratório</option>
                       <option value="Internação">Internação</option>
@@ -270,13 +293,23 @@ export function ListExams() {
               <Tbody>
                 <Tr>
                   <Th colSpan={2} textAlign="center">
-                    <Checkbox borderColor="blackAlpha.500" />
+                    <Checkbox 
+                    {...register("onePart")}
+                    name="onePart"
+                   
+                    borderColor="blackAlpha.500" />
                   </Th>
                   <Th colSpan={2} textAlign="center">
-                    <Checkbox borderColor="blackAlpha.500" />
+                    <Checkbox 
+                     {...register("twoPart")}
+                      name="twoPart"
+                    borderColor="blackAlpha.500" />
                   </Th>
                   <Th colSpan={2} textAlign="center">
-                    <Checkbox borderColor="blackAlpha.500" />
+                    <Checkbox
+                    {...register("report")}
+                    name="report"
+                     borderColor="blackAlpha.500" />
                   </Th>
                 </Tr>
               </Tbody>
