@@ -91,6 +91,18 @@ export const accountService = {
           });
         });
 
+      await prisma.hospVetBox
+        .findUnique({ where: { id: parseInt(boxId) } })
+        .then(async (res) => {
+          await prisma.hospVetBox.update({
+            where: { id: res?.id },
+            data: {
+              movimentedValues:
+                Number(res?.movimentedValues) + Number(totalDebit),
+            },
+          });
+        });
+
       await prisma.customer.update({
         where: { id: parseInt(accountId) },
         data: {
