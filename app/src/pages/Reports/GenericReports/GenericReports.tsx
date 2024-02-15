@@ -166,7 +166,7 @@ export const GenericReports = () => {
   }
 
 
-  
+  console.log(reportFinanceDataAPI)
   return (
     <ChakraProvider>
       <AdminContainer>
