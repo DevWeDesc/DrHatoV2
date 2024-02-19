@@ -64,6 +64,7 @@ export const reportsController = {
         request.body
       );
 
+
       const examsAllFiltered = await prisma.examsForPet.findMany({
         where: {
           AND: [
@@ -71,21 +72,43 @@ export const reportsController = {
             { doneExame: true },
             { requesteData: { gte: new Date(initialDate) } },
             { updatedAt: { lt: new Date(finalDate) } },
+
           ],
+
+          
         },
+        include:{
+          medicine: {
+            select: {pet: {select: {name: true, CodAnimal: true, especie: true, customer: {
+              select: {name: true, email: true, tell: true, phone: true}
+            }}},}
+          }
+        }
       });
 
-      const data = {
-        exams: {
-          examsAll: examsAllFiltered,
-          consultsQuantity: examsAllFiltered.length,
-          consultsInvoicing: examsAllFiltered.reduce(
-            (accumulator, examValue) => accumulator + Number(examValue.price),
-            0
-          ),
-        },
-      };
+      const exams = await prisma.oldExams.findMany()
+      const sectors =  await prisma.sectors.findMany()
 
+
+      const data = examsAllFiltered.map((data) => {
+        const filtered = {
+          // data do último update (onde deixa o doneExam True)
+        date: data.updatedAt,
+        customerName: data?.medicine.pet?.customer?.name,
+        customerEmail: data?.medicine.pet?.customer?.email,
+        customerTell: data?.medicine.pet?.customer?.tell,
+        customerPhone: data?.medicine.pet?.customer?.phone,
+        examName: data.name,
+        examPrice: Number(data.price),
+        petName: `${data.medicine?.pet?.name} - ${data.medicine?.pet?.CodAnimal}`,
+        petEsp: data?.medicine.pet?.especie,
+        responsibleVet: data?.responsibleForExam,
+        sector: sectors.find((sector) => sector.id === exams.find(exam => exam.name === data.name)?.sector)?.name
+        }
+
+        return filtered
+      })
+   
       return reply.send(data);
     } catch (error) {}
   },

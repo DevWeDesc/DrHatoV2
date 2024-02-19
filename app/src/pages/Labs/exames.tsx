@@ -258,10 +258,10 @@ export function LabExames() {
                         cursor="pointer"
                         onClick={() =>
                           navigate(
-                            `/Labs/Set/${exam.medicine.pet.id}/${
+                            `/Labs/Set/${exam.id}/${
                               exams.find((data: any) => data.name === exam.name)
                                 .codexam
-                            }`
+                            }/${exam.medicine?.pet.id}`
                           )
                         }
                       >
