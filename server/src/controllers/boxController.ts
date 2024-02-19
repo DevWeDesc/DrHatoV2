@@ -36,11 +36,32 @@ export const boxController = {
 
     const bodySchema = z.object({
       reasonForReturn: z.string(),
+      userName: z.string(),
+      password: z.string(),
       value: z.string(),
     });
-    const { reasonForReturn, value } = bodySchema.parse(request.body);
+    const { reasonForReturn, userName, value } = bodySchema.parse(request.body);
 
     try {
+      await prisma.returnsClientBox
+        .findUnique({
+          where: { id: Number(installmentId) },
+        })
+        .then((res) => {
+          if (res != null) {
+            return reply
+              .status(400)
+              .send("Já foi efetuada a devolução nessa compra!");
+          }
+        });
+      await prisma.user
+        .findUnique({ where: { username: userName } })
+        .then((res) => {
+          if (res == null) {
+            return reply.status(400).send("Usuário não encontrado!");
+          }
+        });
+
       var returnCreated = await prisma.returnsClientBox.create({
         data: {
           reasonForReturn: reasonForReturn,
