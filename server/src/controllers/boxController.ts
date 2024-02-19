@@ -237,91 +237,92 @@ export const boxController = {
     request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
   ) => {
-    const { boxId, vetBox } = request.params;
+    const ParamsSchema =  z.object({
+      vetBox: z.coerce.number(),
+      boxId: z.coerce.number(),
+    })
+    const { boxId, vetBox } = ParamsSchema.parse(request.params);
     const { entryValues, exitValues, closedBy } = boxSchema.parse(request.body);
     try {
-      const actualDate = new Date();
 
-      const accounts = await prisma.customer.findMany({
+      const customers = await prisma.customer.findMany({
         where: {
-          customerAccount: { debits: { gte: 1 }, clientIsVip: false || null },
+          customerAccount: { debits: { gte: 1 }, clientIsVip: false },
         },
         include: {
           customerAccount: true,
         },
       });
 
-      if (accounts.length > 0) {
-        return reply
+      const accounts =  customers.map((customer) => {
+        return customer.customerAccount
+      })
+    
+
+
+      if (accounts) {
+        const debits = accounts.reduce((acc, account) => {
+          return acc += Number(account?.debits)
+        }, 0)
+
+        if(debits >= 1) {
+          return reply
           .status(400)
           .send("Não é possivel fechar o caixa, pois tem débitos em aberto!");
-      } else {
-        await prisma.hospVetBox
-          .update({
-            where: { id: parseInt(vetBox) },
-            data: {
-              historyBox: {
-                update: {
-                  where: { id: parseInt(boxId) },
-                  data: {
-                    closeBox: actualDate,
-                    entryValues: { increment: entryValues },
-                    exitValues: { increment: exitValues },
-                    closedBy,
-                    boxIsOpen: false,
-                  },
+        }
+
+      }
+
+      const dailyBox = await prisma.hospBoxHistory.findUnique({
+        where: { id: boxId },
+      });
+
+      const fatherBox = await prisma.hospVetBox.findUnique({where: {id: vetBox}})
+
+      
+      if (!dailyBox) {
+        return;
+      }
+
+      let totalMovimentendValues =
+      Number(fatherBox?.entryValues) +
+      Number(fatherBox?.exitValues);
+
+      let totalValues =
+      Number(dailyBox.entryValues) -
+      Number(dailyBox.exitValues)
+
+     const dailyVetBox = await prisma.hospVetBox
+        .update({
+          where: { id: vetBox },
+          data: {
+            entryValues: {increment: Number(dailyBox.entryValues)},
+            exitValues: {
+              increment: Number(dailyBox.exitValues),
+            },
+            movimentedValues: totalMovimentendValues,
+            
+            historyBox: {
+              update: {
+                where: { id: boxId },
+                data: {
+                  closeBox: new Date(),
+                  entryValues: { increment: entryValues },
+                  exitValues: { increment: exitValues },
+                  totalValues,
+                  closedBy,
+                  boxIsOpen: false,
+
                 },
               },
             },
-          })
-          .then(async () => {
-            const dailyBox = await prisma.hospBoxHistory.findUnique({
-              where: { id: parseInt(boxId) },
-            });
-            if (!dailyBox) {
-              return;
-            }
+          },
+        })
 
-            await prisma.hospVetBox
-              .update({
-                where: { id: parseInt(vetBox) },
-                data: {
-                  entryValues: { increment: Number(dailyBox.entryValues) },
-                  exitValues: {
-                    increment: Number(dailyBox.exitValues),
-                  },
-                },
-              })
-              .then(async () => {
-                const dailyVetBox = await prisma.hospVetBox.findUnique({
-                  where: { id: parseInt(vetBox) },
-                });
-
-                let totalMovimentendValues =
-                  Number(dailyVetBox?.entryValues) +
-                  Number(dailyVetBox?.exitValues);
-
-                await prisma.hospVetBox
-                  .update({
-                    where: { id: parseInt(vetBox) },
-                    data: {
-                      movimentedValues: totalMovimentendValues,
-                      historyBox: {
-                        update: {
-                          where: { id: parseInt(boxId) },
-                          data: {
-                            totalValues:
-                              Number(dailyBox.entryValues) -
-                              Number(dailyBox.exitValues),
-                          },
-                        },
-                      },
-                    },
-                  })
-                  .then(() => reply.send("Caixa fechado com sucesso"));
-              });
-          });
-      }
+      
+        reply.send({
+          dailyVetBox
+        })
     } catch (error) {
       console.log(error);
     }

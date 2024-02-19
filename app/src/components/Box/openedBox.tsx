@@ -3,24 +3,25 @@ import {
   Flex,
   Box, Button
 } from "@chakra-ui/react";
-import { useState, Suspense, useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState,  useEffect } from "react";
 import { toast } from "react-toastify";
-import { BoxContext } from "../../contexts/BoxContext";
-import { HistoryBoxProps } from "../../interfaces";
+import { BoxProps, HistoryBoxProps } from "../../interfaces";
 import { api } from "../../lib/axios";
 import { ClosedBox } from "./closedBox";
 export function OpenedBox() {
-  const { fatherBox } = useContext(BoxContext)
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [dailyBox, setDailyBox] = useState({} as HistoryBoxProps);
+  const [fatherBox, setFatherBox] = useState({} as BoxProps);
 
   async function GetDailyBox () {
     const response = await api.get("/dailybox")
     setDailyBox(response.data)
   }
-
+   async function getFatherBox () {
+    const response = await api.get("/vetbox")
+    setFatherBox(response.data)
+  } 
   
   async function handleOpenBox() {
     try {
@@ -77,6 +78,7 @@ export function OpenedBox() {
   
   useEffect(() => {
     GetDailyBox() 
+    getFatherBox()
   }, [])
 
 

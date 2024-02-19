@@ -110,6 +110,57 @@ export const reportsController = {
       })
    
       return reply.send(data);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
   },
+
+  reportProceduresDoneForVets: async function (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) {
+    try {
+      const ReportBySectorSchema = z.object({
+        initialDate: z.string(),
+        finalDate: z.string(),
+      });
+
+      const { initialDate, finalDate } = ReportBySectorSchema.parse(
+        request.body
+      );
+
+    
+      const sectors =  await prisma.sectors.findMany()
+
+
+      const proceduresFiltered = await prisma.proceduresForPet.findMany({
+        where: {
+          AND: [
+            // Quando uma consulta for concluida dar um update na tabela examsForPet no campo doneExame para true
+            { isDone: true },
+            { requestedDate: { gte: new Date(initialDate) } },
+            { finishedDate: { lt: new Date(finalDate) } },
+
+          ],
+        },
+        include:{
+          medicine: {
+            select: {pet: {select: {name: true, CodAnimal: true, especie: true, customer: {
+              select: {name: true, email: true, tell: true, phone: true}
+            }}},}
+          }
+        }
+      });
+
+      
+
+
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
+
+
+
 };
