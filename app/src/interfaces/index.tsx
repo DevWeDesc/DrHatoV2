@@ -470,3 +470,18 @@ interface IReportItem {
 export interface IReportResponse {
   reports: IReportItem[];
 }
+
+export interface IReportExams {
+  id: number;
+  date: string;
+  customerName: string;
+  customerEmail: string;
+  customerTell?: string;
+  customerPhone: string;
+  examName: string;
+  examPrice: number;
+  petName: string;
+  petEsp: string;
+  responsibleVet: string;
+  sector: string;
+}
