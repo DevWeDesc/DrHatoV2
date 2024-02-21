@@ -238,7 +238,7 @@ export function Router() {
           <Route path="/Labs/Exames" element={<LabExames />} />
           <Route path="/Labs/Exames/:id" element={<DataExames />} />
           <Route path="/Labs/Imagens" element={<LabImagens />} />
-          <Route path="/Labs/Set/:id/:examId" element={<SetPetExam />} />
+          <Route path="/Labs/Set/:id/:examId/:codAnimal" element={<SetPetExam />} />
           <Route path="/Schedule" element={<Schedules />} />
           <Route path="/Schedule/Menu" element={<ScheduleMenu />} />
           <Route path="/Admissions" element={<Admissions />} />

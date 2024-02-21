@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { BoxContext } from "../../../contexts/BoxContext";
 import { AxiosResponse } from "axios";
 import { Message } from "react-hook-form";
+import { BoxProps, HistoryBoxProps } from "../../../interfaces";
 
 type resTypeBox = {
   Message: string;
@@ -24,33 +25,47 @@ type resTypeBox = {
 };
 
 export function BoxReception() {
-  const { fatherBox, dailyBox, setReloadData } = useContext(BoxContext);
+  const [dailyBox, setDailyBox] = useState({} as HistoryBoxProps);
+  const [fatherBox, setFatherBox] = useState({} as BoxProps);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") as string);
 
-  async function handleCloseBox() {
-    try {
-      const data = {
-        entryValues: 1000,
-        exitValues: 500,
-        closedBy: user.username,
-      };
 
-      let fatherBoxValue = Number(fatherBox.id) - 1;
+  async function GetDailyBox () {
+    const response = await api.get("/dailybox")
+    setDailyBox(response.data)
+  }
+   async function getFatherBox () {
+    const response = await api.get("/vetbox")
+    setFatherBox(response.data)
+  } 
+
+  async function handleCloseBox() {
+
+    const data = {
+      entryValues: 1000,
+      exitValues: 500,
+      closedBy: user.username,
+    };
+
+    try {
       await api
-        .put(`/closehistbox/${fatherBoxValue}/${dailyBox.id}`, data)
+        .patch(`/closehistbox/${fatherBox.id}/${dailyBox.id}`, data)
         .then((res: any) => {
-          setReloadData(true);
           navigate("/Recepcao");
           toast.success("Caixa fechado com sucesso!");
           console.log(res.respose.data);
         });
     } catch (error) {
-      toast.warning(
-        "Não é possivel fechar o caixa, pois tem débitos em aberto!"
-      );
+        console.log(error);
     }
   }
+
+  useEffect(() => {
+    GetDailyBox() 
+    getFatherBox()
+  }, [])
+
 
   return (
     <ChakraProvider>

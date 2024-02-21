@@ -9,7 +9,7 @@ export async function boxRoutes(app: FastifyInstance) {
   app.get("/lastbox", boxController.showlastBoxClosed);
   app.get("/debitaccounts", boxController.showCustomerDebitsOpen);
   app.post("/openhistbox/:boxId", boxController.openBoxDaily);
-  app.put("/closehistbox/:vetBox/:boxId", boxController.closeBoxDaily);
+  app.patch("/closehistbox/:vetBox/:boxId", boxController.closeBoxDaily);
   app.get("/account/debitsAll", boxController.getAllDebits);
   app.get("/account/debitByBox/:boxId", boxController.getDebitsByBox);
   app.post(

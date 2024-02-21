@@ -129,7 +129,7 @@ export interface PetExam {
 
 
 export function SetPetExam() {
-  const { id, examId } = useParams<{ id: string; examId: string }>()
+  const { id, examId, codAnimal } = useParams<{ id: string; examId: string; codAnimal: string }>()
   const user = JSON.parse(localStorage.getItem('user') as string)
   const [pet, setPet] = useState({} as PetProps)
   const [disableRequest, setDisableRequest] = useState(false)
@@ -138,7 +138,7 @@ export function SetPetExam() {
   const { register, handleSubmit } = useForm()
   const navigate = useNavigate()
   async function Pets() {
-    const pets = await api.get(`/labexam/${id}`)
+    const pets = await api.get(`/labexam/${codAnimal}`)
     setPet(pets.data)
   }
   async function Exam() {
