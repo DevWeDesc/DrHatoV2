@@ -10,24 +10,20 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { ReportsVetData } from "../../mocks/ReportsVetData";
-import { ReportFinanceData } from "../../mocks/ReportsFinance";
-import { ReportsExamsData } from "../../mocks/ReportsExams";
 import { useState } from "react";
-import { IReportResponse } from "../../interfaces";
+import { IReportExams, IReportResponse } from "../../interfaces";
 
 type ReportsVetTableType = {
   tableType: string;
   dataReport: IReportResponse;
+  dataReportExam: IReportExams[];
 };
 
 export const ReportsGeneticTable = ({
   dataReport,
   tableType,
+  dataReportExam,
 }: ReportsVetTableType) => {
-
-
-
-
   const TableTypes = () => {
     let TableContent: JSX.Element = <></>;
     const [totalPayment, setTotalPayment] = useState([0]);
@@ -83,7 +79,6 @@ export const ReportsGeneticTable = ({
               <Thead>
                 <Tr>
                   <Th>Data</Th>
-                  <Th>Quantidade</Th>
                   <Th>Nome do proprietário</Th>
                   <Th>E-mail</Th>
                   <Th>Telefone</Th>
@@ -97,20 +92,23 @@ export const ReportsGeneticTable = ({
                 </Tr>
               </Thead>
               <Tbody>
-                {ReportsExamsData.map((report, index) => (
-                  <Tr key={index}>
-                    <Td>{report.Data}</Td>
-                    <Td>{report.Quantidade}</Td>
-                    <Td>{report.NomeProprietario}</Td>
-                    <Td>{report.Email}</Td>
-                    <Td>{report.Telefone}</Td>
-                    <Td>{report.Telefone2}</Td>
-                    <Td>{report.Procedimento}</Td>
-                    <Td>{report.Pet}</Td>
-                    <Td>{report.Especie}</Td>
-                    <Td>{report.Valor}</Td>
-                    <Td>{report.Veterinario}</Td>
-                    <Td>{report.Setor}</Td>
+                {dataReportExam?.map((data: IReportExams) => (
+                  <Tr key={data.id}>
+                    <Td>{Intl.DateTimeFormat().format(new Date(data.date))}</Td>
+                    <Td>{data.customerName}</Td>
+                    <Td>{data.customerEmail}</Td>
+                    <Td>
+                      {!data.customerTell
+                        ? "Não tem telefone fixo"
+                        : data.customerTell}
+                    </Td>
+                    <Td>{data.customerPhone}</Td>
+                    <Td>{data.examName}</Td>
+                    <Td>{data.petName}</Td>
+                    <Td>{data.petEsp}</Td>
+                    <Td>R$ {data.examPrice.toFixed(2)}</Td>
+                    <Td>{data.responsibleVet}</Td>
+                    <Td>{data.sector}</Td>
                   </Tr>
                 ))}
               </Tbody>
@@ -122,72 +120,84 @@ export const ReportsGeneticTable = ({
         TableContent = (
           <TableContainer>
             {dataReport?.reports?.map((data, index) => {
-              const admissions = data?.report?.admissions?.procedures
-              const consultsQuantity =  data.report.consults.procedures.reduce((acc, item) => {return acc + item.quantity}, 0)
-              const admissionsQuantity = data.report.admissions.procedures.reduce((acc, item) => {return acc + item.quantity}, 0)
-              const fatConsults = data.report.consults.consultsInvoicing
-              const fatAdmissions = data.report.admissions.consultsInvoicing
-              const qtdTotal = consultsQuantity + admissionsQuantity
-              const fatTotal = fatConsults + fatAdmissions
-            return    <Table key={data?.id} variant="striped" colorScheme="gray">
-            <Thead bg="gray.200">
-              <Tr>
-                <Th colSpan={7} textColor="black" fontWeight="bold">
-                  {data?.name}
-                </Th>
-              </Tr>
-              <Tr>
-                <Th>Procedimento</Th>
-                <Th>Qtd Amb</Th>
-                <Th>Qtd Int</Th>
-                <Th>Fat Amb</Th>
-                <Th>Fat Int</Th>
-                <Th>Qtd Total</Th>
-                <Th>Fat Total</Th>
-              </Tr>
-              
-            </Thead>
-            <Tbody>
-              {data?.report?.consults?.procedures?.map((procedure, index) => {
-                const fatInt = admissions[index]?.quantity ? admissions[index]?.quantity * Number(procedure.value) : ''
-                const fatAmb = procedure.quantity * Number(procedure.value)
-                const totalQuantity = admissions[index]?.quantity ? admissions[index]?.quantity + procedure.quantity : procedure.quantity + 0
-                const totalFat = admissions[index]?.quantity ? 
-                (admissions[index]?.quantity + procedure.quantity) * (Number(admissions[index]?.value) + Number(procedure.value))
-                :
-                (procedure.quantity) * (Number(procedure.value))
-              
-                return (
-                  <>
-                  <Tr key={procedure.id}>
-                    <Th>{procedure.name}</Th>
-                    <Th>{procedure.quantity}</Th>
-                    <Th>{admissions[index]?.quantity}</Th>
-                    <Th>{fatAmb}</Th>
-                    <Th>{fatInt}</Th>
-                    <Th>{totalQuantity}</Th>
-                    <Th>{totalFat}</Th>
-                     
-                  </Tr>
-                  
-               
-                  </>
-              
-              
-                )
-                
-              })}
-                <Tr bgColor="whatsapp.100">
-                  <Th >Total</Th>
-                  <Th>{consultsQuantity}</Th>
-                  <Th>{admissionsQuantity}</Th>
-                  <Th>{fatConsults}</Th>
-                  <Th>{fatAdmissions}</Th>
-                  <Th>{qtdTotal}</Th>
-                  <Th>{fatTotal}</Th>
-                </Tr>
-            </Tbody>
-          </Table>
+              const admissions = data?.report?.admissions?.procedures;
+              const consultsQuantity = data.report.consults.procedures.reduce(
+                (acc, item) => {
+                  return acc + item.quantity;
+                },
+                0
+              );
+              const admissionsQuantity =
+                data.report.admissions.procedures.reduce((acc, item) => {
+                  return acc + item.quantity;
+                }, 0);
+              const fatConsults = data.report.consults.consultsInvoicing;
+              const fatAdmissions = data.report.admissions.consultsInvoicing;
+              const qtdTotal = consultsQuantity + admissionsQuantity;
+              const fatTotal = fatConsults + fatAdmissions;
+              return (
+                <Table key={data?.id} variant="striped" colorScheme="gray">
+                  <Thead bg="gray.200">
+                    <Tr>
+                      <Th colSpan={7} textColor="black" fontWeight="bold">
+                        {data?.name}
+                      </Th>
+                    </Tr>
+                    <Tr>
+                      <Th>Procedimento</Th>
+                      <Th>Qtd Amb</Th>
+                      <Th>Qtd Int</Th>
+                      <Th>Fat Amb</Th>
+                      <Th>Fat Int</Th>
+                      <Th>Qtd Total</Th>
+                      <Th>Fat Total</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {data?.report?.consults?.procedures?.map(
+                      (procedure, index) => {
+                        const fatInt = admissions[index]?.quantity
+                          ? admissions[index]?.quantity *
+                            Number(procedure.value)
+                          : "";
+                        const fatAmb =
+                          procedure.quantity * Number(procedure.value);
+                        const totalQuantity = admissions[index]?.quantity
+                          ? admissions[index]?.quantity + procedure.quantity
+                          : procedure.quantity + 0;
+                        const totalFat = admissions[index]?.quantity
+                          ? (admissions[index]?.quantity + procedure.quantity) *
+                            (Number(admissions[index]?.value) +
+                              Number(procedure.value))
+                          : procedure.quantity * Number(procedure.value);
+
+                        return (
+                          <>
+                            <Tr key={procedure.id}>
+                              <Th>{procedure.name}</Th>
+                              <Th>{procedure.quantity}</Th>
+                              <Th>{admissions[index]?.quantity}</Th>
+                              <Th>{fatAmb}</Th>
+                              <Th>{fatInt}</Th>
+                              <Th>{totalQuantity}</Th>
+                              <Th>{totalFat}</Th>
+                            </Tr>
+                          </>
+                        );
+                      }
+                    )}
+                    <Tr bgColor="whatsapp.100">
+                      <Th>Total</Th>
+                      <Th>{consultsQuantity}</Th>
+                      <Th>{admissionsQuantity}</Th>
+                      <Th>{fatConsults}</Th>
+                      <Th>{fatAdmissions}</Th>
+                      <Th>{qtdTotal}</Th>
+                      <Th>{fatTotal}</Th>
+                    </Tr>
+                  </Tbody>
+                </Table>
+              );
             })}
           </TableContainer>
         );
