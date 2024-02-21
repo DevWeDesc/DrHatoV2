@@ -11,20 +11,23 @@ import LogoHatoRelatorios from "../../../assets/logoHatoRelatórios.jpg";
 import { useNavigate, useParams } from "react-router-dom";
 import { TbArrowBack } from "react-icons/tb";
 import { ReportsGeneticTable } from "../../../components/Tables/ReportsGenericTable";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { ReportsExamsData } from "../../../mocks/ReportsExams";
 import { ReportsVetData } from "../../../mocks/ReportsVetData";
 import { ReportFinanceData } from "../../../mocks/ReportsFinance";
 import * as XLSX from "xlsx";
-import { CSVLink } from "react-csv";
 import { api } from "../../../lib/axios";
-import { Toast } from "react-toastify/dist/components";
-import { IReportResponse } from "../../../interfaces";
+import { IReportExams, IReportResponse } from "../../../interfaces";
 
 interface IDataReport {
   initialDate: Date | null | string;
   finallyDate: Date | null | string;
+}
+
+interface IReportDataAPI {
+  ResponseSector: IReportResponse;
+  ReponseExams: IReportExams[];
 }
 
 export const GenericReports = () => {
@@ -35,9 +38,7 @@ export const GenericReports = () => {
     initialDate: null,
     finallyDate: null,
   } as IDataReport);
-  const [reportFinanceDataAPI, setReportFinanceDataAPI] = useState(
-    {} as IReportResponse
-  );
+  const [reportDataAPI, setReportDataAPI] = useState({} as IReportDataAPI);
   const formattedData = (date: string | Date | null | any) => {
     return Intl.DateTimeFormat().format(new Date(date));
   };
@@ -95,6 +96,7 @@ export const GenericReports = () => {
       ...DateReport,
       initialDate: new Date(ev.target.value).toISOString(),
     });
+    console.log(DateReport.initialDate);
   };
 
   const handelFinalDate = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,8 +114,24 @@ export const GenericReports = () => {
     await api
       .post("/reports/sector", data)
       .then((res) => {
-        setReportFinanceDataAPI(res.data);
-        toast.success("Relatório gerado com sucesso!");
+        setReportDataAPI({ ...reportDataAPI, ResponseSector: res.data });
+        if (showTable) toast.success("Relatório gerado com sucesso!");
+      })
+      .catch((error) => {
+        toast.error(error);
+      });
+  };
+
+  const GetExamsReports = async () => {
+    const data = {
+      initialDate: DateReport.initialDate,
+      finalDate: DateReport.finallyDate,
+    };
+    await api
+      .post("/reports/exams", data)
+      .then((res) => {
+        setReportDataAPI({ ...reportDataAPI, ReponseExams: res.data });
+        if (showTable) toast.success("Relatório gerado com sucesso!");
       })
       .catch((error) => {
         toast.error(error);
@@ -163,7 +181,20 @@ export const GenericReports = () => {
     });
   }
 
-  console.log(reportFinanceDataAPI)
+  const getReportByParam = () => {
+    switch (typeReports) {
+      case "Exams":
+        GetExamsReports();
+        break;
+      case "FinanceSector":
+        GetFinanceSector();
+        break;
+      default:
+        GetFinanceSector();
+        break;
+    }
+  };
+
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -186,22 +217,19 @@ export const GenericReports = () => {
                     {title}
                   </Text>
                   <ReportsGeneticTable
-                    dataReport={reportFinanceDataAPI}
+                    dataReport={reportDataAPI.ResponseSector}
+                    dataReportExam={reportDataAPI.ReponseExams}
                     tableType={`${typeReports}`}
                   />
-                 
-                    <Button
-                
-   
-
-                      maxW="-webkit-max-content"
-                      px={21}
-                      py={7}
-                      colorScheme="whatsapp"
-                      onClick={() => createExcellReport()}
-                    >
-                      Exportar ExcelS
-                    </Button>
+                  <Button
+                    maxW="-webkit-max-content"
+                    px={21}
+                    py={7}
+                    colorScheme="whatsapp"
+                    onClick={() => createExcellReport()}
+                  >
+                    Exportar ExcelS
+                  </Button>
                   {/* <CSVLink filename={`relatorio${typeReports}`} data={dataCSV}>
                 
                   </CSVLink> */}
@@ -273,8 +301,8 @@ export const GenericReports = () => {
                         py="8"
                         rounded="0"
                         onClick={() => {
-                          GetFinanceSector();
                           handleShowTable();
+                          getReportByParam();
                         }}
                       >
                         Visualizar
