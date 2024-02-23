@@ -71,6 +71,7 @@ export function ListExams() {
   const queryClient = useQueryClient();
   const { isLoading, error } = useQuery("adminExams", () => getExamesListData);
   const { isLoading: sectorLoading, error: sectorError, data: sectorsData } = useQuery("sectors", () => getSectors);
+  
   const { mutate } = useMutation(
     (data: CreateExamsDTO) => api.post("/exams", data),
     {

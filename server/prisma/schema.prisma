@@ -671,7 +671,7 @@ model OldExams {
 
 model PartExams {
   id              Int           @id @default(autoincrement())
-  codpart         Int?          @unique
+  codpart         Int?          @unique @default(autoincrement())
   OldExams        OldExams?     @relation(fields: [oldExamsCodexam], references: [codexam])
   oldExamsCodexam Int?
   examsDetails    PartDetails[]
