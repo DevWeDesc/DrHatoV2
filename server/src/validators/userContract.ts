@@ -1,6 +1,8 @@
 import { ExamsType } from "../schemas/schemasValidator";
 import bcrypt from "bcrypt"
 import { prisma } from "../interface/PrismaInstance";
+import { ResourceNotFoundError } from "../errors/ResouceNotFoundError";
+import { InvalidPasswordError } from "../errors/InvalidPasswordError";
 
 export class ValidationContract {
     private errors: string[];
@@ -19,14 +21,22 @@ export class ValidationContract {
 
 
     public async checkPassword(value: { username: string, password: string}, message: string) {
-      const user = await prisma.user.findFirst({where: {username: value.username, password: value.password }})
-      if(!user) return
+      const user = await prisma.user.findUnique({where: {username: value.username,  }})
       
-      const isCorrectPassword = await bcrypt.compare(value.password, user.password)
-
-      if(isCorrectPassword === false) {
-          this.errors.push(message)
+      if(!user) {
+        throw new ResourceNotFoundError()
       }
+
+      const correctPassword =  await bcrypt.compare(value.password, user.password)
+
+
+      if(!correctPassword) {
+        throw new InvalidPasswordError()
+      }
+
+      if(correctPassword) {
+        return true
+      }  
   }
 
     public async userAlreadyExists(value: string, message: string) {
