@@ -5,6 +5,8 @@ import {  UserSchema  } from "../schemas/schemasValidator";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { z } from "zod";
+import { ResourceNotFoundError } from "../errors/ResouceNotFoundError";
+import { InvalidPasswordError } from "../errors/InvalidPasswordError";
 
 const secret = process.env.JWT_TOKEN
 
@@ -54,6 +56,7 @@ loginUser: async(request: FastifyRequest, reply: FastifyReply)=> {
     password: z.string(),
   })
   try {
+
     let contract = new ValidationContract()
     const { username, password} = loginSchema.parse(request.body)
     const user = await prisma.user.findUnique({where: {
@@ -76,24 +79,28 @@ loginUser: async(request: FastifyRequest, reply: FastifyReply)=> {
     
   
     
-     await contract.checkPassword({username, password}, "Senha incorreta")
-    if(contract.hadError()){
-      reply.status(400).send(contract.showErrors())
-      contract.clearErrors()
-      return
-    } 
+    const checkedPassword =  await contract.checkPassword({username, password}, "Senha incorreta")
+
+    if(!checkedPassword || checkedPassword === undefined) {
+      throw new Error('Something wrong with this credentials')
+    }
+
     if(!secret) {
       return
     } 
 
   
    const token = jwt.sign({userData}, secret, {expiresIn: "01h"})
-   reply.send({token: token, userData}).status(200)
+     reply.send({token: token, userData}).status(200)
     
 
   } catch (error) {
+
+    if(error instanceof ResourceNotFoundError || error instanceof InvalidPasswordError) {
+      reply.status(404).send({error: error.message})
+    }
+
     reply.send({error: error}).status(500)
-    console.log(error)
   }
 },
 

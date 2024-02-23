@@ -3,18 +3,9 @@ import {
   Box,
   Button,
   Checkbox,
-  CheckboxGroup,
   Flex,
   FormControl,
-  Heading,
   Text,
-  Textarea,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  HStack,
   TableContainer,
   Table,
   Thead,
@@ -23,116 +14,101 @@ import {
   Tbody,
   Td,
   TableCaption,
+  HStack,
 } from "@chakra-ui/react";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { api } from "../../lib/axios";
-import { toast } from "react-toastify";
 import { Input } from "../admin/Input";
+import { GenericModal } from "../Modal/GenericModal";
+import { useQuery, useQueryClient } from "react-query";
+import { toast } from "react-toastify";
+import { LoadingSpinner } from "../Loading";
 
-interface ExamProps {
-  name: string;
-  price: string;
-}
-interface CharacProps {
-  data: Array<{
-    id: number;
-    name: string;
+export interface ExamsProps {
+  codexam:           number;
+  name:              string;
+  price:             number;
+  onePart:           boolean;
+  twoPart:           boolean;
+  byReport:          boolean;
+  ageGroups:         number;
+  disponible:        boolean;
+  minAge:            number;
+  maxAge:            number;
+  applicableMales:   null;
+  appicableFemales:  null;
+  defaultMetodology: null;
+  uniqueCod:         null;
+  sector:            number;
+  ImageLab:          null;
+  defaultLab:        null;
+  healthPlan:        null;
+  impressName:       null;
+  partExams:         Array<{
+    partName: string
   }>;
 }
 
+
 export function EditExams() {
   const { register, handleSubmit } = useForm();
-  const [characters, setCharacters] = useState({} as CharacProps);
-  const [characIdArray, setCharacIdArray] = useState([] as any);
-  const [examsIdArray, setExamsIdArray] = useState([] as any);
-  const [isMultiPart, setIsMultiPart] = useState(false);
-  const [isReportByText, setisReportByText] = useState(false);
-  const [isOnePart, setisOnePart] = useState(false);
-  const [examsData, setExamsData] = useState({} as ExamProps);
-  const [allExams, setAllExams] = useState([]);
-  const [caractersIsVisible, setCaractersIsVisible] = useState(false);
   const { id } = useParams<{ id: string }>();
+   const [examsData, setExamsData] = useState({} as ExamsProps);
+  const [isModalOpen, setModalIsOpen] = useState(false);
+  const [onePartSessionName, setOnePartSessionName] = useState("")
+  const queryClient = useQueryClient()
 
-  const handleCreateExam: SubmitHandler<FieldValues> = async (values) => {
-    let rangeAges = [values.minAge, values.maxAge];
-    try {
-      const data = {
-        name: values.name ? values.name : examsData.name,
-        price: values.price
-          ? parseInt(values.price)
-          : parseInt(examsData.price),
-        available: values.available,
-        examsType: values.examsType,
-        applicableGender: values.applicableGender,
-        subName: values.subName,
-        description: values.description,
-        ageRange: rangeAges,
-        characters: characIdArray,
-        isMultiPart,
-        exams: examsIdArray,
-        isReportByText,
-        isOnePart,
-      };
-
-      await api.put(`exams/${id}`, data);
-      toast.success("Exame configurado com sucesso");
-      // navigate(0);
-    } catch (error) {
-      toast.error("Falha ao criar novo Exame");
-    }
-  };
-
-  async function getCharacteristics() {
-    try {
-      const res = await api.get("/examcharac");
-      setCharacters(res.data);
-    } catch (error) {
-      console.error(error);
-    }
+  async function getExamsData(): Promise<ExamsProps> {
+    const response = await api.get(`/exams/${id}`);
+    return response.data
   }
 
-  async function getExamsData() {
-    try {
-      const response = await api.get(`/exams/${id}`);
-      setExamsData(response.data);
-      const allexams = await api.get("/exams");
-      setAllExams(allexams.data);
-    } catch (error) {
-      console.log(error);
+  const {isLoading} = useQuery('editExamDetails', {
+    queryFn: getExamsData,
+    onSuccess: (data) => {
+      setExamsData(data)
     }
+
+  })
+
+
+  
+   if(isLoading) {
+    return <LoadingSpinner />
+   }
+
+  async function handleCreateSessionOnePartExam() {
+    const data = {
+      isMultiPart: false,
+      isByText: false,
+      partName: onePartSessionName
+    }
+
+    if(examsData.partExams.length >= 1) {
+      toast.warning("Exames de uma parte podem possuir apenas uma sessão ")
+      return 
+    }
+
+    await api.post(`/parts/exams/${id}`, data)
+    queryClient.invalidateQueries('editExamDetails')
+    toast.success('Sessão criada com sucesso!')
+
   }
 
-  console.log("CHARACS", characters);
 
-  function removeIds(itemToRemove: string) {
-    const indice = characIdArray.indexOf(itemToRemove);
-    if (indice !== -1) {
-      characIdArray.splice(indice, 1);
-    }
-  }
 
-  function removeExamsIds(itemToRemove: string) {
-    const indice = examsIdArray.indexOf(itemToRemove);
-    if (indice !== -1) {
-      examsIdArray.splice(indice, 1);
-    }
-  }
 
-  useEffect(() => {
-    setCaractersIsVisible(false);
-    getExamsData();
-    getCharacteristics();
-  }, []);
+
+
+
 
   return (
     <Box flex="1" borderRadius={8} bg="gray.100" p="8">
-      {/* <Heading size="lg" fontWeight="normal">
-        Exames
-      </Heading> */}
+
       <FormControl
         as="form"
-        onSubmit={handleSubmit(handleCreateExam)}
+      
         justifyContent="space-between"
         display="flex"
         flexDirection="column"
@@ -178,22 +154,10 @@ export function EditExams() {
                   </label>
                 </Td>
                 <Td py="1">
-                  <NumberInput size="xs" name="minAge" maxW={"100%"} w="100%">
-                    <NumberInputField
-                      py="5"
-                      rounded="md"
-                      border="1px solid black"
-                      fontSize="18"
-                      bg="white"
-                      w="100%"
+                  <Input 
+                      value={examsData.minAge ? examsData.minAge : 0}
                       {...register("minAge")}
-                      name="minAge"
-                    />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
+                      name="minAge"/>
                 </Td>
                 <Td py="1">
                   {" "}
@@ -202,23 +166,10 @@ export function EditExams() {
                   </label>
                 </Td>
                 <Td py="1">
-                  {" "}
-                  <NumberInput size="xs" name="minAge" maxW={"100%"} w="100%">
-                    <NumberInputField
-                      py="5"
-                      rounded="md"
-                      border="1px solid black"
-                      fontSize="18"
-                      bg="white"
-                      w="100%"
+                <Input 
+                      value={examsData.maxAge ? examsData.maxAge : 0}
                       {...register("maxAge")}
-                      name="maxAge"
-                    />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
+                      name="maxAge"/>
                 </Td>
               </Tr>
             </Tbody>
@@ -226,11 +177,8 @@ export function EditExams() {
         </TableContainer>
         <TableContainer>
           <Table variant="simple">
-            <TableCaption>
-              <Flex justifyContent="end">
-                <Button colorScheme="whatsapp">Gravar</Button>
-              </Flex>
-            </TableCaption>
+      
+ 
             <Thead>
               <Tr>
                 <Th fontSize="xl">Disponibilidade</Th>
@@ -242,8 +190,10 @@ export function EditExams() {
               <Tr>
                 <Td display="flex" gap={5}>
                   <Checkbox
-                    disabled={isMultiPart || isOnePart}
-                    onChange={(ev) => setisReportByText(ev.target.checked)}
+                  isChecked={examsData.byReport === null ? false : examsData.byReport}
+                  disabled={examsData.onePart || examsData.twoPart }
+
+                   
                     size="lg"
                     id="available"
                     name="available"
@@ -255,6 +205,8 @@ export function EditExams() {
                 <Td>
                   <Flex gap={5}>
                     <Checkbox
+                    
+                      isChecked={examsData.ImageLab === null ? false : examsData.ImageLab}
                       size="lg"
                       {...register("examsType")}
                       value={"image"}
@@ -270,6 +222,7 @@ export function EditExams() {
                   <Flex gap="4">
                     <Checkbox
                       size="lg"
+                      isChecked={examsData.appicableFemales === null ? false : examsData.appicableFemales}
                       {...register("applicableGender")}
                       value={"femea"}
                       type="radio"
@@ -284,6 +237,7 @@ export function EditExams() {
               <Tr>
                 <Td display="flex" gap={5}>
                   <Checkbox
+                   isChecked={examsData.disponible === null ? false : examsData.disponible}
                     {...register("available")}
                     size="lg"
                     id="available"
@@ -296,6 +250,7 @@ export function EditExams() {
                 <Td>
                   <Flex gap={5}>
                     <Checkbox
+                    isChecked={examsData.defaultLab === null ? false : examsData.defaultLab}
                       size="lg"
                       type="radio"
                       {...register("examsType")}
@@ -311,6 +266,7 @@ export function EditExams() {
                   {" "}
                   <Flex gap="4">
                     <Checkbox
+                       isChecked={examsData.applicableMales === null ? false : examsData.applicableMales}
                       size="lg"
                       type="radio"
                       {...register("applicableGender")}
@@ -327,95 +283,78 @@ export function EditExams() {
                 <Td display="flex" gap={5}>
                   {" "}
                   <Checkbox
-                    disabled={isMultiPart || isReportByText}
-                    onChange={(ev) => setisOnePart(ev.target.checked)}
+                    isChecked={examsData.onePart === null ? false : examsData.onePart}
+                    disabled={examsData.twoPart || examsData.byReport }
+                  
                     size="lg"
                     id="available"
                     name="available"
                     type="checkbox"
                     borderColor="gray.800"
                   />
-                  <label htmlFor="available">Exame e único?</label>
+                  <label htmlFor="available">Exame e uma parte?</label>
                 </Td>
               </Tr>
               <Tr>
                 <Td display="flex" gap={5}>
                   <Checkbox
-                    onChange={(ev) => setIsMultiPart(ev.target.checked)}
-                    disabled={isReportByText || isOnePart}
+                    isChecked={examsData.twoPart === null ? false : examsData.twoPart}
+                    disabled={examsData.onePart || examsData.byReport }
+                  
                     size="lg"
                     id="available"
                     name="available"
                     type="checkbox"
                     borderColor="gray.800"
                   />
-                  <label htmlFor="available">Exame Multipart?</label>
+                  <label htmlFor="available">Exame e duas partes?</label>
                 </Td>
               </Tr>
             </Tbody>
           </Table>
-        </TableContainer>
-        <TableContainer>
-          <Table variant="simple">
-            <TableCaption>
-              <Flex justifyContent="end">
-                <Button
-                  colorScheme="whatsapp"
-                  onClick={() => setCaractersIsVisible(true)}
-                >
-                  Gravar
-                </Button>
+          
+          <Flex justifyContent="space-between">
+                <Flex w="60%" gap={4}>
+                <Button w="320px" colorScheme="yellow" onClick={() => handleCreateSessionOnePartExam()}>Adicionar Sessão</Button>
+                  <Input placeholder="Nome da sessão"  name="sessioName" onChange={(ev) => setOnePartSessionName(ev.target.value)} />
+               
+                </Flex>
+              
+                <Button colorScheme="red">Gravar</Button>
               </Flex>
-            </TableCaption>
+        </TableContainer>
+          {
+            examsData.partExams?.map((part) => 
+            <HStack mt={12}>
+            <Text fontWeight="bold">Sessão</Text>
+              <Input name=""  w={262} defaultValue={part.partName} /> 
+            </HStack>
+            )
+          }
+    
+        <TableContainer mt="8">
+       
+       
+
+          <Table>
+
             <Thead>
               <Tr>
-                <Th textAlign="center" fontSize="lg" colSpan={2}>
-                  Criar Sessão
-                </Th>
+                <Th>Característica</Th>
+                <Th>Uni ABS</Th>
+                <Th>Uni REL</Th>
+                <Th>Coluna 1</Th>
+                <Th>Coluna 2</Th>
+                <Th>Coluna 3</Th>
               </Tr>
             </Thead>
-            <Tbody>
-              <Tr>
-                <Td py={1}>Nome da Sessão</Td>
-                <Td py={1}>
-                  <Input name="" />
-                </Td>
-                <Td></Td>
-              </Tr>
-              <Tr>
-                <Td py={1}>Emprimir Primeira coluna para as espécies:</Td>
-                <Td py={1}>
-                  <Input name="" />
-                </Td>
-              </Tr>
-              <Tr>
-                <Td py={1}>Emprimir Segunda coluna para as espécies:</Td>
-                <Td py={1}>
-                  <Input name="" />
-                </Td>
-              </Tr>
-              <Tr>
-                <Td py={1}>Emprimir Terceira coluna para as espécies:</Td>
-                <Td py={1}>
-                  <Input name="" />
-                </Td>
-              </Tr>
-            </Tbody>
           </Table>
+
         </TableContainer>
-        {caractersIsVisible && (
-          <TableContainer>
+        <Flex>
+        <TableContainer>
             <Table variant="simple">
-              <TableCaption>
-                <Flex justifyContent="end">
-                  <Button
-                    colorScheme="whatsapp"
-                    onClick={() => setCaractersIsVisible(true)}
-                  >
-                    Gravar
-                  </Button>
-                </Flex>
-              </TableCaption>
+         
               <Thead>
                 <Tr>
                   <Th textAlign="center" fontSize="lg" colSpan={9}>
@@ -500,19 +439,19 @@ export function EditExams() {
                   </Td>
                   <Td colSpan={2} p={1}>
                     <Flex alignItems="center">
-                      <Text>Coluna 3:</Text>
+                      <Text>Lógica 1:</Text>
                       <Input name="" />
                     </Flex>
                   </Td>
                   <Td colSpan={2} p={1}>
                     <Flex alignItems="center">
-                      <Text>Coluna 3:</Text>
+                      <Text>Lógica 2:</Text>
                       <Input name="" />
                     </Flex>
                   </Td>
                   <Td colSpan={2} p={1}>
                     <Flex alignItems="center">
-                      <Text>Coluna 3:</Text>
+                      <Text>Lógica 3:</Text>
                       <Input name="" />
                     </Flex>
                   </Td>
@@ -520,97 +459,50 @@ export function EditExams() {
               </Tbody>
             </Table>
           </TableContainer>
-        )}
+        </Flex>
 
-        {/* <Flex mb="8" justify="space-between" align="center">
-        
-          <Flex justify="center" w="100%">
-            <Flex
-              direction="column"
-              margin="4"
-              p="4"
-              rounded="4"
-              w="70%"
-              fontSize="20"
-              fontWeight="bold"
-            >
-              <Flex>
-                <Flex direction="column" mt="4" align="center" gap={4}>
-                  <Text fontWeight="black">
-                    Selecione os exames adicionais que farão parte deste.
-                  </Text>
-                  <Text fontSize="md" color="gray.800">
-                    O Exame herdara os subexames e suas caracteristicas{" "}
-                  </Text>
-                  <Flex wrap="wrap" gap="4">
-                    
-                  </Flex>
-                </Flex>
-              </Flex>
-            </Flex>
-            <Flex
-              direction="column"
-              margin="4"
-              bg="white"
-              p="10"
-              rounded="4"
-              w="40%"
-              fontSize="25"
-              fontWeight="bold"
-              height="900px"
-              shadow="0px 0px 10px rgba(0, 0, 0, 0.5)"
-              overflowY="auto"
-            >
-              <Text>Diponibilidade</Text>
-              <Flex gap="4"></Flex>
-              <Flex gap="4"></Flex>
-              <Flex gap="4"></Flex>
-              <Flex gap="4"></Flex>
 
-              <CheckboxGroup>
-                <Text mt="10">Laboratórios</Text>
-                <Flex gap="4"></Flex>
-                <Flex gap="4"></Flex>
-              </CheckboxGroup>
-              <CheckboxGroup>
-                <Text mt="10">Gênero</Text>
-              </CheckboxGroup>
 
-              <Flex height="auto" direction="column">
-                <Text>Caractéristicas desse exame</Text>
-                <Flex wrap="wrap" gap={4}>
-                  {characters ? (
-                    characters.data?.map((char: any) => {
-                      return (
-                        <>
-                          <label>{char?.name}</label>
-                          <Checkbox
-                            disabled={isMultiPart || isReportByText}
-                            onChange={(ev) =>
-                              ev.target.checked === true
-                                ? setCharacIdArray([...characIdArray, char?.id])
-                                : removeIds(char?.id)
-                            }
-                            defaultValue={`${char?.id}`}
-                            size="lg"
-                            borderColor="black"
-                          />
-                        </>
-                      );
-                    })
-                  ) : (
-                    <LoadingSpinner />
-                  )}
-                </Flex>
-              </Flex>
-            </Flex>
-          </Flex> */}
-        {/* </Flex> */}
-
-        <Button type="submit" colorScheme="yellow" m="2" py="8">
-          Configurar
-        </Button>
       </FormControl>
+      <GenericModal
+      isOpen={isModalOpen}
+      onRequestClose={() => setModalIsOpen(false)}
+      >
+        <FormControl display="flex" flexDirection="column" alignItems="center">
+        <TableContainer>
+          <Table variant="simple">
+          
+            <Thead>
+              <Tr>
+                <Th textAlign="center" fontSize="lg" colSpan={2}>
+                  Criar Sessão
+                </Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              <Tr>
+                <Td py={1}>Nome da Sessão</Td>
+                <Td py={1}>
+                  <Input name="" />
+                </Td>
+                <Td></Td>
+              </Tr>
+       
+            </Tbody>
+          </Table>
+        </TableContainer>
+        
+              <Button
+              w="80%"
+              mt="2"
+                  colorScheme="yellow"
+               
+                >
+                  Gravar
+                </Button>
+        </FormControl>
+
+      </GenericModal>
     </Box>
   );
 }
