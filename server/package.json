@@ -9,7 +9,6 @@
   },
   "author": "dilan",
   "license": "MIT",
- 
   "devDependencies": {
     "@jest/globals": "^29.5.0",
     "@mermaid-js/mermaid-cli": "^10.1.0",

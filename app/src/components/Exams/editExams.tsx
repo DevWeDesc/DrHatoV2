@@ -20,10 +20,12 @@ import {  useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
-import { GenericModal } from "../Modal/GenericModal";
+
 import { useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import { LoadingSpinner } from "../Loading";
+import { CreateExameCharacForm } from "./createExamCharactForm";
+import { CreateExamTest } from "./createExamTest";
 
 export interface ExamsProps {
   codexam:           number;
@@ -46,7 +48,13 @@ export interface ExamsProps {
   healthPlan:        null;
   impressName:       null;
   partExams:         Array<{
+    id: number
     partName: string
+    examsDetails: Array<{
+      id: number
+      caracteristic: string
+      absoluteUnit: string
+    }>
   }>;
 }
 
@@ -95,11 +103,6 @@ export function EditExams() {
     toast.success('Sessão criada com sucesso!')
 
   }
-
-
-
-
-
 
 
 
@@ -324,185 +327,62 @@ export function EditExams() {
               </Flex>
         </TableContainer>
           {
-            examsData.partExams?.map((part) => 
-            <HStack mt={12}>
-            <Text fontWeight="bold">Sessão</Text>
-              <Input name=""  w={262} defaultValue={part.partName} /> 
-            </HStack>
+            examsData.partExams?.map((part, index) => 
+              {
+                return <>
+                <HStack key={part.id} mt={12}>
+                <Text fontWeight="bold">Sessão</Text>
+                  <Input name=""  w={262} defaultValue={part.partName} /> 
+                </HStack>
+                <TableContainer mt="8">
+           
+          
+           <Table>
+    
+             <Thead>
+               <Tr>
+                 <Th>Característica</Th>
+                 <Th>Uni ABS</Th>
+                 <Th>Uni REL</Th>
+                 <Th>Coluna 1</Th>
+                 <Th>Coluna 2</Th>
+                 <Th>Coluna 3</Th>
+               </Tr>
+             </Thead>
+             <Tbody>
+                {
+                   examsData.partExams[index].examsDetails.map((detail) => (
+                    <Tr>
+                      <Td>{detail.caracteristic}</Td>
+                      <Td>{detail.absoluteUnit}</Td>
+                    </Tr>
+                   ))
+                }
+             
+             </Tbody>
+             
+           </Table>
+    
+         </TableContainer>
+                 <Flex>
+                 <CreateExamTest  sessionId={part.id}/>
+                   </Flex>
+    
+                   </>
+
+              }
+            
             )
           }
     
-        <TableContainer mt="8">
-       
-       
-
-          <Table>
-
-            <Thead>
-              <Tr>
-                <Th>Característica</Th>
-                <Th>Uni ABS</Th>
-                <Th>Uni REL</Th>
-                <Th>Coluna 1</Th>
-                <Th>Coluna 2</Th>
-                <Th>Coluna 3</Th>
-              </Tr>
-            </Thead>
-          </Table>
-
-        </TableContainer>
-        <Flex>
-        <TableContainer>
-            <Table variant="simple">
-         
-              <Thead>
-                <Tr>
-                  <Th textAlign="center" fontSize="lg" colSpan={9}>
-                    Adicionar nova Característica
-                  </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Td py={1}>Característica</Td>
-                  <Td py={1}>Un Abs.</Td>
-                  <Td>Un Rel.</Td>
-                  <Td colSpan={2}>
-                    <Flex alignItems="center">
-                      <Text>Coluna 1:</Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                  <Td colSpan={2}>
-                    <Flex alignItems="center">
-                      <Text>Coluna 2:</Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                  <Td colSpan={2}>
-                    <Flex alignItems="center">
-                      <Text>Coluna 3:</Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td p={1}>
-                    <Input name="" />
-                  </Td>
-                  <Td p={1}>
-                    <Input name="" />
-                  </Td>
-                  <Td p={1}>
-                    <Input name="" />
-                  </Td>
-                  <Td p={1}>
-                    <Flex alignItems="center">
-                      <Text>Abs - </Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                  <Td p={1}>
-                    <Flex alignItems="center">
-                      <Text>Rel - </Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                  <Td p={1}>
-                    <Flex alignItems="center">
-                      <Text>Abs - </Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                  <Td p={1}>
-                    <Flex alignItems="center">
-                      <Text>Rel - </Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                  <Td p={1}>
-                    <Flex alignItems="center">
-                      <Text>Abs - </Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                  <Td p={1}>
-                    <Flex alignItems="center">
-                      <Text>Rel - </Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td colSpan={3}>
-                    <Text>Logicas de avaliação de idade:</Text>
-                  </Td>
-                  <Td colSpan={2} p={1}>
-                    <Flex alignItems="center">
-                      <Text>Lógica 1:</Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                  <Td colSpan={2} p={1}>
-                    <Flex alignItems="center">
-                      <Text>Lógica 2:</Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                  <Td colSpan={2} p={1}>
-                    <Flex alignItems="center">
-                      <Text>Lógica 3:</Text>
-                      <Input name="" />
-                    </Flex>
-                  </Td>
-                </Tr>
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </Flex>
+   
+    
 
 
 
       </FormControl>
-      <GenericModal
-      isOpen={isModalOpen}
-      onRequestClose={() => setModalIsOpen(false)}
-      >
-        <FormControl display="flex" flexDirection="column" alignItems="center">
-        <TableContainer>
-          <Table variant="simple">
-          
-            <Thead>
-              <Tr>
-                <Th textAlign="center" fontSize="lg" colSpan={2}>
-                  Criar Sessão
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              <Tr>
-                <Td py={1}>Nome da Sessão</Td>
-                <Td py={1}>
-                  <Input name="" />
-                </Td>
-                <Td></Td>
-              </Tr>
-       
-            </Tbody>
-          </Table>
-        </TableContainer>
-        
-              <Button
-              w="80%"
-              mt="2"
-                  colorScheme="yellow"
-               
-                >
-                  Gravar
-                </Button>
-        </FormControl>
+     
 
-      </GenericModal>
     </Box>
   );
 }
