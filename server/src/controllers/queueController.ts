@@ -23,8 +23,16 @@ export const queueController = {
     );
     const { id } = request.params;
     try {
+
+      const pet = await prisma.pets.findUnique({where:{ id: parseInt(id)}})
+
+      if(!pet) {
+        return
+      }
+
       await prisma.openedConsultsForPet.create({
         data: {
+          petName: pet.name,
           openedDate: new Date(),
           consultType: queryType,
           vetPreference,
@@ -95,11 +103,17 @@ export const queueController = {
         queueId: queueUUID,
       });
 
+     const pet = await prisma.pets.update({
+        where: { id: petId },
+        data: { priceAccumulator: { update: { accumulator: 0 } } },
+      });
+
       await prisma.openedConsultsForPet.update({
         where: {
           id: queueUUID,
         },
         data: {
+          petName: pet.name,
           clodedByVetName: responsibleVeterinarian,
           closedByVetId: responsibleVeterinarianId,
           closedDate: new Date(),
@@ -127,10 +141,7 @@ export const queueController = {
         },
       });
 
-      await prisma.pets.update({
-        where: { id: petId },
-        data: { priceAccumulator: { update: { accumulator: 0 } } },
-      });
+  
 
       reply.status(201).send({
         message: "Fila encerrada com sucesso!",

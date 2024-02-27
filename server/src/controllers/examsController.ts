@@ -333,6 +333,29 @@ export const examsController = {
 
       console.error(error)
     }
+  },
+
+
+  deleteExam: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+        const DeletExamParams =  z.object({
+          examId: z.coerce.number()
+        })
+ 
+        const {examId} = DeletExamParams.parse(request.params)
+
+
+        await prisma.oldExams.delete({
+          where: {
+            codexam: examId
+          }
+        })
+
+
+        reply.status(204)
+    } catch (error) {
+        console.log(error)
+    }
   }
 
 

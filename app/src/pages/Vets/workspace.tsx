@@ -96,7 +96,7 @@ export function WorkSpaceVet() {
 
   const GetDetailsCustomerById = async (id: number) => {
     const customer = await api.get(`/customers/${id}`);
-    setCustomerDetails(customer.data);
+    setCustomerDetails(customer.data.customer);
     console.log(customer);
     setIsCustomerDetailsOpen(true);
   };

@@ -10,4 +10,6 @@ export async function customersRoutes(app: FastifyInstance)
   app.post('/customers', customerController.createUser)
   app.get('/customers', customerController.showAllUsers)
   app.get("/customers/:id", customerController.findUserById)
+
+  app.get('/installments/:id', customerController.getInstallmentDetails)
 }

@@ -149,33 +149,11 @@ export const customerController = {
   },
 
   findUserById: async (request: FastifyRequest, reply: FastifyReply) => {
-    const { id }: any = request.params;
+      try {
+        const { id }: any = request.params;
     const customer = await prisma.customer.findUnique({
       where: { id: parseInt(id) },
       include: {
-        pets: {
-          include: {
-            medicineRecords: {
-              include: {
-                petQueues: {
-                  include: {
-                    medicine: {
-                      include: { pet: { select: { id: true, name: true } } },
-                    },
-                  },
-                },
-                petBeds: {
-                  where: { isCompleted: true },
-                  include: {
-                    medicine: {
-                      include: { pet: { select: { id: true, name: true } } },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
         transaction: true,
         customerAccount: {
           include: {
@@ -186,11 +164,125 @@ export const customerController = {
               },
             },
             consultsForPet: { include: { consultDebits: true } },
+            Admission: {include: {consultDebits: true }}
           },
         },
+        pets: {
+          include: {
+            medicineRecords:{ 
+              include: {
+                petConsults: {
+                  where: {
+                    AND: [
+                      { totaLDebits: {gte: 1}},
+                      {isClosed: true}
+                    ]
+                  }
+                },
+                petAdmissions: {
+                  where: {
+                    AND: [
+                      { totaLDebits: {gte: 1}},
+                      {isClosed: true}
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
       },
     });
 
-    reply.send(customer);
+    
+    const consults = customer?.customerAccount?.consultsForPet
+     const admissions = customer?.customerAccount?.Admission
+     //@ts-ignore
+      const installments = customer?.customerAccount?.installments?.concat(consults).concat(admissions).filter((install) => install?.id).map((installment) => {
+        const data = {
+            id: installment?.id,
+            debitName: installment?.debitName,
+            totalDebit: installment?.totalDebit,
+			      paymentType: installment?.paymentType,
+			      paymentDate: installment?.paymentDate?.toLocaleDateString('pt-BR', {day: '2-digit',
+          month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit'}),
+			      installmentAmount: installment?.installmentAmount,
+			      amountInstallments: installment?.amountInstallments,
+			      customerId: installment?.customerId,
+			      boxHistoryId: installment?.boxHistoryId,
+			      consultPetId: installment?.consultPetId,
+			      admissionsPetId: installment?.admissionsPetId,
+            consult: installment?.consult
+        }
+        return data
+      })
+
+
+      const debits = customer?.pets.flatMap((pet) => {
+
+        //@ts-ignore
+        return pet.medicineRecords?.petConsults.concat(pet.medicineRecords.petAdmissions)
+  
+   
+      })
+
+    reply.send({customer, installments, debits});
+      } catch (error) {
+        console.log(error)
+      }
   },
+
+  getInstallmentDetails: async(request: FastifyRequest, reply: FastifyReply) => {
+    const { id }: any = request.params;
+    
+    try {
+      const installment = await prisma.installmentsDebts.findUnique({
+        where: {id: parseInt(id)},
+        include: {
+          consult: {
+            include: {consultDebits: true}
+          }
+        }
+      })
+
+      if(!installment) {
+        const installment =  await prisma.openedConsultsForPet.findFirst({
+          where: {
+            id: id
+          },
+          include: {
+            consultDebits: true
+          }
+        })
+
+
+          if(!installment) {
+            const installment =  await prisma.openededAdmissionsForPet.findFirst({
+              where: {
+                id: id
+              },
+            include: {
+              consultDebits: true
+            }})
+
+              if(!installment) {
+                reply.status(404)
+              }
+
+              reply.send(installment)
+          }
+
+          
+          
+
+         reply.send(installment)
+      }
+
+
+      reply.send(installment)
+    } catch (error) {
+        console.log(error)
+    }
+      
+  }
 };

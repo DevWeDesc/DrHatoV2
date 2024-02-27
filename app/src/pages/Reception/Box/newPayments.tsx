@@ -58,7 +58,7 @@ export function BoxNewPayments() {
   }
   async function getCustomers() {
     const response = await api.get(`/customers/${id}`);
-    setCostumers(response.data);
+    setCostumers(response.data.customer);
   }
   useEffect(() => {
     getCustomers();

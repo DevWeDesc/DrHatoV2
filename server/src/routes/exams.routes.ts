@@ -16,4 +16,7 @@ export async function examsRoutes(app: FastifyInstance) {
     "/exams/old/:examId/:petId/:accId/:queueId",
     examsController.setExamInPet
   );
+
+
+  app.delete('/exams/:examId', examsController.deleteExam)
 }

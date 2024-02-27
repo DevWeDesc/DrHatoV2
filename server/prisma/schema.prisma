@@ -366,6 +366,7 @@ model SurgeriesForPet {
 model OpenedConsultsForPet {
   id                String              @id @default(uuid())
   openedDate        DateTime            @default(now())
+  petName           String?
   openedBy          String?
   vetPreference     String?
   closedDate        DateTime?
@@ -394,6 +395,7 @@ model OpenededAdmissionsForPet {
   openedDate        DateTime            @default(now())
   closedDate        DateTime?
   updatedDate       DateTime?
+  petName           String?
   isClosed          Boolean?
   closedByVetId     Int?
   clodedByVetName   String?
