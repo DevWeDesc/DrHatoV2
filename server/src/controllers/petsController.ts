@@ -579,4 +579,73 @@ export const petsController = {
       });
     }
   },
+
+  getAllResultsOld: async (request: FastifyRequest, reply: FastifyReply) => {
+    const resultOld = await prisma.resultsOld.findMany();
+    return reply.status(200).send(resultOld);
+  },
+
+  getResultsOldByPet: async (
+    request: FastifyRequest<{ Params: { petId: string } }>,
+    reply: FastifyReply
+  ) => {
+    const resultOldByPet = await prisma.resultsOld.findMany({
+      where: { petId: parseInt(request.params.petId) },
+    });
+    return reply.status(200).send(resultOldByPet);
+  },
+
+  createResultsOld: async (request: FastifyRequest, reply: FastifyReply) => {
+    const requestParams = z.object({
+      examId: z.string(),
+      petId: z.string(),
+    });
+
+    const { ...params } = requestParams.parse(request.params);
+
+    const requestBody = z.object({
+      date: z.string(),
+      requesterCRM: z.string(),
+      requesterName: z.string(),
+      report: z.any(),
+    });
+
+    const { ...body } = requestBody.parse(request.body);
+
+    try {
+      const examById = await prisma.oldExams.findUnique({
+        where: { codexam: Number(params.examId) },
+      });
+
+      if (examById == null)
+        return reply.status(400).send({ message: "Exame não encontrado!" });
+
+      const petById = await prisma.pets.findUnique({
+        where: { CodAnimal: parseInt(params.petId) },
+        include: { customer: true },
+      });
+
+      if (petById == null)
+        return reply.status(400).send({ message: "Pet não encontrado!" });
+
+      await prisma.resultsOld.create({
+        data: {
+          customerName: petById?.customer.name,
+          examName: examById?.name,
+          petId: parseInt(params.petId),
+          examId: parseInt(params.examId),
+          date: body.date,
+          requesterCRM: body.requesterCRM,
+          requesterName: body.requesterName,
+          report: body.report,
+        },
+      });
+
+      return reply
+        .status(200)
+        .send({ message: "Resultado Criado com sucesso!" });
+    } catch (error) {
+      return reply.status(400).send(error);
+    }
+  },
 };
