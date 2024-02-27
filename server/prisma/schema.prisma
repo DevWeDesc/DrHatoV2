@@ -85,6 +85,7 @@ model Pets {
   bed                Bed?
   petOldConsults     OldConsults[]
   petOldExamsHistory OldExamsHistory[]
+  ResultsOld         ResultsOld[]
 }
 
 model OldExamsHistory {
@@ -697,6 +698,19 @@ model PartDetails {
   minAgesThree     String?
   maxAgesThree     String?
   parts            Int?
+}
+
+model ResultsOld {
+  id            Int      @id @default(autoincrement())
+  customerName  String?
+  petId         Int?
+  pet           Pets?    @relation(fields: [petId], references: [id])
+  date          DateTime
+  examId        Int
+  examName      String?
+  requesterName String
+  requesterCRM  String
+  report        Json?
 }
 
 model PaymentsType {
