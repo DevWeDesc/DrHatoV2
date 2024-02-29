@@ -114,6 +114,9 @@ export const examsController = {
         where: {
           disponible: true,
         },
+        include:{
+          appicableEspecies: true
+        }
       });
 
       reply.send({ totalPages, totalExams, exams });
@@ -141,6 +144,7 @@ export const examsController = {
           partExams: {
             include: { examsDetails: true },
           },
+          appicableEspecies: true
         },
       });
 
@@ -167,7 +171,12 @@ export const examsController = {
       const response = await prisma.oldExams.findMany({
         where: {
           name: { contains: examName },
+          
+       
         },
+        include:{
+          appicableEspecies: true
+        }
       });
 
       reply.send(response);
@@ -190,6 +199,9 @@ export const examsController = {
         where: {
           name: { startsWith: firstLetter.toUpperCase() },
         },
+        include:{
+          appicableEspecies: true
+        }
       });
 
       reply.send(response);

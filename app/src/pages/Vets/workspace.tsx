@@ -128,7 +128,9 @@ export function WorkSpaceVet() {
 
   const handleChangePetWeight = async (weigth: string) => {
     try {
-      await api.put(`/pet/${id}/${weigth}`);
+      console.log(weigth.replace(/kg/g, ""))
+      await api.put(`/pet/${id}/${weigth.replace(/kg/g, "")}`);
+      await api.patch(`/queue/pet/weight/${queueId}/${weigth.replace(/kg/g, "")}`)
       setReloadData(true);
       toast.success("Peso editado com sucesso");
     } catch (error) {

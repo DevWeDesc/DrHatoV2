@@ -402,7 +402,7 @@ export const petsController = {
   },
 
   changePetWeight: async (
-    request: FastifyRequest<{ Params: { petId: string; weight: number } }>,
+    request: FastifyRequest<{ Params: { petId: string; weight: string } }>,
     reply: FastifyReply
   ) => {
     try {
@@ -411,7 +411,7 @@ export const petsController = {
       await prisma.pets.update({
         where: { id: parseInt(petId) },
         data: {
-          weigth: weight,
+          weigth: parseFloat(weight),
         },
       });
     } catch (error) {

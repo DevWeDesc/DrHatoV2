@@ -334,6 +334,28 @@ export const queueController = {
     }
   },
 
+  updatePetWeightInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const UpdatePetWeightInQueueParams = z.object({
+        queueId: z.string().uuid(),
+        petWeigth: z.coerce.string()
+      });
+
+      const {petWeigth, queueId} = UpdatePetWeightInQueueParams.parse(request.params)
+
+      await prisma.openedConsultsForPet.update({
+        where:{ id: queueId},
+        data: {
+          petWeight: petWeigth
+        }
+      })
+
+
+    } catch (error) {
+      
+    }
+  },
+
   getQueueDiagnostics: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const GetParams = z.object({
