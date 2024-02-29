@@ -11,14 +11,17 @@ import {
   TableContainer,
   Input,
   Td,
+  Text,
+  InputGroup,
+  InputLeftElement,
 
 } from "@chakra-ui/react";
 import { Header } from "../../../components/admin/Header";
 import { AdminContainer } from "../../AdminDashboard/style";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
-import { BsCashCoin } from "react-icons/all";
-import { useEffect, useState, useContext } from "react";
+import { BsCashCoin, TbPigMoney } from "react-icons/all";
+import {useState, useContext } from "react";
 import { api } from "../../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { BsReception4 } from "react-icons/bs";
@@ -26,6 +29,8 @@ import { BiCalendarPlus, AiFillEdit } from "react-icons/all";
 import { ICustomer } from "../../../interfaces";
 import { BoxContext } from "../../../contexts/BoxContext";
 import { GenericModal } from "../../../components/Modal/GenericModal";
+import { useQuery, useQueryClient } from "react-query";
+import { toast } from "react-toastify";
 
 export interface Installment {
   id:                  number | string;
@@ -115,9 +120,13 @@ export function BoxPaymentsDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [creditModalIsOpen, setCreditModalIsOpen] = useState(false);
   const [installments, setInstallments] = useState<Installment[]>([]);
   const [installment, setInstallment] = useState({} as Installment)
   const [debits, setDebits] = useState<any[]>([])
+  const [customerCredits, setCustomerCredits] = useState(0)
+  const queryClient = useQueryClient();
+
 
   async function getCustomers() {
     const customer = await api.get(`/customers/${id}`);
@@ -131,9 +140,18 @@ export function BoxPaymentsDetails() {
     setInstallment(installment.data)
   }
 
-  useEffect(() => {
-    getCustomers();
-  }, []);
+  async function incrementCustomerCredits() {
+    const data = {
+      customerId: client.id,
+      credits: customerCredits
+    }
+    await api.patch(`/customer/credits`, data)
+    queryClient.invalidateQueries('customerDetails')
+    toast.success("Valor adicionado!") 
+  }
+
+  useQuery('customerDetails', getCustomers )
+
 
   console.log(installment)
 
@@ -294,7 +312,7 @@ export function BoxPaymentsDetails() {
                         bg="blue.100"
                         borderBottom="1px solid black"
                       >
-                        Dados do Cliente
+                        Dados do Cliente 
                       </Th>
 
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
@@ -302,7 +320,11 @@ export function BoxPaymentsDetails() {
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                      <Th bg="blue.100" borderBottom="1px solid black">
+                        <Button 
+                        onClick={() => setCreditModalIsOpen(true)}
+                        colorScheme="orange">Adicionar Créditos</Button>
+                      </Th>
                     </Tr>
 
                     <>
@@ -673,6 +695,30 @@ export function BoxPaymentsDetails() {
               </TableContainer>
             </>
          
+        </GenericModal>
+        <GenericModal isOpen={creditModalIsOpen} onRequestClose={() => setCreditModalIsOpen(false)}>
+          <Flex align="center" direction="column" w="400px" h="200px">
+           <Text fontWeight="bold">Adicionar créditos ao cliente: -  {client.name}</Text>
+           
+           <InputGroup marginTop={8}>
+                <InputLeftElement
+               
+                  pointerEvents='none'
+                  color="green.400"
+                  fontSize='1.2em'
+                >
+                <TbPigMoney    />
+
+                </InputLeftElement>
+                <Input
+                  type="number"
+                onChange={(ev) => setCustomerCredits(Number(ev.target.value))} border="1px" placeholder='Digite a quantia de créditos a ser adicionado!' />
+
+              </InputGroup>
+              <Button 
+                onClick={() => incrementCustomerCredits()}
+              marginTop={8} w="100%" colorScheme="whatsapp">Salvar</Button>
+          </Flex>
         </GenericModal>
       </AdminContainer>
     </ChakraProvider>

@@ -85,7 +85,7 @@ export const queueController = {
       petWeight: z.number().optional(),
       consultId: z.string().optional(),
       admissionId: z.string().optional(),
-      // accountId: z.number().optional(),
+       accountId: z.number().optional(),
     });
     const { petId, queueUUID, customerId } = ParamsSchema.parse(request.params);
     const {
@@ -94,7 +94,7 @@ export const queueController = {
       petWeight,
       consultId,
       admissionId,
-      // accountId,
+       accountId,
     } = QueueSchema.parse(request.body);
     try {
       const getDebitsInConsultService = new GetDebitsInConsultsService();
@@ -124,7 +124,7 @@ export const queueController = {
           request: debits[0].request,
           diagnostic: debits[0].diagnostic,
           observations: debits[0].observations,
-          customerAccountId: customerId,
+          customerAccountId: accountId,
         },
       });
 

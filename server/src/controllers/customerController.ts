@@ -3,6 +3,7 @@ import { ValidationContract } from "../validators/userContract";
 import { createCustomer } from "../schemas/schemasValidator";
 import { randomNumberAccount } from "../utils/randomNumberAccount";
 import { prisma } from "../interface/PrismaInstance";
+import { z } from "zod";
 
 export const customerController = {
   showAllUsers: async (
@@ -284,5 +285,30 @@ export const customerController = {
         console.log(error)
     }
       
+  },
+
+
+  incrementCustomerCredits: async(request: FastifyRequest, reply: FastifyReply) => {
+    try { 
+      const incrementCustomerCreditsBody = z.object({
+        customerId: z.coerce.number(),
+        credits: z.coerce.number()
+      })
+      
+      const {credits, customerId} = incrementCustomerCreditsBody.parse(request.body)
+
+      await prisma.customerAccount.update({
+        where: {
+          customerId
+        },
+        data: {
+          credits: {increment: credits}
+        }
+      })
+
+      reply.status(200)
+    } catch (error) {
+      console.log(error)
+    }
   }
 };
