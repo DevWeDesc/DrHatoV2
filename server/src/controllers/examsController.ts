@@ -35,6 +35,7 @@ export const examsController = {
       const exam = await prisma.oldExams.findUnique({
         where: { codexam: parseInt(id) },
         include: {
+          appicableEspecies: true,
           partExams: {
             include: { examsDetails: true },
           },
@@ -355,6 +356,53 @@ export const examsController = {
         reply.status(204)
     } catch (error) {
         console.log(error)
+    }
+  },
+  setEspecieInExam: async (
+    request: FastifyRequest<{
+      Params: { examId: string; especieId: string };
+    }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const { examId, especieId } = request.params;
+
+      await prisma.oldExams.update({
+        where: { codexam: parseInt(examId) },
+        data: {
+          appicableEspecies: {
+            connect: { id: parseInt(especieId) },
+          },
+        },
+      });
+
+      reply.status(201);
+    } catch (error) {
+      reply.send(error).status(400);
+    }
+  },
+
+  removeEspecieInExam: async (
+    request: FastifyRequest<{
+      Params: { examId: string; especieId: string };
+    }>,
+    reply: FastifyReply
+  )=>{
+    try {
+      const {examId, especieId} = request.params
+
+      await prisma.oldExams.update({
+        where: {codexam: parseInt(examId)},
+        data: {
+          appicableEspecies: {
+            disconnect: {
+              id: parseInt(especieId)
+            }
+          }
+        }
+      })
+    } catch (error) {
+      console.error(error)
     }
   }
 

@@ -17,7 +17,7 @@ const filteredData = data
     especie: pet.Tipo,
     sexo: pet.Sexo,
     race: pet.raça,
-    weigth: pet.Peso ? `"${pet.Peso}"`: "Atualizar",
+    weigth: pet.Peso ? parseFloat(pet.Peso) :  0,
     haveChip:  pet.Microchipagem,
     corPet: pet.Cor,
     sizePet: "",
@@ -64,7 +64,7 @@ const filteredData = data
         
         } catch (error) {
           // Registre o erro, mas continue com o próximo pet
-         // console.error(`Erro ao criar pet: ${pets.name}, Código do Cliente: ${pets.CodCli}`);
+          console.error(`Erro ao criar pet: ${pets.name}, Código do Cliente: ${pets.CodCli}`);
 
         }
       }
@@ -74,3 +74,4 @@ const filteredData = data
     }
   }
   
+ 

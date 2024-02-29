@@ -14,7 +14,9 @@ import {
   Tbody,
   Td,
   TableCaption,
-  HStack
+  HStack,
+  VStack,
+  Divider
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -24,6 +26,7 @@ import { useQuery, useQueryClient } from 'react-query'
 import { toast } from 'react-toastify'
 import { LoadingSpinner } from '../Loading'
 import { CreateExamTest } from './createExamTest'
+import { GenericModal } from '../Modal/GenericModal'
 
 export interface ExamsProps {
   codexam: number
@@ -45,6 +48,10 @@ export interface ExamsProps {
   defaultLab: null
   healthPlan: null
   impressName: null
+  appicableEspecies: Array<{
+    id: number,
+    name: string
+  }>
   partExams: Array<{
     id: number
     partName: string
@@ -66,18 +73,54 @@ export interface ExamsProps {
     }>
   }>
 }
-
+type EspeciesDTO = {
+  id: number;
+  name: string;
+  race: Array<{
+  id:  number;
+	name:  string;
+	codEspOld:  number;
+	especiesId:  number;
+  }>
+}
 export function EditExams() {
   const { register } = useForm()
   const { id } = useParams<{ id: string }>()
   const [examsData, setExamsData] = useState({} as ExamsProps)
   const [onePartSessionName, setOnePartSessionName] = useState('')
+  const [especies, setEspecies] = useState<EspeciesDTO[]>([])
+  const [especiesModalIsOpen, setEspeciesModalIsOpen] = useState(false);
   const queryClient = useQueryClient()
 
   async function getExamsData(): Promise<ExamsProps> {
     const response = await api.get(`/exams/${id}`)
     return response.data
   }
+
+
+  async function getEspeciesData() {
+      const response = await api.get("/pets/especie")
+      return response.data
+  }
+
+  async function removeEspecieInProcedure(especieId: string | number) {
+    await api.patch(`/exams/especies/remove/${id}/${especieId}`)
+    queryClient.invalidateQueries('editExamDetails')
+    toast.success("Especie removida!!")
+  }
+
+  async function setEspecieInExam(especieId: number | string) {
+    await api.patch(`/exams/especies/${id}/${especieId}`)
+    queryClient.invalidateQueries('editExamDetails')
+    toast.success("Especie Adicionada!")
+  }
+
+  useQuery('getEspecies', {
+    queryFn: getEspeciesData,
+    onSuccess: data => {
+      setEspecies(data)
+    }
+  })
 
   const { isLoading } = useQuery('editExamDetails', {
     queryFn: getExamsData,
@@ -125,10 +168,12 @@ export function EditExams() {
         display="flex"
         flexDirection="column"
       >
+      
         <TableContainer>
           <Table variant="simple">
             <Thead>
               <Tr>
+             
                 <Th colSpan={4} fontSize="xl" textAlign="center">
                   Editando Exame: {examsData.name}
                 </Th>
@@ -345,7 +390,9 @@ export function EditExams() {
           </Table>
 
           <Flex justifyContent="space-between">
+          <Button onClick={() => setEspeciesModalIsOpen(true)} colorScheme="linkedin">Permissão de especies</Button>
             <Flex w="60%" gap={4}>
+              
               <Button
                 w="320px"
                 colorScheme="yellow"
@@ -403,6 +450,34 @@ export function EditExams() {
           )
         })}
       </FormControl>
+      <GenericModal
+     isOpen={especiesModalIsOpen}
+     onRequestClose={() => setEspeciesModalIsOpen(false)}
+     >
+      <Flex w="460px" h="500px"  justify="space-between">
+        <VStack h="100%" w="50%" overflowY="scroll">
+        <Text fontWeight="bold">Especies Bloqueadas</Text>
+          {
+            examsData?.appicableEspecies?.map((esp) => 
+            <Button
+            onClick={() => removeEspecieInProcedure(esp.id)}
+            key={esp.id} colorScheme="facebook">{esp.name}</Button>)
+          }
+        </VStack>
+
+        <Divider border="1px"  orientation="vertical"/>
+
+        <VStack h="100%"  w="50%" overflowY="scroll">
+     
+        <Text fontWeight="bold">Especies Disponiveis</Text>
+        {
+          especies.map((esp) => <Button key={esp.id} onClick={() => setEspecieInExam(esp.id)} colorScheme="teal">{esp.name}</Button>)
+        }
+
+        </VStack>
+      </Flex>
+        
+     </GenericModal>
     </Box>
   )
 }

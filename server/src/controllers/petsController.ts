@@ -402,7 +402,7 @@ export const petsController = {
   },
 
   changePetWeight: async (
-    request: FastifyRequest<{ Params: { petId: string; weight: string } }>,
+    request: FastifyRequest<{ Params: { petId: string; weight: number } }>,
     reply: FastifyReply
   ) => {
     try {

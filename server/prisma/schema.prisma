@@ -67,7 +67,7 @@ model Pets {
   especie            String
   sexo               String
   race               String
-  weigth             String?
+  weigth             Float?
   haveChip           Boolean?
   corPet             String?
   sizePet            String?            @default("")
@@ -586,11 +586,13 @@ model ReportForExams {
 
 // -------------- Especies/Raças ----------------- //
 model Especies {
-  id           Int          @id @default(autoincrement())
-  name         String       @unique
-  race         Races[]
-  Procedures   Procedures[]
-  proceduresId Int?
+  id              Int          @id @default(autoincrement())
+  name            String       @unique
+  race            Races[]
+  Procedures      Procedures[]
+  proceduresId    Int?
+  OldExams        OldExams[]
+  oldExamsCodexam Int?
 }
 
 model Races {
@@ -669,6 +671,7 @@ model OldExams {
   healthPlan        Boolean?
   impressName       String?
   partExams         PartExams[]
+  appicableEspecies Especies[]
 }
 
 model PartExams {

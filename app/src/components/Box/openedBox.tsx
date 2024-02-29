@@ -30,7 +30,7 @@ export function OpenedBox() {
         exitValues: 500,
         openBy: user.username,
       };
-      await api.post(`/openhistbox/${fatherBox.id}`, data)
+      await api.post(`/openhistbox/${fatherBox?.id}`, data)
       setReloadData(true)
       toast.success("Caixa aberto com sucesso")
     } catch (error) {

@@ -50,7 +50,7 @@ export function BoxReception() {
 
     try {
       await api
-        .patch(`/closehistbox/${fatherBox.id}/${dailyBox.id}`, data)
+        .patch(`/closehistbox/${fatherBox?.id}/${dailyBox?.id}`, data)
         .then((res: any) => {
           navigate("/Recepcao");
           toast.success("Caixa fechado com sucesso!");

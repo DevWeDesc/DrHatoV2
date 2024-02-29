@@ -43,7 +43,7 @@ export function ClosedBox() {
             textAlign="center"
             py="5"
           >
-            {fatherBox.name} Cod Caixa: {dailyBox.id}
+            {fatherBox?.name} Cod Caixa: {dailyBox?.id}
           </Heading>
 
           <Flex
@@ -89,7 +89,7 @@ export function ClosedBox() {
             <Input
               h="51px"
               w="40%"
-              defaultValue={lastBox.totalValues}
+              defaultValue={lastBox?.totalValues}
               bgColor="white"
               borderX="1px solid black"
               rounded="0"
@@ -110,7 +110,7 @@ export function ClosedBox() {
               w="40%"
               bgColor="white"
               defaultValue={`R$ ${parseFloat(
-                dailyBox.totalValues.toString()
+                dailyBox?.totalValues?.toString()
               ).toFixed(2)}`}
               borderX="1px solid black"
               rounded="0"
@@ -176,7 +176,7 @@ export function ClosedBox() {
             </Text>
             <Input
               value={`R$ ${parseFloat(
-                fatherBox.movimentedValues.toString()
+                fatherBox?.movimentedValues?.toString()
               ).toFixed(2)}`}
               h="51px"
               w="40%"

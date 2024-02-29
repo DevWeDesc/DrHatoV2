@@ -35,11 +35,11 @@ type ExamsDTO = {
 export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
-  const [exams, setExams] = useState<ExamsDTO[]>([]);
   const [reloadData, setReloadData] = useState(true);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [examName, setExamName] = useState("");
   const [searchByLetter, setSearchByLetter] = useState("");
+  
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["examsData"],
     queryFn: async () => {

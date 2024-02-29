@@ -59,7 +59,7 @@
 [] - Possibilidade de escolher unidade em banco unificado
 [X] - Conclusão de cirurgias com laudo técnico
 [] - Configuração de Eventos do Sistema para painel Administrativo
-[] - Edição livre de referências do Exame
+[X] - Edição livre de referências do Exame
 [X] - Internação possui diário
 
 ### RFNs(Requisitos não-funcionais)
@@ -91,7 +91,7 @@
 
 ## DILAN IMPORTANTE
 
-[] - REFINAR SISTEMA FINANCEIRO
+[X] - REFINAR SISTEMA FINANCEIRO
 [] - DIMINUIR USO DE CONTEXTOS
 [] - CACHEAR CHAMADAS BACKEND (REACT QUERY)
 [] - AJUSTAR PASTAS/ROTAS/COMPONENTS (Bagunçados pelo Vinicius)
@@ -100,18 +100,12 @@
 [] - REFINAR CENTRAL MEDICAMENTOS, MUITOS USE EFFECT. MELHORAR LÓGICA DELEÇÃO DE ITEMS.
 [] - COLOCAR MEDICAMENTOS NA INTERNAÇÃO
 [] - ADICIONAR LÓGICA E CONTROLE DE ESTOQUE PARA MEDICAMENTOS
-[] - TODAS REMOÇÕES /EXAMES/PROCEDIMENTOS/VACINAS/CIRURGIAS TAMBÉM REMOVER DOS DÉBITOS DA CONSULTA.
+[X] - TODAS REMOÇÕES /EXAMES/PROCEDIMENTOS/VACINAS/CIRURGIAS TAMBÉM REMOVER DOS DÉBITOS DA CONSULTA.
 [] - PODER REMOVER DIRETO DA CONSULTA O DÉBITO/ PODER REMOVER DIRETO DA INTERNAÇÃO
-[] - MESMA LÓGICA PROCEDIMENTOS PARA EDIÇÃO E CAD DE EXAMES
-[] - CRIAR VALIDAÇÕES NA HORA DE INTERNAR ANIMAL, INTERNAR APENAS NO CANIL SELECIONADO, E PULAR ETAPAS APENAS AO CUMPRIR ANTERIOR.
+[X] - MESMA LÓGICA PROCEDIMENTOS PARA EDIÇÃO E CAD DE EXAMES
+[X] - CRIAR VALIDAÇÕES NA HORA DE INTERNAR ANIMAL, INTERNAR APENAS NO CANIL SELECIONADO, E PULAR ETAPAS APENAS AO CUMPRIR ANTERIOR.
 
-#### BUGS e Correções
 
-[X] - Tabela exames duplicando
-[X] - Ajustar cadastro de pets campo idade
-[X] - Valores já prédefinidos dos exames que já existem
-[] - ENCERRAMENTO DE QUEUE.
-[X] - VERIFICAR PORQUE EXAME DUAS PARTES NÃO COMPUTOU QUEM LAUDOU
 
 ### To do Solicitado Dr Daniel
 
@@ -158,3 +152,21 @@ OBS: Acrescentado sistema de Especies, um procedimento só vai poder ser lançad
 OBS: Sistema antigo de laudar não funcionava a opção de laudo externo, e também tem onde baixar o laudo externo, isso entra como melhoria(dando autorização eu faço).
 [X] - verificar a impressão: Ajustar os exames e laudos no pdf
 [X] - Medicações: Historico e exclusão, varios remedios ao mesmo tempo, pesquisa(Front)
+
+
+FEATURES TODO
+[X] - PERMISSÃO DE ESPECIES EXAMES 
+[] - EDIÇÃO DE PESO APARECER NO HISTÓRICO DA CONSULTA
+[] - AJUSTE FINANCEIRO ABERTURA E FECHAMENTO DE CAIXA
+[] - LAUDO CIRURGIAS E VISUALIZAÇÃO DE LAUDOS CIRURGIAS
+[] - NOVOS TIPOS DE PAGAMENTO DÉBITO E CRÉDITOS INTERNOS
+[] - VALIDAR FLUXOS INTERNAÇÃO
+#### BUGS e Correções
+
+[X] - Tabela exames duplicando
+[X] - Ajustar cadastro de pets campo idade
+[X] - Valores já prédefinidos dos exames que já existem
+[X] - ENCERRAMENTO DE QUEUE.
+[X] - VERIFICAR PORQUE EXAME DUAS PARTES NÃO COMPUTOU QUEM LAUDOU
+[] - VISUALIZAÇÃO DE LAUDO DE NOVOS EXAMES CRIADOS - MULTIPART BUGADO
+[] - ABERTURA E FECHAMENTO DE CAIXAS
