@@ -28,7 +28,8 @@ interface SugerieDetailsProps {
 }
 
 export default function SurgeriesDetails() {
-  const [surgeriesDetails, setSurgeriesDetails] = useState({} as SugerieDetailsProps);  const { id } = useParams<{ id: string }>();
+  const [surgeriesDetails, setSurgeriesDetails] = useState({} as SugerieDetailsProps); 
+   const { id } = useParams<{ id: string }>();
   const [reloadSugeriesData, setReloadSugeriesData] = useState(false)
   const [endSurgerie, setEndSurgerie] = useState(false)
   const [reportText, setReportText] = useState("")
