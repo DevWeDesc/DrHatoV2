@@ -358,4 +358,35 @@ export const surgeriesController = {
       console.log(error);
     }
   },
+
+
+  getSurgeriePetDetails: async (request: FastifyRequest,
+    reply: FastifyReply) => {
+      try {
+          const GetSurgeriePetDetailSchema = z.object({
+            surgerieId: z.coerce.number()
+          })
+
+          const {surgerieId} = GetSurgeriePetDetailSchema.parse(request.params)
+
+          const surgerie =  await prisma.surgeriesForPet.findUnique({
+            where: {
+              id: surgerieId
+            },
+            include: {surgeriesReport: true}
+          })
+
+          reply.send({
+            surgerie
+          })
+
+      } catch (error) {
+          reply.status(404).send({
+            message: error
+          })
+      }
+
+  }
+
+
 };

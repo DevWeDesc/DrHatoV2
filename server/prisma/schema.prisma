@@ -67,7 +67,7 @@ model Pets {
   especie            String
   sexo               String
   race               String
-  weigth             String?
+  weigth             Float?
   haveChip           Boolean?
   corPet             String?
   sizePet            String?            @default("")
@@ -366,6 +366,7 @@ model SurgeriesForPet {
 model OpenedConsultsForPet {
   id                String              @id @default(uuid())
   openedDate        DateTime            @default(now())
+  petName           String?
   openedBy          String?
   vetPreference     String?
   closedDate        DateTime?
@@ -394,6 +395,7 @@ model OpenededAdmissionsForPet {
   openedDate        DateTime            @default(now())
   closedDate        DateTime?
   updatedDate       DateTime?
+  petName           String?
   isClosed          Boolean?
   closedByVetId     Int?
   clodedByVetName   String?
@@ -584,11 +586,13 @@ model ReportForExams {
 
 // -------------- Especies/Raças ----------------- //
 model Especies {
-  id           Int          @id @default(autoincrement())
-  name         String       @unique
-  race         Races[]
-  Procedures   Procedures[]
-  proceduresId Int?
+  id              Int          @id @default(autoincrement())
+  name            String       @unique
+  race            Races[]
+  Procedures      Procedures[]
+  proceduresId    Int?
+  OldExams        OldExams[]
+  oldExamsCodexam Int?
 }
 
 model Races {
@@ -667,6 +671,7 @@ model OldExams {
   healthPlan        Boolean?
   impressName       String?
   partExams         PartExams[]
+  appicableEspecies Especies[]
 }
 
 model PartExams {

@@ -10,13 +10,10 @@ import { BiCalendarPlus } from "react-icons/bi";
 import { AiFillPrinter } from "react-icons/ai";
 import { TbCashBanknoteOff } from "react-icons/tb";
 import { OpenedBox } from "../../../components/Box/openedBox";
-import { useContext, useState, useEffect } from "react";
+import {  useState, useEffect } from "react";
 import { ConfirmationDialog } from "../../../components/dialogConfirmComponent/ConfirmationDialog";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
-import { BoxContext } from "../../../contexts/BoxContext";
-import { AxiosResponse } from "axios";
-import { Message } from "react-hook-form";
 import { BoxProps, HistoryBoxProps } from "../../../interfaces";
 
 type resTypeBox = {
@@ -50,7 +47,7 @@ export function BoxReception() {
 
     try {
       await api
-        .patch(`/closehistbox/${fatherBox.id}/${dailyBox.id}`, data)
+        .patch(`/closehistbox/${fatherBox?.id}/${dailyBox?.id}`, data)
         .then((res: any) => {
           navigate("/Recepcao");
           toast.success("Caixa fechado com sucesso!");

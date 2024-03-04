@@ -87,6 +87,7 @@ export const accountService = {
             data: {
               consultPetId: consultId ? consultId : null,
               admissionsPetId: admissionId ? admissionId : null,
+        
             },
           });
         });
@@ -115,6 +116,21 @@ export const accountService = {
           },
         },
       });
+
+
+      if(consultId) {
+        await prisma.openedConsultsForPet.update({
+          where: {id: consultId}, data: {totaLDebits: 0}
+        })
+      } else if(admissionId) {
+        await prisma.openededAdmissionsForPet.update({
+          where: {id: admissionId}, data: {totaLDebits: 0}
+        })
+      } 
+
+
+
+    
     } catch (error) {
       console.log(error);
     }

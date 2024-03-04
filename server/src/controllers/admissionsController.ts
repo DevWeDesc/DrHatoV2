@@ -215,7 +215,7 @@ export const admissionsController = {
        await prisma.openededAdmissionsForPet.update({
         where: {id: queueId}, data: {
           closedDate: new Date(),
-          petWeight: pet.weigth,
+          petWeight: pet.weigth?.toString(),
           totaLDebits: total,
           isClosed: true,
           closedByVetId: responsibleVeterinarianId,
