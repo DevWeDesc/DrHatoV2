@@ -585,6 +585,45 @@ export const petsController = {
     return reply.status(200).send(resultOld);
   },
 
+  getResultOldByExamId: async (
+    request: FastifyRequest<{ Params: { resultId: string } }>,
+    reply: FastifyReply
+  ) => {
+    const resultOld = await prisma.resultsOld.findUnique({
+      where: { id: parseInt(request.params.resultId) },
+    });
+
+    if (resultOld == null)
+      return reply
+        .status(400)
+        .send({ Message: "Resultado informado não existe!" });
+
+    const petResult = await prisma.pets.findUnique({
+      where: { CodAnimal: resultOld?.petId ? resultOld.petId : 0 },
+    });
+
+    const examResult = await prisma.oldExams.findUnique({
+      where: { codexam: resultOld?.examId ? resultOld.examId : 0 },
+      include: {
+        partExams: {
+          include: { examsDetails: true },
+        },
+      },
+    });
+
+    const data = {
+      client: resultOld?.customerName,
+      animal: `${petResult?.name}, ${petResult?.especie}, ${petResult?.race}, ${petResult?.dateAge}, ${petResult?.sexo}, Código do Animal: ${petResult?.CodAnimal}`,
+      date: resultOld?.date,
+      examName: resultOld?.examName,
+      Exam: resultOld?.examName,
+      solicited: `${resultOld?.requesterName} / ${resultOld?.requesterCRM}`,
+      report: resultOld?.report,
+    };
+
+    return reply.status(200).send({ dataResult: data, petResult: petResult });
+  },
+
   getResultsOldByPet: async (
     request: FastifyRequest<{ Params: { petId: string } }>,
     reply: FastifyReply
@@ -615,6 +654,11 @@ export const petsController = {
     try {
       const examById = await prisma.oldExams.findUnique({
         where: { codexam: Number(params.examId) },
+        include: {
+          partExams: {
+            include: { examsDetails: true },
+          },
+        },
       });
 
       if (examById == null)
@@ -637,7 +681,7 @@ export const petsController = {
           date: body.date,
           requesterCRM: body.requesterCRM,
           requesterName: body.requesterName,
-          report: body.report,
+          report: examById.partExams,
         },
       });
 
