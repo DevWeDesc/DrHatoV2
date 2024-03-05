@@ -344,4 +344,32 @@ export const boxController = {
       console.log(error);
     }
   },
+
+  getDailyBoxInstallments: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
+    try {
+      
+      const DailyBoxInstallmentSchema = z.object({
+        dailyBoxId: z.coerce.number()
+      })
+      const {dailyBoxId} = DailyBoxInstallmentSchema.parse(request.params)
+
+      const box =  await prisma.hospBoxHistory.findMany({
+        where: {
+          id: dailyBoxId
+        },
+        include: {
+          installments: true
+        }
+      })
+
+      return {
+        box
+      }
+    } catch (error) {
+      console.log(error) 
+    }
+  }
 };

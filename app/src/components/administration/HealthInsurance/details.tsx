@@ -1,22 +1,16 @@
 import { Flex, Heading, Box } from "@chakra-ui/layout";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
   Button,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router";
-import { ProceduresList } from "../../../pages/Procedures";
-import procedures from "../../Admission/procedures";
-import { Surgierslist } from "../../surgeries/surgierslist";
-import { HealthInsuranceList } from ".";
 
 export default function DetailsHealthInsurance() {
   const { id } = useParams<{ id: string }>();

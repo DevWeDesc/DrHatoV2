@@ -19,11 +19,12 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  BoxProps,
 } from "@chakra-ui/react";
 import { Input as SInput } from "../../../components/admin/Input";
 import { Header } from "../../../components/admin/Header";
 import { AdminContainer } from "../../AdminDashboard/style";
-import { useEffect, useState, useContext } from "react";
+import { useState } from "react";
 import { api } from "../../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
@@ -31,38 +32,51 @@ import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GiCardDiscard } from "react-icons/gi";
 import { BsCashCoin } from "react-icons/bs";
 import { BsReception4 } from "react-icons/bs";
-import { ICustomer } from "../../../interfaces";
+import { HistoryBoxProps, ICustomer } from "../../../interfaces";
 import { GenericModal } from "../../../components/Modal/GenericModal";
 import { ConfirmationDialog } from "../../../components/dialogConfirmComponent/ConfirmationDialog";
 import { BiMoney } from "react-icons/bi";
 import { toast } from "react-toastify";
-import { BoxContext } from "../../../contexts/BoxContext";
+import { useQuery } from "react-query";
+import { LoadingSpinner } from "../../../components/Loading";
 
 export function BoxNewPayments() {
   const [customers, setCostumers] = useState({} as ICustomer);
-  const { fatherBox } = useContext(BoxContext);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [typePayment, setTypePayment] = useState("");
   const [valueTotal, setValueTotal] = useState(0);
   const [installments, setInstallments] = useState(0);
   const [paymentType, setPaymentType] = useState("");
+  const [dailyBox, setDailyBox] = useState({} as HistoryBoxProps);
+  const [fatherBox, setFatherBox] = useState({} as BoxProps);
+  
   const handleChange = (installments: number) => setInstallments(installments);
   const { id } = useParams<{ id: string }>();
 
-  function openModal() {
-    setIsModalOpen(true);
+  async function GetDailyBox () {
+    const response = await api.get("/dailybox")
+    setDailyBox(response.data)
   }
-  function closeModal() {
-    setIsModalOpen(false);
-  }
+  async function getFatherBox () {
+    const response = await api.get("/vetbox")
+    setFatherBox(response.data)
+  } 
+
   async function getCustomers() {
     const response = await api.get(`/customers/${id}`);
     setCostumers(response.data.customer);
   }
-  useEffect(() => {
-    getCustomers();
-  }, []);
+
+  const {isLoading: isFatherBoxLoading} = useQuery('fatherBox', getFatherBox)
+  const {isLoading: isDailyBoxLoading} = useQuery('dailyBox', GetDailyBox)
+  const {isLoading: isCustomerLoading} = useQuery('customer', getCustomers)
+
+
+  if(isDailyBoxLoading || isCustomerLoading || isFatherBoxLoading) {
+    return <LoadingSpinner/>
+  }
+
 
   async function openInstallmentPayment() {
     const data = {
@@ -79,7 +93,7 @@ export function BoxNewPayments() {
         return;
       }
       await api.post(
-        `/account/installments/${customers.id}/${fatherBox.id}`,
+        `/account/installments/${customers.id}/${dailyBox.id}/${fatherBox.id}`,
         data
       );
       toast.success("Parcelamento realizado com sucesso!");
@@ -398,7 +412,7 @@ export function BoxNewPayments() {
               </TableContainer>
               <Flex></Flex>
               <Button
-                onClick={() => openModal()}
+                onClick={() => setIsModalOpen(true)}
                 w="100%"
                 py="8"
                 colorScheme="whatsapp"
@@ -408,7 +422,7 @@ export function BoxNewPayments() {
             </Box>
           </Flex>
         </Flex>
-        <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+        <GenericModal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
           <Flex>{paymentForm}</Flex>
         </GenericModal>
       </AdminContainer>

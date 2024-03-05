@@ -13,7 +13,7 @@ interface UniversalSearchProps {
 
 export function UniversalSearch({ path}: UniversalSearchProps) {
 
-const { setData } = useContext(DbContext)
+const { setDataCustomer } = useContext(DbContext)
  
     const {register, handleSubmit} = useForm()
   const handleSearch: SubmitHandler<any> = async (values) => {
@@ -22,7 +22,7 @@ const { setData } = useContext(DbContext)
         const responseName = await api.get(
           `${path}?name=${values.name}`
         );
-        setData(responseName.data);
+        setDataCustomer(responseName.data);
         toast.success("Usuário encontrado");
       } catch (error) {
         toast.error("Usuário não encontrado");
@@ -34,7 +34,7 @@ const { setData } = useContext(DbContext)
         const responseCpf = await api.get(
           `${path}?cpf=${values.cpf}`
         );
-        setData(responseCpf.data);
+        setDataCustomer(responseCpf.data);
         toast.success("Usuário encontrado");
       } catch (error) {
         toast.error("Usuário não encontrado");
@@ -46,7 +46,7 @@ const { setData } = useContext(DbContext)
         const responsePhone = await api.get(
           `${path}?adress=${values.adress}`
         );
-        setData(responsePhone.data);
+        setDataCustomer(responsePhone.data);
         toast.success("Usuário encontrado");
       } catch (error) {
         toast.error("Usuário não encontrado");

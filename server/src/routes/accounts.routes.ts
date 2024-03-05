@@ -6,7 +6,7 @@ export async function accountsRoutes(app: FastifyInstance) {
   app.put("/account/credit/:customerId", accountController.creditAccount);
   app.put("/account/debit/:customerId", accountController.debitAccount);
   app.post(
-    "/account/installments/:customerId/:histBoxId",
+    "/account/installments/:customerId/:histBoxId/:fatherBoxId",
     accountController.payInInstallments
   );
 }

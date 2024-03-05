@@ -15,6 +15,8 @@ import { ConfirmationDialog } from "../../../components/dialogConfirmComponent/C
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { BoxProps, HistoryBoxProps } from "../../../interfaces";
+import { useQuery } from "react-query";
+import { LoadingSpinner } from "../../../components/Loading";
 
 type resTypeBox = {
   Message: string;
@@ -48,20 +50,22 @@ export function BoxReception() {
     try {
       await api
         .patch(`/closehistbox/${fatherBox?.id}/${dailyBox?.id}`, data)
-        .then((res: any) => {
-          navigate("/Recepcao");
-          toast.success("Caixa fechado com sucesso!");
-          console.log(res.respose.data);
-        });
+        toast.success("Caixa fechado com sucesso!");
+         navigate("/Recepcao");
+    
     } catch (error) {
-        console.log(error);
+      //@ts-ignore
+       toast.warning(error.response.data);
     }
   }
 
-  useEffect(() => {
-    GetDailyBox() 
-    getFatherBox()
-  }, [])
+  const {isLoading: isDailyBoxLoading} = useQuery('dailyBox', GetDailyBox)
+  const {isLoading: isFatherBoxLoading} = useQuery('fatherBox', getFatherBox)
+
+  if(isDailyBoxLoading || isFatherBoxLoading) {
+    return <LoadingSpinner/>
+  }
+
 
 
   return (

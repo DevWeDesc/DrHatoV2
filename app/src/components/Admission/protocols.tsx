@@ -12,7 +12,7 @@ import { TbArrowBack } from "react-icons/tb";
 import { useNavigate, useParams } from "react-router-dom";
 import { AdminContainer } from "../../pages/AdminDashboard/style";
 import { WorkSpaceHeader } from "../../pages/Vets/styles";
-import ProceduresAdmissions from "./procedures";
+
 
 export function ProtocolsAdmission() {
   const [group, setGroup] = useState<string>("");
