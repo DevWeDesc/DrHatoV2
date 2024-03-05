@@ -8,6 +8,7 @@ type params = {
   customerId: string;
   histBoxId: string;
   medicineId: string;
+  fatherBoxId: string;
 };
 
 export const accountController = {
@@ -53,7 +54,13 @@ export const accountController = {
     }>,
     reply: FastifyReply
   ) => {
-    const { customerId, histBoxId } = request.params;
+
+    const PayInstallmentSchema = z.object({
+      customerId: z.coerce.number(),
+      histBoxId: z.coerce.number(),
+      fatherBoxId: z.coerce.number(),
+    })
+    const { customerId, histBoxId, fatherBoxId } = PayInstallmentSchema.parse(request.params);
     const {
       totalDebit,
       installmentAmount,
@@ -66,12 +73,14 @@ export const accountController = {
       await accountService.installmentDebit(
         customerId,
         histBoxId,
+        fatherBoxId,
         totalDebit,
         installmentAmount,
         debitName,
         paymentType,
         consultId,
-        admissionId
+        admissionId,
+
       );
       reply.send("Parcelado com sucesso!");
     } catch (error) {

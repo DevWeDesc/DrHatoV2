@@ -8,15 +8,11 @@ import {
   Button,
   Text,
   Textarea,
-  TableContainer,
-  TableCaption,
-  Tfoot,
-  Th,
 } from "@chakra-ui/react";
 import { Input } from "../admin/Input";
 import { TableBioquimicaSerica } from "../TablesLab/BioquimicaSerica";
 import { TableBioquimicoCompleto } from "../TablesLab/BioquimicoCompleto";
-import { TableHemogramaCaninoAdulto } from "../TablesLab/HemogramaCaninoAdulto";
+import { HemogramaCaninoAdulto } from "../TablesLab/HemogramaCaninoAdulto";
 import { TableHemogramaFelino } from "../TablesLab/HemogramaFelino";
 
 type Props = {
@@ -37,13 +33,13 @@ export function HemoTable({ Option, CloseOption }: Props): any {
           <>
             {option.name === "Hemograma Felino" && (
               <>
-                <TableHemogramaFelino />
+                <TableHemogramaFelino examId={undefined} />
               </>
             )}
           </>
           <>
             {option.name === "Hemograma Canino Adulto" && (
-              <TableHemogramaCaninoAdulto />
+              <HemogramaCaninoAdulto examId={undefined} />
             )}
           </>
           <>

@@ -17,4 +17,6 @@ export async function boxRoutes(app: FastifyInstance) {
     boxController.createReturnsBoxByUser
   );
   app.get("/returnsAll", boxController.getAllReturns);
+
+  app.get('/dailybox/installments/:dailyBoxId', boxController.getDailyBoxInstallments)
 }

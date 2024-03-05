@@ -49,6 +49,7 @@ import { CardMedicineRecord } from "../../components/CardMedicineRecord/CardMedi
 import { ThrowDiagnoisticsInConsult } from "./WorkSpaceComponents/ThrowDiagnoticsInConsult";
 import { QueryClient, useQuery } from "react-query";
 import { LoadingSpinner } from "../../components/Loading";
+import moment from "moment";
 type OpenExamProps = {
   isMultiPart: boolean;
   isReportByText: boolean;
@@ -871,21 +872,32 @@ export function WorkSpaceVet() {
         </Flex>
       </GenericModal>
       <GenericModal isOpen={surgerieDetailsIsOpen} onRequestClose={() => setSurgerieDetailsIsOpen(false)}>
-        <Flex w={400} h={400} align="center" justify="center" direction="column">
+        <Flex w={600} h={400} align="center"  direction="column">
         <Text fontWeight="bold" p='2' >Cirurgia: {surgerieDetails?.name}</Text>
         <Text fontWeight="bold" p='2' >Laudado por: {surgerieDetails?.surgeriesReport?.reportedBy}</Text>
-        <HStack>
-          <Text>Data solicitada: {new Intl.DateTimeFormat('pt-BR').format(new Date(surgerieDetails?.requestedDate))}</Text>
+        <HStack justify="space-between" w="100%">
+          <Text fontWeight="black">Data solicitada: {moment(surgerieDetails?.requestedDate).format('DD-MM-YYYY')}</Text>
           {
             surgerieDetails.completedDate ? (
-              <Text>Data finalizada: {new Intl.DateTimeFormat('pt-BR').format(new Date(surgerieDetails?.requestedDate))}</Text>
+              <Text fontWeight="black">Data finalizada: 
+                {
+                moment(surgerieDetails?.completedDate).format('DD-MM-YYYY')
+                }</Text>
             ) : (
-              <Text>Não laudado!</Text>
+              <Text fontWeight="black">Não laudado!</Text>
             )
           }
         </HStack>
-        <Text>Laudo técnico:</Text>
-        <Textarea  defaultValue={
+        <HStack justify="space-between" w="100%" mt="4">
+        <Text  fontWeight="black">Laudo técnico:</Text>
+        <Text fontWeight="black">Ultima atualização: 
+                {
+                moment( surgerieDetails?.surgeriesReport?.reportedAt).format('DD-MM-YYYY')
+                }</Text>
+        </HStack>
+        
+        <Textarea  
+        value={
           surgerieDetails?.surgeriesReport?.reportedText
         } />
         </Flex>
