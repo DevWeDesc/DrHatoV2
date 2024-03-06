@@ -56,6 +56,11 @@ app.register(paymentsTypeRoutes);
 app.register(reportsRoutes);
 app.register(examPartRoutes)
 
+
+app.get('/hello', () => {
+  return 'hello word'
+})
+
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {
     return reply
