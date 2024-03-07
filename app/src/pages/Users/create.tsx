@@ -25,14 +25,13 @@ import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import * as yup from "yup";
+import { object, string, number, date, InferType } from 'yup';
 import { useState } from "react";
 
-const schema = yup
-  .object({
-    name: yup.string().required("Login de usuario obrigatório"),
-    username: yup.string().required("UserName de usuario obrigatório"),
-    password: yup.string().required("Senha de usuario obrigatório"),
+const schema = object({
+    name: string().required("Login de usuario obrigatório"),
+    username: string().required("UserName de usuario obrigatório"),
+    password: string().required("Senha de usuario obrigatório"),
   })
   .required();
 
