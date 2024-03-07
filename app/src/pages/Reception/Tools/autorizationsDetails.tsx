@@ -29,7 +29,7 @@ export function ToolsAutorizationsDetails() {
   const [petsCustomer, setPetsCustomer] = useState([]);
 
   async function getCustomer() {
-    const customer = await api.get("http://localhost:5000/customers");
+    const customer = await api.get("/customers");
     const customerfilter = customer.data.filter((cust: any) =>
       cust.id == id ? cust : null
     );
