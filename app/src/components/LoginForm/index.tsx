@@ -7,12 +7,11 @@ import { Button, ChakraProvider, Flex, Text } from "@chakra-ui/react";
 import { defaultTheme } from "../../styles/themes/default";
 import { LoadingSpinner } from "../Loading";
 import { Input } from "../admin/Input";
-import * as yup from "yup";
+import { object, string, number, date, InferType } from 'yup';
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { api } from "../../lib/axios";
 import Cookies from "js-cookie";
-import { DbContext } from "../../contexts/DbContext";
 import { AuthContext } from "../../contexts/AuthContext";
 
 export function LoginForm() {
@@ -23,9 +22,9 @@ export function LoginForm() {
     password: string;
   }
 
-  const SignInSchema = yup.object().shape({
-    username: yup.string().required("Campo Obrigatório"),
-    password: yup.string().required("Senha Obrigatória"),
+  const SignInSchema = object().shape({
+    username: string().required("Campo Obrigatório"),
+    password: string().required("Senha Obrigatória"),
   });
 
   const {

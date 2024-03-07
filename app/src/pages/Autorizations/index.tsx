@@ -34,8 +34,9 @@ import { DbContext } from "../../contexts/DbContext";
 import { StyledBox } from "../../components/Header/style";
 import { api } from "../../lib/axios";
 import { MdPets as Burger } from "react-icons/all";
-import * as pdfMake from "pdfmake/build/pdfmake";
-import * as pdfFonts from "pdfmake/build/vfs_fonts";
+// import * as pdfMake from "pdfmake/build/pdfmake";
+// import * as pdfFonts from "pdfmake/build/vfs_fonts";
+
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { toast } from "react-toastify";
 import { VetsSearch } from "../../components/Search/vetsSearch";
@@ -65,8 +66,8 @@ export function GenerateAutorizations() {
     dataAutorizations();
   }, []);
 
-  //@ts-ignore
-  pdfMake.addVirtualFileSystem(pdfFonts);
+  // //@ts-ignore
+  // pdfMake.addVirtualFileSystem(pdfFonts);
 
   const handleCreateAut = async () => {
     try {
@@ -96,7 +97,7 @@ export function GenerateAutorizations() {
         pageMargins: [50, 50],
         pageSize: "A4",
       };
-      pdfMake.createPdf(docDefinition).open();
+      // pdfMake.createPdf(docDefinition).open();
     } catch (error) {
       console.log("ERRO AUT", error);
       toast.error(
