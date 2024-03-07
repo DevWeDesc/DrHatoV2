@@ -46,9 +46,11 @@ const styles = StyleSheet.create({
   section: {
     margin: 10,
     padding: 10,
+    //@ts-ignore
     size: 'A4',
   },
   table: { 
+     //@ts-ignore
     display: "table", 
     width: "auto", 
   }, 

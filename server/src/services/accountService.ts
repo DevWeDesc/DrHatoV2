@@ -53,8 +53,9 @@ export const accountService = {
   },
 
   installmentDebit: async (
-    accountId: string,
-    boxId: string,
+    accountId: number,
+    boxId: number,
+    fatherBoxId: number,
     totalDebit: number,
     installmentAmount: number,
     debitName: string,
@@ -76,9 +77,9 @@ export const accountService = {
             paymentType,
             debitName,
             customerAccount: {
-              connect: { customerId: parseInt(accountId) },
+              connect: { customerId: accountId },
             },
-            boxHistory: { connect: { id: parseInt(boxId) } },
+            boxHistory: { connect: { id: boxId } },
           },
         })
         .then(async (res) => {
@@ -87,12 +88,13 @@ export const accountService = {
             data: {
               consultPetId: consultId ? consultId : null,
               admissionsPetId: admissionId ? admissionId : null,
+        
             },
           });
         });
 
       await prisma.hospVetBox
-        .findUnique({ where: { id: parseInt(boxId) } })
+        .findUnique({ where: { id: fatherBoxId } })
         .then(async (res) => {
           await prisma.hospVetBox.update({
             where: { id: res?.id },
@@ -104,7 +106,7 @@ export const accountService = {
         });
 
       await prisma.customer.update({
-        where: { id: parseInt(accountId) },
+        where: { id: accountId },
         data: {
           customerAccount: {
             update: {
@@ -115,6 +117,21 @@ export const accountService = {
           },
         },
       });
+
+
+      if(consultId) {
+        await prisma.openedConsultsForPet.update({
+          where: {id: consultId}, data: {totaLDebits: 0}
+        })
+      } else if(admissionId) {
+        await prisma.openededAdmissionsForPet.update({
+          where: {id: admissionId}, data: {totaLDebits: 0}
+        })
+      } 
+
+
+
+    
     } catch (error) {
       console.log(error);
     }

@@ -11,15 +11,17 @@ import {
   TableContainer,
   Input,
   Td,
-  Grid,
   Text,
+  InputGroup,
+  InputLeftElement,
+
 } from "@chakra-ui/react";
 import { Header } from "../../../components/admin/Header";
 import { AdminContainer } from "../../AdminDashboard/style";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
-import { BsCashCoin } from "react-icons/all";
-import { useEffect, useState, useContext } from "react";
+import { BsCashCoin, TbPigMoney } from "react-icons/all";
+import {useState, useContext } from "react";
 import { api } from "../../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { BsReception4 } from "react-icons/bs";
@@ -27,156 +29,199 @@ import { BiCalendarPlus, AiFillEdit } from "react-icons/all";
 import { ICustomer } from "../../../interfaces";
 import { BoxContext } from "../../../contexts/BoxContext";
 import { GenericModal } from "../../../components/Modal/GenericModal";
+import { useQuery, useQueryClient } from "react-query";
+import { toast } from "react-toastify";
+
+export interface Installment {
+  id:                  number | string;
+  debitName?:          string;
+  totalDebit:           number;
+  paymentType?:        string;
+  paymentDate:          string;
+  installmentAmount?:  number;
+  amountInstallments?: string;
+  customerId?:         number;
+  boxHistoryId?:       number;
+  consultPetId?:       null | string;
+  admissionsPetId?:    null;
+  consult?:            Consult | null;
+  admission?:          null;
+  openedDate?:         Date;
+  petName?:            string;
+  openedBy?:           string;
+  vetPreference?:      string;
+  closedDate:           Date | string | null;
+  updatedDate:          Date | string | null;
+  isClosed?:           boolean;
+  closedByVetId?:      number;
+  clodedByVetName?:    string;
+  petWeight?:          string;
+  observations?:       string;
+  consultType?:        string;
+  symptoms?:           null;
+  request?:            null;
+  diagnostic?:         null;
+  totaLDebits?:        string;
+  medicineRecordId?:   number;
+  clientIsVip?:        boolean;
+  customerAccountId?:  number;
+  consultDebits?:      ConsultDebit[];
+}
+
+export interface Consult {
+  id:                string;
+  openedDate:        Date;
+  petName:           string;
+  openedBy:          string;
+  vetPreference:     string;
+  closedDate:        Date;
+  updatedDate:       null;
+  isClosed:          boolean;
+  closedByVetId:     number;
+  clodedByVetName:   string;
+  petWeight:         string;
+  observations:      string;
+  consultType:       string;
+  symptoms:          null;
+  request:           null;
+  diagnostic:        null;
+  totaLDebits:       string;
+  medicineRecordId:  number;
+  clientIsVip:       boolean;
+  customerAccountId: number;
+  consultDebits:     ConsultDebit[];
+}
+
+export interface ConsultDebit {
+  id:                       number;
+  name:                     string;
+  price:                    string;
+  sectorId:                 number;
+  itemId:                   number;
+  isAdmissions:             null;
+  isExam:                   boolean;
+  isSurgerie:               null;
+  isVaccine:                null;
+  isProcedure:              null;
+  isAdmission:              null;
+  RequestedByVetId:         number;
+  RequestedByVetName:       string;
+  requestedDate:            Date;
+  consultOpenedId:          null;
+  surgerieOpenedId:         null;
+  openedConsultsForPetId:   string;
+  openedAdmissionsForPetId: null;
+}
 
 export function BoxPaymentsDetails() {
   const [client, setClient] = useState({} as ICustomer);
   const { fatherBox, dailyBox } = useContext(BoxContext);
-  const [typePayment, setTypePayment] = useState(false);
+  const [typePayment, setTypePayment] = useState(true);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [installmentSelected, setInstallmentSelected] = useState({} as any);
+  const [creditModalIsOpen, setCreditModalIsOpen] = useState(false);
+  const [installments, setInstallments] = useState<Installment[]>([]);
+  const [installment, setInstallment] = useState({} as Installment)
+  const [debits, setDebits] = useState<any[]>([])
+  const [customerCredits, setCustomerCredits] = useState(0)
+  const queryClient = useQueryClient();
+
 
   async function getCustomers() {
     const customer = await api.get(`/customers/${id}`);
-    setClient(customer.data);
+    setClient(customer.data.customer);
+    setInstallments(customer.data.installments);
+    setDebits(customer.data.debits)
   }
 
-  useEffect(() => {
-    getCustomers();
-  }, []);
+  async function getInstallmentsDetails(installmentId: string | number) {
+    const installment = await api.get(`/installments/${installmentId}`);
+    setInstallment(installment.data)
+  }
+
+  async function incrementCustomerCredits() {
+    const data = {
+      customerId: client.id,
+      credits: customerCredits
+    }
+    await api.patch(`/customer/credits`, data)
+    queryClient.invalidateQueries('customerDetails')
+    toast.success("Valor adicionado!") 
+  }
+
+  useQuery('customerDetails', getCustomers )
+
+
+  console.log(installment)
 
   let typePaymentShow;
   switch (true) {
     case typePayment === false:
       typePaymentShow = (
         <>
-          {client?.customerAccount?.installments?.length >= 1 ? (
-            client?.customerAccount?.installments?.map((installment) => (
-              <Tr
-                key={installment.id}
-                onClick={() => {
-                  setInstallmentSelected(installment);
-                  setModalIsOpen(true);
-                }}
-              >
-                <Td>
-                  Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
-                </Td>
-                <Td>
-                  {new Intl.DateTimeFormat("pt-BR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }).format(new Date(installment?.paymentDate))}
-                </Td>
+         {
+          installments.filter(installment => installment.id && installment.consultPetId || installment.admissionsPetId).map((installment) => {
+            return <Tr
+            key={installment.id}
+            onClick={() => {
+              getInstallmentsDetails(installment.id)
+              setModalIsOpen(true);
+            }}
+          >
+            <Td>
+              Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
+            </Td>
+            <Td>
+            {installment.paymentDate}
+            </Td>
 
-                <Td>0</Td>
-                <Td border="2px" bgColor="green.100">
-                  {new Intl.NumberFormat("pt-BR", {
-                    currency: "BRL",
-                    style: "currency",
-                  }).format(installment.totalDebit)}
-                </Td>
-                <Td>{installment.paymentType}</Td>
-                <Td>{client.customerAccount?.debits}</Td>
-              </Tr>
-            ))
-          ) : (
-            <Tr></Tr>
-          )}
+            <Td>0</Td>
+            <Td border="2px" bgColor="green.100">
+              {new Intl.NumberFormat("pt-BR", {
+                currency: "BRL",
+                style: "currency",
+              }).format(installment.totalDebit)}
+            </Td>
+            <Td>{installment.paymentType}</Td>
+            <Td>{client.customerAccount?.debits}</Td>
+          </Tr>
+          })
+         }
         </>
       );
       break;
     case typePayment === true:
       typePaymentShow = (
         <>
-          {client ? (
-            client?.pets.map((pet) => (
-              <>
-                {pet?.medicineRecords?.petQueues.map((queue) => (
-                  <Tr key={queue.id}>
-                    <Td>
-                      <Button
-                        colorScheme="whatsapp"
-                        onClick={() =>
-                          navigate(
-                            `/Recepcao/Caixa/PagamentoCliente/${
-                              queue?.medicine?.pet?.id
-                            }/${queue?.queueEntry.toString()}/${client.id}`
-                          )
-                        }
-                      >
-                        {`${queue.queryType} Cod: ${queue.id} Animal: ${queue?.petName}`}
-                      </Button>
-                    </Td>
-                    <Td>
-                      {new Intl.DateTimeFormat("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }).format(new Date(queue?.queueExit))}
-                    </Td>
+          {
+          debits.map((debit) => {
+            return <Tr
+            key={debit.id}
+         
+          >
+            <Td>
+              Procedimento {debit.consultType}
+            </Td>
+            <Td>
+            {new Intl.DateTimeFormat('pt-BR').format(new Date(debit.openedDate))}
+            </Td>
 
-                    <Td border="2px" bgColor="red.100">
-                      {new Intl.NumberFormat("pt-BR", {
-                        currency: "BRL",
-                        style: "currency",
-                      }).format(queue.debitOnThisQuery)}
-                    </Td>
-                    <Td>0</Td>
-                    <Td>Entrada</Td>
-                    <Td>{client.customerAccount.credits}</Td>
-                  </Tr>
-                ))}
-                {pet?.medicineRecords?.petBeds.map((admission) => (
-                  <Tr key={admission.id}>
-                    <Td>
-                      <Button
-                        onClick={() =>
-                          navigate(
-                            `/Recepcao/Caixa/PagamentoCliente/${
-                              admission?.medicine?.pet?.id
-                            }/${admission?.entryOur.toString()}/${client.id}`
-                          )
-                        }
-                        colorScheme="whatsapp"
-                      >{`Internação Iniciada:${new Intl.DateTimeFormat(
-                        "pt-BR"
-                      ).format(new Date(admission.entryOur))}
-                          Cod: ${admission.id} Animal ${
-                        admission?.medicine.pet?.name
-                      }
-                          `}</Button>
-                    </Td>
-                    <Td>
-                      {`Finalizado: ${new Intl.DateTimeFormat("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }).format(new Date(admission.exitOur))}`}
-                    </Td>
-                    <Td border="2px" bgColor="red.100">
-                      {new Intl.NumberFormat("pt-BR", {
-                        currency: "BRL",
-                        style: "currency",
-                      }).format(admission.totalDebt)}
-                    </Td>
-                    <Td>0</Td>
-                    <Td>Entrada</Td>
-                    <Td>{client.customerAccount.credits}</Td>
-                  </Tr>
-                ))}
-              </>
-            ))
-          ) : (
-            <h1>fon</h1>
-          )}
+            <Td border="2px" bgColor="red.100">
+              {new Intl.NumberFormat("pt-BR", {
+                currency: "BRL",
+                style: "currency",
+              }).format(debit.totaLDebits)}
+            </Td>
+          
+            <Td border="2px" bgColor="green.100">
+              0
+            </Td>
+            <Td>débito em aberto</Td>
+            <Td>{client.customerAccount?.debits}</Td>
+          </Tr>
+          })
+         }
         </>
       );
       break;
@@ -267,7 +312,7 @@ export function BoxPaymentsDetails() {
                         bg="blue.100"
                         borderBottom="1px solid black"
                       >
-                        Dados do Cliente
+                        Dados do Cliente 
                       </Th>
 
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
@@ -275,7 +320,11 @@ export function BoxPaymentsDetails() {
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                      <Th bg="blue.100" borderBottom="1px solid black">
+                        <Button 
+                        onClick={() => setCreditModalIsOpen(true)}
+                        colorScheme="orange">Adicionar Créditos</Button>
+                      </Th>
                     </Tr>
 
                     <>
@@ -557,7 +606,7 @@ export function BoxPaymentsDetails() {
           isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}
         >
-          {Object.keys(installmentSelected).length > 0 && (
+
             <>
               <TableContainer gridColumnStart={1} gridColumnEnd={3}>
                 <Table size="sm">
@@ -581,28 +630,21 @@ export function BoxPaymentsDetails() {
                     </Tr>
                     <Tr>
                       <Td fontWeight="bold">Nome do Animal</Td>
-                      <Td>{installmentSelected?.customerAccountId}</Td>
+                      <Td>{installment?.consult?.petName}</Td>
                     </Tr>
                     <Tr>
                       <Td fontWeight="bold"> Data da consulta</Td>
-                      <Td>
-                        {new Intl.DateTimeFormat("pt-BR", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          second: "2-digit",
-                        })
-                          .format(
-                            new Date(installmentSelected?.consult?.closedDate)
-                          )
-                          .replace(",", " às")}
-                      </Td>
+                      {installment?.consult?.closedDate ? new Intl.DateTimeFormat('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year:'2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }).format(new Date(installment?.consult.closedDate)) : ''}
                     </Tr>
                     <Tr>
                       <Td fontWeight="bold"> Veterinário</Td>
-                      <Td>{installmentSelected?.consult?.vetPreference}</Td>
+                      <Td>{installment?.consult?.vetPreference}</Td>
                     </Tr>
                   </Tbody>
                 </Table>
@@ -625,7 +667,7 @@ export function BoxPaymentsDetails() {
                       <Td>Desconto</Td>
                       <Td>Valor Cobrado</Td>
                     </Tr>
-                    {installmentSelected?.consult?.consultDebits?.map(
+                    {installment?.consult?.consultDebits?.map(
                       (data: any) => (
                         <Tr key={data?.id}>
                           <Td>1</Td>
@@ -644,15 +686,39 @@ export function BoxPaymentsDetails() {
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
                           currency: "BRL",
-                        }).format(installmentSelected?.amountInstallments)}
-                        x{installmentSelected.installmentAmount}
+                        }).format(Number(installment?.amountInstallments))}
+                        x{installment.installmentAmount}
                       </Td>
                     </Tr>
                   </Tbody>
                 </Table>
               </TableContainer>
             </>
-          )}
+         
+        </GenericModal>
+        <GenericModal isOpen={creditModalIsOpen} onRequestClose={() => setCreditModalIsOpen(false)}>
+          <Flex align="center" direction="column" w="400px" h="200px">
+           <Text fontWeight="bold">Adicionar créditos ao cliente: -  {client.name}</Text>
+           
+           <InputGroup marginTop={8}>
+                <InputLeftElement
+               
+                  pointerEvents='none'
+                  color="green.400"
+                  fontSize='1.2em'
+                >
+                <TbPigMoney    />
+
+                </InputLeftElement>
+                <Input
+                  type="number"
+                onChange={(ev) => setCustomerCredits(Number(ev.target.value))} border="1px" placeholder='Digite a quantia de créditos a ser adicionado!' />
+
+              </InputGroup>
+              <Button 
+                onClick={() => incrementCustomerCredits()}
+              marginTop={8} w="100%" colorScheme="whatsapp">Salvar</Button>
+          </Flex>
         </GenericModal>
       </AdminContainer>
     </ChakraProvider>

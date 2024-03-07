@@ -131,7 +131,7 @@ export default function EditAutorizations() {
                 >
                   Insira aqui um novo Nome
                 </label>
-                <Input name="name" {...register("name")} />
+                <Input  {...register("name")} name="name" />
 
                 <label
                   htmlFor="text"

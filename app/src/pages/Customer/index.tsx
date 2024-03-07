@@ -88,7 +88,7 @@ export function CustomerDetails() {
 
   async function loadCustomer() {
     const response = await api.get(`/customers/${id}`);
-    setCustomer(response.data);
+    setCustomer(response.data.customer);
   }
 
   async function loadVets() {

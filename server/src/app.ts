@@ -25,6 +25,7 @@ import { medicinesRoutes } from "./routes/medicines.routes";
 import { oldSystemHistorieRoutes } from "./routes/oldsystem.historie.routes";
 import { paymentsTypeRoutes } from "./routes/paymentsType.routes";
 import { reportsRoutes } from "./routes/reports.routes";
+import { examPartRoutes } from "./routes/exam.parts.routes";
 
 export const app = fastify();
 
@@ -53,6 +54,12 @@ app.register(medicinesRoutes);
 app.register(oldSystemHistorieRoutes);
 app.register(paymentsTypeRoutes);
 app.register(reportsRoutes);
+app.register(examPartRoutes)
+
+
+app.get('/hello', () => {
+  return 'hello word'
+})
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {

@@ -83,8 +83,10 @@ export default function EditProtocols() {
                         // onSubmit={handleSubmit(handleEditAutorization as any)}
                       >
                         <Input
-                          label="Insira aqui um novo Nome para o grupo"
-                          //{...register("name")}
+                          // label="Insira aqui um novo Nome para o grupo"
+                      
+                          // {...register("name")}
+                          name="name"
                         />
                         <Text>Visibilidade</Text>
                         <Select

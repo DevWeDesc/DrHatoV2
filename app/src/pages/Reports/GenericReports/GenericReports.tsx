@@ -16,7 +16,9 @@ import { toast } from "react-toastify";
 import { ReportsExamsData } from "../../../mocks/ReportsExams";
 import { ReportsVetData } from "../../../mocks/ReportsVetData";
 import { ReportFinanceData } from "../../../mocks/ReportsFinance";
-import * as XLSX from "xlsx";
+
+import {utils, writeFile} from 'xlsx'
+
 import { api } from "../../../lib/axios";
 import { IReportExams, IReportResponse } from "../../../interfaces";
 
@@ -174,10 +176,10 @@ export const GenericReports = () => {
         );
       });
 
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(dados);
-      XLSX.utils.book_append_sheet(wb, ws, "Relatório");
-      XLSX.writeFile(wb, "Relatório.xlsx");
+      const wb = utils.book_new();
+      const ws = utils.json_to_sheet(dados);
+      utils.book_append_sheet(wb, ws, "Relatório");
+      writeFile(wb, "Relatório.xlsx");
     });
   }
 

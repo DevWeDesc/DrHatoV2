@@ -21,4 +21,6 @@ export async function queueRoutes(app: FastifyInstance) {
     "/queue/consult/diagnostic/:queueId",
     queueController.getQueueDiagnostics
   );
+
+  app.patch('/queue/pet/weight/:queueid/:petWeight', queueController.updatePetWeightInQueue)
 }

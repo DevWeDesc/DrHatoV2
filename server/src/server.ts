@@ -1,10 +1,12 @@
 import { app } from "./app"
 
 
-app.listen({ port: 5000 }, (err, address) => {
+app.listen({host: 'localhost', port: 3333  }, (err, address) => {
   if (err) {
     console.error(err)
     process.exit(1)
   }
-  console.log(`Servidor iniciado porta ${address}`)
+
+  console.log(`server listening on ${address}`)
+ 
 })

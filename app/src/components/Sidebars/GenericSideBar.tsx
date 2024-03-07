@@ -9,6 +9,7 @@ export function GenericSidebar({ children }: any) {
           </Text>
           <Flex
             direction={{ base: "row", lg: "column" }}
+            flexWrap={{ base: "wrap", lg: "nowrap" }}
             justifyContent="space-between"
             gap="4"
             width="100%"

@@ -10,14 +10,13 @@ import { BiCalendarPlus } from "react-icons/bi";
 import { AiFillPrinter } from "react-icons/ai";
 import { TbCashBanknoteOff } from "react-icons/tb";
 import { OpenedBox } from "../../../components/Box/openedBox";
-import { useContext, useState, useEffect } from "react";
+import {  useState, useEffect } from "react";
 import { ConfirmationDialog } from "../../../components/dialogConfirmComponent/ConfirmationDialog";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
-import { BoxContext } from "../../../contexts/BoxContext";
-import { AxiosResponse } from "axios";
-import { Message } from "react-hook-form";
 import { BoxProps, HistoryBoxProps } from "../../../interfaces";
+import { useQuery } from "react-query";
+import { LoadingSpinner } from "../../../components/Loading";
 
 type resTypeBox = {
   Message: string;
@@ -50,21 +49,23 @@ export function BoxReception() {
 
     try {
       await api
-        .patch(`/closehistbox/${fatherBox.id}/${dailyBox.id}`, data)
-        .then((res: any) => {
-          navigate("/Recepcao");
-          toast.success("Caixa fechado com sucesso!");
-          console.log(res.respose.data);
-        });
+        .patch(`/closehistbox/${fatherBox?.id}/${dailyBox?.id}`, data)
+        toast.success("Caixa fechado com sucesso!");
+         navigate("/Recepcao");
+    
     } catch (error) {
-        console.log(error);
+      //@ts-ignore
+       toast.warning(error.response.data);
     }
   }
 
-  useEffect(() => {
-    GetDailyBox() 
-    getFatherBox()
-  }, [])
+  const {isLoading: isDailyBoxLoading} = useQuery('dailyBox', GetDailyBox)
+  const {isLoading: isFatherBoxLoading} = useQuery('fatherBox', getFatherBox)
+
+  if(isDailyBoxLoading || isFatherBoxLoading) {
+    return <LoadingSpinner/>
+  }
+
 
 
   return (

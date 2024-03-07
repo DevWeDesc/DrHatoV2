@@ -47,6 +47,7 @@ export function ConfirmationDialog({
 
       <AlertDialog
         isOpen={isOpen}
+        //@ts-ignore
         leastDestructiveRef={cancelRef}
         onClose={onClose}
       >
@@ -59,7 +60,10 @@ export function ConfirmationDialog({
             <AlertDialogBody>{describreConfirm}</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
+              
+              <Button 
+              //@ts-ignore
+              ref={cancelRef} onClick={onClose}>
                 Cancelar
               </Button>
               <Button

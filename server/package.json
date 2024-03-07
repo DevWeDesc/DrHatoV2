@@ -9,7 +9,6 @@
   },
   "author": "dilan",
   "license": "MIT",
- 
   "devDependencies": {
     "@jest/globals": "^29.5.0",
     "@mermaid-js/mermaid-cli": "^10.1.0",
@@ -30,7 +29,7 @@
     "@types/node": "^18.15.5",
     "bcrypt": "^5.1.0",
     "dayjs": "^1.11.9",
-    "fastify": "^4.15.0",
+    "fastify": "^4.26.2",
     "jsonwebtoken": "^9.0.1",
     "xlsx": "^0.18.5",
     "zod": "^3.21.4"

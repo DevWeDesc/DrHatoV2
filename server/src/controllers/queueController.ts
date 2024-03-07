@@ -23,8 +23,16 @@ export const queueController = {
     );
     const { id } = request.params;
     try {
+
+      const pet = await prisma.pets.findUnique({where:{ id: parseInt(id)}})
+
+      if(!pet) {
+        return
+      }
+
       await prisma.openedConsultsForPet.create({
         data: {
+          petName: pet.name,
           openedDate: new Date(),
           consultType: queryType,
           vetPreference,
@@ -74,10 +82,10 @@ export const queueController = {
       responsibleVeterinarianId: z.number().optional(),
       debitOnThisQuery: z.number().optional(),
       responsibleVeterinarian: z.string().optional(),
-      petWeight: z.string().optional(),
+      petWeight: z.number().optional(),
       consultId: z.string().optional(),
       admissionId: z.string().optional(),
-      // accountId: z.number().optional(),
+       accountId: z.number().optional(),
     });
     const { petId, queueUUID, customerId } = ParamsSchema.parse(request.params);
     const {
@@ -86,7 +94,7 @@ export const queueController = {
       petWeight,
       consultId,
       admissionId,
-      // accountId,
+       accountId,
     } = QueueSchema.parse(request.body);
     try {
       const getDebitsInConsultService = new GetDebitsInConsultsService();
@@ -95,22 +103,28 @@ export const queueController = {
         queueId: queueUUID,
       });
 
+     const pet = await prisma.pets.update({
+        where: { id: petId },
+        data: { priceAccumulator: { update: { accumulator: 0 } } },
+      });
+
       await prisma.openedConsultsForPet.update({
         where: {
           id: queueUUID,
         },
         data: {
+          petName: pet.name,
           clodedByVetName: responsibleVeterinarian,
           closedByVetId: responsibleVeterinarianId,
           closedDate: new Date(),
           isClosed: true,
-          petWeight: petWeight,
+          petWeight: petWeight?.toString(),
           totaLDebits: total,
           symptoms: debits[0].symptoms,
           request: debits[0].request,
           diagnostic: debits[0].diagnostic,
           observations: debits[0].observations,
-          customerAccountId: customerId,
+          customerAccountId: accountId,
         },
       });
 
@@ -127,10 +141,7 @@ export const queueController = {
         },
       });
 
-      await prisma.pets.update({
-        where: { id: petId },
-        data: { priceAccumulator: { update: { accumulator: 0 } } },
-      });
+  
 
       reply.status(201).send({
         message: "Fila encerrada com sucesso!",
@@ -320,6 +331,28 @@ export const queueController = {
       reply.status(404).send({
         message: error,
       });
+    }
+  },
+
+  updatePetWeightInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const UpdatePetWeightInQueueParams = z.object({
+        queueId: z.string().uuid(),
+        petWeigth: z.coerce.string()
+      });
+
+      const {petWeigth, queueId} = UpdatePetWeightInQueueParams.parse(request.params)
+
+      await prisma.openedConsultsForPet.update({
+        where:{ id: queueId},
+        data: {
+          petWeight: petWeigth
+        }
+      })
+
+
+    } catch (error) {
+      
     }
   },
 

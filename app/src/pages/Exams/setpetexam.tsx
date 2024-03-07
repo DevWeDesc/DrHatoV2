@@ -658,7 +658,9 @@ export function SetPetExam() {
   return (
     <ChakraProvider>
       <Flex direction="column" h="100vh">
-        {/* <Header title="Tabela de Laboratórios" url="/Labs/Exames" /> */}
+        <Box>
+          <Header title="Tabela de Laboratórios" url="/Labs/Exames" />
+        </Box>
         <Flex
           w="100%"
           my="6"
@@ -666,20 +668,26 @@ export function SetPetExam() {
           px="6"
           direction={{ base: "column", lg: "row" }}
         >
-          {/* <GenericSidebar>
-            <GenericLink icon={BsArrowLeft} name="Voltar" path="/Labs/Exames" />
-            <GenericLink icon={AiOutlineMenu} name="Menu" path="/Home" />
-            <GenericLink
-              icon={IoIosFlask}
-              name="Laboratório"
-              path="/Labs/Exames"
-            />
-            <GenericLink
-              icon={BsImages}
-              name="Laboratório Imagens"
-              path="/Labs/Imagens"
-            />
-          </GenericSidebar> */}
+          <Box>
+            <GenericSidebar>
+              <GenericLink
+                icon={BsArrowLeft}
+                name="Voltar"
+                path="/Labs/Exames"
+              />
+              <GenericLink icon={AiOutlineMenu} name="Menu" path="/Home" />
+              <GenericLink
+                icon={IoIosFlask}
+                name="Laboratório"
+                path="/Labs/Exames"
+              />
+              <GenericLink
+                icon={BsImages}
+                name="Laboratório Imagens"
+                path="/Labs/Imagens"
+              />
+            </GenericSidebar>
+          </Box>
           <Box height="auto" w="100%" borderRadius={8} bg="gray.200" p="8">
             <Flex
               direction={{ base: "column", lg: "row" }}
@@ -698,36 +706,46 @@ export function SetPetExam() {
               <Table variant="simple">
                 <Thead>
                   <Tr>
-                    <Th textColor="black">Caracteristicas</Th>
-                    <Th textColor="black" colSpan={3}>
+                    <Th border="1px solid black" textColor="black">
+                      Caracteristicas
+                    </Th>
+                    <Th border="1px solid black" textColor="black" colSpan={3}>
                       Informações
                     </Th>
                     {/* <Th textColor="black">Caracteristicas do Veterinário</Th> */}
-                    <Th textColor="black">Dados do Veterinário</Th>
+                    <Th border="1px solid black" textColor="black">
+                      Dados do Veterinário
+                    </Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  <Tr>
+                  <Tr border="1px solid black">
                     <Td py={0} fontWeight="bold">
                       Cliente
                     </Td>
-                    <Td py={3} colSpan={5} bg="white" borderX="1px solid black">
+                    <Td
+                      py={3}
+                      colSpan={5}
+                      bg="white"
+                      borderTop="1px solid black"
+                      border="1px solid black"
+                    >
                       {pet?.customer?.name}
                     </Td>
                   </Tr>
-                  <Tr>
+                  <Tr border="1px solid black">
                     <Td py={0} fontWeight="bold">
                       Animal
                     </Td>
-                    <Td py={3} colSpan={5} bg="white" borderX="1px solid black">
+                    <Td py={3} colSpan={5} bg="white" border="1px solid black">
                       {pet?.name}
                     </Td>
                   </Tr>
-                  <Tr>
+                  <Tr border="1px solid black">
                     <Td py={0} fontWeight="bold">
                       Exame
                     </Td>
-                    <Td py={3} colSpan={2} bg="white" borderX="1px solid black">
+                    <Td py={3} colSpan={2} bg="white" border="1px solid black">
                       {
                         pet?.medicineRecords?.petExams.find(
                           (exam) => exam.name === exam.name
@@ -742,7 +760,7 @@ export function SetPetExam() {
                     >
                       Veterinário
                     </Td>
-                    <Td py={3} colSpan={2} bg="white" borderX="1px solid black">
+                    <Td py={3} colSpan={2} bg="white" border="1px solid black">
                       {
                         pet?.medicineRecords?.petExams.find(
                           (exam) => exam.name === exam.name
@@ -750,11 +768,11 @@ export function SetPetExam() {
                       }
                     </Td>
                   </Tr>
-                  <Tr>
+                  <Tr border="1px solid black">
                     <Td py={0} fontWeight="bold">
                       Exame
                     </Td>
-                    <Td py={3} colSpan={2} bg="white" borderX="1px solid black">
+                    <Td py={3} colSpan={2} bg="white" border="1px solid black">
                       {new Intl.DateTimeFormat("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
@@ -769,7 +787,7 @@ export function SetPetExam() {
                     >
                       CRMV
                     </Td>
-                    <Td py={3} colSpan={2} bg="white" borderX="1px solid black">
+                    <Td py={3} colSpan={2} bg="white" border="1px solid black">
                       {
                         pet?.medicineRecords?.petExams.find(
                           (exam) => exam.name === exam.name

@@ -20,6 +20,7 @@ import { ExamsProps, PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
 import { useQuery } from "react-query";
 import { LoadingSpinner } from "../Loading";
+import { NotAllowedError } from "../../errors/NotAllowedError";
 
 type ExamsVetProps = {
   InAdmission: boolean;
@@ -35,12 +36,23 @@ type ExamsDTO = {
 export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
-  const [exams, setExams] = useState<ExamsDTO[]>([]);
   const [reloadData, setReloadData] = useState(true);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [examName, setExamName] = useState("");
   const [searchByLetter, setSearchByLetter] = useState("");
-  const { data, isLoading, refetch } = useQuery({
+
+
+
+  async function getPetExams() {
+    const response = await api.get(`/pets/${id}`);
+    setPetDetails(response.data);
+
+    // const exams = await api.get("/exams/old/all");
+    // setExams(exams.data.exams);
+  }
+
+
+  const { data: examData, isLoading, refetch } = useQuery({
     queryKey: ["examsData"],
     queryFn: async () => {
       if (searchByLetter) {
@@ -58,13 +70,7 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
 
   // console.log(data);
 
-  async function getPetExams() {
-    const response = await api.get(`/pets/${id}`);
-    setPetDetails(response.data);
 
-    // const exams = await api.get("/exams/old/all");
-    // setExams(exams.data.exams);
-  }
 
   // async function searchExamByName() {
   //   const response = await api.get(`/exams/old/${examName}`);
@@ -77,7 +83,16 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
   // }
 
   async function setOldExamInPet(examId: number) {
+
     try {
+      const allowedEspecie = examData.find((esp: any, ind: any) => esp.codexam === examId);
+      const allowedSetExam =  allowedEspecie.appicableEspecies.map((esp: any) => {
+           if(esp.name.includes(petDetails.especie)){
+             throw new NotAllowedError('Especie não permitida!')
+           }
+   
+     
+         })
       const data = {
         RequestedByVetId: user.id,
         RequestedByVetName: user.consultName,
@@ -90,9 +105,6 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
           `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
           data
         );
-        console.log(
-          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`
-        );
         setReloadData(true);
         toast.success("Exame adicionado Ala Internação!");
       } else {
@@ -104,7 +116,14 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
         toast.success("Exame adicionado Ala Veterinários");
       }
     } catch (error) {
-      toast.error("Falha ao cadastrar exame!");
+  
+      if(error instanceof NotAllowedError) {
+        toast.error(error.message)
+      } else {
+        toast.error("Falha ao cadastar exame!")
+      }
+      
+     
     }
   }
 
@@ -322,7 +341,7 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
               </Tr>
             </Thead>
             <Tbody>
-              {data?.map((exam: ExamsDTO) => (
+              {examData?.map((exam: ExamsDTO) => (
                 <Tr key={exam.codexam}>
                   <Td border="2px">{exam.name}</Td>
                   <Td border="2px">R$ {exam.price}</Td>

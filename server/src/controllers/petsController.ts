@@ -411,7 +411,7 @@ export const petsController = {
       await prisma.pets.update({
         where: { id: parseInt(petId) },
         data: {
-          weigth: weight,
+          weigth: parseFloat(weight),
         },
       });
     } catch (error) {

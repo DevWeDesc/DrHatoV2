@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import { DbContext } from "../../contexts/DbContext";
 
 export function SearchComponent({ children, path }: any) {
-  const { setData } = useContext(DbContext);
+  const { setDataCustomer } = useContext(DbContext);
 
   const { register, handleSubmit } = useForm();
   const handleSearch: SubmitHandler<any> = async (values) => {
@@ -24,7 +24,7 @@ export function SearchComponent({ children, path }: any) {
         const responseName = await api.get(
           `/customers/search?name=${values.name}`
         );
-        setData(responseName.data);
+        setDataCustomer(responseName.data);
         toast.success("Usuário encontrado");
       } catch (error) {
         toast.error("Usuário não encontrado");
@@ -36,7 +36,7 @@ export function SearchComponent({ children, path }: any) {
         const responseCpf = await api.get(
           `/customers/search?cpf=${values.cpf}`
         );
-        setData(responseCpf.data);
+        setDataCustomer(responseCpf.data);
         toast.success("Usuário encontrado");
       } catch (error) {
         toast.error("Usuário não encontrado");
@@ -48,7 +48,7 @@ export function SearchComponent({ children, path }: any) {
         const responsePhone = await api.get(
           `/customers/search?phone=${values.phone}`
         );
-        setData(responsePhone.data);
+        setDataCustomer(responsePhone.data);
         toast.success("Usuário encontrado");
       } catch (error) {
         toast.error("Usuário não encontrado");

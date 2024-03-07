@@ -70,7 +70,7 @@ export default function AdminVaccines() {
     }
   }
 
-  async function DeleteVaccine(vaccineId: string) {
+  async function DeleteVaccine(vaccineId: string | number) {
     await api
       .delete(`/vaccine/${vaccineId}`)
       .then(() => toast.success("Vacina deletada com sucesso"))

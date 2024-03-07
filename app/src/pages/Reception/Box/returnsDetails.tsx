@@ -80,7 +80,7 @@ export function BoxReturnsDetails() {
 
   async function getCustomer() {
     const response = await api.get(`/customers/${id}`);
-    setCostumer(response.data);
+    setCostumer(response.data.customer);
   }
   useEffect(() => {
     getCustomer();

@@ -38,8 +38,6 @@ import { api } from "../../lib/axios";
 import { ConsultsPetDetails, ICustomer, PetDetaisl } from "../../interfaces";
 import { toast } from "react-toastify";
 import { Textarea } from "@chakra-ui/react";
-import { TDocumentDefinitions } from "pdfmake/interfaces";
-import * as pdfMake from "pdfmake/build/pdfmake";
 import { ModalContext, ModalProvider } from "../../hooks/useModal";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
@@ -49,6 +47,9 @@ import { VetInstructions } from "./WorkSpaceVets/instructions";
 import { EndConsults } from "./WorkSpaceVets/endconsults";
 import { CardMedicineRecord } from "../../components/CardMedicineRecord/CardMedicineRecord";
 import { ThrowDiagnoisticsInConsult } from "./WorkSpaceComponents/ThrowDiagnoticsInConsult";
+import { QueryClient, useQuery } from "react-query";
+import { LoadingSpinner } from "../../components/Loading";
+import moment from "moment";
 type OpenExamProps = {
   isMultiPart: boolean;
   isReportByText: boolean;
@@ -58,6 +59,7 @@ type OpenExamProps = {
 
 export function WorkSpaceVet() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
+  const queryClient = new QueryClient();
   const navigate = useNavigate();
   const [pet, setPet] = useState({} as PetDetaisl);
   const {
@@ -87,23 +89,22 @@ export function WorkSpaceVet() {
   } = useContext(ModalContext);
   const [handleViewComponent, setHandleViewComponent] = useState("");
   const [petWeigth, setPetWeigth] = useState("");
-  const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [customerDetails, setCustomerDetails] = useState({} as ICustomer);
   const [consultDetails, setConsultDetails] = useState(
     {} as ConsultsPetDetails
   );
-
+  const [surgerieDetailsIsOpen, setSurgerieDetailsIsOpen] = useState(false);
+  const [surgerieDetails, setSurgerieDetails] = useState({} as any);
   const GetDetailsCustomerById = async (id: number) => {
     const customer = await api.get(`/customers/${id}`);
-    setCustomerDetails(customer.data);
-    console.log(customer);
+    setCustomerDetails(customer.data.customer);
     setIsCustomerDetailsOpen(true);
   };
 
   const handleChangePet = async (newPetId: number) => {
     navigate(`/Vets/Workspace/${newPetId}`);
-    setReloadData(true);
+    queryClient.invalidateQueries("getPetDetailsInfos");
   };
 
   function handleOpenResultExams({
@@ -127,8 +128,11 @@ export function WorkSpaceVet() {
 
   const handleChangePetWeight = async (weigth: string) => {
     try {
-      await api.put(`/pet/${id}/${weigth}`);
-      setReloadData(true);
+      await api.put(`/pet/${id}/${weigth.replace(/kg/g, "")}`);
+      await api.patch(
+        `/queue/pet/weight/${queueId}/${weigth.replace(/kg/g, "")}`
+      );
+      queryClient.invalidateQueries("getPetDetailsInfos");
       toast.success("Peso editado com sucesso");
     } catch (error) {
       console.log(error);
@@ -148,16 +152,14 @@ export function WorkSpaceVet() {
       setConsultDetails(resConsult.data);
     });
   }
-  useEffect(() => {
-    getDetailsInformations();
-  }, []);
 
-  useEffect(() => {
-    if (reloadData === true) {
-      getDetailsInformations();
-      setReloadData(false); // Reseta o estado para evitar chamadas infinitas
-    }
-  }, [reloadData]);
+  const { isLoading } = useQuery("getPetDetailsInfos", {
+    queryFn: getDetailsInformations,
+  });
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   const handleCloseQuery = async () => {
     try {
@@ -188,8 +190,13 @@ export function WorkSpaceVet() {
       .then(() => {
         toast.success("Cliente Vip atualizado com sucesso!");
       });
-    setReloadData(true);
+    queryClient.invalidateQueries("getPetDetailsInfos");
   };
+
+  async function getSurgeriePetDetails(surgerieId: string | number) {
+    const res = await api.get(`/surgerie/details/${surgerieId}`);
+    setSurgerieDetails(res.data.surgerie);
+  }
 
   let viewComponent;
   switch (true) {
@@ -256,10 +263,19 @@ export function WorkSpaceVet() {
             </Thead>
             <Tbody>
               {pet.surgeries?.map((surgerie: any) => (
-                <Tr key={surgerie.id}>
+                <Tr
+                  cursor="pointer"
+                  onClick={() => {
+                    getSurgeriePetDetails(surgerie.id);
+                    setSurgerieDetailsIsOpen(true);
+                  }}
+                  key={surgerie.id}
+                >
                   <Td>
                     {surgerie.completedDate
-                      ? surgerie.completedDate.toString()
+                      ? new Intl.DateTimeFormat("pt-BR").format(
+                          new Date(surgerie.completedDate)
+                        )
                       : "NÃO CONCLUIDA"}
                   </Td>
                   <Td>{surgerie.name}</Td>
@@ -882,6 +898,44 @@ export function WorkSpaceVet() {
             textButton="Histórico Novo"
             title="Visualizar Histórico novo"
           />
+        </Flex>
+      </GenericModal>
+      <GenericModal
+        isOpen={surgerieDetailsIsOpen}
+        onRequestClose={() => setSurgerieDetailsIsOpen(false)}
+      >
+        <Flex w={600} h={400} align="center" direction="column">
+          <Text fontWeight="bold" p="2">
+            Cirurgia: {surgerieDetails?.name}
+          </Text>
+          <Text fontWeight="bold" p="2">
+            Laudado por: {surgerieDetails?.surgeriesReport?.reportedBy}
+          </Text>
+          <HStack justify="space-between" w="100%">
+            <Text fontWeight="black">
+              Data solicitada:{" "}
+              {moment(surgerieDetails?.requestedDate).format("DD-MM-YYYY")}
+            </Text>
+            {surgerieDetails.completedDate ? (
+              <Text fontWeight="black">
+                Data finalizada:
+                {moment(surgerieDetails?.completedDate).format("DD-MM-YYYY")}
+              </Text>
+            ) : (
+              <Text fontWeight="black">Não laudado!</Text>
+            )}
+          </HStack>
+          <HStack justify="space-between" w="100%" mt="4">
+            <Text fontWeight="black">Laudo técnico:</Text>
+            <Text fontWeight="black">
+              Ultima atualização:
+              {moment(surgerieDetails?.surgeriesReport?.reportedAt).format(
+                "DD-MM-YYYY"
+              )}
+            </Text>
+          </HStack>
+
+          <Textarea value={surgerieDetails?.surgeriesReport?.reportedText} />
         </Flex>
       </GenericModal>
     </ChakraProvider>

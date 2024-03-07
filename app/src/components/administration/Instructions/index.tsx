@@ -24,15 +24,15 @@ import { GenericModal } from "../../Modal/GenericModal";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../admin/Input";
-import * as pdfMake from "pdfmake/build/pdfmake";
-import * as pdfFonts from "pdfmake/build/vfs_fonts";
+import  pdfMake from "pdfmake/build/pdfmake";
+// import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
 
-//@ts-ignore
-pdfMake.addVirtualFileSystem(pdfFonts);
-// Create styles
+// //@ts-ignore
+// pdfMake.addVirtualFileSystem(pdfFonts);
+// // Create styles
 
 export function Instructions() {
   //const { instructions } = useContext(DbContext);
@@ -50,7 +50,7 @@ export function Instructions() {
       pageMargins: [50, 50],
       pageSize: "A4",
     };
-    pdfMake.createPdf(docDefinition).open();
+    // pdfMake.createPdf(docDefinition).open();
   }
   function openModal() {
     setIsModalOpen(true);

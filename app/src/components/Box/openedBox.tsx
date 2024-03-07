@@ -3,17 +3,18 @@ import {
   Flex,
   Box, Button
 } from "@chakra-ui/react";
-import { useState,  useEffect } from "react";
+import { useState } from "react";
+import { QueryClient, useQuery } from "react-query";
 import { toast } from "react-toastify";
 import { BoxProps, HistoryBoxProps } from "../../interfaces";
 import { api } from "../../lib/axios";
+import { LoadingSpinner } from "../Loading";
 import { ClosedBox } from "./closedBox";
 export function OpenedBox() {
-  const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [dailyBox, setDailyBox] = useState({} as HistoryBoxProps);
   const [fatherBox, setFatherBox] = useState({} as BoxProps);
-
+  const queryClient = new QueryClient()
   async function GetDailyBox () {
     const response = await api.get("/dailybox")
     setDailyBox(response.data)
@@ -30,8 +31,8 @@ export function OpenedBox() {
         exitValues: 500,
         openBy: user.username,
       };
-      await api.post(`/openhistbox/${fatherBox.id}`, data)
-      setReloadData(true)
+      await api.post(`/openhistbox/${fatherBox?.id}`, data)
+      queryClient.invalidateQueries(['dailyBox', 'fatherBox'])
       toast.success("Caixa aberto com sucesso")
     } catch (error) {
       toast.error("Falha ao abrir caixa!");
@@ -39,6 +40,13 @@ export function OpenedBox() {
     }
   }
 
+  const {isLoading: isDailyBoxLoading} = useQuery('dailyBox', GetDailyBox)
+  const {isLoading: isFatherBoxLoading} = useQuery('fatherBox', getFatherBox)
+
+  
+  if(isDailyBoxLoading || isFatherBoxLoading) {
+    return <LoadingSpinner/>
+  }
 
   let boxShow;
   switch(true) {
@@ -68,19 +76,6 @@ export function OpenedBox() {
     break;
 
   }
-
-  useEffect(() => {
-    if(reloadData) {
-      GetDailyBox() 
-      setReloadData(false)
-    }
-  }, [reloadData])
-  
-  useEffect(() => {
-    GetDailyBox() 
-    getFatherBox()
-  }, [])
-
 
   
   return (

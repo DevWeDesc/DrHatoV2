@@ -35,6 +35,7 @@ export const examsController = {
       const exam = await prisma.oldExams.findUnique({
         where: { codexam: parseInt(id) },
         include: {
+          appicableEspecies: true,
           partExams: {
             include: { examsDetails: true },
           },
@@ -113,6 +114,9 @@ export const examsController = {
         where: {
           disponible: true,
         },
+        include:{
+          appicableEspecies: true
+        }
       });
 
       reply.send({ totalPages, totalExams, exams });
@@ -140,6 +144,7 @@ export const examsController = {
           partExams: {
             include: { examsDetails: true },
           },
+          appicableEspecies: true
         },
       });
 
@@ -166,7 +171,12 @@ export const examsController = {
       const response = await prisma.oldExams.findMany({
         where: {
           name: { contains: examName },
+          
+       
         },
+        include:{
+          appicableEspecies: true
+        }
       });
 
       reply.send(response);
@@ -189,6 +199,9 @@ export const examsController = {
         where: {
           name: { startsWith: firstLetter.toUpperCase() },
         },
+        include:{
+          appicableEspecies: true
+        }
       });
 
       reply.send(response);
@@ -331,6 +344,76 @@ export const examsController = {
 
     } catch (error) {
 
+      console.error(error)
+    }
+  },
+
+
+  deleteExam: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+        const DeletExamParams =  z.object({
+          examId: z.coerce.number()
+        })
+ 
+        const {examId} = DeletExamParams.parse(request.params)
+
+
+        await prisma.oldExams.delete({
+          where: {
+            codexam: examId
+          }
+        })
+
+
+        reply.status(204)
+    } catch (error) {
+        console.log(error)
+    }
+  },
+  setEspecieInExam: async (
+    request: FastifyRequest<{
+      Params: { examId: string; especieId: string };
+    }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const { examId, especieId } = request.params;
+
+      await prisma.oldExams.update({
+        where: { codexam: parseInt(examId) },
+        data: {
+          appicableEspecies: {
+            connect: { id: parseInt(especieId) },
+          },
+        },
+      });
+
+      reply.status(201);
+    } catch (error) {
+      reply.send(error).status(400);
+    }
+  },
+
+  removeEspecieInExam: async (
+    request: FastifyRequest<{
+      Params: { examId: string; especieId: string };
+    }>,
+    reply: FastifyReply
+  )=>{
+    try {
+      const {examId, especieId} = request.params
+
+      await prisma.oldExams.update({
+        where: {codexam: parseInt(examId)},
+        data: {
+          appicableEspecies: {
+            disconnect: {
+              id: parseInt(especieId)
+            }
+          }
+        }
+      })
+    } catch (error) {
       console.error(error)
     }
   }
