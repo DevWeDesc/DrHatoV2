@@ -6,6 +6,7 @@ export const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     font-family: 'Open Sans', sans-serif;
+    color: black;
   }
   :focus {
     outline: 0;
