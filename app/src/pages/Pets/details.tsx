@@ -24,6 +24,8 @@ import { api } from "../../lib/axios";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "../../components/admin/Input";
+import { useQuery } from "react-query";
+import { LoadingSpinner } from "../../components/Loading";
 
 
 
@@ -62,19 +64,23 @@ export function DetailsPets() {
   const { register, handleSubmit } = useForm()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    async function getPet () {
-      try {
-        const response  = await api.get(`/pets/${id}`)
-        setPets(response.data)
-  
-      } catch (error) {
-        console.log(error)
-      }
-  
+  async function getPet () {
+    try {
+      const response  = await api.get(`/pets/${id}`)
+      setPets(response.data)
+
+    } catch (error) {
+      console.log(error)
     }
-    getPet()
-  },[])
+
+  }
+
+
+  const {isLoading} = useQuery('petDetails',getPet )
+
+  if(isLoading) {
+    return <LoadingSpinner/>
+  }
 
   function openModal() {
     setIsModalOpen(true);
@@ -160,7 +166,7 @@ if(PetIsInQueue.returnQueue === true || PetIsInQueue.serviceQueue === true) {
  
                     >
                       <FormControl   as="form"
-                  onSubmit={handleSubmit(handleSetFile)}>
+                        >
                       <Flex direction="column" width={300} height={300} align="center" p="4">
                       <Text fontSize="lg" mb="4" fontWeight="bold">Qual Fila? </Text>
 

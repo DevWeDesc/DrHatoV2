@@ -1,6 +1,15 @@
 version: '3'
 
 services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+       - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+        - nodenet
+      
   postgres:
     image: postgres
     environment:
@@ -11,8 +20,15 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - nodenet
   # nginx: 
   #   image: nginx:lastest
 
 volumes:
   postgres_data:
+
+
+networks:
+  nodenet:
+    driver: bridge

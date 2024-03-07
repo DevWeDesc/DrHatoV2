@@ -86,7 +86,7 @@ export function SurgeryCenter() {
       const data = {
         name: values.name,
       };
-      await api.put(`surgeryCenter/${id}`, data);
+      await api.put(`surgeryCenter/${values.id}`, data);
       toast.success("Centro Cirurgico editado com sucesso!!");
       navigate(0);
     } catch (error) {
