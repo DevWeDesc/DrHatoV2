@@ -22,3 +22,12 @@
 [x] Passo 22 - Mudar cadastro de exames com base no sistema antigo.
 [x] Passo 23 - Mudar Configurar exames para modelo do sistema antigo, primeiro Adicionar Nome da sessão, após adicionar a sessão renderizar Adicionar nova Caracteristica, para adição de nova Caracteristica.
 [][D] Passo 24 - Adicionar ReactQuery na tela de veterinarios na parte de exames para tirar o travamento.
+
+[][D] Passo 25 -deixar a tela veterinários principal responsiva
+[][D] Passo 26 -deixar a tela laboratório principal responsivo
+[][D] Passo 27 -deixar a tela recepção principal responsivo
+[][D] Passo 28 -deixar a tela todos searchs responsivo
+
+
+
+
