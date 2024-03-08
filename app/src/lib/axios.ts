@@ -1,6 +1,6 @@
 import axios from 'axios'
 
 export const api = axios.create({
-    baseURL: 'http://drhato-back.online',
+    baseURL: 'https://drhato-back.online',
 
 })
