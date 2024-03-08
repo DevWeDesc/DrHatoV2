@@ -39,8 +39,12 @@ export const GridContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     border-bottom: 1px solid gray;
+    @media (max-width: 680px) {
+      flex-direction: column;
+      gap: 30px;
+      padding: 30px 0;
+    }
   }
   .container img {
     margin: 1rem;
@@ -58,6 +62,11 @@ export const GridContainer = styled.div`
   .imgContainer {
     display: flex;
     gap: 1rem;
+
+    @media (max-width: 680px) {
+      align-items: center;
+      flex-direction: column;
+    }
   }
 
   .imgContainer h1 {
