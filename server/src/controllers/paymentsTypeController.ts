@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import prisma from "../../client";
+import prisma from "../client";
 import { z } from "zod";
 
 const PaymentsTypeSchema = z.object({

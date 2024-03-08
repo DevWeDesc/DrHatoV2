@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsup --ignore-watch '*.xlxs' src --out-dir build ",
     "dev": "ts-node-dev src/server.ts",
     "test": "jest"
   },
