@@ -3,12 +3,13 @@ version: '3'
 services:
   postgres:
     image: postgres
+    container_name: hato
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: mydb
+      POSTGRES_USER: hato
+      POSTGRES_PASSWORD: hato
+      POSTGRES_DB: hato
     ports:
-      - "5436:5436"  
+       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
