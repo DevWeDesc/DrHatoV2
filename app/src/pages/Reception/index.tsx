@@ -22,7 +22,14 @@ export function Reception() {
     <ChakraProvider>
       <Flex direction="column" h="100vh">
         <Header title="Menu Recepção" url="/Home/" />
-        <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+        <Flex
+          w="100%"
+          my="6"
+          direction={{ base: "column", lg: "row" }}
+          maxWidth={1680}
+          mx="auto"
+          px="6"
+        >
           <ReceptionSidebar />
           <SimpleGrid
             flex="1"
