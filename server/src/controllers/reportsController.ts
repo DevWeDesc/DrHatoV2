@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
-import prisma from "../../client";
+import prisma from "../client";
 import { OutpatientAdmissionsAndConsultsReportSector } from "../services/reports/outpatient-report-sector";
 import { LabsAdmissionsAndConsultsReportSector } from "../services/reports/labs-report-sector";
 import { LabsImageAdmissionsAndConsultsReportSector } from "../services/reports/labimage-report-sector";

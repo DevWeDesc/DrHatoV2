@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import prisma from "../../client";
+import prisma from "../client";
 
 export interface VetsMenuProps {
   customerName: string | undefined;
