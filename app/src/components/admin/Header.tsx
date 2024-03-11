@@ -27,7 +27,11 @@ export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
       px="6"
       align="center"
     >
-      <Text fontSize="3xl" fontWeight="bold" color="green.800">
+      <Text
+        fontSize={{ base: "xl", lg: "3xl" }}
+        fontWeight="bold"
+        color="green.800"
+      >
         {title}
       </Text>
 
@@ -43,6 +47,7 @@ export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
         position="relative"
         bg="gray.200"
         borderRadius="full"
+        display={{ base: "none", lg: "flex" }}
       >
         <Input
           color="gray.700"
@@ -64,6 +69,7 @@ export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
           py="1"
           borderRightWidth={1}
           borderColor="gray.700"
+          display={{ base: "none", lg: "flex" }}
         >
           <Icon
             as={RiNotificationLine}
@@ -75,7 +81,11 @@ export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
         </HStack>
 
         <Flex align="center" direction="column">
-          <Text fontSize="md" fontWeight="bold">
+          <Text
+            display={{ base: "none", lg: "block" }}
+            fontSize="md"
+            fontWeight="bold"
+          >
             {user.consultName ? user.consultName : "Realizar Login"}
           </Text>
           <Link to={url ? url : "/Home"}>
