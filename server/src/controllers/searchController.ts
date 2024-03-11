@@ -80,7 +80,7 @@ export const searchController = {
 
   searchVetMenu: async (
     request: FastifyRequest<{
-      Querystring: {
+        Querystring: {
         petName: string;
         customerName: string;
         petCode: string;

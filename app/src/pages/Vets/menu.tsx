@@ -86,7 +86,7 @@ export function MenuVet() {
         break;
       case isFinishied === true:
         await api
-          .get(`vetmenusearch?/${pagination}isFinished=true`)
+          .get(`vetmenusearch?/${pagination}?isFinished=true`)
           .then((res) => {
             setPetData(res.data);
             console.log(res.data.data);

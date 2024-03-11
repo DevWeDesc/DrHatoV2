@@ -163,9 +163,6 @@ export class VetsMenuSearch {
   }
 
   async getParamsWithDate({
-    customerName,
-    petName,
-    petCode,
     initialDate,
     finalDate,
     isAddmited,

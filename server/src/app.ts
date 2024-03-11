@@ -26,8 +26,10 @@ import { oldSystemHistorieRoutes } from "./routes/oldsystem.historie.routes";
 import { paymentsTypeRoutes } from "./routes/paymentsType.routes";
 import { reportsRoutes } from "./routes/reports.routes";
 import { examPartRoutes } from "./routes/exam.parts.routes";
+import { searchEngineMenu } from "./routes/search.engine.routes";
 
 export const app = fastify();
+
 
 app.register(cors, { origin: true });
 app.register(userRoutes);
@@ -55,6 +57,7 @@ app.register(oldSystemHistorieRoutes);
 app.register(paymentsTypeRoutes);
 app.register(reportsRoutes);
 app.register(examPartRoutes)
+app.register(searchEngineMenu)
 
 
 app.get('/hello', () => {
