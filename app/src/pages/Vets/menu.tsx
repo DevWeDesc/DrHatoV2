@@ -24,121 +24,88 @@ import { AdminContainer } from "../AdminDashboard/style";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/axios";
 import { Input } from "../../components/admin/Input";
+import { useQuery } from "react-query";
+import { LoadingSpinner } from "../../components/Loading";
 
 export function MenuVet() {
-  const [petName, setPetName] = useState("");
-  const [codPet, setCodPet] = useState("");
-  const [customerName, setCustomerName] = useState("");
   const [isFinishied, setIsFinishied] = useState(false);
   const [isAddmited, setIsAddmited] = useState(false);
   const [showAllVets, setShowAllVets] = useState(false);
   const [pagination, SetPagination] = useState(1);
   const [numberOfPages, setNumberOfPages] = useState(0);
-  const [totalInQueue, setTotalInQueue] = useState(0 as any);
+  const [totalInQueue, setTotalInQueue] = useState(0);
   const [petsByVetPreference, setPetsByVetPreference] = useState([]);
   const [petData, setPetData] = useState([] as any);
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
+  const navigate = useNavigate();
+  const [searchBody, setSearchBody] = useState({
+    petName: "",
+    codPet: "",
+    customerName: ""
+  })
 
-  async function getQueueVetPreference() {
-    if (showAllVets === true) {
-      const response = await api.get("/pets/queue");
-      setTotalInQueue(response.data);
-      setPetsByVetPreference(response.data.response);
-    } else {
-      const response = await api.get(
-        `/pets/queue/preference/${user.consultName}`
-      );
-      setPetsByVetPreference(response.data.response);
-    }
+
+  async function getDefaultQueue() {
+    const response = await api.get(
+      `/pets/queue/preference/${user.consultName}`
+    );
+    setPetsByVetPreference(response.data.response);
   }
 
+  const {isLoading} = useQuery('queueVets', getDefaultQueue)
+
+  if(isLoading) {
+    return <LoadingSpinner/>
+  }
+  
+  async function getQueueVetPreference() {
+      const response = await api.get("/pets/queue");
+      setPetData([])
+      setTotalInQueue(response.data.totalInQueue);
+      setPetsByVetPreference(response.data.response);
+  }
+
+
+  async function searchDataVet() {
+    const data = {
+      page: pagination,
+      petCode: searchBody.codPet,
+      customerName: searchBody.customerName,
+      petName: searchBody.petName,
+      isFinished: isFinishied,
+      isAddmited: isAddmited,
+      initialDate: initialDate,
+      finalDate: finalDate
+    }
+    const response = await api.post("/engine/veterinary", data)
+    setPetData(response.data.data);
+    
+    setNumberOfPages(response.data.totalPages);   
+  }
+
+
+
   function incrementPage() {
-    SetPagination((prevCount) =>
-      pagination < numberOfPages ? prevCount + 1 : numberOfPages
-    );
+    SetPagination((prevCount) => pagination < numberOfPages ? prevCount + 1 : numberOfPages );
+    searchDataVet()
   }
 
   function decrementPage() {
     SetPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
+    searchDataVet()
   }
 
-  const navigate = useNavigate();
 
-  async function searchDataVet() {
-    switch (true) {
-      case petName?.length >= 1:
-        await api
-          .get(`vetmenusearch/${pagination}?petName=${petName}`)
-          .then((res) => {
-            setPetData(res.data.data);
-            setNumberOfPages(res.data.totalPages);
-          });
-        break;
-      case customerName?.length >= 1:
-        await api
-          .get(`vetmenusearch/${pagination}?customerName=${customerName}`)
-          .then((res) => {
-            setPetData(res.data.data);
-            setNumberOfPages(res.data.totalPages);
-          });
-        break;
-      case isFinishied === true:
-        await api
-          .get(`vetmenusearch?/${pagination}?isFinished=true`)
-          .then((res) => {
-            setPetData(res.data);
-            console.log(res.data.data);
-          });
-        break;
-      case isAddmited === true:
-        await api
-          .get(`vetmenusearch/${pagination}?isAddmited=true`)
-          .then((res) => {
-            setPetData(res.data.data);
-          });
-        break;
-    }
-  }
-
-  const handleGetDataWithParams = async () => {
-    switch (true) {
-      case !!codPet:
-        await api.get(`searchcodpet/${codPet}`).then((res) => {
-          setPetData(res.data);
-        });
-        break;
-      case isFinishied === true:
-        await api
-          .get(
-            `vetmenusearch/${pagination}?isFinished=true&initialDate=${initialDate}&finalDate=${finalDate}`
-          )
-          .then((res) => {
-            setPetData(res.data.data);
-          });
-        break;
-      case isAddmited === true:
-        await api
-          .get(
-            `vetmenusearch/${pagination}?isAddmited=true&initialDate=${initialDate}&finalDate=${finalDate}`
-          )
-          .then((res) => {
-            setPetData(res.data.data);
-          });
-        break;
-    }
-  };
 
   useEffect(() => {
-    getQueueVetPreference();
+    if(showAllVets === true) {
+      getQueueVetPreference();
+    }
   }, [showAllVets]);
 
-  useEffect(() => {
-    searchDataVet();
-  }, [petName, codPet, customerName, isFinishied, isAddmited, pagination]);
 
-  console.log(petData);
 
   return (
     <ChakraProvider>
@@ -200,11 +167,7 @@ export function MenuVet() {
                         <VStack w={160}>
                           <FormLabel>Todos Veterinários</FormLabel>
                           <Checkbox
-                            onChange={(ev) =>
-                              ev.target.checked === true
-                                ? setShowAllVets(true)
-                                : setShowAllVets(false)
-                            }
+                            onChange={(ev) => setShowAllVets(ev.target.checked)}
                             border="2px"
                             size="lg"
                           />
@@ -216,25 +179,38 @@ export function MenuVet() {
                   <HStack mt="4" w="100%">
                     <Input
                       name="codPet"
-                      value={codPet}
-                      onChange={(ev) => setCodPet(ev.target.value)}
+                      value={searchBody?.codPet}
+                      onChange={(ev) => setSearchBody({
+                        customerName: '',
+                        codPet: ev.target.value,
+                        petName: '',
+                      })}
                       label="Código do Animal"
                     />
                     <Input
                       name="petName"
-                      value={petName}
-                      onChange={(ev) => setPetName(ev.target.value)}
+                      value={searchBody?.petName}
+                      onChange={(ev) => setSearchBody({
+                        customerName: '',
+                        codPet: '',
+                        petName: ev.target.value,
+                      })}
                       label="Nome do Animal"
                     />
                     <Input
                       name="customerName"
-                      value={customerName}
-                      onChange={(ev) => setCustomerName(ev.target.value)}
+                      value={searchBody?.customerName}
+                      onChange={(ev) => setSearchBody({
+                        customerName: ev.target.value,
+                        codPet: '',
+                        petName: ''
+                      })}
                       label="Nome do Cliente"
                     />
                   </HStack>
                   <Button
-                    onClick={handleGetDataWithParams}
+                    isDisabled={showAllVets}
+                    onClick={() => searchDataVet()}
                     mt="4"
                     colorScheme="whatsapp"
                   >
@@ -243,7 +219,7 @@ export function MenuVet() {
                 </Flex>
                 <Flex gap={8}>
                   <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
-                    <>TOTAL NA FILA: {totalInQueue.totalInQueue}</>
+                    <>TOTAL NA FILA: {totalInQueue}</>
                   </Button>
                   <Button colorScheme="whatsapp">
                     Total Paginas: {numberOfPages}
@@ -305,15 +281,15 @@ export function MenuVet() {
                           >
                             <Td>
                               <Text colorScheme="whatsapp">
-                                {pet?.customer.cpf
-                                  ? pet.customer.cpf
+                                {pet?.customer?.cpf
+                                  ? pet?.customer?.cpf
                                   : "Não encontrado"}
                               </Text>
                             </Td>
 
                             <Td>
-                              {pet?.customer.name
-                                ? pet.customer.name
+                              {pet?.customer?.name
+                                ? pet?.customer?.name
                                 : "Não encontrado"}
                             </Td>
 
@@ -326,8 +302,8 @@ export function MenuVet() {
                             <Td>{pet?.weigth}</Td>
                             <Td>
                               {" "}
-                              {pet.customer.vetPreference == user.consultName
-                                ? pet.vetPreference
+                              {pet?.customer?.vetPreference == user?.consultName
+                                ? pet?.vetPreference
                                 : "Sem preferência"}
                             </Td>
                           </Tr>

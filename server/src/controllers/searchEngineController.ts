@@ -205,6 +205,8 @@ export const searchEngineController =  {
         
       default:
         data = await prisma.pets.findMany({
+          skip: (currentPage - 1) * 25,
+          take: 25,
           where: {
             OR: [
               { name: { contains: petName } },
@@ -214,7 +216,7 @@ export const searchEngineController =  {
           },
         });
 
-        total = data.length
+        total = await prisma.pets.count()
 
         reply.send({
           data,
