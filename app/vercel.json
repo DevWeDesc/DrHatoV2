@@ -1,0 +1,7 @@
+{
+  "redirects": [
+    { "source": "/WorkSpace/ExamResultsMultiPart/", "destination": "/WorkSpace/ExamResultsMultiPart/*", "permanent": true },
+    { "source": "/ExamResultsOnePart/", "destination": "/ExamResultsOnePart/*", "permanent": true },
+    { "source": "/WorkSpace/ExamResultsByText/4", "destination": " /WorkSpace/ExamResultsByText/*", "permanent": true }
+  ]
+}

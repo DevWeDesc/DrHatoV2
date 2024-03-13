@@ -18,7 +18,7 @@ export const queueController = {
     request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
   ) => {
-    const { queryType, vetPreference, moreInfos, openedBy } = QueueSchema.parse(
+    const { queryType, vetPreference, moreInfos, openedBy, removePreference } = QueueSchema.parse(
       request.body
     );
     const { id } = request.params;
@@ -35,7 +35,7 @@ export const queueController = {
           petName: pet.name,
           openedDate: new Date(),
           consultType: queryType,
-          vetPreference,
+          vetPreference: removePreference === true ? "Sem preferência": vetPreference,
           isClosed: false,
           observations: moreInfos,
           openedBy,

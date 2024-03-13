@@ -99,11 +99,11 @@ export function MenuVet() {
 
 
 
-  useEffect(() => {
-    if(showAllVets === true) {
-      getQueueVetPreference();
-    }
-  }, [showAllVets]);
+  // useEffect(() => {
+  //   if(showAllVets === true) {
+  //     getQueueVetPreference();
+  //   }
+  // }, [showAllVets]);
 
 
 
@@ -167,7 +167,14 @@ export function MenuVet() {
                         <VStack w={160}>
                           <FormLabel>Todos Veterinários</FormLabel>
                           <Checkbox
-                            onChange={(ev) => setShowAllVets(ev.target.checked)}
+                            onChange={(ev) => 
+                            {  
+                              setShowAllVets(ev.target.checked)
+                              getQueueVetPreference()
+                            }
+                            
+                            }
+                      
                             border="2px"
                             size="lg"
                           />
