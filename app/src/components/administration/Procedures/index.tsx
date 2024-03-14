@@ -232,11 +232,11 @@ export default function ListProcedures() {
             <Table colorScheme="blackAlpha">
               <Thead>
                 <Tr>
-                  <Th borderColor="black">Nome</Th>
-                  <Th borderColor="black">Id do Procedimento</Th>
-                  <Th borderColor="black">Preço</Th>
-
-                  <Th borderColor="black"></Th>
+                  <Th>Nome</Th>
+                  <Th>Id do Procedimento</Th>
+                  <Th>Preço</Th>
+                  <Th textAlign="center">Editar</Th>
+                  <Th textAlign="center">Deletar</Th>
                 </Tr>
                 <Tr></Tr>
               </Thead>
@@ -245,39 +245,20 @@ export default function ListProcedures() {
                 {procedures ? (
                   procedures.map((proceds) => (
                     <Tr key={proceds.id}>
-                      <Td
-                        fontWeight="bold"
-                        fontSize={{ base: "sm", lg: "md" }}
-                        borderColor="black"
-                      >
+                      <Td fontWeight="bold" fontSize={{ base: "sm", lg: "md" }}>
                         {proceds.name}
                       </Td>
-                      <Td
-                        fontWeight="bold"
-                        fontSize={{ base: "sm", lg: "md" }}
-                        borderColor="black"
-                      >
+                      <Td fontWeight="bold" fontSize={{ base: "sm", lg: "md" }}>
                         {proceds.id}
                       </Td>
-                      <Td
-                        fontWeight="bold"
-                        fontSize={{ base: "sm", lg: "md" }}
-                        borderColor="black"
-                      >
+                      <Td fontWeight="bold" fontSize={{ base: "sm", lg: "md" }}>
                         {new Intl.NumberFormat("pt-BR", {
                           currency: "BRL",
                           style: "currency",
                         }).format(Number(proceds.price))}
                       </Td>
 
-                      <Td
-                        fontWeight="bold"
-                        fontSize={{ base: "sm", lg: "md" }}
-                        borderColor="black"
-                        display="flex"
-                        gap="2"
-                        py="5"
-                      >
+                      <Td>
                         <Link to={`/Admin/Procedures/Edit/${proceds.id}`}>
                           <Button
                             as="a"
@@ -289,7 +270,9 @@ export default function ListProcedures() {
                             Editar Procedimento
                           </Button>
                         </Link>
-
+                      </Td>
+                      <Td>
+                        {" "}
                         <ConfirmationDialog
                           disabled={false}
                           icon={<BsFillTrashFill fill="white" size={16} />}

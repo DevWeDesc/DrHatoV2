@@ -139,10 +139,12 @@ export default function AutorizationsMenu() {
               </Button>
             </Heading>
             <TableContainer w="full">
-              <Table w="full" variant="simple" size="lg">
+              <Table w="full" variant="simple">
                 <Thead>
                   <Tr>
-                    <Th colSpan={3}>Nome</Th>
+                    <Th>Nome</Th>
+                    <Th textAlign="center">Editar</Th>
+                    <Th textAlign="center">Deletar</Th>
                   </Tr>
                 </Thead>
                 <Tbody>

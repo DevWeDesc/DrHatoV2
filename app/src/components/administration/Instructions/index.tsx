@@ -168,12 +168,14 @@ export function Instructions() {
               </Button>
             </Heading>
             <TableContainer w="full">
-              <Table w="full" variant="simple" size="lg">
+              <Table w="full" variant="simple">
                 <Thead>
-                  <Tr borderColor="black">
-                    <Th borderColor="black">Nome</Th>
-                    <Th borderColor="black">Id do Instrução</Th>
-                    <Th borderColor="black" colSpan={3}></Th>
+                  <Tr>
+                    <Th>Nome</Th>
+                    <Th>Id do Instrução</Th>
+                    <Th textAlign="center">Editar</Th>
+                    <Th textAlign="center">Deletar</Th>
+                    <Th textAlign="center">Gerar PDF</Th>
                   </Tr>
                 </Thead>
 
@@ -185,6 +187,7 @@ export function Instructions() {
                           {sector.name}
                         </Td>
                         <Td
+                          textAlign="center"
                           fontSize={{ base: "12", lg: "sm" }}
                           fontWeight="bold"
                         >

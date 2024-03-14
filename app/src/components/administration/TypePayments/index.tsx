@@ -159,8 +159,11 @@ export const TypePayments = () => {
               <Thead>
                 <Tr>
                   <Th>Nome</Th>
-                  <Th>Id do Tipo de pagamento</Th>
-                  <Th />
+                  <Th w="full" textAlign="center">
+                    Id do Tipo de pagamento
+                  </Th>
+                  <Th textAlign="center">Editar</Th>
+                  <Th textAlign="center">Deletar</Th>
                 </Tr>
               </Thead>
 
@@ -194,7 +197,8 @@ export const TypePayments = () => {
                         >
                           Editar
                         </Button>
-
+                      </Td>
+                      <Td>
                         <ConfirmationDialog
                           fontSize={{ base: "sm", lg: "md" }}
                           disabled={false}

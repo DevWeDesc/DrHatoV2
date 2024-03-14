@@ -157,10 +157,11 @@ export function HealthInsuranceList() {
             <Table colorScheme="blackAlpha">
               <Thead>
                 <Tr>
-                  <Th w="70%" colSpan={2}>
-                    Nome do Plano
+                  <Th w="full" colSpan={2}>
+                    Nome
                   </Th>
-                  <Th>Configurações do Plano</Th>
+                  <Th>Editar</Th>
+                  <Th>Deletar</Th>
                 </Tr>
               </Thead>
 
@@ -190,17 +191,19 @@ export function HealthInsuranceList() {
                           >
                             Editar Plano
                           </Button>
-
-                          <ConfirmationDialog
-                            fontSize={{ base: "12", lg: "sm" }}
-                            disabled={false}
-                            icon={<BsFillTrashFill fill="white" size={16} />}
-                            buttonTitle="Deletar Plano de Saúde"
-                            whatIsConfirmerd={`Tem certeza que deseja Excluir o Plano de Saúde ${plans.name}?`}
-                            describreConfirm="Excluir o Plano de Saúde é uma ação irreversivel, tem certeza que deseja excluir?"
-                            callbackFn={() => DeleteHealth(plans.id)}
-                          />
                         </Flex>
+                      </Td>
+                      <Td>
+                        {" "}
+                        <ConfirmationDialog
+                          fontSize={{ base: "12", lg: "sm" }}
+                          disabled={false}
+                          icon={<BsFillTrashFill fill="white" size={16} />}
+                          buttonTitle="Deletar Plano de Saúde"
+                          whatIsConfirmerd={`Tem certeza que deseja Excluir o Plano de Saúde ${plans.name}?`}
+                          describreConfirm="Excluir o Plano de Saúde é uma ação irreversivel, tem certeza que deseja excluir?"
+                          callbackFn={() => DeleteHealth(plans.id)}
+                        />
                       </Td>
                     </Tr>
                   ))

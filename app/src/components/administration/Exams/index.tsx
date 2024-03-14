@@ -163,15 +163,13 @@ export function ListExams() {
             <TableContainer w="full">
               <Table variant="simple">
                 <Thead>
-                  <Tr borderColor="black">
-                    <Th borderColor="black">Nome</Th>
-                    <Th borderColor="black">Preço</Th>
-                    <Th borderColor="black">Disponivel</Th>
-                    <Th borderColor="black">Duas Partes</Th>
-
-                    <Th width="8" borderColor="black"></Th>
-                    <Th width="8" borderColor="black"></Th>
-                    <Th width="8" borderColor="black"></Th>
+                  <Tr>
+                    <Th>Nome</Th>
+                    <Th>Preço</Th>
+                    <Th>Disponivel</Th>
+                    <Th>Duas Partes</Th>
+                    <Th textAlign="center">Configurar</Th>
+                    <Th textAlign="center">Deletar</Th>
                   </Tr>
                 </Thead>
 
@@ -181,11 +179,7 @@ export function ListExams() {
                       <Td fontSize={{ base: "12", lg: "sm" }}>
                         <Box>
                           <Link to={`/Admin/Exams/Details/${exam.codexam}`}>
-                            <Text
-                              fontWeight="bold"
-                              color="gray.800"
-                              borderColor="black"
-                            >
+                            <Text fontWeight="bold" color="gray.800">
                               {exam.name}
                             </Text>
                           </Link>
@@ -204,7 +198,6 @@ export function ListExams() {
                         fontWeight="bold"
                         color="gray.800"
                         textAlign="center"
-                        borderColor="black"
                         bgColor={exam.disponible ? "green.200" : "red.100"}
                       >
                         {exam.disponible ? "SIM" : "NÃO"}
@@ -214,21 +207,11 @@ export function ListExams() {
                         textAlign="center"
                         fontWeight="bold"
                         color="gray.800"
-                        borderColor="black"
                       >
                         {exam.twoPart ? "SIM" : "NÃO"}
                       </Td>
-                      <Td borderColor="black">
-                        <ConfirmationDialog
-                          disabled={false}
-                          icon={<BsFillTrashFill fill="white" size={16} />}
-                          buttonTitle="Deletar Exame"
-                          whatIsConfirmerd="Tem certeza que deseja Excluir esse Exame?"
-                          describreConfirm="Excluir a Exame é uma ação irreversivel, tem certeza que deseja excluir?"
-                          callbackFn={() => DeleteExam(exam.codexam.toString())}
-                        />
-                      </Td>
-                      <Td borderColor="black">
+
+                      <Td>
                         <Link to={`/Admin/Exams/${exam.codexam}`}>
                           <Button
                             as="a"
@@ -240,6 +223,16 @@ export function ListExams() {
                             Configurar
                           </Button>
                         </Link>
+                      </Td>
+                      <Td>
+                        <ConfirmationDialog
+                          disabled={false}
+                          icon={<BsFillTrashFill fill="white" size={16} />}
+                          buttonTitle="Deletar Exame"
+                          whatIsConfirmerd="Tem certeza que deseja Excluir esse Exame?"
+                          describreConfirm="Excluir a Exame é uma ação irreversivel, tem certeza que deseja excluir?"
+                          callbackFn={() => DeleteExam(exam.codexam.toString())}
+                        />
                       </Td>
                     </Tr>
                   ))}

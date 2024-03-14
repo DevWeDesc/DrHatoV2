@@ -38,6 +38,7 @@ export function SurgeryCenter() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
+  const [surgeryCenter, setSurgeryCenter] = useState([]);
   const navigate = useNavigate();
 
   function openModal() {
@@ -100,24 +101,31 @@ export function SurgeryCenter() {
         <Flex direction="column" h="100vh">
           <Header title="Centro Cirúrgico" url="/Admin/" />
 
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <Flex
+            w="100%"
+            my="6"
+            direction={{ base: "column", xl: "row" }}
+            mx="auto"
+            px="6"
+          >
             <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
-              <Flex
-                mb="8"
-                justify="space-between"
-                direction="column"
-                align="center"
+            <Box flex="1" borderRadius={8} py={{ base: "8", xl: 0 }}>
+              <Heading
+                fontSize={{ base: "lg", lg: "2xl" }}
+                fontWeight="bold"
+                pl="2"
+                w="100%"
+                mb="5"
+                display="flex"
+                flexDirection={{ base: "column", md: "row" }}
+                gap={{ base: 3, md: 0 }}
+                justifyContent="space-between"
               >
-                <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                  Centro Cirúrgico
-                </Heading>
-
+                Centro Cirúrgico
                 <Button
                   as="a"
-                  width="100%"
-                  fontSize="20"
-                  py="8"
+                  py="6"
+                  fontSize={{ base: "sm", lg: "md" }}
                   colorScheme="whatsapp"
                   cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
@@ -125,69 +133,56 @@ export function SurgeryCenter() {
                 >
                   Cadastrar novo Centro Cirúrgico
                 </Button>
-              </Flex>
+              </Heading>
 
               <Table colorScheme="blackAlpha">
                 <Thead>
                   <Tr>
-                    <Th fontSize="18" borderColor="black">
-                      Nome
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Slots
-                    </Th>
-                    <Th borderColor="black"></Th>
+                    <Th>Nome</Th>
+                    <Th>Slots</Th>
+                    <Th />
                   </Tr>
                 </Thead>
 
                 <Tbody>
-                  {/*sectors ? (
-                    sectors.map((sector) => (*/}
+                  {surgeryCenter.length > 0 ? (
+                    surgeryCenter.map((surgeryCenter) => (
+                      <Tr key="0">
+                        <Td fontSize={{ base: "12", lg: "sm" }}></Td>
+                        <Td fontSize={{ base: "12", lg: "sm" }}></Td>
 
-                  <Tr key="0">
-                    <Td borderColor="black">
-                      <Text fontWeight="bold" color="gray.800"></Text>
-                    </Td>
-                    <Td borderColor="black"></Td>
+                        <Td>
+                          <Flex gap="2" ml="40%">
+                            <Button
+                              as="a"
+                              size="sm"
+                              fontSize="sm"
+                              colorScheme="yellow"
+                              leftIcon={<Icon as={RiPencilLine} />}
+                              onClick={() => openModalTwo()}
+                            >
+                              Editar Centro Cirúrgico
+                            </Button>
 
-                    <Td borderColor="black">
-                      <Flex gap="2" ml="40%">
-                        <Button
-                          as="a"
-                          size="sm"
-                          fontSize="sm"
-                          colorScheme="yellow"
-                          leftIcon={<Icon as={RiPencilLine} />}
-                          onClick={() => openModalTwo()}
-                        >
-                          Editar Centro Cirúrgico
-                        </Button>
-
-                        <ConfirmationDialog
-                          disabled={false}
-                          icon={<BsFillTrashFill fill="white" size={16} />}
-                          buttonTitle="Deletar Centro Cirurgico"
-                          whatIsConfirmerd="Tem certeza que deseja Excluir esse Centro Cirurgico?"
-                          describreConfirm="Excluir o Centro Cirurgico é uma ação irreversivel, tem certeza que deseja excluir?"
-                          callbackFn={() => DeleteSurgeryCenter(1)}
-                        />
-                        {/* <Button
-                          as="a"
-                          size="md"
-                          fontSize="md"
-                          colorScheme="red"
-                          leftIcon={<Icon as={RiPencilLine} />}
-                          onClick={() => handleDeleteSector("")}
-                        >
-                          Deletar Centro Cirúrgico
-                        </Button> */}
-                      </Flex>
-                    </Td>
-                  </Tr>
-                  {/*))
-                  )
-                  : (
-                  <LoadingSpinner />)*/}
+                            <ConfirmationDialog
+                              disabled={false}
+                              icon={<BsFillTrashFill fill="white" size={16} />}
+                              buttonTitle="Deletar Centro Cirurgico"
+                              whatIsConfirmerd="Tem certeza que deseja Excluir esse Centro Cirurgico?"
+                              describreConfirm="Excluir o Centro Cirurgico é uma ação irreversivel, tem certeza que deseja excluir?"
+                              callbackFn={() => DeleteSurgeryCenter(1)}
+                            />
+                          </Flex>
+                        </Td>
+                      </Tr>
+                    ))
+                  ) : (
+                    <Tr>
+                      <Td fontSize={{ base: "12", lg: "sm" }} fontWeight="bold">
+                        Sem Centro Cirurgico cadastrado até o momento!
+                      </Td>
+                    </Tr>
+                  )}
                 </Tbody>
               </Table>
               <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
