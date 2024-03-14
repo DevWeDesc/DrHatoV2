@@ -19,13 +19,14 @@ import { useEffect, useState } from "react";
 import { Header } from "../../components/admin/Header";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import { AiOutlineSearch, BiLeftArrow, BiRightArrow } from "react-icons/all";
+import { AiOutlineSearch, BiLeftArrow, BiRightArrow, BsFillTrashFill } from "react-icons/all";
 import { AdminContainer } from "../AdminDashboard/style";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/axios";
 import { Input } from "../../components/admin/Input";
 import { useQuery } from "react-query";
 import { LoadingSpinner } from "../../components/Loading";
+import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 
 export function MenuVet() {
   const [isFinishied, setIsFinishied] = useState(false);
@@ -97,6 +98,19 @@ export function MenuVet() {
     searchDataVet()
   }
 
+
+  async function updateQueuePetPreference(queueId: string, petId: number)   {
+    const data = {
+      vetPreference: user.consultName,
+      queueId: queueId
+    }
+    await api.patch("/queue/vetpreference", data).then(() => {
+      navigate(
+        `/Vets/Workspace/${petId}/${queueId}`
+      )
+    })
+  
+  }
 
 
   // useEffect(() => {
@@ -276,14 +290,14 @@ export function MenuVet() {
                           <Tr
                             key={pet?.id}
                             cursor="pointer"
-                            onClick={() =>
-                              navigate(
+                            onClick={() => navigate(
                                 `/Vets/Workspace/${pet?.id}/${
                                   pet.queueId != undefined && pet.queueId
                                     ? pet.queueId
                                     : "Sem consulta aberta"
                                 }`
                               )
+                            
                             }
                           >
                             <Td>
@@ -307,11 +321,12 @@ export function MenuVet() {
                                 : "Não encontrado"}
                             </Td>
                             <Td>{pet?.weigth}</Td>
+                            
                             <Td>
                               {" "}
                               {pet?.customer?.vetPreference == user?.consultName
                                 ? pet?.vetPreference
-                                : "Sem preferência"}
+                                : "Sem preferência/Consulta Aberta"}
                             </Td>
                           </Tr>
                         ))}
@@ -336,13 +351,15 @@ export function MenuVet() {
                         {petsByVetPreference
                           .map((pet: any) => (
                             <Tr
+                              onClick={() => {
+                                if(pet.vetPreference != "Sem preferência") {
+                                  navigate(
+                                    `/Vets/Workspace/${pet.id}/${pet.queueId}`
+                                  )
+                                }
+                              }}
                               key={pet.id}
-                              cursor="pointer"
-                              onClick={() =>
-                                navigate(
-                                  `/Vets/Workspace/${pet.id}/${pet.queueId}`
-                                )
-                              }
+                              cursor="pointer" 
                             >
                               <Td>
                                 <Text colorScheme="whatsapp">
@@ -370,11 +387,23 @@ export function MenuVet() {
                                 }).format(new Date(pet?.queueEntry))}
                               </Td>
 
-                              <Td>
+                                {
+                                  pet.vetPreference == "Sem preferência" ? <Td>
+                                         <ConfirmationDialog
+                                    icon={
+                                      <BsFillTrashFill fill="white" size={16} />
+                                    }
+                                    buttonTitle={pet.vetPreference} callbackFn={() => updateQueuePetPreference(pet.queueId, pet.id)} describreConfirm="Deseja atribuir essa consulta a seu nome?" whatIsConfirmerd="Este animal está sem preferência" disabled={false}
+                               
+                                    
+                                    />
+                                  </Td> :  <Td>
                                 {pet.vetPreference == user.consultName
                                   ? pet.vetPreference
                                   : pet.vetPreference}
                               </Td>
+                                }
+                             
                               <Td>0</Td>
                             </Tr>
                           ))

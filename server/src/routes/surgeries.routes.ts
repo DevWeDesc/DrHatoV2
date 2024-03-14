@@ -32,4 +32,6 @@ export async function surgeriesRoutes(app: FastifyInstance) {
 
 
   app.get('/surgerie/details/:surgerieId', surgeriesController.getSurgeriePetDetails)
+
+  app.get('/surgerie/letter/:letter/:page', surgeriesController.getSurgeriesByLetters)
 }
