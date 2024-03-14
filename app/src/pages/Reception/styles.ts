@@ -49,14 +49,24 @@ export const GridContainer = styled.div`
   .container img {
     margin: 1rem;
     border-radius: 4px;
-    height: 200px;
-    width: 260px;
+    height: 20vw;
+    width: 20vw;
+    object-fit: cover;
+    @media (max-width: 680px) {
+      height: 60vw;
+      width: 100%;
+      margin: 0;
+    }
   }
 
   .buttonsContainer {
+    width: 15vw;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    @media (max-width: 680px) {
+      width: 100%;
+    }
   }
 
   .imgContainer {
