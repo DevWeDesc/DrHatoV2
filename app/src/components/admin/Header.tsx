@@ -17,16 +17,7 @@ export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") as string);
   return (
-    <Flex
-      as="header"
-      w="100%"
-      maxWidth={1680}
-      h="20"
-      mx="auto"
-      mt="4"
-      px="6"
-      align="center"
-    >
+    <Flex as="header" w="100%" h="20" mx="auto" mt="4" px="6" align="center">
       <Text
         fontSize={{ base: "xl", lg: "3xl" }}
         fontWeight="bold"
