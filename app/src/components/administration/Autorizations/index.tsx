@@ -9,6 +9,13 @@ import {
   Textarea,
   FormLabel,
   VStack,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 import { Flex } from "@chakra-ui/react";
 import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
@@ -27,6 +34,7 @@ import { Heading } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
+import { MdEdit } from "react-icons/md";
 
 export default function AutorizationsMenu() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,90 +95,86 @@ export default function AutorizationsMenu() {
   }
 
   return (
-    <SimpleGrid
-      flex="1"
+    <Flex
+      py={{ base: 10, xl: 0 }}
+      direction="column"
       gap="4"
-      minChildWidth="320px"
-      align="flex-start"
-      as={Flex}
+      w="full"
+      maxH="48rem"
     >
-      <Flex direction="column" gap="4" maxH="44rem">
-        <Box
-          flex="1"
-          borderRadius={8}
-          overflow="auto"
-          bg="gray.200"
-          p="8"
-          m="4"
-        >
-          <Flex w="100%" direction={"column"} justify="center" align="center">
-            <Flex
+      <Box borderRadius={8} overflow="auto">
+        <Flex w="100%" direction={"column"} justify="center" align="center">
+          <Flex
+            w="100%"
+            alignItems="center"
+            justifyContent="center"
+            direction="column"
+          >
+            <Heading
+              fontSize={{ base: "lg", lg: "2xl" }}
+              fontWeight="bold"
+              pl="2"
               w="100%"
-              alignItems="center"
-              justifyContent="center"
-              direction="column"
+              mb="5"
+              display="flex"
+              flexDirection={{ base: "column", md: "row" }}
+              gap={{ base: 3, md: 0 }}
+              justifyContent="space-between"
             >
-              <Heading fontSize="30" fontWeight="bold" pl="2" w="100%" mb="5">
-                Painel de Autorizações
-              </Heading>
+              Painel de Autorizações
               <Button
-                w="100%"
-                py="8"
-                fontSize="20"
+                py="6"
+                fontSize={{ base: "sm", lg: "md" }}
                 onClick={() => openModal()}
                 colorScheme="whatsapp"
-                leftIcon={<Icon as={RiAddLine} />}
+                leftIcon={
+                  <Icon
+                    as={RiAddLine}
+                    fontWeight="bold"
+                    fontSize={{ base: "md", lg: "xl" }}
+                  />
+                }
               >
                 Cadastrar Autorização
               </Button>
-
-              <Text
-                w="100%"
-                fontSize="23"
-                fontWeight="bold"
-                mt="4"
-                py="2"
-                pl="2"
-              >
-                Nome
-              </Text>
-              <UnorderedList
-                fontWeight="bold"
-                fontSize="18"
-                pl="2"
-                pr="1"
-                py="2"
-                m="0"
-                w="100%"
-                borderTop="1px solid black"
-                textAlign="left"
-              >
-                {allAutorization != null ? (
-                  allAutorization.map((item: any) => (
-                    <>
-                      {!!item.name && (
-                        <Box
-                          key={item.id}
-                          //to={`/Admin/Autorizations/${item.id}`}
-                        >
-                          <Flex
-                            py="1"
-                            align="center"
-                            justify="space-between"
-                            borderBottom="1px solid black"
-                          >
-                            <Text>{item.name} </Text>
-                            <Flex gap="5" py="2">
+            </Heading>
+            <TableContainer w="full">
+              <Table w="full" variant="simple" size="lg">
+                <Thead>
+                  <Tr>
+                    <Th colSpan={3}>Nome</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {allAutorization != null ? (
+                    allAutorization.map((item: any) => (
+                      <>
+                        {!!item.name && (
+                          <Tr>
+                            <Td fontSize={{ base: "12", lg: "sm" }}>
+                              {item.name}
+                            </Td>
+                            <Td>
+                              {" "}
                               <Button
+                                fontSize={{ base: "sm", lg: "md" }}
+                                display="flex"
+                                gap={2}
+                                alignItems="center"
                                 colorScheme="yellow"
                                 size="sm"
                                 onClick={() =>
                                   navigate(`/Admin/Autorizations/${item.id}`)
                                 }
                               >
-                                Editar
+                                <MdEdit fill="black" size={16} />
+
+                                <Text>Editar</Text>
                               </Button>
+                            </Td>
+                            <Td>
                               <ConfirmationDialog
+                                fontSize={{ base: "sm", lg: "md" }}
                                 disabled={false}
                                 icon={
                                   <BsFillTrashFill fill="white" size={16} />
@@ -180,44 +184,61 @@ export default function AutorizationsMenu() {
                                 describreConfirm="Excluir a Autorização é uma ação irreversivel, tem certeza que deseja excluir?"
                                 callbackFn={() => DeleteAutorization(item.id)}
                               />
-                            </Flex>
-                          </Flex>
-                        </Box>
-                      )}
-                    </>
-                  ))
-                ) : (
-                  <LoadingSpinner />
-                )}
-              </UnorderedList>
-            </Flex>
-            <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-              <Text mb="4" color="black">
-                Cadastrar nova autorização
-              </Text>
-              <FormControl
-                as="form"
-                onSubmit={handleSubmit(handleAutorization)}
-              >
-                <Input {...register("name")} label="Nome" name="name" />
-
-                <VStack gap="2" m="2">
-                  <FormLabel>Autorização</FormLabel>
-                  <Textarea
-                    {...register("text")}
-                    name="text"
-                    minHeight={300}
-                    minWidth={400}
-                  ></Textarea>
-                </VStack>
-                <Button type="submit" colorScheme="green" m="2">
-                  Cadastrar
-                </Button>
-              </FormControl>
-            </GenericModal>
+                            </Td>
+                          </Tr>
+                        )}
+                      </>
+                    ))
+                  ) : (
+                    <LoadingSpinner />
+                  )}
+                </Tbody>
+              </Table>
+            </TableContainer>
           </Flex>
-        </Box>
-      </Flex>
-    </SimpleGrid>
+          <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+            <Text
+              fontSize={{ base: "md", lg: "lg" }}
+              fontWeight="bold"
+              textAlign="center"
+              mb="4"
+              color="black"
+            >
+              Cadastrar nova autorização
+            </Text>
+            <FormControl as="form" onSubmit={handleSubmit(handleAutorization)}>
+              <Input
+                fontSize={{ base: "sm", lg: "md" }}
+                {...register("name")}
+                label="Nome"
+                name="name"
+              />
+
+              <VStack gap="2" m="2">
+                <FormLabel fontSize={{ base: "sm", lg: "md" }}>
+                  Autorização
+                </FormLabel>
+                <Textarea
+                  fontSize={{ base: "sm", lg: "md" }}
+                  {...register("text")}
+                  name="text"
+                  minHeight={300}
+                  minWidth={{ base: "80vw", lg: "30vw" }}
+                ></Textarea>
+              </VStack>
+              <Button
+                w="full"
+                fontSize={{ base: "sm", lg: "md" }}
+                type="submit"
+                colorScheme="green"
+                m="2"
+              >
+                Cadastrar
+              </Button>
+            </FormControl>
+          </GenericModal>
+        </Flex>
+      </Box>
+    </Flex>
   );
 }
