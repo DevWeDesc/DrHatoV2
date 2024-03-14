@@ -23,7 +23,7 @@ export async function OutpatientAdmissionsAndConsultsReportSector (initialDate: 
       ],
     },
     include: {
-      PetConsultsDebits: true,
+      consultDebits: true,
     },
   });
 
@@ -33,7 +33,7 @@ export async function OutpatientAdmissionsAndConsultsReportSector (initialDate: 
   });
 
   const proceduresByAdmissions = admission.flatMap((admission) => {
-    return admission.PetConsultsDebits.filter((a) => a.sectorId === 1);
+    return admission.consultDebits.filter((a) => a.sectorId === 1);
   });
 
 
