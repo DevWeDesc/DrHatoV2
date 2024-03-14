@@ -1,4 +1,11 @@
-import { Box, Button, ChakraProvider, Flex, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  ChakraProvider,
+  Flex,
+  Heading,
+  Text,
+} from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
@@ -15,25 +22,57 @@ export function ProcedureEdit() {
         <Flex direction="column" h="100vh">
           <Header title="Procedimentos" url="/Admin/Procedures" />
 
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <Flex
+            w="100%"
+            my="6"
+            direction={{ base: "column", xl: "row" }}
+            mx="auto"
+            px="6"
+          >
             <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
-              <Flex mb="8" align="center" direction="column">
-                <Flex direction="row" justify="space-between" w="100%">
-                  <Heading size="lg" fontWeight="normal">
-                    Edição procedimento
-                  </Heading>
-                  <Button
-                    onClick={() => navigate("/Admin/Procedures")}
-                    colorScheme="yellow"
+            <Flex
+              py={{ base: 10, xl: 0 }}
+              direction="column"
+              gap="4"
+              w="full"
+              maxH="48rem"
+            >
+              <Box borderRadius={8} overflow="auto">
+                <Flex
+                  w="100%"
+                  direction={"column"}
+                  justify="center"
+                  align="center"
+                  gap={2}
+                >
+                  <Heading
+                    fontWeight="bold"
+                    pl="2"
+                    w="100%"
+                    mb="5"
+                    display="flex"
+                    flexDirection={{ base: "column", md: "row" }}
+                    gap={{ base: 3, md: 0 }}
+                    justifyContent="space-between"
+                    alignItems="center"
                   >
-                    Voltar Procedimentos
-                  </Button>
-                </Flex>
+                    <Text fontSize={{ base: "xl", lg: "2xl" }}>
+                      {" "}
+                      Edição de procedimento
+                    </Text>
+                    <Button
+                      size={{ base: "sm", lg: "md" }}
+                      onClick={() => navigate("/Admin/Procedures")}
+                      colorScheme="yellow"
+                    >
+                      Voltar Procedimentos
+                    </Button>
+                  </Heading>
 
-                <CreateProcedureForm procedureId={id} isEditable={true} />
-              </Flex>
-            </Box>
+                  <CreateProcedureForm procedureId={id} isEditable={true} />
+                </Flex>
+              </Box>
+            </Flex>
           </Flex>
         </Flex>
       </AdminContainer>

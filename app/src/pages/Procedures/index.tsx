@@ -10,7 +10,13 @@ export function ProceduresList() {
       <AdminContainer>
         <Flex direction="column" h="100vh">
           <Header title="Procedimentos" url="/Admin/" />
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <Flex
+            w="100%"
+            my="6"
+            direction={{ base: "column", xl: "row" }}
+            mx="auto"
+            px="6"
+          >
             <Sidebar />
             <ListProcedures />
           </Flex>
