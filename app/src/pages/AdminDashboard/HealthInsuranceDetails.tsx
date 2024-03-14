@@ -17,7 +17,13 @@ export function HealthInsuranceDetails() {
             title="Detalhes de Plano de Saúde"
             url="/Admin/HealthInsurance"
           ></Header>
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <Flex
+            w="100%"
+            my="6"
+            direction={{ base: "column", xl: "row" }}
+            mx="auto"
+            px="6"
+          >
             <Sidebar />
             <DetailsHealthInsurance />
           </Flex>
