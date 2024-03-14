@@ -158,14 +158,14 @@ export function SectorsList() {
               flex="1"
               borderRadius={8}
               // bg="gray.200"
-              py="8"
+              py={{ base: "8", xl: 0 }}
               maxH="44rem"
               w="100%"
             >
               <Grid
                 gap={10}
                 w="100%"
-                templateColumns={{ lg: "repeat(2, 1fr)" }}
+                templateColumns={{ xl: "repeat(2, 1fr)" }}
               >
                 <Flex
                   direction="column"
@@ -218,41 +218,27 @@ export function SectorsList() {
                               {sector.id}
                             </Td>
 
-                            <Td pr="1">
-                              <Flex gap="2" ml="5%">
-                                <Button
-                                  as="a"
-                                  size="sm"
-                                  fontSize="sm"
-                                  colorScheme="yellow"
-                                  leftIcon={<Icon as={RiPencilLine} />}
-                                  onClick={() => openModalTwo()}
-                                >
-                                  Editar setor
-                                </Button>
-                                <ConfirmationDialog
-                                  disabled={false}
-                                  icon={
-                                    <BsFillTrashFill fill="white" size={16} />
-                                  }
-                                  buttonTitle="Deletar Setor"
-                                  whatIsConfirmerd="Tem certeza que deseja Excluir esse Setor?"
-                                  describreConfirm="Excluir o Setor é uma ação irreversivel, tem certeza que deseja excluir?"
-                                  callbackFn={() =>
-                                    handleDeleteSector(sector.id)
-                                  }
-                                />
-                                {/* <Button
-                                  as="a"
-                                  size="sm"
-                                  fontSize="sm"
-                                  colorScheme="red"
-                                  leftIcon={<Icon as={RiPencilLine} />}
-                                  onClick={() => handleDeleteSector(sector.id)}
-                                >
-                                  Deletar Setor
-                                </Button> */}
-                              </Flex>
+                            <Td display="flex" gap={2} justifyContent="end">
+                              <Button
+                                as="a"
+                                size="sm"
+                                fontSize="sm"
+                                colorScheme="yellow"
+                                leftIcon={<Icon as={RiPencilLine} />}
+                                onClick={() => openModalTwo()}
+                              >
+                                Editar setor
+                              </Button>
+                              <ConfirmationDialog
+                                disabled={false}
+                                icon={
+                                  <BsFillTrashFill fill="white" size={16} />
+                                }
+                                buttonTitle="Deletar Setor"
+                                whatIsConfirmerd="Tem certeza que deseja Excluir esse Setor?"
+                                describreConfirm="Excluir o Setor é uma ação irreversivel, tem certeza que deseja excluir?"
+                                callbackFn={() => handleDeleteSector(sector.id)}
+                              />
                             </Td>
                           </Tr>
                         ))
@@ -307,41 +293,27 @@ export function SectorsList() {
                               {group.id}
                             </Td>
 
-                            <Td>
-                              <Flex gap="2" ml="10%">
-                                <Button
-                                  as="a"
-                                  size="sm"
-                                  fontSize="sm"
-                                  colorScheme="yellow"
-                                  leftIcon={<Icon as={RiPencilLine} />}
-                                  onClick={() => openModalTwo()}
-                                >
-                                  Editar Grupo
-                                </Button>
-                                <ConfirmationDialog
-                                  disabled={false}
-                                  icon={
-                                    <BsFillTrashFill fill="white" size={16} />
-                                  }
-                                  buttonTitle="Deletar Grupo"
-                                  whatIsConfirmerd="Tem certeza que deseja Excluir esse Grupo?"
-                                  describreConfirm="Excluir o Grupo é uma ação irreversivel, tem certeza que deseja excluir?"
-                                  callbackFn={() =>
-                                    handleDeleteSector(group.id)
-                                  }
-                                />
-                                {/* <Button
-                                  as="a"
-                                  size="sm"
-                                  fontSize="sm"
-                                  colorScheme="red"
-                                  leftIcon={<Icon as={RiPencilLine} />}
-                                  onClick={() => handleDeleteSector(group.id)}
-                                >
-                                  Deletar Grupo
-                                </Button> */}
-                              </Flex>
+                            <Td display="flex" gap={2} justifyContent="end">
+                              <Button
+                                as="a"
+                                size="sm"
+                                fontSize="sm"
+                                colorScheme="yellow"
+                                leftIcon={<Icon as={RiPencilLine} />}
+                                onClick={() => openModalTwo()}
+                              >
+                                Editar Grupo
+                              </Button>
+                              <ConfirmationDialog
+                                disabled={false}
+                                icon={
+                                  <BsFillTrashFill fill="white" size={16} />
+                                }
+                                buttonTitle="Deletar Grupo"
+                                whatIsConfirmerd="Tem certeza que deseja Excluir esse Grupo?"
+                                describreConfirm="Excluir o Grupo é uma ação irreversivel, tem certeza que deseja excluir?"
+                                callbackFn={() => handleDeleteSector(group.id)}
+                              />
                             </Td>
                           </Tr>
                         ))
