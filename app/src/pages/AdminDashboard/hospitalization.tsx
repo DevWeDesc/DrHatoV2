@@ -18,6 +18,7 @@ import {
   Checkbox,
   Textarea,
   FormLabel,
+  TableContainer,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -121,180 +122,199 @@ export function Hospitalization() {
         <Flex direction="column" h="100vh">
           <Header title="Leitos internação" url="/Admin/" />
 
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6" maxH="85vh">
+          <Flex
+            w="100%"
+            my="6"
+            direction={{ base: "column", xl: "row" }}
+            mx="auto"
+            px="6"
+          >
             <Sidebar />
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8" overflow="auto">
-              <Flex
-                mb="8"
-                justify="space-between"
-                direction="column"
-                align="center"
-              >
-                <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                  Leitos para internação
-                </Heading>
-
-                <Button
-                  as="a"
-                  width="100%"
-                  fontSize="20"
-                  py="8"
-                  colorScheme="whatsapp"
-                  cursor="pointer"
-                  leftIcon={<Icon as={RiAddLine} />}
-                  onClick={() => openModal()}
+            <Flex
+              py={{ base: 10, xl: 0 }}
+              direction="column"
+              gap="4"
+              w="full"
+              maxH="48rem"
+            >
+              <Box borderRadius={8} overflow="auto">
+                <Flex
+                  w="100%"
+                  direction={"column"}
+                  justify="center"
+                  align="center"
                 >
-                  Cadastrar novo Leito de internação
-                </Button>
-              </Flex>
+                  <Flex
+                    w="100%"
+                    alignItems="center"
+                    justifyContent="center"
+                    direction="column"
+                  >
+                    <Heading
+                      fontSize={{ base: "lg", lg: "2xl" }}
+                      fontWeight="bold"
+                      pl="2"
+                      w="100%"
+                      mb="5"
+                      display="flex"
+                      flexDirection={{ base: "column", md: "row" }}
+                      gap={{ base: 3, md: 0 }}
+                      justifyContent="space-between"
+                    >
+                      Leitos para internação
+                      <Button
+                        py="6"
+                        fontSize={{ base: "sm", lg: "md" }}
+                        colorScheme="whatsapp"
+                        cursor="pointer"
+                        leftIcon={<Icon as={RiAddLine} />}
+                        onClick={() => openModal()}
+                      >
+                        Cadastrar novo Leito de internação
+                      </Button>
+                    </Heading>
+                  </Flex>
+                  <TableContainer w="full">
+                    <Table colorScheme="blackAlpha">
+                      <Thead>
+                        <Tr>
+                          <Th>Nome</Th>
+                          <Th>Quantidade de Camas</Th>
+                          <Th>Preço diária</Th>
+                          <Th />
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {beds ? (
+                          beds.map((bed: any) => (
+                            <Tr key={bed.id}>
+                              <Td fontSize={{ base: "12", lg: "sm" }}>
+                                {bed.name}
+                              </Td>
+                              <Td fontSize={{ base: "12", lg: "sm" }}>
+                                {bed.totalBeds}
+                              </Td>
+                              <Td fontSize={{ base: "12", lg: "sm" }}>
+                                {bed.price}
+                              </Td>
+                              <Td
+                                display="flex"
+                                gap={2}
+                                justifyContent="end"
+                                fontSize={{ base: "12", lg: "sm" }}
+                              >
+                                <Button
+                                  alignItems="center"
+                                  size="sm"
+                                  width={120}
+                                  fontSize="sm"
+                                  colorScheme="yellow"
+                                  leftIcon={<Icon as={RiPencilLine} />}
+                                  onClick={() => openModalTwo()}
+                                >
+                                  Editar Leito
+                                </Button>
 
-              <Table colorScheme="blackAlpha">
-                <Thead>
-                  <Tr>
-                    <Th fontSize="18" borderColor="black" width="20%">
-                      Nome
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Quantidade de Camas
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Preço diária
-                    </Th>
-                    <Th borderColor="black"></Th>
-                  </Tr>
-                </Thead>
+                                <ConfirmationDialog
+                                  disabled={false}
+                                  icon={
+                                    <BsFillTrashFill fill="white" size={16} />
+                                  }
+                                  buttonTitle="Deletar Leito"
+                                  whatIsConfirmerd="Tem certeza que deseja Excluir esse Leito?"
+                                  describreConfirm="Excluir Leito é uma ação irreversivel, tem certeza que deseja excluir?"
+                                  callbackFn={() => handleDeleteSector(bed.id)}
+                                />
+                              </Td>
+                            </Tr>
+                          ))
+                        ) : (
+                          <LoadingSpinner />
+                        )}
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
+                </Flex>
 
-                <Tbody>
-                  {beds ? (
-                    beds.map((bed: any) => (
-                      <Tr key={bed.id}>
-                        <Td borderColor="black">
-                          <Text fontWeight="bold" color="gray.800">
-                            {bed.name}
-                          </Text>
-                        </Td>
-                        <Td borderColor="black">{bed.totalBeds}</Td>
-                        <Td borderColor="black">{bed.price}</Td>
-                        <Td borderColor="black">
-                          <Flex gap="2">
-                            <Button
-                              alignItems="center"
-                              size="sm"
-                              width={120}
-                              fontSize="sm"
-                              colorScheme="yellow"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => openModalTwo()}
-                            >
-                              Editar Leito
-                            </Button>
+                <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+                  <FormControl
+                    as="form"
+                    onSubmit={handleSubmit(handleCreateSector)}
+                    display="flex"
+                    flexDir="column"
+                    alignItems="center"
+                  >
+                    <Input
+                      {...register("name")}
+                      name="name"
+                      label="Nome do leito"
+                      mb="4"
+                    />
+                    <Input
+                      type="number"
+                      {...register("price")}
+                      name="price"
+                      label="Preço da Diária"
+                    />
 
-                            <ConfirmationDialog
-                              disabled={false}
-                              icon={<BsFillTrashFill fill="white" size={16} />}
-                              buttonTitle="Deletar Leito"
-                              whatIsConfirmerd="Tem certeza que deseja Excluir esse Leito?"
-                              describreConfirm="Excluir Leito é uma ação irreversivel, tem certeza que deseja excluir?"
-                              callbackFn={() => handleDeleteSector(bed.id)}
-                            />
-                            {/* <Button
-                              alignItems="center"
-                              size="md"
-                              width={220}
-                              fontSize="md"
-                              colorScheme="red"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => handleDeleteSector("")}
-                            >
-                              Deletar Leito
-                            </Button> */}
-                          </Flex>
-                        </Td>
-                      </Tr>
-                    ))
-                  ) : (
-                    <LoadingSpinner />
-                  )}
-                </Tbody>
-              </Table>
-              <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-                <FormControl
-                  as="form"
-                  onSubmit={handleSubmit(handleCreateSector)}
-                  display="flex"
-                  flexDir="column"
-                  alignItems="center"
+                    <Input
+                      {...register("totalBeds")}
+                      name="totalBeds"
+                      label="Quantidade de Camas"
+                      type="number"
+                      mb="4"
+                    />
+
+                    <FormLabel htmlFor="description">
+                      Descrição ou Observação do leito:{" "}
+                    </FormLabel>
+                    <Textarea {...register("description")} name="description" />
+
+                    <Button w="100%" type="submit" colorScheme="green" m="4">
+                      Cadastrar
+                    </Button>
+                  </FormControl>
+                </GenericModal>
+
+                <GenericModal
+                  isOpen={isModalOpenTwo}
+                  onRequestClose={closeModalTwo}
                 >
-                  <Input
-                    {...register("name")}
-                    name="name"
-                    label="Nome do leito"
-                    mb="4"
-                  />
-                  <Input
-                    type="number"
-                    {...register("price")}
-                    name="price"
-                    label="Preço da Diária"
-                  />
+                  <FormControl
+                    as="form"
+                    onSubmit={handleSubmit(handleEditSector)}
+                    display="flex"
+                    flexDir="column"
+                    alignItems="center"
+                  >
+                    <Text pb="15">Editar Leito</Text>
+                    <Input
+                      {...register("id")}
+                      name="id"
+                      label="Id do Leito"
+                      mb="4"
+                    />
+                    <Input
+                      {...register("name")}
+                      name="name"
+                      label="Nome do Leito"
+                      mb="4"
+                    />
 
-                  <Input
-                    {...register("totalBeds")}
-                    name="totalBeds"
-                    label="Quantidade de Camas"
-                    type="number"
-                    mb="4"
-                  />
+                    <Input
+                      {...register("id")}
+                      name="id"
+                      label="Quantidade de Leitos"
+                      mb="4"
+                    />
 
-                  <FormLabel htmlFor="description">
-                    Descrição ou Observação do leito:{" "}
-                  </FormLabel>
-                  <Textarea {...register("description")} name="description" />
-
-                  <Button w="100%" type="submit" colorScheme="green" m="4">
-                    Cadastrar
-                  </Button>
-                </FormControl>
-              </GenericModal>
-
-              <GenericModal
-                isOpen={isModalOpenTwo}
-                onRequestClose={closeModalTwo}
-              >
-                <FormControl
-                  as="form"
-                  onSubmit={handleSubmit(handleEditSector)}
-                  display="flex"
-                  flexDir="column"
-                  alignItems="center"
-                >
-                  <Text pb="15">Editar Leito</Text>
-                  <Input
-                    {...register("id")}
-                    name="id"
-                    label="Id do Leito"
-                    mb="4"
-                  />
-                  <Input
-                    {...register("name")}
-                    name="name"
-                    label="Nome do Leito"
-                    mb="4"
-                  />
-
-                  <Input
-                    {...register("id")}
-                    name="id"
-                    label="Quantidade de Leitos"
-                    mb="4"
-                  />
-
-                  <Button w="100%" type="submit" colorScheme="green" m="2">
-                    Cadastrar
-                  </Button>
-                </FormControl>
-              </GenericModal>
-            </Box>
+                    <Button w="100%" type="submit" colorScheme="green" m="2">
+                      Cadastrar
+                    </Button>
+                  </FormControl>
+                </GenericModal>
+              </Box>
+            </Flex>
           </Flex>
         </Flex>
       </AdminContainer>
