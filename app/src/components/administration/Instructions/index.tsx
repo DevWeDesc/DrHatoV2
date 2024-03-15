@@ -32,10 +32,17 @@ import pdfMake from "pdfmake/build/pdfmake";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
+import { values } from "lodash";
 
 // //@ts-ignore
 // pdfMake.addVirtualFileSystem(pdfFonts);
 // // Create styles
+
+interface IInstruction {
+  id: number | null;
+  name: string;
+  description: string;
+}
 
 export function Instructions() {
   //const { instructions } = useContext(DbContext);
@@ -44,6 +51,9 @@ export function Instructions() {
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
   const [reloadData, setReloadData] = useState<boolean>(false);
   const [allInstructions, setAllInstructions] = useState([]);
+  const [instructionsSelected, setInstructionsSelected] = useState(
+    {} as IInstruction
+  );
 
   const navigate = useNavigate();
 
@@ -62,10 +72,12 @@ export function Instructions() {
     setIsModalOpen(false);
   }
 
-  function openModalTwo() {
+  function openModalTwo(sector: IInstruction) {
+    setInstructionsSelected(sector);
     setIsModalOpenTwo(true);
   }
   function closeModalTwo() {
+    setInstructionsSelected({ description: "", id: null, name: "" });
     setIsModalOpenTwo(false);
   }
 
@@ -83,7 +95,7 @@ export function Instructions() {
     }
   };
 
-  async function handleDeleteSector(id: string | number) {
+  async function handleDeleteSector(id: string | number | null) {
     try {
       await api.delete(`instructions/${id}`);
       setReloadData(true);
@@ -96,10 +108,10 @@ export function Instructions() {
   const handleEditInstructions: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
-        name: values.name,
-        description: values.description,
+        name: instructionsSelected.name,
+        description: instructionsSelected.description,
       };
-      await api.put(`instructions/${values.id}`, data);
+      await api.put(`instructions/${instructionsSelected.id}`, data);
       setReloadData(true);
       toast.success("Instrução editada com sucesso");
     } catch (error) {
@@ -181,7 +193,7 @@ export function Instructions() {
 
                 <Tbody>
                   {allInstructions ? (
-                    allInstructions.map((sector: any) => (
+                    allInstructions.map((sector: IInstruction) => (
                       <Tr key={sector.id}>
                         <Td fontSize={{ base: "12", lg: "sm" }}>
                           {sector.name}
@@ -202,7 +214,7 @@ export function Instructions() {
                             colorScheme="yellow"
                             mr="3"
                             leftIcon={<Icon as={RiPencilLine} />}
-                            onClick={() => openModalTwo()}
+                            onClick={() => openModalTwo(sector)}
                           >
                             Editar Instrução
                           </Button>
@@ -304,7 +316,13 @@ export function Instructions() {
             </FormControl>
           </GenericModal>
 
-          <GenericModal isOpen={isModalOpenTwo} onRequestClose={closeModalTwo}>
+          <GenericModal
+            isOpen={isModalOpenTwo}
+            onRequestClose={() => {
+              closeModalTwo();
+              setInstructionsSelected({ description: "", id: null, name: "" });
+            }}
+          >
             <FormControl
               as="form"
               onSubmit={handleSubmit(handleEditInstructions)}
@@ -314,21 +332,27 @@ export function Instructions() {
             >
               <Text>Editar Setor</Text>
               <Input
-                {...register("name")}
+                onChange={(ev) =>
+                  setInstructionsSelected({
+                    ...instructionsSelected,
+                    name: ev.target.value,
+                  })
+                }
+                defaultValue={instructionsSelected.name}
                 name="name"
                 label="Nome da Instrução"
-                mb="4"
-              />
-              <Input
-                {...register("id")}
-                name="id"
-                label="Id da Instrução"
                 mb="4"
               />
 
               <label>Descrição da Instrução</label>
               <Textarea
-                {...register("description")}
+                onChange={(ev) =>
+                  setInstructionsSelected({
+                    ...instructionsSelected,
+                    description: ev.target.value,
+                  })
+                }
+                defaultValue={instructionsSelected.description}
                 name="description"
                 minHeight={300}
                 minWidth={300}
