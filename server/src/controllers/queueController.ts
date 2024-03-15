@@ -383,4 +383,26 @@ export const queueController = {
       console.error(error);
     }
   },
+
+
+  updateQueuePreference: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const updateQueuePreferenceSchema = z.object({
+        queueId: z.string().uuid(),
+        vetPreference: z.string()
+      })
+
+      const {queueId, vetPreference} = updateQueuePreferenceSchema.parse(request.body)
+
+      const queue = await prisma.openedConsultsForPet.update({
+        where: {id: queueId},
+        data: {vetPreference: vetPreference}
+      })
+
+
+      reply.send(queue)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 };

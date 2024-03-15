@@ -16,10 +16,12 @@ import {
   Checkbox,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
+import { LoadingSpinner } from "../Loading";
 
 interface SugeriesProps {
   id: number;
@@ -38,37 +40,67 @@ export function Createsurgeries({
 }: SurgerieVetProps) {
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [sugeries, setSugeries] = useState<SugeriesProps[]>([]);
-  const [reloadData, setReloadData] = useState(true);
   const [pagination, setPagination] = useState(1);
   const user = JSON.parse(localStorage.getItem("user") as string);
-  const navigate = useNavigate();
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
-
-  async function getPetData() {
+  const [surgerieName, setSurgerieName] = useState("")
+  const queryClient = useQueryClient();
+  async function getSurgeriesData() {
     const pet = await api.get(`/pets/${id}`);
     setPetDetails(pet.data);
-  }
-  async function GetData() {
-    try {
-      const sugeries = await api.get(
-        `/surgeries?page=${pagination}&sex=${petDetails.sexo}`
-      );
-      setSugeries(sugeries.data.surgeries);
-    } catch (error) {
-      console.error(error);
-    }
+    const sugeries = await api.get(
+      `/surgeries?page=${pagination}&sex=${petDetails.sexo}`
+    );
+    setSugeries(sugeries.data.surgeries);
   }
 
-  useEffect(() => {
-    GetData();
-  }, []);
+  async function getSurgerieByLetter(letter: string)   {
+    const response = await api.get(`/surgerie/letter/${letter}/${pagination}`)
+    setSugeries(response.data.surgeries);
+  }
 
-  useEffect(() => {
-    if (reloadData === true) {
-      getPetData();
-      setReloadData(false);
-    }
-  }, [reloadData]);
+  async function getSurgerieByName () {
+    const response = await api.get(`/surgerie/name/${surgerieName}/${pagination}`)
+    setSugeries(response.data.surgeries);
+  }
+
+  ///surgerie/letter/:letter/:page
+
+  const {isLoading} = useQuery('surgeriesData', getSurgeriesData)
+  const SearchAlfabet = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+  ];
+
+  if(isLoading) {
+    return <LoadingSpinner/>
+  }
+
+
 
   async function setSugeriesInPet(surgerieId: number) {
     try {
@@ -83,14 +115,14 @@ export function Createsurgeries({
           `surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
           data
         );
-        setReloadData(true);
+        queryClient.invalidateQueries('surgeriesData');
         toast.success("Cirurgia adicionada - Internações");
       } else {
         await api.post(
           `surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
           data
         );
-        setReloadData(true);
+        queryClient.invalidateQueries('surgeriesData');
         toast.success("Cirurgia adicionada - Veterinários");
       }
     } catch (error) {
@@ -114,7 +146,7 @@ export function Createsurgeries({
             `/petsurgery/${did}/${petDetails.totalAcc.id}/${sugPrice}/${linkedConsultId}`
           )
           .then((res) => {
-            setReloadData(true);
+            queryClient.invalidateQueries('surgeriesData');
             toast.warning("EXCLUIDO COM SUCESSO");
           });
       } else {
@@ -203,6 +235,7 @@ export function Createsurgeries({
             </TableContainer>
           </Flex>
           <Flex direction="column" h="65vh">
+            
             <Text
               bg="gray.700"
               fontSize="2xl"
@@ -216,11 +249,32 @@ export function Createsurgeries({
               {" "}
               Adicione Cirurgias
             </Text>
+            <HStack spacing={2}>
+            {SearchAlfabet.map((letter) => (
+              <Button
+                _hover={{
+                  bgColor: "green.300",
+                }}
+                colorScheme="whatsapp"
+                 onClick={() => getSurgerieByLetter(letter)}
+                fontWeight="bold"
+                fontSize="22px"
+              >
+                {letter.toUpperCase()}
+              </Button>
+            ))}
+          </HStack>
             <Flex bg="gray.200" py="2" justify="center">
               <Flex>
-                <Input borderColor="black" rounded="0" w="20vw" bg="white" />
+                <Input borderColor="black" rounded="0" w="20vw" bg="white"
+                name="name"
+                onChange={(ev) => setSurgerieName(ev.target.value)}
+                />
+         
                 <HStack>
-                  <Button color="white" rounded="0" colorScheme="twitter">
+                  <Button 
+                  onClick={() => getSurgerieByName ()}
+                  color="white" rounded="0" colorScheme="twitter">
                     Procurar
                   </Button>
                 </HStack>
