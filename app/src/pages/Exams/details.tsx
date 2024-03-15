@@ -9,6 +9,7 @@ import {
   Tr,
   Th,
   Button,
+  TableContainer,
 } from "@chakra-ui/react";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -68,82 +69,101 @@ export function ExamDetail() {
     <ChakraProvider>
       <Flex direction="column" h="100vh">
         <Header title="Detalhes do Exame" url="/Admin/Exams" />
-        <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+        <Flex
+          w="100%"
+          my="6"
+          direction={{ base: "column", xl: "row" }}
+          mx="auto"
+          px="6"
+        >
           <Sidebar />
-          <SimpleGrid
-            flex="1"
-            gap="4"
-            minChildWidth="320px"
-            align="flex-start"
-            as={Flex}
-          >
-            <Box textAlign="center" p="8" bg="gray.100" borderRadius={8}>
-              <Flex mt="8" justify="center" direction="column">
-                <Table colorScheme="blackAlpha">
-                  <Thead>
-                    <Tr>
-                      <Th>Nome</Th>
-                      <Th>Preço</Th>
-                      <Th>Disponível</Th>
-                      <Th>Laboratórios</Th>
-                      <Th>Aplicavel á</Th>
-                      <Th>Idade mínima e Máxima</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Tr>
-                      <Th>{exams.name ? exams.name : "Sem valor no banco"}</Th>
-                      <Th>
-                        {new Intl.NumberFormat("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        }).format(exams.price)}
-                      </Th>
-                      <Th>
-                        {exams.available
-                          ? exams.available === true
-                            ? "Sim"
-                            : "Não"
-                          : "Sem valor no banco"}
-                      </Th>
-                      <Th>{labType ? labType : "Sem valor no banco"}</Th>
-                      <Th>{petGender ? petGender : "Sem valor no banco"}</Th>
-                      <Th>{petAge ? petAge : "Sem valor no banco"}</Th>
-                    </Tr>
-                  </Tbody>
-                </Table>
 
-                <Table colorScheme="blackAlpha">
-                  <Thead>
-                    <Tr>
-                      <Th>Título</Th>
-                      <Th>Valor padrão</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Tr>
-                      <Th>
-                        {exams.subName ? exams.name : "Sem valor no banco"}
-                      </Th>
-                      <Th>
-                        {exams.description
-                          ? exams.description
-                          : "Sem valor no banco"}
-                      </Th>
-                    </Tr>
-                  </Tbody>
-                </Table>
+          <Flex
+            py={{ base: 10, xl: 0 }}
+            direction="column"
+            gap="4"
+            w="full"
+            maxH="48rem"
+          >
+            <Box borderRadius={8} overflow="auto">
+              <Flex
+                w="100%"
+                direction={"column"}
+                justify="center"
+                align="center"
+              >
+                <TableContainer w="full">
+                  <Table colorScheme="blackAlpha">
+                    <Thead>
+                      <Tr>
+                        <Th>Nome</Th>
+                        <Th>Preço</Th>
+                        <Th>Disponível</Th>
+                        <Th>Laboratórios</Th>
+                        <Th>Aplicavel á</Th>
+                        <Th>Idade mínima e Máxima</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      <Tr>
+                        <Th>
+                          {exams.name ? exams.name : "Sem valor no banco"}
+                        </Th>
+                        <Th>
+                          {new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          }).format(exams.price)}
+                        </Th>
+                        <Th>
+                          {exams.available
+                            ? exams.available === true
+                              ? "Sim"
+                              : "Não"
+                            : "Sem valor no banco"}
+                        </Th>
+                        <Th>{labType ? labType : "Sem valor no banco"}</Th>
+                        <Th>{petGender ? petGender : "Sem valor no banco"}</Th>
+                        <Th>{petAge ? petAge : "Sem valor no banco"}</Th>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+                <TableContainer w="full">
+                  <Table colorScheme="blackAlpha">
+                    <Thead>
+                      <Tr>
+                        <Th colSpan={2}>Título</Th>
+                        <Th>Valor padrão</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      <Tr>
+                        <Th colSpan={2}>
+                          {exams.subName ? exams.name : "Sem valor no banco"}
+                        </Th>
+                        <Th>
+                          {exams.description
+                            ? exams.description
+                            : "Sem valor no banco"}
+                        </Th>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+
                 <Button
                   mt="4"
                   maxWidth={220}
                   colorScheme="red"
                   onClick={() => handleDeleteUser()}
+                  fontSize={{ base: "sm", lg: "md" }}
                 >
                   Deletar Exame
                 </Button>
               </Flex>
             </Box>
-          </SimpleGrid>
+          </Flex>
         </Flex>
       </Flex>
     </ChakraProvider>

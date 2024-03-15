@@ -53,6 +53,77 @@ export const vaccinesController = {
     }
   },
 
+  getVaccinesByLetter: async (request: FastifyRequest,
+    reply: FastifyReply) => {
+      try {
+        const getVaccinesByLetterSchema = z.object({
+          letter: z.string(),
+          page: z.coerce.number()
+        })
+        const {letter, page} = getVaccinesByLetterSchema.parse(request.params)
+        const currentPage = page || 1;
+        // Obtenha o número total de usuários.
+        const totalVaccines = await prisma.vaccines.count();
+        // Calcule o número de páginas.
+        const totalPages = Math.ceil(totalVaccines / 35);
+
+        const vaccines =  await prisma.vaccines.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {name: {startsWith: letter.toUpperCase()}}
+        })
+
+        reply.
+        status(200).send({
+          currentPage,
+          totalPages,
+          totalVaccines,
+          vaccines,
+        })
+        
+
+
+    } catch (error) {
+        console.log(error);
+    }
+  }, 
+
+  getVaccinesByName: async (request: FastifyRequest,
+    reply: FastifyReply) => {
+    try {
+      const getVaccinesByLetterSchema = z.object({
+        name: z.string(),
+        page: z.coerce.number()
+      })
+      const {name, page} = getVaccinesByLetterSchema.parse(request.params)
+      const currentPage = page || 1;
+      // Obtenha o número total de usuários.
+      const totalVaccines = await prisma.surgeries.count();
+      // Calcule o número de páginas.
+      const totalPages = Math.ceil(totalVaccines / 35);
+
+      const vaccines =  await prisma.vaccines.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {name: {contains: name}}
+      })
+
+      reply.
+      status(200).send({
+        currentPage,
+        totalPages,
+        totalVaccines,
+        vaccines,
+      })
+      
+
+
+  } catch (error) {
+      console.log(error);
+  }
+
+  },
+
   setVaccineInPet: async (
     request: FastifyRequest<{ Params: params; Body: body }>,
     reply: FastifyReply

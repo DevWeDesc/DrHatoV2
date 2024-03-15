@@ -12,9 +12,8 @@ import {
   Box,
   Icon,
   Table,
-  Text,
   Textarea,
-  FormLabel,
+  Text,
 } from "@chakra-ui/react";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Paginaton } from "../../components/admin/Pagination";
@@ -103,31 +102,37 @@ export default function AdminVaccines() {
         <Flex direction="column" h="100vh">
           <Header title="Vacinas" url="/Admin/" />
 
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <Flex
+            w="100%"
+            my="6"
+            direction={{ base: "column", xl: "row" }}
+            mx="auto"
+            px="6"
+          >
             <Sidebar />
             <Box
               flex="1"
               borderRadius={8}
-              bg="gray.200"
-              p="8"
+              // bg="gray.200"
+              py={{ base: "8", xl: 0 }}
               maxH="44rem"
               overflow="auto"
             >
-              <Flex
-                mb="8"
-                justify="space-between"
-                direction="column"
-                align="center"
+              <Heading
+                fontSize={{ base: "xl", lg: "2xl" }}
+                fontWeight="bold"
+                pl="2"
+                w="100%"
+                mb="5"
+                display="flex"
+                flexDirection={{ base: "column", md: "row" }}
+                gap={{ base: 3, md: 0 }}
+                justifyContent="space-between"
               >
-                <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                  Vacinas
-                </Heading>
-
+                Vacinas
                 <Button
-                  as="a"
-                  width="100%"
-                  fontSize="20"
-                  py="8"
+                  py="6"
+                  fontSize={{ base: "sm", lg: "md" }}
                   colorScheme="whatsapp"
                   cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
@@ -135,54 +140,46 @@ export default function AdminVaccines() {
                 >
                   Cadastrar nova Vacina
                 </Button>
-              </Flex>
+              </Heading>
 
               <Table colorScheme="blackAlpha">
                 <Thead>
                   <Tr>
-                    <Th fontSize="18" borderColor="black">
-                      Vacina
-                    </Th>
-                    <Th borderColor="black"></Th>
-                    <Th fontSize="18" borderColor="black" colSpan={2}>
-                      Valor
-                    </Th>
-                    <Th borderColor="black">Configurações</Th>
+                    <Th>Vacina</Th>
+
+                    <Th>Valor</Th>
+                    <Th textAlign="end">Configurações</Th>
                   </Tr>
                 </Thead>
 
                 <Tbody>
                   {vaccines.map((vaccine) => (
                     <Tr key={vaccine.id}>
-                      <Td borderColor="black">
-                        <Text fontWeight="bold" color="gray.800">
-                          {vaccine.name}
-                        </Text>
+                      <Td fontSize={{ base: "12", lg: "sm" }}>
+                        {vaccine.name}
                       </Td>
-                      <Td borderColor="black"></Td>
-                      <Td borderColor="black" colSpan={2} w="21.8rem">
+                      <Td fontSize={{ base: "12", lg: "sm" }}>
                         R${vaccine.price}
                       </Td>
 
-                      <Td borderColor="black">
-                        <Flex gap="2">
+                      <Td>
+                        <Flex gap="2" justifyContent="end">
                           <Button
+                            fontSize={{ base: "sm", lg: "md" }}
                             alignItems="center"
-                            as="a"
                             size="sm"
-                            fontSize="sm"
                             colorScheme="yellow"
-                            width={220}
                             leftIcon={<Icon size={28} as={RiPencilLine} />}
                             onClick={() => openModal()}
                           >
                             Editar Vacina
                           </Button>
                           <ConfirmationDialog
+                            fontSize={{ base: "sm", lg: "md" }}
                             disabled={false}
                             icon={<BsFillTrashFill fill="white" size={16} />}
                             buttonTitle="Deletar Vacina"
-                            whatIsConfirmerd="Tem certeza que deseja Excluir a Vacina?"
+                            whatIsConfirmerd={`Tem certeza que deseja Excluir a Vacina ${vaccine.name}?`}
                             describreConfirm="Excluir a vacina é uma ação irreverssivel tem certeza que deseja excluir?"
                             callbackFn={() => DeleteVaccine(vaccine.id)}
                           />
@@ -198,14 +195,7 @@ export default function AdminVaccines() {
                   as="form"
                   onSubmit={handleSubmit(handleCreateVaccine)}
                 >
-                  <Flex
-                    direction="column"
-                    m="4"
-                    gap="4"
-                    align="center"
-                    width="480px"
-                    height="680px"
-                  >
+                  <Flex direction="column" m="4" gap="4" align="center">
                     <Input
                       {...register("name")}
                       name="name"
@@ -217,17 +207,22 @@ export default function AdminVaccines() {
                       label="Preço da Vacina: "
                     />
 
-                    <FormLabel htmlFor="description">
+                    <Text w="full" fontSize={{ base: "sm", lg: "md" }}>
                       Descrição da Vacina:{" "}
-                    </FormLabel>
+                    </Text>
                     <Textarea
                       borderColor="gray.900"
-                      height="500px"
+                      minH="20vh"
                       {...register("description")}
                       name="description"
                     />
 
-                    <Button type="submit" colorScheme="whatsapp">
+                    <Button
+                      w="full"
+                      fontSize={{ base: "sm", lg: "md" }}
+                      type="submit"
+                      colorScheme="whatsapp"
+                    >
                       CADASTRAR
                     </Button>
                   </Flex>

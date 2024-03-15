@@ -29,6 +29,7 @@ import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 import { BoxProps } from "../../interfaces";
+import { BsFillTrashFill } from "react-icons/bs";
 
 export default function AdminBoxs() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,124 +84,136 @@ export default function AdminBoxs() {
         <Flex direction="column" h="100vh">
           <Header title="Vacinas" url="/Admin/" />
 
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <Flex
+            w="100%"
+            my="6"
+            direction={{ base: "column", xl: "row" }}
+            mx="auto"
+            px="6"
+          >
             <Sidebar />
             <Box
               flex="1"
               borderRadius={8}
-              bg="gray.200"
-              p="8"
+              // bg="gray.200"
+              py={{ base: "8", xl: 0 }}
               maxH="44rem"
               overflow="auto"
             >
-              <Flex
-                mb="8"
-                justify="space-between"
-                direction="column"
-                align="center"
+              <Heading
+                fontSize={{ base: "lg", lg: "2xl" }}
+                fontWeight="bold"
+                pl="2"
+                w="100%"
+                mb="5"
+                display="flex"
+                flexDirection={{ base: "column", md: "row" }}
+                gap={{ base: 3, md: 0 }}
+                justifyContent="space-between"
               >
-                <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                  Caixas
-                </Heading>
-
+                Caixas
                 <Button
-                  as="a"
-                  width="100%"
-                  fontSize="20"
-                  py="8"
+                  py="6"
+                  fontSize={{ base: "sm", lg: "md" }}
                   colorScheme="whatsapp"
                   cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
                   onClick={() => openModal()}
                 >
-                  Cadastrar nova caixa
+                  Cadastrar novo caixa
                 </Button>
-              </Flex>
+              </Heading>
 
               <Table colorScheme="blackAlpha">
                 <Thead>
                   <Tr>
-                    <Th fontSize="18" borderColor="black">
-                     Nome
-                    </Th>
-                   
-                    <Th fontSize="18" borderColor="black">
-                      Está Aberta?
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Entradas
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Saidas
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Total Movimentado
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                     Editar
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                     Deletar
-                     </Th>
-                
-                
+                    <Th>Nome</Th>
+
+                    <Th>Está Aberta?</Th>
+                    <Th>Entradas</Th>
+                    <Th>Saidas</Th>
+                    <Th>Total Movimentado</Th>
+                    <Th>Editar</Th>
+                    <Th>Deletar</Th>
                   </Tr>
                 </Thead>
 
                 <Tbody>
-                <Tr key={boxs.id}>
-                      <Td borderColor="black">
-                        <Text fontWeight="bold" color="gray.800">
-                          {boxs.name}
-                        </Text>
-                      </Td>
-                    
-                      <Td borderColor="black">{boxs.boxIsOpen === true ? "SIM" : "NÃO"}</Td>
-                      <Td borderColor="black">{new Intl.NumberFormat("pt-BR", {currency: 'BRL', style: 'currency'}).format(boxs.entryValues)}</Td>
-                      <Td borderColor="black">{new Intl.NumberFormat("pt-BR", {currency: 'BRL', style: 'currency'}).format(boxs.exitValues)}</Td>
-                      <Td borderColor="black">{new Intl.NumberFormat("pt-BR", {currency: 'BRL', style: 'currency'}).format(boxs.movimentedValues)}</Td>
-                      <Td borderColor="black">          <Button
-                            alignItems="center"
-                            as="a"
-                            size="md"
-                            fontSize="md"
-                            colorScheme="yellow"
-                            width={220}
-                            leftIcon={<Icon size={28} as={RiPencilLine} />}
-                            onClick={() => openModal()}
-                          >
-                            Editar Caixa
-                          </Button></Td>
-                          <Td borderColor="black">
-                          <Button
-                            width={220}
-                            as="a"
-                            size="md"
-                            fontSize="md"
-                            colorScheme="red"
-                            leftIcon={<Icon as={RiPencilLine} />}
-                            //onClick={() => handleDeleteSector(sector.id)}
-                          >
-                            Deletar Caixa
-                          </Button>
-                          </Td>
+                  {boxs ? (
+                    <Tr key={boxs.id}>
+                      <Td fontSize={{ base: "12", lg: "sm" }}>{boxs.name}</Td>
 
-               
+                      <Td fontSize={{ base: "12", lg: "sm" }}>
+                        {boxs.boxIsOpen === true ? "SIM" : "NÃO"}
+                      </Td>
+                      <Td fontSize={{ base: "12", lg: "sm" }}>
+                        {new Intl.NumberFormat("pt-BR", {
+                          currency: "BRL",
+                          style: "currency",
+                        }).format(boxs.entryValues)}
+                      </Td>
+                      <Td fontSize={{ base: "12", lg: "sm" }}>
+                        {new Intl.NumberFormat("pt-BR", {
+                          currency: "BRL",
+                          style: "currency",
+                        }).format(boxs.exitValues)}
+                      </Td>
+                      <Td fontSize={{ base: "12", lg: "sm" }}>
+                        {new Intl.NumberFormat("pt-BR", {
+                          currency: "BRL",
+                          style: "currency",
+                        }).format(boxs.movimentedValues)}
+                      </Td>
+                      <Td fontSize={{ base: "12", lg: "sm" }}>
+                        {" "}
+                        <Button
+                          cursor="pointer"
+                          alignItems="center"
+                          as="a"
+                          size="sm"
+                          fontSize="sm"
+                          colorScheme="yellow"
+                          leftIcon={<Icon size={28} as={RiPencilLine} />}
+                          onClick={() => openModal()}
+                        >
+                          Editar Caixa
+                        </Button>
+                      </Td>
+                      <Td>
+                        <Button
+                          cursor="pointer"
+                          as="a"
+                          size="sm"
+                          fontSize="sm"
+                          colorScheme="red"
+                          leftIcon={<Icon as={BsFillTrashFill} />}
+                          //onClick={() => handleDeleteSector(sector.id)}
+                        >
+                          Deletar Caixa
+                        </Button>
+                      </Td>
                     </Tr>
+                  ) : (
+                    <Tr>
+                      <Td
+                        colSpan={7}
+                        fontSize={{ base: "12", lg: "sm" }}
+                        fontWeight="bold"
+                      >
+                        Sem caixa cadastrado até o momento!
+                      </Td>
+                    </Tr>
+                  )}
                 </Tbody>
               </Table>
               <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-                <FormControl
-                  as="form"
-                  onSubmit={handleSubmit(handleCreateBox)}
-                >
+                <FormControl as="form" onSubmit={handleSubmit(handleCreateBox)}>
                   <Flex
                     direction="column"
                     m="4"
                     gap="4"
                     align="center"
                     width="480px"
-                   
                   >
                     <Input
                       {...register("name")}
@@ -208,20 +221,14 @@ export default function AdminBoxs() {
                       label="Nome do caixa: "
                     />
 
-
-                    <FormLabel
-                      htmlFor="boxIsOpen"
-                    >Caixa está aberto?</FormLabel>
+                    <FormLabel htmlFor="boxIsOpen">
+                      Caixa está aberto?
+                    </FormLabel>
                     <Checkbox
-                    size="lg"
-                    borderColor="black"
-
+                      size="lg"
                       {...register("boxIsOpen")}
                       name="boxIsOpen"
-                    
                     />
-
-                 
 
                     <Button type="submit" colorScheme="whatsapp">
                       CADASTRAR

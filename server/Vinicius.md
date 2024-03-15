@@ -21,13 +21,18 @@
 [x] Passo 21 - Consumir crud de tipos de pagamento no Front criando a página seguindo o padrão dos outros cadastros em administração.
 [x] Passo 22 - Mudar cadastro de exames com base no sistema antigo.
 [x] Passo 23 - Mudar Configurar exames para modelo do sistema antigo, primeiro Adicionar Nome da sessão, após adicionar a sessão renderizar Adicionar nova Caracteristica, para adição de nova Caracteristica.
-[][D] Passo 24 - Adicionar ReactQuery na tela de veterinarios na parte de exames para tirar o travamento.
+[x] Passo 24 - Adicionar ReactQuery na tela de veterinarios na parte de exames para tirar o travamento.
 
-[][D] Passo 25 -deixar a tela veterinários principal responsiva
-[][D] Passo 26 -deixar a tela laboratório principal responsivo
-[][D] Passo 27 -deixar a tela recepção principal responsivo
-[][D] Passo 28 -deixar a tela todos searchs responsivo
+[x] ExamsOld Guarda todos o registro de todos os exames cadastrados (Apenas exames não são exames que os pets fizeram e sim a listagem de todos os exames disponíveis)
 
+[x] Passo 25 - ResultsOld Guardara o exameOld que o pet antigo fez (Sem relacionamento) buscando o examOld pelo Id e cadastrando característica desse examOld no registro
 
+[x] Passo 26 - Criação da tabela ResultsOld.
 
+[x] Passo 27 - Criação da rota para requisições dos Controllers.
 
+[x] Passo 27 - Criação de Controllers para manipulação de ResultsOld em PetRoutes.
+
+[x] Passo 28 - Obter todas as tabelas dos resultados antigos do sistema antigo
+
+[][D] OBS - Atributo CodigoExameConsulta da tabela ExamesPorConsulta é filtrado pelo Id do resultado vindo pela rota, tem as observações da consulta

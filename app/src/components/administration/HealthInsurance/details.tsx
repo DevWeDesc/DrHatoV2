@@ -9,6 +9,7 @@ import {
   Td,
   TableContainer,
   Button,
+  Grid,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router";
 
@@ -244,167 +245,199 @@ export default function DetailsHealthInsurance() {
   console.log(Health);
 
   return (
-    <Box
-      flex="1"
-      borderRadius={8}
-      bg="gray.200"
-      p="8"
-      // maxH="44rem"
-      // overflow="auto"
+    <Flex
+      py={{ base: 10, xl: 0 }}
+      direction="column"
+      gap="4"
+      w="full"
+      maxH="48rem"
     >
-      <Flex mb="8" justify="space-between" direction="column" align="center">
-        <Heading
-          size="lg"
-          fontWeight="bold"
-          w="100%"
-          mb="5"
-          display="flex"
-          justifyContent="space-between"
-        >
-          Edição de Plano de Saúde {Health.name}
-          <Flex gap="1">
-            <Button
-              colorScheme="whatsapp"
-              onClick={() => navigate("/Admin/Procedures")}
+      <Box borderRadius={8} overflow="auto">
+        <Flex w="100%" direction={"column"} justify="center" align="center">
+          <Flex
+            w="100%"
+            alignItems="center"
+            justifyContent="center"
+            direction="column"
+          >
+            <Heading
+              size="lg"
+              fontSize={{ base: "lg", lg: "2xl" }}
+              fontWeight="bold"
+              w="100%"
+              mb="5"
+              display="flex"
+              flexDirection={{ base: "column", xl: "row" }}
+              gap={{ base: 5, xl: 0 }}
+              justifyContent="space-between"
             >
-              Adicionar Procedimento
-            </Button>
-            <Button
-              colorScheme="whatsapp"
-              onClick={() => navigate("/Admin/Vaccines")}
+              Edição de Plano de Saúde {Health.name}
+              <Grid
+                gap="1"
+                templateColumns={{
+                  base: "repeat(2, 1fr)",
+                  lg: "repeat(4, 1fr)",
+                }}
+              >
+                <Button
+                  fontSize={{ base: "12", lg: "sm" }}
+                  whiteSpace="normal"
+                  colorScheme="whatsapp"
+                  onClick={() => navigate("/Admin/Procedures")}
+                >
+                  Adicionar Procedimento
+                </Button>
+                <Button
+                  fontSize={{ base: "12", lg: "sm" }}
+                  whiteSpace="normal"
+                  colorScheme="whatsapp"
+                  onClick={() => navigate("/Admin/Vaccines")}
+                >
+                  Adicionar Vacinas
+                </Button>
+                <Button
+                  fontSize={{ base: "12", lg: "sm" }}
+                  whiteSpace="normal"
+                  colorScheme="whatsapp"
+                  onClick={() => navigate("/Admin/Exams")}
+                >
+                  Adicionar Exames
+                </Button>
+                <Button
+                  fontSize={{ base: "12", lg: "sm" }}
+                  whiteSpace="normal"
+                  colorScheme="whatsapp"
+                  onClick={() => navigate("/Admin/Surgeryes")}
+                >
+                  Adicionar Cirurgias
+                </Button>
+              </Grid>
+            </Heading>
+
+            <TableContainer
+              w="100%"
+              display="flex"
+              flexDirection={{ base: "column", md: "row" }}
+              maxH="15rem"
+              overflowY="auto"
             >
-              Adicionar Vacinas
-            </Button>
-            <Button
-              colorScheme="whatsapp"
-              onClick={() => navigate("/Admin/Exams")}
+              <Table variant="simple" w={{ base: "100%", md: "50%" }}>
+                <Thead>
+                  <Tr>
+                    <Th color="black">Procedimentos</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {procedures.length === 0 ? (
+                    <Tr>
+                      <Td fontSize={{ base: "12", lg: "sm" }} fontWeight="bold">
+                        Este plano no momento não tem Procedimentos no momento
+                      </Td>
+                    </Tr>
+                  ) : (
+                    procedures?.map((procedure: any) => (
+                      <Tr>
+                        <>
+                          <Td fontSize={{ base: "12", lg: "sm" }}>
+                            {procedure.name}
+                          </Td>
+                        </>
+                      </Tr>
+                    ))
+                  )}
+                </Tbody>
+              </Table>
+              <Table variant="simple" w="50%">
+                <Thead>
+                  <Tr>
+                    <Th color="black">Vacinas</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {vaccines.length === 0 ? (
+                    <Tr>
+                      <Td fontWeight="bold" fontSize={{ base: "12", lg: "sm" }}>
+                        Este plano no momento não tem Vacinas no momento
+                      </Td>
+                    </Tr>
+                  ) : (
+                    vaccines.map((vaccine: any) => (
+                      <Tr>
+                        <>
+                          <Td fontSize={{ base: "12", lg: "sm" }}>
+                            {vaccine.name}
+                          </Td>
+                        </>
+                      </Tr>
+                    ))
+                  )}
+                </Tbody>
+              </Table>
+            </TableContainer>
+            <TableContainer
+              w="100%"
+              display="flex"
+              maxH="15rem"
+              overflowY="auto"
+              flexDirection={{ base: "column", md: "row" }}
+              mt="12"
             >
-              Adicionar Exames
-            </Button>
-            <Button
-              colorScheme="whatsapp"
-              onClick={() => navigate("/Admin/Surgeryes")}
-            >
-              Adicionar Cirurgias
-            </Button>
+              <Table variant="simple" w={{ base: "100%", md: "50%" }}>
+                <Thead>
+                  <Tr>
+                    <Th color="black">Exames</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {exams.length === 0 ? (
+                    <Tr>
+                      <Td fontWeight="bold" fontSize={{ base: "12", lg: "sm" }}>
+                        Este plano no momento não tem Exames no momento
+                      </Td>
+                    </Tr>
+                  ) : (
+                    exams?.map((exam: any) => (
+                      <Tr>
+                        <>
+                          <Td fontSize={{ base: "12", lg: "sm" }}>
+                            {exam.name}
+                          </Td>
+                        </>
+                      </Tr>
+                    ))
+                  )}
+                </Tbody>
+              </Table>
+              <Table variant="simple" w="50%">
+                <Thead>
+                  <Tr>
+                    <Th color="black">Cirurgias</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {surgeries.length === 0 ? (
+                    <Tr>
+                      <Td fontWeight="bold" fontSize={{ base: "12", lg: "sm" }}>
+                        Este plano no momento não tem Cirurgias no momento
+                      </Td>
+                    </Tr>
+                  ) : (
+                    surgeries?.map((surgerie: any) => (
+                      <Tr>
+                        <>
+                          <Td fontSize={{ base: "12", lg: "sm" }}>
+                            {surgerie.name}
+                          </Td>
+                        </>
+                      </Tr>
+                    ))
+                  )}
+                </Tbody>
+              </Table>
+            </TableContainer>
           </Flex>
-        </Heading>
-        .
-        <TableContainer w="100%" display="flex" maxH="15rem" overflowY="auto">
-          <Table variant="simple" w="50%">
-            <Thead>
-              <Tr>
-                <Th fontSize={19} color="black">
-                  Procedimentos
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {procedures.length === 0 ? (
-                <Tr>
-                  <Td fontWeight="bold" fontSize={18}>
-                    Este plano no momento não tem Procedimentos no momento
-                  </Td>
-                </Tr>
-              ) : (
-                procedures?.map((procedure: any) => (
-                  <Tr>
-                    <>
-                      <Td>{procedure.name}</Td>
-                    </>
-                  </Tr>
-                ))
-              )}
-            </Tbody>
-          </Table>
-          <Table variant="simple" w="50%">
-            <Thead>
-              <Tr>
-                <Th fontSize={19} color="black">
-                  Vacinas
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {vaccines.length === 0 ? (
-                <Tr>
-                  <Td fontWeight="bold" fontSize="18">
-                    Este plano no momento não tem Vacinas no momento
-                  </Td>
-                </Tr>
-              ) : (
-                vaccines.map((vaccine: any) => (
-                  <Tr>
-                    <>
-                      <Td>{vaccine.name}</Td>
-                    </>
-                  </Tr>
-                ))
-              )}
-            </Tbody>
-          </Table>
-        </TableContainer>
-        <TableContainer
-          w="100%"
-          display="flex"
-          maxH="15rem"
-          overflowY="auto"
-          mt="12"
-        >
-          <Table variant="simple" w="50%">
-            <Thead>
-              <Tr>
-                <Th fontSize={19} color="black">
-                  Exames
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {exams.length === 0 ? (
-                <Tr>
-                  <Td fontWeight="bold" fontSize="18">
-                    Este plano no momento não tem Exames no momento
-                  </Td>
-                </Tr>
-              ) : (
-                exams?.map((exam: any) => (
-                  <Tr>
-                    <>
-                      <Td>{exam.name}</Td>
-                    </>
-                  </Tr>
-                ))
-              )}
-            </Tbody>
-          </Table>
-          <Table variant="simple" w="50%">
-            <Thead>
-              <Tr>
-                <Th fontSize={19} color="black">
-                  Cirurgias
-                </Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {surgeries.length === 0 ? (
-                <Tr>
-                  <Td fontWeight="bold" fontSize="18">
-                    Este plano no momento não tem Cirurgias no momento
-                  </Td>
-                </Tr>
-              ) : (
-                surgeries?.map((surgerie: any) => (
-                  <Tr>
-                    <>
-                      <Td>{surgerie.name}</Td>
-                    </>
-                  </Tr>
-                ))
-              )}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      </Flex>
-    </Box>
+        </Flex>
+      </Box>
+    </Flex>
   );
 }

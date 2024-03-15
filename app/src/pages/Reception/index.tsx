@@ -22,7 +22,13 @@ export function Reception() {
     <ChakraProvider>
       <Flex direction="column" h="100vh">
         <Header title="Menu Recepção" url="/Home/" />
-        <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+        <Flex
+          w="100%"
+          my={{ lg: "6" }}
+          direction={{ base: "column", lg: "row" }}
+          mx="auto"
+          px={{ lg: "6" }}
+        >
           <ReceptionSidebar />
           <SimpleGrid
             flex="1"
@@ -33,9 +39,8 @@ export function Reception() {
           >
             <Box
               textAlign="center"
-              p="8"
-              bg="gray.100"
-              maxH="44rem"
+              p={{ lg: "8" }}
+              maxH={{ lg: "44rem" }}
               overflow="auto"
               borderRadius={8}
             >
@@ -54,18 +59,18 @@ export function Reception() {
 
                       <div className="buttonsContainer">
                         <Link to="/Recepcao/Consultas">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Nova Consulta
                           </Button>
                         </Link>
                         <Link to="/Recepcao/Change">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Alterar Consulta
                           </Button>
                         </Link>
 
                         <Link to="/Recepcao/Create">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Cadastro de Clientes
                           </Button>
                         </Link>
@@ -81,18 +86,18 @@ export function Reception() {
 
                       <div className="buttonsContainer">
                         <Link to="/Recepcao/Caixa">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Caixa
                           </Button>
                         </Link>
                         <Button colorScheme="whatsapp">Reimprimir Caixa</Button>
                         <Link to="/Recepcao/Caixa/Pagamentos">
-                          <Button colorScheme="whatsapp" minWidth={200}>
+                          <Button colorScheme="whatsapp" w="full">
                             Pagamentos
                           </Button>
                         </Link>
                         <Link to="/Recepcao/Caixa/Returns">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Devoluções
                           </Button>
                         </Link>
@@ -108,17 +113,17 @@ export function Reception() {
 
                       <div className="buttonsContainer">
                         <Link to="/Recepcao/Ferramentas/Tabela">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Tabela de Preços
                           </Button>
                         </Link>
                         <Link to={`/Recepcao/Ferramentas/TrocaDeSenha/${1}`}>
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Trocar Senha
                           </Button>
                         </Link>
                         <Link to="/Recepcao/Ferramentas/Autorizacao">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Autorizações
                           </Button>
                         </Link>
@@ -131,7 +136,7 @@ export function Reception() {
                             );
                           }}
                         >
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Medicamentos
                           </Button>
                         </Link>
@@ -147,17 +152,17 @@ export function Reception() {
 
                       <div className="buttonsContainer">
                         <Link to="/Admissions">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Internações
                           </Button>
                         </Link>
                         <Link to="/Labs/Exames">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Exames
                           </Button>
                         </Link>
                         <Link to="/Recepcao/Internacoes/Vacinas">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Vacinas
                           </Button>
                         </Link>
@@ -173,17 +178,17 @@ export function Reception() {
 
                       <div className="buttonsContainer">
                         <Link to="/Recepcao/Finance">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Financeiro
                           </Button>
                         </Link>
                         <Link to="/Recepcao/RegistroClinicas">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Cadastro de Clinicas
                           </Button>
                         </Link>
                         <Link to="/Recepcao/CadastroRaças">
-                          <Button minWidth={200} colorScheme="whatsapp">
+                          <Button w="full" colorScheme="whatsapp">
                             Cadastro de Raças
                           </Button>
                         </Link>

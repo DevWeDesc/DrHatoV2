@@ -56,22 +56,26 @@ export function ListExams() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [exams, setExams] = useState<ExamsDTO[]>([]);
-  const [sectors, setSectors] = useState<SectorsDto[]>([])
+  const [sectors, setSectors] = useState<SectorsDto[]>([]);
 
   async function getExamesListData() {
     const exams = await api.get("/exams/old/all");
     setExams(exams.data.exams);
   }
 
-  async function getSectors () {
-    const sectors = await api.get('/sectors')
-    setSectors(sectors.data)
+  async function getSectors() {
+    const sectors = await api.get("/sectors");
+    setSectors(sectors.data);
   }
 
   const queryClient = useQueryClient();
   const { isLoading, error } = useQuery("adminExams", () => getExamesListData);
-  const { isLoading: sectorLoading, error: sectorError, data: sectorsData } = useQuery("sectors", () => getSectors);
-  
+  const {
+    isLoading: sectorLoading,
+    error: sectorError,
+    data: sectorsData,
+  } = useQuery("sectors", () => getSectors);
+
   const { mutate } = useMutation(
     (data: CreateExamsDTO) => api.post("/exams", data),
     {
@@ -95,7 +99,7 @@ export function ListExams() {
         onePart: values.onePart,
         twoPart: values.twoPart,
         report: values.report,
-        sector: values.sector
+        sector: values.sector,
       });
     } catch (error) {
       console.error(error);
@@ -112,269 +116,447 @@ export function ListExams() {
   }
 
   return (
-    <Box
-      flex="1"
-      borderRadius={8}
-      bg="gray.200"
-      p="8"
-      maxH="44rem"
-      overflow="auto"
+    <Flex
+      py={{ base: 10, xl: 0 }}
+      direction="column"
+      gap="4"
+      w="full"
+      maxH="48rem"
+      overflow="hidden"
     >
-      <Flex direction="column" mb="8" align="left">
-        <Heading fontSize="30" fontWeight="bold" mb="5">
-          Painel de Exames
-        </Heading>
-
-        <Button
-          w="100%"
-          py="8"
-          fontSize="20"
-          colorScheme="whatsapp"
-          leftIcon={<Icon as={RiAddLine} />}
-          onClick={() => setIsModalOpen(true)}
-        >
-          Cadastrar novo Exame
-        </Button>
-      </Flex>
-
-      <Table colorScheme="blackAlpha">
-        <Thead>
-          <Tr borderColor="black">
-            <Th fontSize="21" borderColor="black">
-              Nome
-            </Th>
-            <Th fontSize="21" borderColor="black">
-              Preço
-            </Th>
-            <Th fontSize="21" borderColor="black">
-              Disponivel
-            </Th>
-            <Th fontSize="21" borderColor="black">
-              Duas Partes
-            </Th>
-
-            <Th width="8" borderColor="black"></Th>
-            <Th width="8" borderColor="black"></Th>
-          </Tr>
-        </Thead>
-
-        <Tbody>
-          {exams.map((exam) => (
-            <Tr key={exam.codexam} fontSize="18">
-              <Td borderColor="black">
-                <Box>
-                  <Link to={`/Admin/Exams/Details/${exam.codexam}`}>
-                    <Text
-                      fontWeight="bold"
-                      color="gray.800"
-                      borderColor="black"
-                    >
-                      {exam.name}
-                    </Text>
-                  </Link>
-                </Box>
-              </Td>
-              <Td borderColor="black">
-                <Text fontWeight="bold" color="gray.800">
-                  {new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(exam.price)}
-                </Text>
-              </Td>
-              <Td
-                fontWeight="bold"
-                color="gray.800"
-                borderColor="black"
-                bgColor={exam.disponible ? "green.200" : "red.100"}
-              >
-                {exam.disponible ? "SIM" : "NÃO"}
-              </Td>
-              <Td fontWeight="bold" color="gray.800" borderColor="black">
-                {exam.twoPart ? "SIM" : "NÃO"}
-              </Td>
-              <Td borderColor="black">
-                <ConfirmationDialog
-                  disabled={false}
-                  icon={<BsFillTrashFill fill="white" size={16} />}
-                  buttonTitle="Deletar Exame"
-                  whatIsConfirmerd="Tem certeza que deseja Excluir esse Exame?"
-                  describreConfirm="Excluir a Exame é uma ação irreversivel, tem certeza que deseja excluir?"
-                  callbackFn={() => DeleteExam(exam.codexam.toString())}
-                />
-              </Td>
-              <Td borderColor="black">
-                <Link to={`/Admin/Exams/${exam.codexam}`}>
-                  <Button
-                    as="a"
-                    size="sm"
-                    fontSize="sm"
-                    colorScheme="yellow"
-                    leftIcon={<Icon as={RiPencilLine} />}
-                  >
-                    Configurar
-                  </Button>
-                </Link>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-      <GenericModal
-        isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
-      >
-        <FormControl as="form" onSubmit={handleSubmit(handleCreateExam)}>
-          <TableContainer>
-            <Table variant="simple">
-              <Thead>
-                <Tr>
-                  <Th colSpan={2} textAlign="center">
-                    Cadastro de Exames
-                  </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Td py={1}>Nome do Exame</Td>
-                  <Td py={1}>
-                    <Input {...register("name")} name="name" />
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td py={1}>Preço</Td>
-                  <Td py={1}>
-                    <Input {...register("price")} name="price" />
-                  </Td>
-                </Tr>
-                <Tr >
-                  <Td py={1}>Disponivel</Td>
-                  <Td py={1}>
-                    <Checkbox  border="2px" {...register("disponible")} name="disponible"  />
-                  </Td>
-                </Tr>
-             
-                <Tr>
-                  <Td py={1}>Setor</Td>
-                  <Td py={1}>
-                    <Select
-                      borderColor="blackAlpha.800"
-                      _hover={{
-                        backgroundColor: "gray.100",
-                        borderColor: "blackAlpha.800",
-                      }}
-                      {...register("sector")}
-                      name="sector"
-                    >
-                      {
-                       sectors.map((sector) => <option key={sector.id} value={sector.id}>{sector.name}</option>)
-                      }
-                      <option value="Veterinário">Veterinário</option>
-                      <option value="Laboratório">Laboratório</option>
-                      <option value="Internação">Internação</option>
-                    </Select>
-                  </Td>
-                </Tr>
-              </Tbody>
-            </Table>
-            <Table variant="simple">
-              <Thead>
-                <Tr>
-                  <Th colSpan={2} textAlign="center">
-                    Uma Parte
-                  </Th>
-                  <Th colSpan={2} textAlign="center">
-                    Duas Partes
-                  </Th>
-                  <Th colSpan={2} textAlign="center">
-                    Formato de Laudo
-                  </Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                <Tr>
-                  <Th colSpan={2} textAlign="center">
-                    <Checkbox 
-                    {...register("onePart")}
-                    name="onePart"
-                   
-                    borderColor="blackAlpha.500" />
-                  </Th>
-                  <Th colSpan={2} textAlign="center">
-                    <Checkbox 
-                     {...register("twoPart")}
-                      name="twoPart"
-                    borderColor="blackAlpha.500" />
-                  </Th>
-                  <Th colSpan={2} textAlign="center">
-                    <Checkbox
-                    {...register("report")}
-                    name="report"
-                     borderColor="blackAlpha.500" />
-                  </Th>
-                </Tr>
-              </Tbody>
-            </Table>
-          </TableContainer>
-          {/* <Flex direction="column" align="center" margin="4"> */}
-          {/* <Input {...register("price")} name="price" label="Preço" /> */}
-          {/* <Flex direction="column" gap={4} my={2}>
-              <HStack gap="2">
-                <label htmlFor="available">Formato de Laudo ?</label>
-                <Checkbox
-                  {...register("available")}
-                  id="available"
-                  name="available"
-                  type="checkbox"
-                  _checked={{ background: "#FF0000" }}
-                />
-              </HStack>
-
-              <HStack gap="2">
-                <label htmlFor="available">Disponivel ?</label>
-                <Checkbox
-                  {...register("available")}
-                  id="available"
-                  name="available"
-                  type="checkbox"
-                  _checked={{ background: "#FF0000" }}
-                />
-              </HStack>
-              <HStack spacing={4}>
-                <CheckboxGroup>
-                  <label htmlFor="">Lab Imagens</label>
-                  <Checkbox
-                    {...register("examsType")}
-                    value={"image"}
-                    type="radio"
-                    colorScheme="green"
-                    name="examsType"
-                  />
-
-                  <label htmlFor="">Labs</label>
-                  <Checkbox
-                    type="radio"
-                    {...register("examsType")}
-                    value={"lab"}
-                    colorScheme="green"
-                    name="examsType"
-                  />
-                </CheckboxGroup>
-              </HStack>
-            </Flex> */}
-
-          {/* </Flex> */}
-          <Button
-            width="100%"
-            type="submit"
-            colorScheme="green"
-            m="2"
-            isLoading={isLoading}
+      <Box borderRadius={8} overflow="auto">
+        <Flex w="100%" direction={"column"} justify="center" align="center">
+          <Flex
+            w="100%"
+            alignItems="center"
+            justifyContent="center"
+            direction="column"
           >
-            Cadastrar
-          </Button>
-        </FormControl>
-      </GenericModal>
-    </Box>
+            <Heading
+              fontSize={{ base: "lg", lg: "2xl" }}
+              fontWeight="bold"
+              pl="2"
+              w="100%"
+              mb="5"
+              display="flex"
+              flexDirection={{ base: "column", md: "row" }}
+              gap={{ base: 3, md: 0 }}
+              justifyContent="space-between"
+            >
+              Painel de Exames
+              <Button
+                py="6"
+                fontSize={{ base: "sm", lg: "md" }}
+                onClick={() => setIsModalOpen(true)}
+                colorScheme="whatsapp"
+                leftIcon={
+                  <Icon
+                    as={RiAddLine}
+                    fontWeight="bold"
+                    fontSize={{ base: "md", lg: "xl" }}
+                  />
+                }
+              >
+                Cadastrar Exame
+              </Button>
+            </Heading>
+            <TableContainer w="full">
+              <Table variant="simple">
+                <Thead>
+                  <Tr>
+                    <Th>Nome</Th>
+                    <Th>Preço</Th>
+                    <Th>Disponivel</Th>
+                    <Th>Duas Partes</Th>
+                    <Th textAlign="center">Configurar</Th>
+                    <Th textAlign="center">Deletar</Th>
+                  </Tr>
+                </Thead>
+
+                <Tbody>
+                  {exams.map((exam) => (
+                    <Tr key={exam.codexam} fontSize="18">
+                      <Td fontSize={{ base: "12", lg: "sm" }}>
+                        <Box>
+                          <Link to={`/Admin/Exams/Details/${exam.codexam}`}>
+                            <Text fontWeight="bold" color="gray.800">
+                              {exam.name}
+                            </Text>
+                          </Link>
+                        </Box>
+                      </Td>
+                      <Td fontSize={{ base: "12", lg: "sm" }}>
+                        <Text fontWeight="bold" color="gray.800">
+                          {new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          }).format(exam.price)}
+                        </Text>
+                      </Td>
+                      <Td
+                        fontSize={{ base: "12", lg: "sm" }}
+                        fontWeight="bold"
+                        color="gray.800"
+                        textAlign="center"
+                        bgColor={exam.disponible ? "green.200" : "red.100"}
+                      >
+                        {exam.disponible ? "SIM" : "NÃO"}
+                      </Td>
+                      <Td
+                        fontSize={{ base: "12", lg: "sm" }}
+                        textAlign="center"
+                        fontWeight="bold"
+                        color="gray.800"
+                      >
+                        {exam.twoPart ? "SIM" : "NÃO"}
+                      </Td>
+
+                      <Td>
+                        <Link to={`/Admin/Exams/${exam.codexam}`}>
+                          <Button
+                            as="a"
+                            size="sm"
+                            fontSize="sm"
+                            colorScheme="yellow"
+                            leftIcon={<Icon as={RiPencilLine} />}
+                          >
+                            Configurar
+                          </Button>
+                        </Link>
+                      </Td>
+                      <Td>
+                        <ConfirmationDialog
+                          disabled={false}
+                          icon={<BsFillTrashFill fill="white" size={16} />}
+                          buttonTitle="Deletar Exame"
+                          whatIsConfirmerd="Tem certeza que deseja Excluir esse Exame?"
+                          describreConfirm="Excluir a Exame é uma ação irreversivel, tem certeza que deseja excluir?"
+                          callbackFn={() => DeleteExam(exam.codexam.toString())}
+                        />
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Flex>
+
+          <GenericModal
+            isOpen={isModalOpen}
+            onRequestClose={() => setIsModalOpen(false)}
+          >
+            <FormControl as="form" onSubmit={handleSubmit(handleCreateExam)}>
+              <TableContainer>
+                <Table
+                  w="full"
+                  variant="simple"
+                  size={{ base: "sm", lg: "lg" }}
+                  display={{ base: "none", md: "block" }}
+                >
+                  <Thead>
+                    <Tr>
+                      <Th
+                        fontSize={{ base: "sm", lg: "md" }}
+                        colSpan={2}
+                        textAlign="center"
+                      >
+                        Cadastro de Exames
+                      </Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    <Tr>
+                      <Td fontSize={{ base: "sm", lg: "md" }} py={1}>
+                        Nome do Exame
+                      </Td>
+                      <Td fontSize={{ base: "sm", lg: "md" }} py={1}>
+                        <Input {...register("name")} name="name" />
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        py={1}
+                      >
+                        Preço
+                      </Td>
+                      <Td py={1}>
+                        <Input {...register("price")} name="price" />
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        py={1}
+                      >
+                        Disponivel
+                      </Td>
+                      <Td py={1}>
+                        <Checkbox
+                          border="2px"
+                          {...register("disponible")}
+                          name="disponible"
+                        />
+                      </Td>
+                    </Tr>
+
+                    <Tr>
+                      <Td
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        py={1}
+                      >
+                        Setor
+                      </Td>
+                      <Td py={1}>
+                        <Select
+                          borderColor="blackAlpha.800"
+                          _hover={{
+                            backgroundColor: "gray.100",
+                            borderColor: "blackAlpha.800",
+                          }}
+                          {...register("sector")}
+                          name="sector"
+                        >
+                          {sectors.map((sector) => (
+                            <option key={sector.id} value={sector.id}>
+                              {sector.name}
+                            </option>
+                          ))}
+                          <option value="Veterinário">Veterinário</option>
+                          <option value="Laboratório">Laboratório</option>
+                          <option value="Internação">Internação</option>
+                        </Select>
+                      </Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+                <Table variant="simple" display={{ base: "none", md: "block" }}>
+                  <Thead>
+                    <Tr>
+                      <Th
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        colSpan={2}
+                        textAlign="center"
+                      >
+                        Uma Parte
+                      </Th>
+                      <Th
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        colSpan={2}
+                        textAlign="center"
+                      >
+                        Duas Partes
+                      </Th>
+                      <Th
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        colSpan={2}
+                        textAlign="center"
+                      >
+                        Formato de Laudo
+                      </Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    <Tr>
+                      <Th colSpan={2} textAlign="center">
+                        <Checkbox
+                          {...register("onePart")}
+                          name="onePart"
+                          borderColor="blackAlpha.500"
+                        />
+                      </Th>
+                      <Th colSpan={2} textAlign="center">
+                        <Checkbox
+                          {...register("twoPart")}
+                          name="twoPart"
+                          borderColor="blackAlpha.500"
+                        />
+                      </Th>
+                      <Th colSpan={2} textAlign="center">
+                        <Checkbox
+                          {...register("report")}
+                          name="report"
+                          borderColor="blackAlpha.500"
+                        />
+                      </Th>
+                    </Tr>
+                  </Tbody>
+                </Table>
+                {/* Mobile */}
+                <Table
+                  w="full"
+                  variant="simple"
+                  size={{ base: "sm", lg: "lg" }}
+                  display={{ md: "none" }}
+                >
+                  <Thead>
+                    <Tr>
+                      <Th
+                        fontSize={{ base: "sm", lg: "md" }}
+                        colSpan={2}
+                        textAlign="center"
+                      >
+                        Cadastro de Exames
+                      </Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    <Tr>
+                      <Td fontSize={{ base: "sm", lg: "md" }} py={1}>
+                        Nome do Exame
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td fontSize={{ base: "sm", lg: "md" }} py={1}>
+                        <Input {...register("name")} name="name" />
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        py={1}
+                      >
+                        Preço
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      {" "}
+                      <Td py={1}>
+                        <Input {...register("price")} name="price" />
+                      </Td>
+                    </Tr>
+
+                    <Tr>
+                      {" "}
+                      <Td
+                        display="flex"
+                        justifyContent="space-between"
+                        gap={4}
+                        textAlign="center"
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        colSpan={2}
+                      >
+                        Disponivel{" "}
+                        <Checkbox
+                          px="10px"
+                          borderColor="blackAlpha.500"
+                          {...register("disponible")}
+                          name="disponible"
+                        ></Checkbox>
+                      </Td>
+                    </Tr>
+
+                    <Tr>
+                      <Td
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        py={1}
+                      >
+                        Setor
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      {" "}
+                      <Td py={1}>
+                        <Select
+                          fontSize={{ base: "sm", lg: "md" }}
+                          borderColor="blackAlpha.800"
+                          _hover={{
+                            backgroundColor: "gray.100",
+                            borderColor: "blackAlpha.800",
+                          }}
+                          {...register("sector")}
+                          name="sector"
+                        >
+                          {sectors.map((sector) => (
+                            <option key={sector.id} value={sector.id}>
+                              {sector.name}
+                            </option>
+                          ))}
+                          <option value="Veterinário">Veterinário</option>
+                          <option value="Laboratório">Laboratório</option>
+                          <option value="Internação">Internação</option>
+                        </Select>
+                      </Td>
+                    </Tr>
+                  </Tbody>
+                </Table>
+                <Table variant="simple" display={{ md: "none" }}>
+                  <Thead>
+                    <Tr>
+                      <Td
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        colSpan={2}
+                      >
+                        Uma Parte
+                      </Td>
+                      <Td colSpan={2} textAlign="center">
+                        <Checkbox
+                          {...register("onePart")}
+                          name="onePart"
+                          borderColor="blackAlpha.500"
+                        />
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        colSpan={2}
+                      >
+                        Duas Partes
+                      </Td>{" "}
+                      <Td colSpan={2} textAlign="center">
+                        <Checkbox
+                          {...register("twoPart")}
+                          name="twoPart"
+                          borderColor="blackAlpha.500"
+                        />
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        colSpan={2}
+                      >
+                        Formato de Laudo
+                      </Td>
+                      <Td colSpan={2} textAlign="center">
+                        <Checkbox
+                          {...register("report")}
+                          name="report"
+                          borderColor="blackAlpha.500"
+                        />
+                      </Td>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    <Tr></Tr>
+                  </Tbody>
+                </Table>
+              </TableContainer>
+              <Button
+                width="full"
+                type="submit"
+                colorScheme="green"
+                isLoading={isLoading}
+              >
+                Cadastrar
+              </Button>
+            </FormControl>
+          </GenericModal>
+        </Flex>
+      </Box>
+    </Flex>
   );
 }

@@ -17,10 +17,14 @@ export async function queueRoutes(app: FastifyInstance) {
   app.get("/queue/details/:queueId", queueController.getQueueByID);
 
   app.patch("/queue/consult/:queueId", queueController.updateQueueDiagnostics);
+
+
   app.get(
     "/queue/consult/diagnostic/:queueId",
     queueController.getQueueDiagnostics
   );
 
   app.patch('/queue/pet/weight/:queueid/:petWeight', queueController.updatePetWeightInQueue)
+
+  app.patch('/queue/vetpreference', queueController.updateQueuePreference)
 }

@@ -3,6 +3,7 @@ import {
   ChakraProvider,
   Checkbox,
   Flex,
+  HStack,
   Table,
   TableContainer,
   Tbody,
@@ -15,9 +16,11 @@ import {
 import { useState, useEffect } from "react";
 import { BiHome } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
+import { QueryClient, useQuery } from "react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Input } from "../../../components/admin/Input";
+import { LoadingSpinner } from "../../../components/Loading";
 import { PetDetaisl } from "../../../interfaces";
 import { api } from "../../../lib/axios";
 
@@ -39,9 +42,39 @@ export function Vaccines({
 }: VaccineComponentProps) {
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [vaccines, setVaccines] = useState<VaccinesProps[]>([]);
-  const [reloadData, setReloadData] = useState(false);
+  const [pagination, setPagination] = useState(1)
+  const [vaccineName, setVaccineName] = useState("")
   const navigate = useNavigate();
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
+  const queryClient = new QueryClient()
+  const SearchAlfabet = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+  ];
   const user = JSON.parse(localStorage.getItem("user") as string);
   async function GetVaccine() {
     try {
@@ -52,6 +85,13 @@ export function Vaccines({
     } catch (error) {
       console.log(error);
     }
+  }
+
+
+  const {isLoading} = useQuery('vaccinesSet', GetVaccine)
+
+  if(isLoading) {
+    return <LoadingSpinner/>
   }
 
   async function setVaccineInPet(vaccineId: number) {
@@ -70,14 +110,16 @@ export function Vaccines({
           `/vaccinepet/${vaccineId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
           data
         );
-        setReloadData(true);
+        queryClient.invalidateQueries('vaccinesSet')
         toast.success("Vacina criada com Sucesso");
       } else {
         await api.post(
           `/vaccinepet/${vaccineId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
           data
         );
-        setReloadData(true);
+      
+        queryClient.invalidateQueries('vaccinesSet')
+
         toast.success("Vacina criada com Sucesso");
       }
     } catch (error) {
@@ -101,7 +143,9 @@ export function Vaccines({
             `petvaccine/${vaccineId}/${petDetails.totalAcc.id}/${vaccPrice}/${linkedDebitId}`
           )
           .then(() => {
-            setReloadData(true);
+          
+        queryClient.invalidateQueries('vaccinesSet')
+
             toast.warning("Excluido com sucesso");
           });
       } else {
@@ -113,16 +157,17 @@ export function Vaccines({
     }
   }
 
-  useEffect(() => {
-    GetVaccine();
-  }, []);
 
-  useEffect(() => {
-    if (reloadData === true) {
-      GetVaccine();
-      setReloadData(false); // Reseta o estado para evitar chamadas infinitas
-    }
-  }, [reloadData]);
+  async function getVaccinesByLetter(letter: string) {
+    const response = await api.get(`/vaccines/${letter}/${pagination}`)
+    setVaccines(response.data.vaccines);
+  }
+
+  async function getVaccinesByName() {
+    const response = await api.get(`/vaccines/${vaccineName}/${pagination}`)
+    setVaccines(response.data.vaccines);
+  }
+
 
   return (
     <ChakraProvider>
@@ -187,11 +232,28 @@ export function Vaccines({
                 align="center"
                 justify="center"
               >
+       
                 <Flex align="center" gap="2" p="4">
-                  <Button colorScheme="teal">FILTRAR</Button>
-                  <Input name="filter" placeholder="Nome da Vacina" />
+                  <Button onClick={() => getVaccinesByName()} colorScheme="teal">FILTRAR</Button>
+                  <Input  name="filter" onChange={(ev) => setVaccineName(ev.target.value)} placeholder="Nome da Vacina" />
                 </Flex>
+    
               </Flex>
+              <HStack spacing={2} w="600px">
+            {SearchAlfabet.map((letter) => (
+              <Button
+                _hover={{
+                  bgColor: "green.300",
+                }}
+                colorScheme="whatsapp"
+                 onClick={() => getVaccinesByLetter(letter)}
+                fontWeight="bold"
+                fontSize="22px"
+              >
+                {letter.toUpperCase()}
+              </Button>
+            ))}
+          </HStack>
               <TableContainer
                 w="100%"
                 h="100%"
