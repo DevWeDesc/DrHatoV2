@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { accountService } from "../services/accountService";
-import prisma from "../../client";
+import prisma from "../client";
 import { z } from "zod";
 
 type params = {

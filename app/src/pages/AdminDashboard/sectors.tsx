@@ -16,6 +16,7 @@ import {
   HStack,
   CheckboxGroup,
   Checkbox,
+  Grid,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -145,40 +146,49 @@ export function SectorsList() {
       <AdminContainer>
         <Flex direction="column" h="100vh">
           <Header title="Setores e Grupos" url="/Admin" />
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <Flex
+            w="100%"
+            my="6"
+            direction={{ base: "column", xl: "row" }}
+            mx="auto"
+            px="6"
+          >
             <Sidebar />
             <Box
               flex="1"
               borderRadius={8}
-              bg="gray.200"
-              p="8"
+              // bg="gray.200"
+              py={{ base: "8", xl: 0 }}
               maxH="44rem"
               w="100%"
             >
-              <Flex w="100%" justifyContent="space-between">
+              <Grid
+                gap={10}
+                w="100%"
+                templateColumns={{ xl: "repeat(2, 1fr)" }}
+              >
                 <Flex
                   direction="column"
-                  w="48%"
-                  borderRight="1px solid black"
+                  w="full"
                   pr="1"
                   maxH="40rem"
                   overflowY="auto"
                 >
-                  <Flex
-                    mb="8"
-                    justify="space-between"
-                    direction="column"
-                    align="center"
+                  <Heading
+                    fontSize={{ base: "xl", lg: "2xl" }}
+                    fontWeight="bold"
+                    pl="2"
+                    w="100%"
+                    mb="5"
+                    display="flex"
+                    flexDirection={{ base: "column", md: "row" }}
+                    gap={{ base: 3, md: 0 }}
+                    justifyContent="space-between"
                   >
-                    <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                      Setores
-                    </Heading>
-
+                    Setores
                     <Button
-                      as="a"
-                      width="100%"
-                      fontSize="20"
-                      py="8"
+                      py="6"
+                      fontSize={{ base: "sm", lg: "md" }}
                       colorScheme="whatsapp"
                       cursor="pointer"
                       leftIcon={<Icon as={RiAddLine} />}
@@ -186,18 +196,14 @@ export function SectorsList() {
                     >
                       Cadastrar novo Setor
                     </Button>
-                  </Flex>
+                  </Heading>
 
                   <Table colorScheme="blackAlpha">
                     <Thead>
                       <Tr>
-                        <Th fontSize="18" borderColor="black">
-                          Nome
-                        </Th>
-                        <Th fontSize="18" borderColor="black">
-                          Id do Setor
-                        </Th>
-                        <Th borderColor="black"></Th>
+                        <Th>Nome</Th>
+                        <Th>Id do Setor</Th>
+                        <Th />
                       </Tr>
                     </Thead>
 
@@ -205,48 +211,34 @@ export function SectorsList() {
                       {sectors ? (
                         sectors.map((sector: any) => (
                           <Tr key={sector.id}>
-                            <Td borderColor="black">
-                              <Text fontWeight="bold" color="gray.800">
-                                {sector.name}
-                              </Text>
+                            <Td fontSize={{ base: "12", lg: "sm" }}>
+                              {sector.name}
                             </Td>
-                            <Td borderColor="black">{sector.id}</Td>
+                            <Td fontSize={{ base: "12", lg: "sm" }}>
+                              {sector.id}
+                            </Td>
 
-                            <Td borderColor="black" pr="1">
-                              <Flex gap="2" ml="5%">
-                                <Button
-                                  as="a"
-                                  size="sm"
-                                  fontSize="sm"
-                                  colorScheme="yellow"
-                                  leftIcon={<Icon as={RiPencilLine} />}
-                                  onClick={() => openModalTwo()}
-                                >
-                                  Editar setor
-                                </Button>
-                                <ConfirmationDialog
-                                  disabled={false}
-                                  icon={
-                                    <BsFillTrashFill fill="white" size={16} />
-                                  }
-                                  buttonTitle="Deletar Setor"
-                                  whatIsConfirmerd="Tem certeza que deseja Excluir esse Setor?"
-                                  describreConfirm="Excluir o Setor é uma ação irreversivel, tem certeza que deseja excluir?"
-                                  callbackFn={() =>
-                                    handleDeleteSector(sector.id)
-                                  }
-                                />
-                                {/* <Button
-                                  as="a"
-                                  size="sm"
-                                  fontSize="sm"
-                                  colorScheme="red"
-                                  leftIcon={<Icon as={RiPencilLine} />}
-                                  onClick={() => handleDeleteSector(sector.id)}
-                                >
-                                  Deletar Setor
-                                </Button> */}
-                              </Flex>
+                            <Td display="flex" gap={2} justifyContent="end">
+                              <Button
+                                as="a"
+                                size="sm"
+                                fontSize="sm"
+                                colorScheme="yellow"
+                                leftIcon={<Icon as={RiPencilLine} />}
+                                onClick={() => openModalTwo()}
+                              >
+                                Editar setor
+                              </Button>
+                              <ConfirmationDialog
+                                disabled={false}
+                                icon={
+                                  <BsFillTrashFill fill="white" size={16} />
+                                }
+                                buttonTitle="Deletar Setor"
+                                whatIsConfirmerd="Tem certeza que deseja Excluir esse Setor?"
+                                describreConfirm="Excluir o Setor é uma ação irreversivel, tem certeza que deseja excluir?"
+                                callbackFn={() => handleDeleteSector(sector.id)}
+                              />
                             </Td>
                           </Tr>
                         ))
@@ -256,28 +248,22 @@ export function SectorsList() {
                     </Tbody>
                   </Table>
                 </Flex>
-                <Flex
-                  w="52%"
-                  direction="column"
-                  pl="1"
-                  maxH="40rem"
-                  overflowY="auto"
-                >
-                  <Flex
-                    mb="8"
-                    justify="space-between"
-                    direction="column"
-                    align="center"
+                <Flex w="full" direction="column" maxH="40rem" overflowY="auto">
+                  <Heading
+                    fontSize={{ base: "lg", lg: "2xl" }}
+                    fontWeight="bold"
+                    pl="2"
+                    w="100%"
+                    mb="5"
+                    display="flex"
+                    flexDirection={{ base: "column", md: "row" }}
+                    gap={{ base: 3, md: 0 }}
+                    justifyContent="space-between"
                   >
-                    <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                      Grupos
-                    </Heading>
-
+                    Grupos
                     <Button
-                      as="a"
-                      width="100%"
-                      fontSize="20"
-                      py="8"
+                      py="6"
+                      fontSize={{ base: "sm", lg: "md" }}
                       colorScheme="whatsapp"
                       cursor="pointer"
                       leftIcon={<Icon as={RiAddLine} />}
@@ -285,18 +271,14 @@ export function SectorsList() {
                     >
                       Cadastrar novo Grupo
                     </Button>
-                  </Flex>
+                  </Heading>
 
                   <Table colorScheme="blackAlpha">
                     <Thead>
                       <Tr>
-                        <Th fontSize="18" borderColor="black">
-                          Nome
-                        </Th>
-                        <Th fontSize="18" borderColor="black">
-                          Id do Grupo
-                        </Th>
-                        <Th borderColor="black"></Th>
+                        <Th>Nome</Th>
+                        <Th>Id do Grupo</Th>
+                        <Th></Th>
                       </Tr>
                     </Thead>
 
@@ -304,48 +286,34 @@ export function SectorsList() {
                       {groups ? (
                         groups.map((group: any) => (
                           <Tr key={group.id}>
-                            <Td borderColor="black">
-                              <Text fontWeight="bold" color="gray.800">
-                                {group.name}
-                              </Text>
+                            <Td fontSize={{ base: "12", lg: "sm" }}>
+                              {group.name}
                             </Td>
-                            <Td borderColor="black">{group.id}</Td>
+                            <Td fontSize={{ base: "12", lg: "sm" }}>
+                              {group.id}
+                            </Td>
 
-                            <Td borderColor="black">
-                              <Flex gap="2" ml="10%">
-                                <Button
-                                  as="a"
-                                  size="sm"
-                                  fontSize="sm"
-                                  colorScheme="yellow"
-                                  leftIcon={<Icon as={RiPencilLine} />}
-                                  onClick={() => openModalTwo()}
-                                >
-                                  Editar Grupo
-                                </Button>
-                                <ConfirmationDialog
-                                  disabled={false}
-                                  icon={
-                                    <BsFillTrashFill fill="white" size={16} />
-                                  }
-                                  buttonTitle="Deletar Grupo"
-                                  whatIsConfirmerd="Tem certeza que deseja Excluir esse Grupo?"
-                                  describreConfirm="Excluir o Grupo é uma ação irreversivel, tem certeza que deseja excluir?"
-                                  callbackFn={() =>
-                                    handleDeleteSector(group.id)
-                                  }
-                                />
-                                {/* <Button
-                                  as="a"
-                                  size="sm"
-                                  fontSize="sm"
-                                  colorScheme="red"
-                                  leftIcon={<Icon as={RiPencilLine} />}
-                                  onClick={() => handleDeleteSector(group.id)}
-                                >
-                                  Deletar Grupo
-                                </Button> */}
-                              </Flex>
+                            <Td display="flex" gap={2} justifyContent="end">
+                              <Button
+                                as="a"
+                                size="sm"
+                                fontSize="sm"
+                                colorScheme="yellow"
+                                leftIcon={<Icon as={RiPencilLine} />}
+                                onClick={() => openModalTwo()}
+                              >
+                                Editar Grupo
+                              </Button>
+                              <ConfirmationDialog
+                                disabled={false}
+                                icon={
+                                  <BsFillTrashFill fill="white" size={16} />
+                                }
+                                buttonTitle="Deletar Grupo"
+                                whatIsConfirmerd="Tem certeza que deseja Excluir esse Grupo?"
+                                describreConfirm="Excluir o Grupo é uma ação irreversivel, tem certeza que deseja excluir?"
+                                callbackFn={() => handleDeleteSector(group.id)}
+                              />
                             </Td>
                           </Tr>
                         ))
@@ -355,7 +323,7 @@ export function SectorsList() {
                     </Tbody>
                   </Table>
                 </Flex>
-              </Flex>
+              </Grid>
               <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
                 <FormControl
                   as="form"

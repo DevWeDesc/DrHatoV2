@@ -12,6 +12,7 @@ import {
   Box,
   Table,
   Text,
+  TableContainer,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { BsFillTrashFill } from "react-icons/bs";
@@ -112,142 +113,173 @@ export const TypePayments = () => {
     }
   }, [reloadData]);
   return (
-    <Box flex="1" borderRadius={8} bg="gray.200" overflow="auto" p="8">
-      <Flex mb="8" direction="column" justify="space-between" align="center">
-        <Heading width="100%" fontSize="30" fontWeight="bold">
-          Painel de Instruções
-        </Heading>
+    <Flex
+      py={{ base: 10, xl: 0 }}
+      direction="column"
+      gap="4"
+      w="full"
+      maxH="48rem"
+    >
+      <Box borderRadius={8} overflow="auto">
+        <Flex w="100%" direction={"column"} justify="center" align="center">
+          <Flex
+            w="100%"
+            alignItems="center"
+            justifyContent="center"
+            direction="column"
+          >
+            <Heading
+              fontSize={{ base: "lg", lg: "2xl" }}
+              fontWeight="bold"
+              pl="2"
+              w="100%"
+              mb="5"
+              display="flex"
+              flexDirection={{ base: "column", md: "row" }}
+              gap={{ base: 3, md: 0 }}
+              justifyContent="space-between"
+            >
+              Painel de Instruções
+              <Button
+                as="a"
+                mt={{ base: "5", md: 0 }}
+                py="6"
+                cursor="pointer"
+                fontSize={{ base: "sm", lg: "md" }}
+                colorScheme="whatsapp"
+                leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                onClick={() => openModal()}
+              >
+                Cadastrar novo tipo de Pagamento
+              </Button>
+            </Heading>
+          </Flex>
+          <TableContainer w="full">
+            <Table colorScheme="blackAlpha">
+              <Thead>
+                <Tr>
+                  <Th>Nome</Th>
+                  <Th w="full" textAlign="center">
+                    Id do Tipo de pagamento
+                  </Th>
+                  <Th textAlign="center">Editar</Th>
+                  <Th textAlign="center">Deletar</Th>
+                </Tr>
+              </Thead>
 
-        <Button
-          as="a"
-          mt="5"
-          width="100%"
-          py="8"
-          cursor="pointer"
-          fontSize="20"
-          colorScheme="whatsapp"
-          leftIcon={<Icon as={RiAddLine} fontSize="20" />}
-          onClick={() => openModal()}
+              <Tbody>
+                {allTypePayments ? (
+                  allTypePayments.map((paymentType: any) => (
+                    <Tr key={paymentType.id}>
+                      <Td
+                        fontSize={{ base: "12", lg: "sm" }}
+                        fontWeight="medium"
+                      >
+                        {paymentType.typePayment}
+                      </Td>
+                      <Td
+                        textAlign="center"
+                        fontSize={{ base: "12", lg: "sm" }}
+                      >
+                        {paymentType.id}
+                      </Td>
+
+                      <Td display="flex" justifyContent="end">
+                        <Button
+                          fontSize={{ base: "sm", lg: "md" }}
+                          cursor="pointer"
+                          as="a"
+                          size="sm"
+                          colorScheme="yellow"
+                          mr="3"
+                          leftIcon={<Icon as={RiPencilLine} />}
+                          onClick={() => openModalTwo(paymentType)}
+                        >
+                          Editar
+                        </Button>
+                      </Td>
+                      <Td>
+                        <ConfirmationDialog
+                          fontSize={{ base: "sm", lg: "md" }}
+                          disabled={false}
+                          icon={<BsFillTrashFill fill="white" size={16} />}
+                          buttonTitle="Deletar Tipo de pagamento"
+                          whatIsConfirmerd={`Tem certeza que deseja Excluir o tipo de pagamento ${paymentType.typePayment}?`}
+                          describreConfirm="Excluir a tipo de pagamento é uma ação irreversivel, tem certeza que deseja excluir?"
+                          callbackFn={() =>
+                            handleDeleteTypePayment(paymentType.id)
+                          }
+                        />
+                      </Td>
+                    </Tr>
+                  ))
+                ) : (
+                  <LoadingSpinner />
+                )}
+              </Tbody>
+            </Table>
+          </TableContainer>
+        </Flex>
+
+        <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+          <FormControl
+            as="form"
+            onSubmit={handleSubmit(handleCreateTypePayment)}
+            display="flex"
+            flexDir="column"
+            alignItems="center"
+          >
+            <Input
+              {...register("typePayment")}
+              name="typePayment"
+              label="Nome do tipo de pagamento"
+              mb="4"
+            />
+
+            <Button w="100%" type="submit" colorScheme="green" m="2">
+              Cadastrar
+            </Button>
+          </FormControl>
+        </GenericModal>
+
+        <GenericModal
+          isOpen={isModalOpenTwo}
+          onRequestClose={() => {
+            reset();
+            closeModalTwo();
+          }}
         >
-          Cadastrar novo tipo de Pagamento
-        </Button>
-      </Flex>
+          <FormControl
+            as="form"
+            onSubmit={handleSubmit(handleEditTypePayment)}
+            display="flex"
+            flexDir="column"
+            alignItems="center"
+          >
+            <Text fontWeight="bold" mb={6}>
+              Editar Tipo de pagamento
+            </Text>
+            <Input
+              defaultValue={typePaymentSelected.typePayments}
+              {...register("typePaymentEdit")}
+              name="typePaymentEdit"
+              label="Nome da Instrução"
+              mb="4"
+            />
+            <Input
+              isDisabled
+              defaultValue={typePaymentSelected.id}
+              name="id"
+              label="Id da Instrução"
+              mb="4"
+            />
 
-      <Table colorScheme="blackAlpha">
-        <Thead>
-          <Tr borderColor="black">
-            <Th borderColor="black" fontSize="18">
-              Nome
-            </Th>
-            <Th borderColor="black" fontSize="18">
-              Id do Tipo de pagamento
-            </Th>
-            <Th borderColor="black"></Th>
-          </Tr>
-        </Thead>
-
-        <Tbody>
-          {allTypePayments ? (
-            allTypePayments.map((paymentType: any) => (
-              <Tr key={paymentType.id}>
-                <Td borderColor="black">
-                  <Text fontWeight="bold" fontSize="16" color="gray.800">
-                    {paymentType.typePayment}
-                  </Text>
-                </Td>
-                <Td borderColor="black" fontSize="16" fontWeight="bold">
-                  {paymentType.id}
-                </Td>
-
-                <Td borderColor="black">
-                  <Flex ml="16%">
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
-                      colorScheme="yellow"
-                      mr="3"
-                      leftIcon={<Icon as={RiPencilLine} />}
-                      onClick={() => openModalTwo(paymentType)}
-                    >
-                      Editar Tipo de pagamento
-                    </Button>
-
-                    <ConfirmationDialog
-                      disabled={false}
-                      icon={<BsFillTrashFill fill="white" size={16} />}
-                      buttonTitle="Deletar Tipo de pagamento"
-                      whatIsConfirmerd={`Tem certeza que deseja Excluir o tipo de pagamento ${paymentType.typePayment}?`}
-                      describreConfirm="Excluir a tipo de pagamento é uma ação irreversivel, tem certeza que deseja excluir?"
-                      callbackFn={() => handleDeleteTypePayment(paymentType.id)}
-                    />
-                  </Flex>
-                </Td>
-              </Tr>
-            ))
-          ) : (
-            <LoadingSpinner />
-          )}
-        </Tbody>
-      </Table>
-      <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-        <FormControl
-          as="form"
-          onSubmit={handleSubmit(handleCreateTypePayment)}
-          display="flex"
-          flexDir="column"
-          alignItems="center"
-        >
-          <Input
-            {...register("typePayment")}
-            name="typePayment"
-            label="Nome do tipo de pagamento"
-            mb="4"
-          />
-
-          <Button w="100%" type="submit" colorScheme="green" m="2">
-            Cadastrar
-          </Button>
-        </FormControl>
-      </GenericModal>
-
-      <GenericModal
-        isOpen={isModalOpenTwo}
-        onRequestClose={() => {
-          reset();
-          closeModalTwo();
-        }}
-      >
-        <FormControl
-          as="form"
-          onSubmit={handleSubmit(handleEditTypePayment)}
-          display="flex"
-          flexDir="column"
-          alignItems="center"
-        >
-          <Text fontWeight="bold" mb={6}>
-            Editar Tipo de pagamento
-          </Text>
-          <Input
-            defaultValue={typePaymentSelected.typePayments}
-            {...register("typePaymentEdit")}
-            name="typePaymentEdit"
-            label="Nome da Instrução"
-            mb="4"
-          />
-          <Input
-            isDisabled
-            defaultValue={typePaymentSelected.id}
-            name="id"
-            label="Id da Instrução"
-            mb="4"
-          />
-
-          <Button w="100%" type="submit" colorScheme="green" m="2">
-            Cadastrar
-          </Button>
-        </FormControl>
-      </GenericModal>
-    </Box>
+            <Button w="100%" type="submit" colorScheme="green" m="2">
+              Cadastrar
+            </Button>
+          </FormControl>
+        </GenericModal>
+      </Box>
+    </Flex>
   );
 };

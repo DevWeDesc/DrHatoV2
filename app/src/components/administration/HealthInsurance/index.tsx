@@ -1,9 +1,7 @@
-import React from "react";
 import {
   Text,
   Box,
   Button,
-  ChakraProvider,
   Flex,
   Heading,
   Icon,
@@ -14,24 +12,17 @@ import {
   Thead,
   Tr,
   FormControl,
-  HStack,
-  CheckboxGroup,
-  Checkbox,
+  TableContainer,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { Header } from "../../admin/Header";
-import { Sidebar } from "../../admin/Sidebar";
+import { useNavigate } from "react-router-dom";
 import { LoadingSpinner } from "../../../components/Loading";
-import { DbContext } from "../../../contexts/DbContext";
 import { GenericModal } from "../../../components/Modal/GenericModal";
-import { AdminContainer } from "../../../pages/AdminDashboard/style";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
 import { Input } from "../../../components/admin/Input";
-import { borderRadius } from "polished";
 import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
 
@@ -124,106 +115,126 @@ export function HealthInsuranceList() {
       .catch(() => toast.error("Algo deu errado!!"));
   }
   return (
-    <Box
-      flex="1"
-      borderRadius={8}
-      bg="gray.200"
-      p="8"
-      maxH="44rem"
-      overflow="auto"
+    <Flex
+      py={{ base: 10, xl: 0 }}
+      direction="column"
+      gap="4"
+      w="full"
+      maxH="48rem"
     >
-      <Flex mb="8" justify="space-between" direction="column" align="center">
-        <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-          Painel de Plano de Saúde
-        </Heading>
+      <Box borderRadius={8} overflow="auto">
+        <Flex w="100%" direction={"column"} justify="center" align="center">
+          <Flex
+            w="100%"
+            alignItems="center"
+            justifyContent="center"
+            direction="column"
+          >
+            <Heading
+              fontSize={{ base: "lg", lg: "2xl" }}
+              fontWeight="bold"
+              pl="2"
+              w="100%"
+              mb="5"
+              display="flex"
+              flexDirection={{ base: "column", md: "row" }}
+              gap={{ base: 3, md: 0 }}
+              justifyContent="space-between"
+            >
+              Painel de Plano de Saúde
+              <Button
+                py="6"
+                fontSize={{ base: "12", lg: "sm" }}
+                colorScheme="whatsapp"
+                leftIcon={<Icon as={RiAddLine} />}
+                onClick={() => setIsModalOpen(true)}
+              >
+                Cadastrar novo Plano de Saúde
+              </Button>
+            </Heading>
+          </Flex>
+          <TableContainer w="full">
+            <Table colorScheme="blackAlpha">
+              <Thead>
+                <Tr>
+                  <Th w="full" colSpan={2}>
+                    Nome
+                  </Th>
+                  <Th>Editar</Th>
+                  <Th>Deletar</Th>
+                </Tr>
+              </Thead>
 
-        <Button
-          as="a"
-          width="100%"
-          fontSize="20"
-          py="8"
-          colorScheme="whatsapp"
-          cursor="pointer"
-          leftIcon={<Icon as={RiAddLine} />}
-          onClick={() => setIsModalOpen(true)}
-        >
-          Cadastrar novo Plano de Saúde
-        </Button>
-      </Flex>
+              <Tbody>
+                {HealthInsuranceList ? (
+                  HealthInsuranceList.map((plans: any) => (
+                    <Tr key={plans.id}>
+                      <Td
+                        fontSize={{ base: "12", lg: "sm" }}
+                        fontWeight="medium"
+                        colSpan={2}
+                      >
+                        {plans.name}
+                      </Td>
+                      <Td>
+                        <Flex gap="2">
+                          <Button
+                            cursor="pointer"
+                            as="a"
+                            size="sm"
+                            fontSize={{ base: "12", lg: "sm" }}
+                            colorScheme="yellow"
+                            leftIcon={<Icon as={RiPencilLine} />}
+                            onClick={() =>
+                              navigate(`/Admin/HealthInsurance/${plans.id}`)
+                            }
+                          >
+                            Editar Plano
+                          </Button>
+                        </Flex>
+                      </Td>
+                      <Td>
+                        {" "}
+                        <ConfirmationDialog
+                          fontSize={{ base: "12", lg: "sm" }}
+                          disabled={false}
+                          icon={<BsFillTrashFill fill="white" size={16} />}
+                          buttonTitle="Deletar Plano de Saúde"
+                          whatIsConfirmerd={`Tem certeza que deseja Excluir o Plano de Saúde ${plans.name}?`}
+                          describreConfirm="Excluir o Plano de Saúde é uma ação irreversivel, tem certeza que deseja excluir?"
+                          callbackFn={() => DeleteHealth(plans.id)}
+                        />
+                      </Td>
+                    </Tr>
+                  ))
+                ) : (
+                  <LoadingSpinner />
+                )}
+              </Tbody>
+            </Table>
+          </TableContainer>
+        </Flex>
+        <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+          <FormControl
+            as="form"
+            onSubmit={handleSubmit(handleCreateSector)}
+            display="flex"
+            flexDir="column"
+            alignItems="center"
+          >
+            <Input
+              {...register("name")}
+              name="name"
+              label="Nome da Plano"
+              mb="4"
+            />
 
-      <Table colorScheme="blackAlpha">
-        <Thead>
-          <Tr>
-            <Th fontSize="18" borderColor="black" w="70%" colSpan={2}>
-              Nome do Plano
-            </Th>
-            <Th borderColor="black" fontSize="18">
-              Configurações do Plano
-            </Th>
-          </Tr>
-        </Thead>
-
-        <Tbody>
-          {HealthInsuranceList ? (
-            HealthInsuranceList.map((plans: any) => (
-              <Tr key={plans.id}>
-                <Td borderColor="black" colSpan={2}>
-                  <Text fontWeight="bold" color="gray.800">
-                    {plans.name}
-                  </Text>
-                </Td>
-                <Td borderColor="black">
-                  <Flex gap="2">
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
-                      colorScheme="yellow"
-                      leftIcon={<Icon as={RiPencilLine} />}
-                      onClick={() =>
-                        navigate(`/Admin/HealthInsurance/${plans.id}`)
-                      }
-                    >
-                      Editar Plano
-                    </Button>
-
-                    <ConfirmationDialog
-                      disabled={false}
-                      icon={<BsFillTrashFill fill="white" size={16} />}
-                      buttonTitle="Deletar Plano de Saúde"
-                      whatIsConfirmerd="Tem certeza que deseja Excluir esse Plano de Saúde?"
-                      describreConfirm="Excluir o Plano de Saúde é uma ação irreversivel, tem certeza que deseja excluir?"
-                      callbackFn={() => DeleteHealth(plans.id)}
-                    />
-                  </Flex>
-                </Td>
-              </Tr>
-            ))
-          ) : (
-            <LoadingSpinner />
-          )}
-        </Tbody>
-      </Table>
-      <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-        <FormControl
-          as="form"
-          onSubmit={handleSubmit(handleCreateSector)}
-          display="flex"
-          flexDir="column"
-          alignItems="center"
-        >
-          <Input
-            {...register("name")}
-            name="name"
-            label="Nome da Plano"
-            mb="4"
-          />
-
-          <Button w="100%" type="submit" colorScheme="green" m="2">
-            Cadastrar
-          </Button>
-        </FormControl>
-      </GenericModal>
-    </Box>
+            <Button w="100%" type="submit" colorScheme="green" m="2">
+              Cadastrar
+            </Button>
+          </FormControl>
+        </GenericModal>
+      </Box>
+    </Flex>
   );
 }

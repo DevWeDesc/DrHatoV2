@@ -106,6 +106,7 @@ export const QueueSchema = z.object({
   petWeight: z.string().optional(),
   observations: z.string().optional(),
   openedBy: z.string().optional(),
+  removePreference: z.boolean().optional(),
 });
 
 export const ExamsType = ["lab", "image"];

@@ -19,6 +19,7 @@ import {
   TableContainer,
   Input,
   Select,
+  Checkbox,
 } from "@chakra-ui/react";
 import { AiFillTags, BiHome, TbArrowBack } from "react-icons/all";
 import { toast } from "react-toastify";
@@ -63,6 +64,7 @@ export function CustomerDetails() {
   const [petId, setPetId] = useState("");
   const [userVets, setUserVets] = useState<VetsProps[]>([])
   const [queryType, setQueryType] = useState("");
+  const [notPreferences, setNotPreferences] = useState(false);
   const [vetPreference, setVetPreference] = useState("");
   const [moreInfos, setMoreInfos] = useState("");
   const [customer, setCustomer] = useState<CustomerProps>({
@@ -121,6 +123,7 @@ export function CustomerDetails() {
     try {
 
       const data = {
+        removePreference: notPreferences,
         vetPreference: vetPreference,
         queryType: queryType,
         openedBy: user.consultName.length >= 1 ? user.consultName : `${user.name} - Id: ${user.id}`,
@@ -128,7 +131,13 @@ export function CustomerDetails() {
       };
 
 
-      if (!!queryType && !!petSelected.id && !!vetPreference) {
+      if (!!queryType && !!petSelected.id) {
+        if(notPreferences === false && vetPreference.length <= 1) {
+          toast.error("Selecione uma preferência")
+          return 
+        }
+
+
         await api.put(`queue/${petSelected.id}`, data);
         navigate("/Recepcao/Change")
         toast.success("Pet colocado na fila com sucesso!");
@@ -550,16 +559,27 @@ export function CustomerDetails() {
                 border="1px"
                 placeholder="Pesquisar"
                 name="searchVet"
-                onChange={(ev) => setVetName(ev.target.value)}
+                onChange={(ev) => {
+                  setVetName(ev.target.value)
+                  setVetPreference("")
+                }}
                 />
                 </Flex>
+                        <HStack>
+                          <Checkbox
+                          onChange={(ev) => setNotPreferences(ev.target.checked)}
+                           border='2px' mb="4px"  />
+                          <Text fontWeight="bold">Sem preferência</Text>
+                        </HStack>
                 {userVets.map((vet) => (
                   <RadioGroup
+                    mt={2}
                     key={vet.id}
                     onChange={setVetPreference}
-                    value={vetPreference}
+                    value={notPreferences === true ? '' : vetPreference}
                   >
                     <Flex direction="column">
+                       
                       <Radio
                         mb="2"
                         borderColor="teal.800"
