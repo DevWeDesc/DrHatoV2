@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
 import {
   ChakraProvider,
   Flex,
@@ -13,83 +13,83 @@ import {
   Tr,
   Th,
   Tbody,
-  Td
-} from '@chakra-ui/react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { GenericSidebar } from '../../components/Sidebars/GenericSideBar'
-import { GenericLink } from '../../components/Sidebars/GenericLink'
+  Td,
+} from "@chakra-ui/react";
+import { useNavigate, useParams } from "react-router-dom";
+import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
+import { GenericLink } from "../../components/Sidebars/GenericLink";
 import {
   BsArrowLeft,
   AiOutlineMenu,
   IoIosFlask,
-  BsImages
-} from 'react-icons/all'
-import { Header } from '../../components/admin/Header'
-import { api } from '../../lib/axios'
-import FileUpload from '../../components/FileUpload'
-import { toast } from 'react-toastify'
-import { LoadingSpinner } from '../../components/Loading'
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
-import moment from 'moment'
+  BsImages,
+} from "react-icons/all";
+import { Header } from "../../components/admin/Header";
+import { api } from "../../lib/axios";
+import FileUpload from "../../components/FileUpload";
+import { toast } from "react-toastify";
+import { LoadingSpinner } from "../../components/Loading";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import moment from "moment";
 
 interface ExamProps {
-  id: number
-  name: string
-  price: string
-  available: boolean
-  doneExam: boolean
-  onePart: boolean
-  twoPart: boolean
-  byReport: boolean
-  ageGroup: number
-  defaultMetodology: string
+  id: number;
+  name: string;
+  price: string;
+  available: boolean;
+  doneExam: boolean;
+  onePart: boolean;
+  twoPart: boolean;
+  byReport: boolean;
+  ageGroup: number;
+  defaultMetodology: string;
   partExams: Array<{
-    id: number
-    codpart: number
-    oldExamsCodexam: number
-    partName: string
-    isFirst: boolean
+    id: number;
+    codpart: number;
+    oldExamsCodexam: number;
+    partName: string;
+    isFirst: boolean;
     examsDetails: Array<{
-      id: number
-      codDetalhe: number
-      partExamsCodpart: number
-      caracteristic: string
-      relativeUnit: string
-      absoluteUnit: string
-      agesOne: string
-      minAgesOne: string
-      maxAgesOne: string
-      agesTwo: string
-      minAgesTwo: string
-      maxAgesTwo: string
-      agesThree: string
-      minAgesThree: string
-      maxAgesThree: string
-      parts: number
-    }>
-  }>
+      id: number;
+      codDetalhe: number;
+      partExamsCodpart: number;
+      caracteristic: string;
+      relativeUnit: string;
+      absoluteUnit: string;
+      agesOne: string;
+      minAgesOne: string;
+      maxAgesOne: string;
+      agesTwo: string;
+      minAgesTwo: string;
+      maxAgesTwo: string;
+      agesThree: string;
+      minAgesThree: string;
+      maxAgesThree: string;
+      parts: number;
+    }>;
+  }>;
 }
 
 export interface PetProps {
-  id:              number;
-  CodCli:          number;
-  CodAnimal:       number;
-  name:            string;
-  especie:         string;
-  sexo:            string;
-  race:            string;
-  weigth:          string;
-  haveChip:        boolean;
-  corPet:          string;
-  sizePet:         string;
-  bornDate:        string;
-  dateAge:         null;
-  observations:    string;
-  customer_id:     number;
-  codPet:          string;
-  isCastred:       boolean;
-  debits:          string;
-  customer:        Customer;
+  id: number;
+  CodCli: number;
+  CodAnimal: number;
+  name: string;
+  especie: string;
+  sexo: string;
+  race: string;
+  weigth: string;
+  haveChip: boolean;
+  corPet: string;
+  sizePet: string;
+  bornDate: string;
+  dateAge: null;
+  observations: string;
+  customer_id: number;
+  codPet: string;
+  isCastred: boolean;
+  debits: string;
+  customer: Customer;
   medicineRecords: MedicineRecords;
 }
 
@@ -98,145 +98,150 @@ export interface Customer {
 }
 
 export interface MedicineRecords {
-  id:           number;
+  id: number;
   observations: string[];
-  petId:        number;
-  petExams:     PetExam[];
+  petId: number;
+  petExams: PetExam[];
 }
 
 export interface PetExam {
-  id:                     number;
-  name:                   string;
-  price:                  string;
-  defaultMethodology:     null;
-  impressName:            null;
-  requesteData:           Date;
-  requestedFor:           string;
-  requestedCrm:           string;
-  responsibleForExam:     null;
-  responsibleForCrm:      null;
-  doneExame:              boolean;
-  onePart:                boolean;
-  twoPart:                boolean;
-  byReport:               boolean;
-  externalReport:         null;
-  medicine_id:            number;
-  linkedConsultDebitId:   number;
+  id: number;
+  name: string;
+  price: string;
+  defaultMethodology: null;
+  impressName: null;
+  requesteData: Date;
+  requestedFor: string;
+  requestedCrm: string;
+  responsibleForExam: null;
+  responsibleForCrm: null;
+  doneExame: boolean;
+  onePart: boolean;
+  twoPart: boolean;
+  byReport: boolean;
+  externalReport: null;
+  medicine_id: number;
+  linkedConsultDebitId: number;
   LinkedAdmissionDebitId: null;
-  examsType:              string[];
-  updatedAt:              Date;
+  examsType: string[];
+  updatedAt: Date;
 }
 
-
 export function SetPetExam() {
-  const { id, examId, codAnimal } = useParams<{ id: string; examId: string; codAnimal: string }>()
-  const user = JSON.parse(localStorage.getItem('user') as string)
-  const [pet, setPet] = useState({} as PetProps)
-  const [disableRequest, setDisableRequest] = useState(false)
-  const [textReport, setTextReport] = useState('')
-  const [exam, setExam] = useState({} as ExamProps)
-  const { register, handleSubmit } = useForm()
-  const navigate = useNavigate()
+  const { id, examId, codAnimal } = useParams<{
+    id: string;
+    examId: string;
+    codAnimal: string;
+  }>();
+  const user = JSON.parse(localStorage.getItem("user") as string);
+  const [pet, setPet] = useState({} as PetProps);
+  const [disableRequest, setDisableRequest] = useState(false);
+  const [textReport, setTextReport] = useState("");
+  const [exam, setExam] = useState({} as ExamProps);
+  const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
   async function Pets() {
-    const pets = await api.get(`/labexam/${codAnimal}`)
-    setPet(pets.data)
+    const pets = await api.get(`/labexam/${codAnimal}`);
+    setPet(pets.data);
   }
   async function Exam() {
-    const exam = await api.get(`/exams/${examId}`)
-    setExam(exam.data)
+    const exam = await api.get(`/exams/${examId}`);
+    setExam(exam.data);
   }
 
- 
   useEffect(() => {
-    Pets()
-    Exam()
-  }, [])
+    Pets();
+    Exam();
+  }, []);
 
-
-  console.log(pet)
+  console.log(pet);
   const handleSetTextReport = async () => {
     try {
       const data = {
         jsonString: textReport,
         responsible: user.consultName,
-        responsibleCrm: user.crm
-      }
-      await api.post(`/labreportexam/${id}`, data)
-      toast.success('Exame laudado com sucesso!')
-      navigate("/Labs/Exames")
+        responsibleCrm: user.crm,
+      };
+      await api.post(`/labreportexam/${id}`, data);
+      toast.success("Exame laudado com sucesso!");
+      navigate("/Labs/Exames");
     } catch (error) {
-      toast.error('Falha ao laudar com texto!')
+      toast.error("Falha ao laudar com texto!");
     }
-  }
+  };
 
   //One Part
-  const handleSetTableReport: SubmitHandler<FieldValues> = async values => {
-    const refs = exam.partExams[0].examsDetails.map(charac => {
+  const handleSetTableReport: SubmitHandler<FieldValues> = async (values) => {
+    const refs = exam.partExams[0].examsDetails.map((charac) => {
       let data = {
-        charac: charac.caracteristic.replace(/\./g, '').trim(),
-        abs: values[`abs${charac.caracteristic.replace(/\./g, '').trim()}`],
-        rel: values[`rel${charac.caracteristic.replace(/\./g, '').trim()}`]
-      }
-        return data
-    })
+        charac: charac.caracteristic.replace(/\./g, "").trim(),
+        abs: values[`abs${charac.caracteristic.replace(/\./g, "").trim()}`],
+        rel: values[`rel${charac.caracteristic.replace(/\./g, "").trim()}`],
+      };
+      return data;
+    });
 
     const data = {
-      report: { 
+      report: {
         refs,
         obs: values.obsOnePart,
       },
       reportedFor: user.consultName,
-      reportedForCrm: user.crm
-    }
+      reportedForCrm: user.crm,
+    };
 
     try {
-    console.log(data)
-      await api.patch(`/reportexam/${id}`, data)
-      toast.success('Exame laudado com sucesso!')
-      navigate("/Labs/Exames")
+      console.log(data);
+      await api.patch(`/reportexam/${id}`, data);
+      toast.success("Exame laudado com sucesso!");
+      navigate("/Labs/Exames");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   //Multi Part
-  const handleSetMultTableReport: SubmitHandler<FieldValues> = async values => {
+  const handleSetMultTableReport: SubmitHandler<FieldValues> = async (
+    values
+  ) => {
     try {
-      const refs = exam.partExams.map(charac => {
+      const refs = exam.partExams.map((charac) => {
         return {
-          name: charac.partName.replace(/\./g, '').trim(),
-          refs: charac.examsDetails.map(charac => {
+          name: charac.partName.replace(/\./g, "").trim(),
+          refs: charac.examsDetails.map((charac) => {
             let data = {
               charac: charac.caracteristic,
-              abs: values[`abs${charac.caracteristic.replace(/\./g, '').trim()}`],
-              rel: values[`rel${charac.caracteristic.replace(/\./g, '').trim()}`]
-            }
-            return data
-          })
-        }
-        0
-      })
+              abs: values[
+                `abs${charac.caracteristic.replace(/\./g, "").trim()}`
+              ],
+              rel: values[
+                `rel${charac.caracteristic.replace(/\./g, "").trim()}`
+              ],
+            };
+            return data;
+          }),
+        };
+        0;
+      });
 
       const data = {
         report: {
           refs,
-          obs: [values.obsPartOne, values.obsPartTwo]
+          obs: [values.obsPartOne, values.obsPartTwo],
         },
         reportedFor: user.consultName,
-        reportedForCrm: user.crm
-      }
+        reportedForCrm: user.crm,
+      };
 
- 
-     await api.patch(`/reportexam/${id}`, data)
-     toast.success('Exame laudado com sucesso!')
-     navigate("/Labs/Exames")
+      await api.patch(`/reportexam/${id}`, data);
+      toast.success("Exame laudado com sucesso!");
+      navigate("/Labs/Exames");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-
-  let typeTableView
+  let typeTableView;
   switch (true) {
     case exam.twoPart === true:
       typeTableView = (
@@ -272,7 +277,7 @@ export function SetPetExam() {
                       @Ref Idade {exam?.partExams[0]?.examsDetails[0]?.agesTwo}
                     </Th>
                     <Th colSpan={2} border="1px solid black">
-                      @Ref Idade{' '}
+                      @Ref Idade{" "}
                       {exam?.partExams[0]?.examsDetails[0]?.agesThree}
                     </Th>
                   </Tr>
@@ -292,18 +297,18 @@ export function SetPetExam() {
                     <Td border="1px solid black">Relativo</Td>
                   </Tr>
 
-                  {exam?.partExams[0]?.examsDetails?.map(items => (
+                  {exam?.partExams[0]?.examsDetails?.map((items) => (
                     <Tr>
                       <Td>{items.caracteristic}</Td>
                       <Td border="1px solid black" bg="white">
                         <Input
                           {...register(
                             `abs${items.caracteristic
-                              .replace(/\./g, '')
+                              .replace(/\./g, "")
                               .trim()}`
                           )}
                           name={`abs${items.caracteristic
-                            .replace(/\./g, '')
+                            .replace(/\./g, "")
                             .trim()}`}
                         />
                       </Td>
@@ -311,11 +316,11 @@ export function SetPetExam() {
                         <Input
                           {...register(
                             `rel${items.caracteristic
-                              .replace(/\./g, '')
+                              .replace(/\./g, "")
                               .trim()}`
                           )}
                           name={`rel${items.caracteristic
-                            .replace(/\./g, '')
+                            .replace(/\./g, "")
                             .trim()}`}
                         />
                       </Td>
@@ -348,9 +353,15 @@ export function SetPetExam() {
                   ))}
                 </Tbody>
               </Table>
-              <Flex m="4"  gap={4} align="center" w="100%">
+              <Flex m="4" gap={4} align="center" w="100%">
                 <Text>Observações</Text>
-                <Input {...register("obsPartOne")}  name='obsPartOne' width="80%" bgColor="white" border="2px" />
+                <Input
+                  {...register("obsPartOne")}
+                  name="obsPartOne"
+                  width="80%"
+                  bgColor="white"
+                  border="2px"
+                />
               </Flex>
             </TableContainer>
           ) : (
@@ -383,7 +394,7 @@ export function SetPetExam() {
                       @Ref Idade {exam?.partExams[1]?.examsDetails[0]?.agesTwo}
                     </Th>
                     <Th colSpan={2} border="1px solid black">
-                      @Ref Idade{' '}
+                      @Ref Idade{" "}
                       {exam?.partExams[1]?.examsDetails[0]?.agesThree}
                     </Th>
                   </Tr>
@@ -403,18 +414,18 @@ export function SetPetExam() {
                     <Td border="1px solid black">Relativo</Td>
                   </Tr>
 
-                  {exam?.partExams[1]?.examsDetails?.map(items => (
+                  {exam?.partExams[1]?.examsDetails?.map((items) => (
                     <Tr>
                       <Td>{items.caracteristic}</Td>
                       <Td border="1px solid black" bg="white">
                         <Input
                           {...register(
                             `abs${items.caracteristic
-                              .replace(/\./g, '')
+                              .replace(/\./g, "")
                               .trim()}`
                           )}
                           name={`abs${items.caracteristic
-                            .replace(/\./g, '')
+                            .replace(/\./g, "")
                             .trim()}`}
                         />
                       </Td>
@@ -422,11 +433,11 @@ export function SetPetExam() {
                         <Input
                           {...register(
                             `rel${items.caracteristic
-                              .replace(/\./g, '')
+                              .replace(/\./g, "")
                               .trim()}`
                           )}
                           name={`rel${items.caracteristic
-                            .replace(/\./g, '')
+                            .replace(/\./g, "")
                             .trim()}`}
                         />
                       </Td>
@@ -459,9 +470,15 @@ export function SetPetExam() {
                   ))}
                 </Tbody>
               </Table>
-              <Flex m="4"  gap={4} align="center" w="100%">
+              <Flex m="4" gap={4} align="center" w="100%">
                 <Text>Observações</Text>
-                <Input  {...register("obsPartTwo")}  name='obsPartTwo' width="80%" bgColor="white" border="2px" />
+                <Input
+                  {...register("obsPartTwo")}
+                  name="obsPartTwo"
+                  width="80%"
+                  bgColor="white"
+                  border="2px"
+                />
               </Flex>
             </TableContainer>
           ) : (
@@ -476,8 +493,8 @@ export function SetPetExam() {
             Gravar
           </Button>
         </Flex>
-      )
-      break
+      );
+      break;
     case exam.onePart === true:
       typeTableView = (
         <TableContainer as="form" onSubmit={handleSubmit(handleSetTableReport)}>
@@ -500,17 +517,14 @@ export function SetPetExam() {
                 </Th>
 
                 <Th colSpan={2} border="1px solid black">
-                      @Ref {exam?.partExams[0]?.examsDetails[0]?.agesOne}
-                    </Th>
-                    <Th colSpan={2} border="1px solid black">
-                      @Ref Idade {exam?.partExams[0]?.examsDetails[0]?.agesTwo}
-                    </Th>
-                    <Th colSpan={2} border="1px solid black">
-                      @Ref Idade{' '}
-                      {exam?.partExams[0]?.examsDetails[0]?.agesThree}
-                    </Th>
-
-            
+                  @Ref {exam?.partExams[0]?.examsDetails[0]?.agesOne}
+                </Th>
+                <Th colSpan={2} border="1px solid black">
+                  @Ref Idade {exam?.partExams[0]?.examsDetails[0]?.agesTwo}
+                </Th>
+                <Th colSpan={2} border="1px solid black">
+                  @Ref Idade {exam?.partExams[0]?.examsDetails[0]?.agesThree}
+                </Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -521,83 +535,63 @@ export function SetPetExam() {
                 <Td border="1px solid black">Un. Abs.</Td>
                 <Td border="1px solid black">Un. Rel.</Td>
 
-            
-                      <Td  border="1px solid black">
-                        Absoluto
-                      </Td>
-                      <Td  border="1px solid black">
-                        Relativo
-                      </Td>
-                      <Td  border="1px solid black">
-                        Absoluto
-                      </Td>
-                      <Td  border="1px solid black">
-                        Relativo
-                      </Td>
-                      <Td  border="1px solid black">
-                        Absoluto
-                      </Td>
-                      <Td  border="1px solid black">
-                        Relativo
-                      </Td>
-          
+                <Td border="1px solid black">Absoluto</Td>
+                <Td border="1px solid black">Relativo</Td>
+                <Td border="1px solid black">Absoluto</Td>
+                <Td border="1px solid black">Relativo</Td>
+                <Td border="1px solid black">Absoluto</Td>
+                <Td border="1px solid black">Relativo</Td>
               </Tr>
-              {exam?.partExams[0]?.examsDetails?.map(items => (
-                    <Tr>
-                      <Td>{items.caracteristic}</Td>
-                      <Td border="1px solid black" bg="white">
-                        <Input
-                          {...register(
-                            `abs${items.caracteristic
-                              .replace(/\./g, '')
-                              .trim()}`
-                          )}
-                          name={`abs${items.caracteristic
-                            .replace(/\./g, '')
-                            .trim()}`}
-                        />
-                      </Td>
-                      <Td border="1px solid black" bg="white">
-                        <Input
-                          {...register(
-                            `rel${items.caracteristic
-                              .replace(/\./g, '')
-                              .trim()}`
-                          )}
-                          name={`rel${items.caracteristic
-                            .replace(/\./g, '')
-                            .trim()}`}
-                        />
-                      </Td>
-                      <Td border="1px solid black" bg="white">
-                        {items.absoluteUnit}
-                      </Td>
-                      <Td border="1px solid black" bg="white">
-                        {items.relativeUnit}
-                      </Td>
+              {exam?.partExams[0]?.examsDetails?.map((items) => (
+                <Tr>
+                  <Td>{items.caracteristic}</Td>
+                  <Td border="1px solid black" bg="white">
+                    <Input
+                      {...register(
+                        `abs${items.caracteristic.replace(/\./g, "").trim()}`
+                      )}
+                      name={`abs${items.caracteristic
+                        .replace(/\./g, "")
+                        .trim()}`}
+                    />
+                  </Td>
+                  <Td border="1px solid black" bg="white">
+                    <Input
+                      {...register(
+                        `rel${items.caracteristic.replace(/\./g, "").trim()}`
+                      )}
+                      name={`rel${items.caracteristic
+                        .replace(/\./g, "")
+                        .trim()}`}
+                    />
+                  </Td>
+                  <Td border="1px solid black" bg="white">
+                    {items.absoluteUnit}
+                  </Td>
+                  <Td border="1px solid black" bg="white">
+                    {items.relativeUnit}
+                  </Td>
 
-                      <Td border="1px" bg="white">
-                        {items.minAgesOne}
-                      </Td>
-                      <Td border="1px" bg="white">
-                        {items.maxAgesOne}
-                      </Td>
-                      <Td border="1px" bg="white">
-                        {items.minAgesTwo}
-                      </Td>
-                      <Td border="1px" bg="white">
-                        {items.maxAgesTwo}
-                      </Td>
-                      <Td border="1px" bg="white">
-                        {items.minAgesThree}
-                      </Td>
-                      <Td border="1px" bg="white">
-                        {items.maxAgesThree}
-                      </Td>
-                    </Tr>
-                  ))}
-
-      
+                  <Td border="1px" bg="white">
+                    {items.minAgesOne}
+                  </Td>
+                  <Td border="1px" bg="white">
+                    {items.maxAgesOne}
+                  </Td>
+                  <Td border="1px" bg="white">
+                    {items.minAgesTwo}
+                  </Td>
+                  <Td border="1px" bg="white">
+                    {items.maxAgesTwo}
+                  </Td>
+                  <Td border="1px" bg="white">
+                    {items.minAgesThree}
+                  </Td>
+                  <Td border="1px" bg="white">
+                    {items.maxAgesThree}
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
           <Button
@@ -609,19 +603,25 @@ export function SetPetExam() {
           >
             GRAVAR
           </Button>
-          <Flex m="4"  gap={4} align="center" w="100%">
-                <Text>Observações</Text>
-                <Input width="80%" bgColor="white" border="2px" {...register("obsOnePart")} name="obsOnePart" />
-              </Flex>
+          <Flex m="4" gap={4} align="center" w="100%">
+            <Text>Observações</Text>
+            <Input
+              width="80%"
+              bgColor="white"
+              border="2px"
+              {...register("obsOnePart")}
+              name="obsOnePart"
+            />
+          </Flex>
         </TableContainer>
-      )
-      break
+      );
+      break;
     case exam.byReport === true:
       typeTableView = (
         <Flex direction="column" align="center" m="4">
           <Text>LAUDO LIVRE</Text>
           <Textarea
-            onChange={ev => setTextReport(ev.target.value)}
+            onChange={(ev) => setTextReport(ev.target.value)}
             border="2px"
             bgColor="white"
             minWidth={600}
@@ -631,8 +631,8 @@ export function SetPetExam() {
             GRAVAR
           </Button>
         </Flex>
-      )
-      break
+      );
+      break;
     default:
       typeTableView = (
         <Flex align="center" justify="center" w="100%" h="100%">
@@ -647,188 +647,162 @@ export function SetPetExam() {
             Ir até configuração
           </Button>
         </Flex>
-      )
-      break
+      );
+      break;
   }
 
-
-  const examRequestedData = moment(pet?.medicineRecords?.petExams.find((exam) => exam.name === exam.name)?.requesteData).toDate()
+  const examRequestedData = moment(
+    pet?.medicineRecords?.petExams.find((exam) => exam.name === exam.name)
+      ?.requesteData
+  ).toDate();
   return (
     <ChakraProvider>
       <Flex direction="column" h="100vh">
-        <Header title="Tabela de Laboratórios" url="/Labs/Exames" />
-        <Flex w="100%" my="6" mx="auto" px="6">
-          <GenericSidebar>
-            <GenericLink icon={BsArrowLeft} name="Voltar" path="/Labs/Exames" />
-            <GenericLink icon={AiOutlineMenu} name="Menu" path="/Home" />
-            <GenericLink
-              icon={IoIosFlask}
-              name="Laboratório"
-              path="/Labs/Exames"
-            />
-            <GenericLink
-              icon={BsImages}
-              name="Laboratório Imagens"
-              path="/Labs/Imagens"
-            />
-          </GenericSidebar>
+        <Box>
+          <Header title="Tabela de Laboratórios" url="/Labs/Exames" />
+        </Box>
+        <Flex
+          w="100%"
+          my="6"
+          mx="auto"
+          px="6"
+          direction={{ base: "column", lg: "row" }}
+        >
+          <Box>
+            <GenericSidebar>
+              <GenericLink
+                icon={BsArrowLeft}
+                name="Voltar"
+                path="/Labs/Exames"
+              />
+              <GenericLink icon={AiOutlineMenu} name="Menu" path="/Home" />
+              <GenericLink
+                icon={IoIosFlask}
+                name="Laboratório"
+                path="/Labs/Exames"
+              />
+              <GenericLink
+                icon={BsImages}
+                name="Laboratório Imagens"
+                path="/Labs/Imagens"
+              />
+            </GenericSidebar>
+          </Box>
           <Box height="auto" w="100%" borderRadius={8} bg="gray.200" p="8">
-            <Flex direction="column" align="center" mb="16">
-              <Flex w="100%">
-                <Box
-                  flex="1"
-                  display={'flex'}
-                  flexDirection={'column'}
-                  alignItems={'center'}
-                  borderRadius={8}
-                  bg="gray.200"
-                  mb="10"
-                >
-                  <Flex
-                    w={'100%'}
-                    alignItems={'center'}
-                    justifyContent={'space-between'}
-                    marginBottom={'10px'}
-                  >
-                    <Flex align="center" m="4" w="100%" justify="space-between">
-                      <Text fontSize="3xl">
-                        <strong>Dados do Exame</strong>
-                      </Text>
-
-                      <FileUpload examId={`${id}`} />
-                    </Flex>
-                  </Flex>
-                  <Flex
-                    direction={'column'}
-                    w="100%"
-                    border={'1px solid black'}
-                  >
-                    <Flex
-                      alignItems={'center'}
-                      borderBottom={'1px solid black'}
-                    >
-                      <Text
-                        paddingRight={'93.5px'}
-                        paddingLeft={'5px'}
-                        paddingTop={'8px'}
-                        paddingBottom={'8px'}
-                        backgroundColor={'gray.300'}
-                      >
-                        <strong> Cliente</strong>
-                      </Text>
-                      <Input
-                        borderRadius={'0'}
-                        borderColor={'black'}
-                        bgColor="white"
-                        w="100%"
-                        defaultValue={pet?.customer?.name}
-                      ></Input>
-                    </Flex>
-                    <Flex
-                      alignItems={'center'}
-                      borderBottom={'1px solid black'}
-                    >
-                      <Text
-                        paddingRight={'93px'}
-                        paddingLeft={'5px'}
-                        paddingTop={'8px'}
-                        paddingBottom={'8px'}
-                        backgroundColor={'gray.300'}
-                      >
-                        <strong> Animal</strong>
-                      </Text>
-                      <Input
-                        bgColor="white"
-                        borderBottom={'0'}
-                        borderRadius={'0'}
-                        borderColor={'black'}
-                        defaultValue={pet?.name}
-                        w="100%"
-                      ></Input>
-                    </Flex>
-                    <Flex
-                      alignItems={'center'}
-                      borderBottom={'1px solid black'}
-                    >
-                      <Text
-                        paddingRight={'97px'}
-                        paddingLeft={'5px'}
-                        paddingTop={'7px'}
-                        paddingBottom={'7px'}
-                        backgroundColor={'gray.300'}
-                      >
-                        <strong> Exame</strong>
-                      </Text>
-                      <Input
-                        bgColor="white"
-                        borderBottom={'0'}
-                        borderRadius={'0'}
-                        borderColor={'black'}
-                        defaultValue={pet?.medicineRecords?.petExams.find((exam) => exam.name === exam.name)?.name}
-                        w="50%"
-                      />
-                      <Text
-                        padding={'7px 51px'}
-                        border={'1px solid black'}
-                        backgroundColor={'red.200'}
-                      >
-                        <strong> Veterinario</strong>
-                      </Text>
-                      <Input
-                        bgColor="white"
-                        borderBottom={'0'}
-                        borderRadius={'0'}
-                        borderColor={'black'} 
-                        defaultValue={pet?.medicineRecords?.petExams.find((exam) => exam.name === exam.name)?.requestedFor}
-                        w="30%"
-                        
-                      />
-                    </Flex>
-                    <Flex
-                      alignItems={'center'}
-                      borderBottom={'1px solid black'}
-                      h="41px"
-                    >
-                      <Text
-                        paddingRight={'112px'}
-                        paddingLeft={'5px'}
-                        paddingTop={'7px'}
-                        paddingBottom={'7px'}
-                        backgroundColor={'gray.300'}
-                      >
-                        <strong> Data</strong>
-                      </Text>
-                      <Input
-                        bgColor="white"
-                        borderRadius={'0'}
-                        borderColor={'black'}
-                        w="50%"
-                        defaultValue={new Intl.DateTimeFormat('pt-BR', {day: '2-digit', month: '2-digit', year: '2-digit'}).format(examRequestedData)}
-                       />
-                      <Text
-                        border={'1px solid black'}
-                        padding={'7px 73px'}
-                        backgroundColor={'gray.300'}
-                      >
-                        <strong> CRMV</strong>
-                      </Text>
-                      <Input
-                        bgColor="white"
-                        borderRadius={'0'}
-                        borderColor={'black'}
-                       defaultValue={pet?.medicineRecords?.petExams.find((exam) => exam.name === exam.name)?.requestedCrm}
-                        w="30%"
-                   />
-                    </Flex>
-
-                    {typeTableView}
-                  </Flex>
-                </Box>
-              </Flex>
+            <Flex
+              direction={{ base: "column", lg: "row" }}
+              gap={{ base: 6, lg: 0 }}
+              align="center"
+              m="4"
+              w="100%"
+              justify="space-between"
+            >
+              <Text fontSize="3xl">
+                <strong>Dados do Exame</strong>
+              </Text>
+              <FileUpload examId={`${id}`} />
             </Flex>
+            <TableContainer>
+              <Table variant="simple">
+                <Thead>
+                  <Tr>
+                    <Th border="1px solid black" textColor="black">
+                      Caracteristicas
+                    </Th>
+                    <Th border="1px solid black" textColor="black" colSpan={3}>
+                      Informações
+                    </Th>
+                    {/* <Th textColor="black">Caracteristicas do Veterinário</Th> */}
+                    <Th border="1px solid black" textColor="black">
+                      Dados do Veterinário
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Tr border="1px solid black">
+                    <Td py={0} fontWeight="bold">
+                      Cliente
+                    </Td>
+                    <Td
+                      py={3}
+                      colSpan={5}
+                      bg="white"
+                      borderTop="1px solid black"
+                      border="1px solid black"
+                    >
+                      {pet?.customer?.name}
+                    </Td>
+                  </Tr>
+                  <Tr border="1px solid black">
+                    <Td py={0} fontWeight="bold">
+                      Animal
+                    </Td>
+                    <Td py={3} colSpan={5} bg="white" border="1px solid black">
+                      {pet?.name}
+                    </Td>
+                  </Tr>
+                  <Tr border="1px solid black">
+                    <Td py={0} fontWeight="bold">
+                      Exame
+                    </Td>
+                    <Td py={3} colSpan={2} bg="white" border="1px solid black">
+                      {
+                        pet?.medicineRecords?.petExams.find(
+                          (exam) => exam.name === exam.name
+                        )?.name
+                      }
+                    </Td>
+                    <Td
+                      py={0}
+                      fontWeight="bold"
+                      bg="red.200"
+                      textAlign="center"
+                    >
+                      Veterinário
+                    </Td>
+                    <Td py={3} colSpan={2} bg="white" border="1px solid black">
+                      {
+                        pet?.medicineRecords?.petExams.find(
+                          (exam) => exam.name === exam.name
+                        )?.requestedFor
+                      }
+                    </Td>
+                  </Tr>
+                  <Tr border="1px solid black">
+                    <Td py={0} fontWeight="bold">
+                      Exame
+                    </Td>
+                    <Td py={3} colSpan={2} bg="white" border="1px solid black">
+                      {new Intl.DateTimeFormat("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                      }).format(examRequestedData)}
+                    </Td>
+                    <Td
+                      py={0}
+                      fontWeight="bold"
+                      bg="gray.200"
+                      textAlign="center"
+                    >
+                      CRMV
+                    </Td>
+                    <Td py={3} colSpan={2} bg="white" border="1px solid black">
+                      {
+                        pet?.medicineRecords?.petExams.find(
+                          (exam) => exam.name === exam.name
+                        )?.requestedCrm
+                      }
+                    </Td>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </TableContainer>
+
+            {typeTableView}
           </Box>
         </Flex>
       </Flex>
     </ChakraProvider>
-  )
+  );
 }

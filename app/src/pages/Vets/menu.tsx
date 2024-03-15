@@ -44,9 +44,8 @@ export function MenuVet() {
   const [searchBody, setSearchBody] = useState({
     petName: "",
     codPet: "",
-    customerName: ""
-  })
-
+    customerName: "",
+  });
 
   async function getDefaultQueue() {
     const response = await api.get(
@@ -55,19 +54,18 @@ export function MenuVet() {
     setPetsByVetPreference(response.data.response);
   }
 
-  const {isLoading} = useQuery('queueVets', getDefaultQueue)
+  const { isLoading } = useQuery("queueVets", getDefaultQueue);
 
-  if(isLoading) {
-    return <LoadingSpinner/>
+  if (isLoading) {
+    return <LoadingSpinner />;
   }
-  
+
   async function getQueueVetPreference() {
-      const response = await api.get("/pets/queue");
-      setPetData([])
-      setTotalInQueue(response.data.totalInQueue);
-      setPetsByVetPreference(response.data.response);
+    const response = await api.get("/pets/queue");
+    setPetData([]);
+    setTotalInQueue(response.data.totalInQueue);
+    setPetsByVetPreference(response.data.response);
   }
-
 
   async function searchDataVet() {
     const data = {
@@ -78,26 +76,25 @@ export function MenuVet() {
       isFinished: isFinishied,
       isAddmited: isAddmited,
       initialDate: initialDate,
-      finalDate: finalDate
-    }
-    const response = await api.post("/engine/veterinary", data)
+      finalDate: finalDate,
+    };
+    const response = await api.post("/engine/veterinary", data);
     setPetData(response.data.data);
-    
-    setNumberOfPages(response.data.totalPages);   
+
+    setNumberOfPages(response.data.totalPages);
   }
 
-
-
   function incrementPage() {
-    SetPagination((prevCount) => pagination < numberOfPages ? prevCount + 1 : numberOfPages );
-    searchDataVet()
+    SetPagination((prevCount) =>
+      pagination < numberOfPages ? prevCount + 1 : numberOfPages
+    );
+    searchDataVet();
   }
 
   function decrementPage() {
     SetPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
-    searchDataVet()
+    searchDataVet();
   }
-
 
   async function updateQueuePetPreference(queueId: string, petId: number)   {
     const data = {
@@ -111,14 +108,6 @@ export function MenuVet() {
     })
   
   }
-
-
-  // useEffect(() => {
-  //   if(showAllVets === true) {
-  //     getQueueVetPreference();
-  //   }
-  // }, [showAllVets]);
-
 
 
   return (
@@ -181,14 +170,10 @@ export function MenuVet() {
                         <VStack w={160}>
                           <FormLabel>Todos Veterinários</FormLabel>
                           <Checkbox
-                            onChange={(ev) => 
-                            {  
-                              setShowAllVets(ev.target.checked)
-                              getQueueVetPreference()
-                            }
-                            
-                            }
-                      
+                            onChange={(ev) => {
+                              setShowAllVets(ev.target.checked);
+                              getQueueVetPreference();
+                            }}
                             border="2px"
                             size="lg"
                           />
@@ -201,31 +186,34 @@ export function MenuVet() {
                     <Input
                       name="codPet"
                       value={searchBody?.codPet}
-                      onChange={(ev) => setSearchBody({
-                        customerName: '',
-                        codPet: ev.target.value,
-                        petName: '',
-                      })}
+                      onChange={(ev) =>
+                        setSearchBody({
+                          ...searchBody,
+                          codPet: ev.target.value,
+                        })
+                      }
                       label="Código do Animal"
                     />
                     <Input
                       name="petName"
                       value={searchBody?.petName}
-                      onChange={(ev) => setSearchBody({
-                        customerName: '',
-                        codPet: '',
-                        petName: ev.target.value,
-                      })}
+                      onChange={(ev) =>
+                        setSearchBody({
+                          ...searchBody,
+                          petName: ev.target.value,
+                        })
+                      }
                       label="Nome do Animal"
                     />
                     <Input
                       name="customerName"
                       value={searchBody?.customerName}
-                      onChange={(ev) => setSearchBody({
-                        customerName: ev.target.value,
-                        codPet: '',
-                        petName: ''
-                      })}
+                      onChange={(ev) =>
+                        setSearchBody({
+                          ...searchBody,
+                          customerName: ev.target.value,
+                        })
+                      }
                       label="Nome do Cliente"
                     />
                   </HStack>

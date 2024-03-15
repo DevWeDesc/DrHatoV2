@@ -3,7 +3,7 @@ import { GrUnorderedList, AiFillHome } from "react-icons/all";
 import { Link } from "react-router-dom";
 export function ReceptionSidebar() {
   return (
-    <Box as="aside" w="64" mr="8">
+    <Box as="aside" w="64" py={{ base: "5", lg: "0" }} mr="8">
       <Stack spacing="12" align="flex-start">
         <Box>
           <Text fontWeight="bold" color="gray.700" fontSize="2xl">
@@ -12,8 +12,13 @@ export function ReceptionSidebar() {
           <Stack spacing="4" mt="8" align="stretch">
             <Link to="/Home/">
               <Flex display="flex" align="center" color="green.300">
-                <Icon as={AiFillHome} fontSize="38" />
-                <Text ml="4" fontWeight="bold" fontSize={22} color="gray.700">
+                <Icon as={AiFillHome} fontSize={{ base: "2xl", lg: "38" }} />
+                <Text
+                  ml="4"
+                  fontWeight="bold"
+                  fontSize={{ base: "lg", lg: "xl" }}
+                  color="gray.700"
+                >
                   HOME
                 </Text>
               </Flex>
@@ -21,8 +26,16 @@ export function ReceptionSidebar() {
 
             <Link to="/Recepcao">
               <Flex display="flex" align="center" color="green.300">
-                <Icon as={GrUnorderedList} fontSize="38" />
-                <Text ml="4" fontWeight="bold" fontSize={22} color="gray.700">
+                <Icon
+                  as={GrUnorderedList}
+                  fontSize={{ base: "2xl", lg: "38" }}
+                />
+                <Text
+                  ml="4"
+                  fontWeight="bold"
+                  fontSize={{ base: "lg", lg: "xl" }}
+                  color="gray.700"
+                >
                   TODAS OPÇÕES
                 </Text>
               </Flex>

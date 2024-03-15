@@ -21,7 +21,11 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (
 ) => {
   return (
     <FormControl isInvalid={!!error}>
-      {!!label && <FormLabel htmlFor={name}>{label}</FormLabel>}
+      {!!label && (
+        <FormLabel fontSize={{ base: "sm", lg: "md" }} htmlFor={name}>
+          {label}
+        </FormLabel>
+      )}
       <ChakraInput
         name={name}
         id={name}
@@ -32,6 +36,7 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = (
         _hover={{
           bgColor: "gray.100",
         }}
+        fontSize={{ base: "sm", md: "md", lg: "lg" }}
         ref={ref}
         {...rest}
       />

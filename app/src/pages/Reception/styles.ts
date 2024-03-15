@@ -39,25 +39,44 @@ export const GridContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     border-bottom: 1px solid gray;
+    @media (max-width: 680px) {
+      flex-direction: column;
+      gap: 30px;
+      padding: 30px 0;
+    }
   }
   .container img {
     margin: 1rem;
     border-radius: 4px;
-    height: 200px;
-    width: 260px;
+    height: 20vw;
+    width: 20vw;
+    object-fit: cover;
+    @media (max-width: 680px) {
+      height: 60vw;
+      width: 100%;
+      margin: 0;
+    }
   }
 
   .buttonsContainer {
+    width: 15vw;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    @media (max-width: 680px) {
+      width: 100%;
+    }
   }
 
   .imgContainer {
     display: flex;
     gap: 1rem;
+
+    @media (max-width: 680px) {
+      align-items: center;
+      flex-direction: column;
+    }
   }
 
   .imgContainer h1 {
