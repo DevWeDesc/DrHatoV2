@@ -46,7 +46,12 @@ export function AdminMain() {
                       key={index}
                       w="full"
                       h="full"
-                      colorScheme="whatsapp"
+                      gridColumn={
+                        link.text == "Relatórios" ? "span 2" : "span 1"
+                      }
+                      colorScheme={
+                        link.text == "Relatórios" ? "linkedin" : "whatsapp"
+                      }
                       fontWeight="bold"
                       fontSize={{ base: "sm", lg: "md" }}
                       py={{ base: 5, lg: 0 }}
