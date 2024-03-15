@@ -43,6 +43,7 @@ export function Createsurgeries({
   const [pagination, setPagination] = useState(1);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
+  const [surgerieName, setSurgerieName] = useState("")
   const queryClient = useQueryClient();
   async function getSurgeriesData() {
     const pet = await api.get(`/pets/${id}`);
@@ -55,6 +56,11 @@ export function Createsurgeries({
 
   async function getSurgerieByLetter(letter: string)   {
     const response = await api.get(`/surgerie/letter/${letter}/${pagination}`)
+    setSugeries(response.data.surgeries);
+  }
+
+  async function getSurgerieByName () {
+    const response = await api.get(`/surgerie/name/${surgerieName}/${pagination}`)
     setSugeries(response.data.surgeries);
   }
 
@@ -260,10 +266,15 @@ export function Createsurgeries({
           </HStack>
             <Flex bg="gray.200" py="2" justify="center">
               <Flex>
-                <Input borderColor="black" rounded="0" w="20vw" bg="white" />
+                <Input borderColor="black" rounded="0" w="20vw" bg="white"
+                name="name"
+                onChange={(ev) => setSurgerieName(ev.target.value)}
+                />
          
                 <HStack>
-                  <Button color="white" rounded="0" colorScheme="twitter">
+                  <Button 
+                  onClick={() => getSurgerieByName ()}
+                  color="white" rounded="0" colorScheme="twitter">
                     Procurar
                   </Button>
                 </HStack>

@@ -106,8 +106,7 @@ export const surgeriesController = {
     }
   },
 
-  getSurgeriesByLetters: async (    request: FastifyRequest<{ Params: params; Body: body }>,
-    reply: FastifyReply) => {
+  getSurgeriesByLetters: async (request: FastifyRequest, reply: FastifyReply) => {
       try {
           const getSurgeriesByLetterSchema = z.object({
             letter: z.string(),
@@ -139,7 +138,44 @@ export const surgeriesController = {
       } catch (error) {
           console.log(error);
       }
-  },  
+  },
+  
+  getSurgeriesByName: async (request: FastifyRequest, reply: FastifyReply) => {
+   
+      try {
+        const getSurgeriesByLetterSchema = z.object({
+          name: z.string(),
+          page: z.coerce.number()
+        })
+        const {name, page} = getSurgeriesByLetterSchema.parse(request.params)
+        const currentPage = page || 1;
+        // Obtenha o número total de usuários.
+        const totalSurgeries = await prisma.surgeries.count();
+        // Calcule o número de páginas.
+        const totalPages = Math.ceil(totalSurgeries / 35);
+
+        const surgeries =  await prisma.surgeries.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {name: {contains: name}}
+        })
+
+        reply.
+        status(200).send({
+          currentPage,
+          totalPages,
+          totalSurgeries,
+          surgeries,
+        })
+        
+
+
+    } catch (error) {
+        console.log(error);
+    }
+  
+
+  },
 
   setSurgerieInPet: async (
     request: FastifyRequest<{ Params: params; Body: body }>,
