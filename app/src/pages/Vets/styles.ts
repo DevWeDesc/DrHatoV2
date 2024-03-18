@@ -53,6 +53,21 @@ export const WorkSpaceContent = styled.div`
     /* height: 100vh; */
   }
 
+  @media (max-width: 624px) {
+    .div1 {
+      grid-area: span 1;
+    }
+    .div2 {
+      grid-area: span 1;
+    }
+    .div3 {
+      grid-area: span 1;
+    }
+    .div4 {
+      grid-area: span 1;
+    }
+  }
+
   .div1 {
     border-right: 1px solid black;
     border-bottom: 1px solid black;

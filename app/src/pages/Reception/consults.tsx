@@ -7,9 +7,10 @@ import {
   Th,
   Td,
   Tbody,
+  TableContainer,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RecepetionSearch } from "../../components/Search/receptionSearch";
 import { DbContext } from "../../contexts/DbContext";
 import { api } from "../../lib/axios";
@@ -18,12 +19,12 @@ import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import { AiFillEdit } from "react-icons/ai";
 import { FaUserPlus } from "react-icons/fa";
-import { LoadingSpinner } from "../../components/Loading";
 
 export function ReceptionConsults() {
+  const navigate = useNavigate();
   const { customer } = useContext(DbContext);
   const [dataCostumer, setDataCostumer] = useState([]);
-  const [page, setPage] = useState(0)
+  const [page, setPage] = useState(0);
 
   async function getCustomer() {
     const dataCostumer = await api.get("customers");
@@ -37,7 +38,13 @@ export function ReceptionConsults() {
     <ChakraProvider>
       <Flex direction="column" h="100vh">
         <Header title="Menu Recepção" url="/Recepcao" />
-        <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+        <Flex
+          w="100%"
+          my={{ lg: "6" }}
+          direction={{ base: "column", lg: "row" }}
+          mx="auto"
+          px="6"
+        >
           <GenericSidebar>
             <GenericLink
               name="Alterar Consulta"
@@ -55,8 +62,7 @@ export function ReceptionConsults() {
             flex="1"
             direction="column"
             borderRadius={8}
-            bg="gray.200"
-            p="8"
+            py={{ base: 8, xl: 0 }}
             maxH="44rem"
             overflow="auto"
           >
@@ -76,64 +82,86 @@ export function ReceptionConsults() {
                 w="100%"
                 fontWeight="bold"
               >
-                <Table mt="4" w="100%" colorScheme="blackAlpha">
-                  <Thead>
-                    <Tr>
-                      <Th>Nome</Th>
-                      <Th>Telefone</Th>
-                      <Th>R.G</Th>
-                      <Th>CPF/CNPJ</Th>
-                    </Tr>
-                  </Thead>
-                  {customer ? (
-                    customer.map((client: any) => (
-                      <Tbody key={client?.id}>
-                        <Tr>
-                          <Td>
-                            <Link
-                              to={`/Recepcao/Consultas/Clientes/${client?.id}`}
-                            >
-                              {client?.name}
-                            </Link>
-                          </Td>
-                          <Td>{client?.phone}</Td>
-                          <Td>{client?.rg}</Td>
-                          <Td>{client?.cpf}</Td>
-                        </Tr>
-                      </Tbody>
-                    ))
-                  ) : (
-                    <Tbody>
+                <TableContainer w="full">
+                  <Table mt="4" w="100%" colorScheme="blackAlpha">
+                    <Thead>
                       <Tr>
-                        <Td>Empty</Td>
-                        <Td>Empty</Td>
-                        <Td>Empty</Td>
-                        <Td>Empty</Td>
+                        <Th>Nome</Th>
+                        <Th>Telefone</Th>
+                        <Th>R.G</Th>
+                        <Th>CPF/CNPJ</Th>
                       </Tr>
-                    </Tbody>
-                  )}
-                  {customer <= 0 ? ((
-                    <>
-                      {dataCostumer.map((client: any) => (
-                        <Tbody key={client.id}>
-                          <Tr>
-                            <Td>
-                              <Link
-                                to={`/Recepcao/Consultas/Clientes/${client.id}`}
-                              >
-                                {client.name}
-                              </Link>
+                    </Thead>
+                    {customer ? (
+                      customer.map((client: any) => (
+                        <Tbody key={client?.id}>
+                          <Tr
+                            cursor="pointer"
+                            onClick={() =>
+                              navigate(
+                                `/Recepcao/Consultas/Clientes/${client?.id}`
+                              )
+                            }
+                          >
+                            <Td fontSize={{ base: "12", lg: "sm " }}>
+                              {client?.name}
                             </Td>
-                            <Td>{client.phone}</Td>
-                            <Td>{client.rg}</Td>
-                            <Td>{client.cpf}</Td>
+                            <Td fontSize={{ base: "12", lg: "sm " }}>
+                              {client?.phone}
+                            </Td>
+                            <Td fontSize={{ base: "12", lg: "sm " }}>
+                              {client?.rg}
+                            </Td>
+                            <Td fontSize={{ base: "12", lg: "sm " }}>
+                              {client?.cpf}
+                            </Td>
                           </Tr>
                         </Tbody>
-                      ))}
-                    </>
-                  )) : (<></>)}
-            
-                </Table>
+                      ))
+                    ) : (
+                      <Tbody>
+                        <Tr>
+                          <Td>Empty</Td>
+                          <Td>Empty</Td>
+                          <Td>Empty</Td>
+                          <Td>Empty</Td>
+                        </Tr>
+                      </Tbody>
+                    )}
+                    {customer <= 0 ? (
+                      <>
+                        {dataCostumer.map((client: any) => (
+                          <Tbody key={client.id}>
+                            <Tr>
+                              <Td
+                                cursor="pointer"
+                                fontSize={{ base: "12", lg: "sm" }}
+                                onClick={() =>
+                                  navigate(
+                                    `/Recepcao/Consultas/Clientes/${client.id}`
+                                  )
+                                }
+                              >
+                                {client.name}
+                              </Td>
+                              <Td fontSize={{ base: "12", lg: "sm" }}>
+                                {client.phone}
+                              </Td>
+                              <Td fontSize={{ base: "12", lg: "sm" }}>
+                                {client.rg}
+                              </Td>
+                              <Td fontSize={{ base: "12", lg: "sm" }}>
+                                {client.cpf}
+                              </Td>
+                            </Tr>
+                          </Tbody>
+                        ))}
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </Table>
+                </TableContainer>
               </Flex>
             </Flex>
           </Flex>
