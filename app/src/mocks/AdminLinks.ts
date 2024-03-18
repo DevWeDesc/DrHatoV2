@@ -3,6 +3,7 @@ interface IAdminLinks {
   text: string;
 }
 export const AdminLinks: IAdminLinks[] = [
+  { to: "/Reports", text: "Relatórios" },
   { to: "/Admin/Autorizations", text: "Cadastro de Autorizações" },
   { to: "/Admin/Instructions", text: "Cadastro de Instruções" },
   { to: "/Admin/Exams", text: "Cadastro de Exames" },
