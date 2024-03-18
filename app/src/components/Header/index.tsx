@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logoPadronizada from "../../assets/logoPadronizada.png";
 import {
   Text,
@@ -25,9 +25,6 @@ import { MdOutlineDarkMode } from "react-icons/md";
 export function Header() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") as string);
-  const { colorMode, toggleColorMode } = useColorMode()
-
-
 
   const logOut = () => {
     Cookies.remove("token");
@@ -50,7 +47,12 @@ export function Header() {
             onClick={() => navigate(`/Reminder`)}
           />
 
-
+        <Link to="/releases" >
+        <Text fontSize="18px" fontWeight="bold">
+         Releases
+        </Text>
+        </Link>
+     
         
           <Menu>
             <MenuButton as={Button} rightIcon={<ArrowDown />}>
