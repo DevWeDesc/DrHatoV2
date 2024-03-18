@@ -168,8 +168,8 @@ model Instructions {
 }
 
 model Procedures {
-  id                  Int        @id @default(autoincrement())
-  codProcedimento     Int?       @unique
+  id                  Int              @id @default(autoincrement())
+  codProcedimento     Int?             @unique
   name                String
   price               Decimal?
   priceTwo            Decimal?
@@ -187,8 +187,10 @@ model Procedures {
   observations        String
   group_id            Int?
   sector_id           Int?
-  groups              Groups?    @relation(fields: [group_id], references: [id])
-  sector              Sectors?   @relation(fields: [sector_id], references: [id])
+  groups              Groups?          @relation(fields: [group_id], references: [id])
+  sector              Sectors?         @relation(fields: [sector_id], references: [id])
+  HealthInsurance     HealthInsurance? @relation(fields: [healthInsuranceId], references: [id])
+  healthInsuranceId   Int?
 }
 
 model ProceduresForPet {
@@ -308,14 +310,16 @@ model HospitalizationDiary {
 //  ------------- VACINES -------------   //
 
 model Vaccines {
-  id               Int      @id @default(autoincrement())
-  name             String
-  price            Decimal
-  description      String
-  disponible       Boolean?
-  applicableMale   Boolean?
-  applicableFemale Boolean?
-  sector_id        Int?
+  id                Int              @id @default(autoincrement())
+  name              String
+  price             Decimal
+  description       String
+  disponible        Boolean?
+  applicableMale    Boolean?
+  applicableFemale  Boolean?
+  sector_id         Int?
+  HealthInsurance   HealthInsurance? @relation(fields: [healthInsuranceId], references: [id])
+  healthInsuranceId Int?
 }
 
 model VaccinesForPet {
@@ -336,12 +340,14 @@ model VaccinesForPet {
 
 // -------------- SURGERIES ----------------- //
 model Surgeries {
-  id                 Int      @id @default(autoincrement())
+  id                 Int              @id @default(autoincrement())
   name               String
   price              Decimal
   applicableToMale   Boolean?
   applicableToFemale Boolean?
   sector_id          Int?
+  HealthInsurance    HealthInsurance? @relation(fields: [healthInsuranceId], references: [id])
+  healthInsuranceId  Int?
 }
 
 enum SurgerieStatus {
@@ -650,18 +656,33 @@ model MedicinesForPets {
 
 // -------------- Medicines ----------------- //
 
+model HealthInsurance {
+  id                    Int          @id @default(autoincrement())
+  planName              String?
+  disponible            Boolean
+  planProvider          String
+  graceDays             Int?
+  coverageLimit         Float?
+  admissionDeduction    Int?
+  disponibleAtAdmission Boolean?
+  exams                 OldExams[]
+  vaccines              Vaccines[]
+  surgeries             Surgeries[]
+  procedures            Procedures[]
+}
+
 // -------------- Exames Old Version ----------------- //
 model OldExams {
-  codexam           Int         @id @default(autoincrement())
+  codexam           Int              @id @default(autoincrement())
   name              String
   price             Float
   onePart           Boolean?
   twoPart           Boolean?
   byReport          Boolean?
-  ageGroups         Int?        @default(3)
+  ageGroups         Int?             @default(3)
   disponible        Boolean?
-  minAge            Int?        @default(0)
-  maxAge            Int?        @default(9999)
+  minAge            Int?             @default(0)
+  maxAge            Int?             @default(9999)
   applicableMales   Boolean?
   appicableFemales  Boolean?
   defaultMetodology String?
@@ -673,6 +694,8 @@ model OldExams {
   impressName       String?
   partExams         PartExams[]
   appicableEspecies Especies[]
+  HealthInsurance   HealthInsurance? @relation(fields: [healthInsuranceId], references: [id])
+  healthInsuranceId Int?
 }
 
 model PartExams {
