@@ -9,7 +9,7 @@ export const AdminLinks: IAdminLinks[] = [
   { to: "/Admin/Exams", text: "Cadastro de Exames" },
 
   { to: "/Admin/Procedures", text: "Cadastro de Procedimentos" },
-  { to: "/Admin/Surgeryes", text: "Cadastro de Cirurgias" },
+  { to: "/Admin/Surgeries", text: "Cadastro de Cirurgias" },
   { to: "/Admin/HealthInsurance", text: "Cadastro de Plano de Saúde" },
   { to: "/Admin/TypesPayment", text: "Cadastro de Tipos de Pagamentos" },
   { to: "/Admin/OptionSistem", text: "Opções do Sistema" },
