@@ -114,12 +114,14 @@ import { InstructionsPdf } from "./components/ReactPdfComp/InstructionsPdf";
 import { MedicineRecordOld } from "./pages/Pets/MedicineRecordOld";
 import { GenericReports } from "./pages/Reports/GenericReports/GenericReports";
 import { TypePaymentsList } from "./pages/AdminDashboard/TypePayments";
+import Releases from "./pages/Releases";
 
 export function Router() {
   return (
     <AuthContextProvider>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Login />} />
+        <Route path="/releases" element={<Releases/>} />
         <Route element={<DefaultLayout />}>
           <Route path="/Home" element={<Home />} />
           <Route path="/Reminder" element={<ReminderPage />} />
@@ -147,7 +149,7 @@ export function Router() {
           <Route path="/Queue/Labs" element={<QueueLabs />} />
           <Route path="/Admin" element={<AdminMain />} />
           <Route path="/Admin/Vaccines" element={<AdminVaccines />} />
-          <Route path="/Admin/Surgeryes" element={<AdminSurgery />} />
+          <Route path="/Admin/Surgeries" element={<AdminSurgery />} />
           <Route path="/Admin/HealthInsurance" element={<HealthInsurance />} />
           <Route
             path="/Admin/HealthInsurance/:id"

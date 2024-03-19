@@ -19,15 +19,15 @@ import {
   TableContainer,
   Grid,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
-import { Paginaton } from "../../components/admin/Pagination";
+
 import { Sidebar } from "../../components/admin/Sidebar";
 import { LoadingSpinner } from "../../components/Loading";
-import { DbContext } from "../../contexts/DbContext";
+
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
@@ -35,6 +35,7 @@ import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
+import { QueryClient, useQuery } from "react-query";
 
 interface ISurgerie {
   id: number;
@@ -60,31 +61,20 @@ export function AdminSurgery() {
   const [reloadData, setReloadData] = useState<boolean>(true);
   const [pageActual, setPageActual] = useState(1);
   const [surgerySelected, setSurgerySelected] = useState({} as ISurgerie);
+  const [surgeries, setSurgeries] = useState([]);
+  const queryClient = new QueryClient();
 
   const navigate = useNavigate();
 
-  function openModal() {
-    setIsModalOpen(true);
-  }
-  function closeModal() {
-    setIsModalOpen(false);
-  }
-
-  function openModalTwo() {
-    setIsModalOpenTwo(true);
-  }
-  function closeModalTwo() {
-    setIsModalOpenTwo(false);
-  }
-
-  const handleCreateSurgery: SubmitHandler<FieldValues> = async (values) => {
+  const handleCreateSurgerie: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
         name: values.name,
         price: parseInt(values.price),
       };
       await api.post("surgeries", data);
-      setReloadData(true);
+      queryClient.invalidateQueries("surgeries");
+
       toast.success("Cirurgia criada com sucesso");
     } catch (error) {
       toast.error("Falha ao criar nova cirurgia");
@@ -94,7 +84,7 @@ export function AdminSurgery() {
   async function DeleteSurgery(id: string | number) {
     try {
       await api.delete(`surgeries/${id}`);
-      setReloadData(true);
+      queryClient.invalidateQueries("surgeries");
       toast.success("Vacina deletada com sucesso!!");
     } catch (error) {
       toast.error("Falha ao Excluir Vacina!!");
@@ -115,41 +105,16 @@ export function AdminSurgery() {
     }
   };
 
-  const handleSurgeryEditing = (surgery: ISurgerie) => {
-    setSurgerySelected(surgery);
-    openModalTwo();
-  };
-
-  async function getSurgeryes() {
-    await api.get(`/surgeries?page=${pageActual}`).then((res) => {
-      setSurgeriesData(res.data);
-    });
+  async function getAllSurgeries() {
+    const Surgeries = await api.get("/surgeries");
+    setSurgeries(Surgeries.data.surgeries);
   }
 
-  function getNextSurgeriesByPage() {
-    if (pageActual < surgeriesData.totalPages) {
-      setPageActual(pageActual + 1);
-      setReloadData(true);
-    }
+  const { isLoading } = useQuery("surgeries", getAllSurgeries);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
   }
-
-  function getBackSurgeriesByPage() {
-    if (pageActual > 1) {
-      setPageActual(pageActual - 1);
-      setReloadData(true);
-    }
-  }
-
-  useEffect(() => {
-    if (reloadData) {
-      getSurgeryes();
-      setReloadData(false);
-    }
-  }, [reloadData, pageActual]);
-
-  // useEffect(() => {
-  //   getSurgeryes();
-  // }, []);
 
   return (
     <ChakraProvider>
@@ -191,7 +156,7 @@ export function AdminSurgery() {
                   colorScheme="whatsapp"
                   cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
-                  onClick={() => openModal()}
+                  onClick={() => setIsModalOpen(true)}
                 >
                   Cadastrar nova Cirurgia
                 </Button>
@@ -208,7 +173,7 @@ export function AdminSurgery() {
                   fontSize={{ base: "sm", lg: "md" }}
                   colorScheme="teal"
                   w="full"
-                  onClick={getBackSurgeriesByPage}
+                  // onClick={getBackSurgeriesByPage}
                 >
                   Voltar Página
                 </Button>
@@ -221,7 +186,7 @@ export function AdminSurgery() {
                 </Button>
                 <Button
                   fontSize={{ base: "sm", lg: "md" }}
-                  onClick={getNextSurgeriesByPage}
+                  // onClick={getNextSurgeriesByPage}
                   colorScheme="teal"
                   w="full"
                 >
@@ -253,7 +218,7 @@ export function AdminSurgery() {
                               fontSize="sm"
                               colorScheme="yellow"
                               leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => handleSurgeryEditing(surgery)}
+                              onClick={() => setIsModalOpenTwo(true)}
                             >
                               Editar Cirurgia
                             </Button>
@@ -277,10 +242,13 @@ export function AdminSurgery() {
                   </Tbody>
                 </Table>
               </TableContainer>
-              <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+              <GenericModal
+                isOpen={isModalOpen}
+                onRequestClose={() => setIsModalOpen(false)}
+              >
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleCreateSurgery)}
+                  onSubmit={handleSubmit(handleCreateSurgerie)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
@@ -307,7 +275,7 @@ export function AdminSurgery() {
 
               <GenericModal
                 isOpen={isModalOpenTwo}
-                onRequestClose={closeModalTwo}
+                onRequestClose={() => setIsModalOpenTwo(false)}
               >
                 <FormControl
                   as="form"
