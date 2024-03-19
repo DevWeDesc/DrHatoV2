@@ -206,6 +206,19 @@ export function SurgeryCenter() {
                     label="Slots"
                     mb="4"
                   />
+                  <Input
+                    placeholder="08:00"
+                    name=""
+                    label="Horário de abertura"
+                    mb="4"
+                  />
+                  <Input
+                    placeholder="22:00"
+                    type="date-time"
+                    name=""
+                    label="Horário de fechamento"
+                    mb="4"
+                  />
 
                   <Button w="100%" type="submit" colorScheme="green" m="2">
                     Cadastrar
