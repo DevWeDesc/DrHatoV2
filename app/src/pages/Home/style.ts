@@ -11,9 +11,9 @@ export const HomeContainer = styled.div`
   scroll-behavior: auto;
   .section-1 {
     @media (max-width: 620px) {
-      grid-column: 1/3;
+      grid-column: span 2;
     }
-    grid-column: 1/2;
+    grid-column: span 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -21,15 +21,15 @@ export const HomeContainer = styled.div`
     padding: 1rem;
     background-color: white;
     width: 100%;
-    max-width: 100vw;
+    max-width: 100%;
   }
 
   .section-2 {
-    grid-column: 2/6;
+    grid-column: span 4;
     @media (max-width: 620px) {
-      grid-column: 1/3;
+      grid-column: span 3;
     }
-    margin: 1rem;
+    padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: stretch;
