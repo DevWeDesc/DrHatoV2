@@ -84,7 +84,7 @@ export function AdminSurgery() {
       toast.success("Vacina deletada com sucesso!!");
       refetch();
     } catch (error) {
-      toast.error("Falha ao Excluir Vacina!!");
+      toast.error("Falha ao Excluir cirurgia!!");
     }
   }
 
@@ -95,10 +95,10 @@ export function AdminSurgery() {
         price: parseFloat(surgerySelected.price),
       };
       await api.put(`surgeries/${surgerySelected.id}`, data);
-      toast.success("Vacina editada com sucesso");
+      toast.success("Cirurgia editada com sucesso");
       refetch();
     } catch (error) {
-      toast.error("Falha ao editar vacina");
+      toast.error("Falha ao editar cirurgia");
     }
   };
 
