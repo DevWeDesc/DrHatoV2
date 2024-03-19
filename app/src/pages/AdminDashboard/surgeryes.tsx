@@ -16,6 +16,8 @@ import {
   HStack,
   CheckboxGroup,
   Checkbox,
+  TableContainer,
+  Grid,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -34,12 +36,30 @@ import { Input } from "../../components/admin/Input";
 import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
 
+interface ISurgerie {
+  id: number;
+  name: string;
+  price: string;
+  applicableToMale: boolean;
+  applicableToFemale: boolean;
+  sector_id: number;
+}
+
+interface ISurgerieData {
+  currentPage: number;
+  totalPages: number;
+  totalSurgeries: number;
+  surgeries: ISurgerie[];
+}
+
 export function AdminSurgery() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
-  const [surgeries, setSurgeries] = useState([]);
-  const [reloadData, setReloadData] = useState<boolean>(false);
+  const [surgeriesData, setSurgeriesData] = useState({} as ISurgerieData);
+  const [reloadData, setReloadData] = useState<boolean>(true);
+  const [pageActual, setPageActual] = useState(1);
+  const [surgerySelected, setSurgerySelected] = useState({} as ISurgerie);
 
   const navigate = useNavigate();
 
@@ -57,7 +77,7 @@ export function AdminSurgery() {
     setIsModalOpenTwo(false);
   }
 
-  const handleCreateSector: SubmitHandler<FieldValues> = async (values) => {
+  const handleCreateSurgery: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
         name: values.name,
@@ -81,34 +101,55 @@ export function AdminSurgery() {
     }
   }
 
-  const handleEditSector: SubmitHandler<FieldValues> = async (values) => {
+  const handleEditSurgery: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
-        name: values.name,
+        name: surgerySelected.name,
+        price: parseFloat(surgerySelected.price),
       };
-      await api.put(`sectors/${values.id}`, data);
-      toast.success("Setor editado com sucesso");
-      navigate(0);
+      await api.put(`surgeries/${surgerySelected.id}`, data);
+      toast.success("Vacina editada com sucesso");
+      setReloadData(true);
     } catch (error) {
       toast.error("Falha ao editar novo setor");
     }
   };
 
+  const handleSurgeryEditing = (surgery: ISurgerie) => {
+    setSurgerySelected(surgery);
+    openModalTwo();
+  };
+
   async function getSurgeryes() {
-    const Surgeries = await api.get("/surgeries");
-    setSurgeries(Surgeries.data);
+    await api.get(`/surgeries?page=${pageActual}`).then((res) => {
+      setSurgeriesData(res.data);
+    });
+  }
+
+  function getNextSurgeriesByPage() {
+    if (pageActual < surgeriesData.totalPages) {
+      setPageActual(pageActual + 1);
+      setReloadData(true);
+    }
+  }
+
+  function getBackSurgeriesByPage() {
+    if (pageActual > 1) {
+      setPageActual(pageActual - 1);
+      setReloadData(true);
+    }
   }
 
   useEffect(() => {
-    getSurgeryes();
-  }, []);
-
-  useEffect(() => {
-    if (reloadData === true) {
+    if (reloadData) {
       getSurgeryes();
       setReloadData(false);
     }
-  }, [reloadData]);
+  }, [reloadData, pageActual]);
+
+  // useEffect(() => {
+  //   getSurgeryes();
+  // }, []);
 
   return (
     <ChakraProvider>
@@ -116,31 +157,37 @@ export function AdminSurgery() {
         <Flex direction="column" h="100vh">
           <Header title="Painel de Cirurgia" url="/Admin/" />
 
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <Flex
+            w="100%"
+            my="6"
+            direction={{ base: "column", xl: "row" }}
+            mx="auto"
+            px="6"
+          >
             <Sidebar />
             <Box
               flex="1"
               borderRadius={8}
-              bg="gray.200"
-              p="8"
+              // bg="gray.200"
+              py={{ base: "8", xl: "0" }}
               maxH="44rem"
               overflow="auto"
             >
-              <Flex
-                mb="8"
-                justify="space-between"
-                direction="column"
-                align="center"
+              <Heading
+                fontSize={{ base: "xl", lg: "2xl" }}
+                fontWeight="bold"
+                w="100%"
+                mb="5"
+                display="flex"
+                flexDirection={{ base: "column", md: "row" }}
+                justifyContent="space-between"
+                gap={{ base: "2", md: 0 }}
               >
-                <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                  Painel de Cirurgia
-                </Heading>
-
+                Painel de Cirurgia
                 <Button
-                  as="a"
-                  width="100%"
-                  fontSize="20"
-                  py="8"
+                  width={{ base: "100%", md: "auto" }}
+                  fontSize={{ base: "md", lg: "lg" }}
+                  py="6"
                   colorScheme="whatsapp"
                   cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
@@ -148,79 +195,92 @@ export function AdminSurgery() {
                 >
                   Cadastrar nova Cirurgia
                 </Button>
-              </Flex>
+              </Heading>
+              <Grid
+                templateColumns={{
+                  base: "repeat(1, 1fr)",
+                  md: "repeat(3, 1fr)",
+                }}
+                placeItems="center"
+                gap="2"
+              >
+                <Button
+                  fontSize={{ base: "sm", lg: "md" }}
+                  colorScheme="teal"
+                  w="full"
+                  onClick={getBackSurgeriesByPage}
+                >
+                  Voltar Página
+                </Button>
+                <Button
+                  fontSize={{ base: "sm", lg: "md" }}
+                  colorScheme="teal"
+                  w="full"
+                >
+                  Página atual:{surgeriesData.currentPage}
+                </Button>
+                <Button
+                  fontSize={{ base: "sm", lg: "md" }}
+                  onClick={getNextSurgeriesByPage}
+                  colorScheme="teal"
+                  w="full"
+                >
+                  Próxima página
+                </Button>
+              </Grid>
 
-              <Table colorScheme="blackAlpha">
-                <Thead>
-                  <Tr>
-                    <Th fontSize="18" borderColor="black">
-                      Nome
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Preço
-                    </Th>
-                    <Th borderColor="black"></Th>
-                  </Tr>
-                </Thead>
+              <TableContainer w="full">
+                <Table colorScheme="blackAlpha">
+                  <Thead>
+                    <Tr>
+                      <Th>Nome</Th>
+                      <Th>Preço</Th>
+                      <Th>Editar</Th>
+                      <Th>Deletar</Th>
+                    </Tr>
+                  </Thead>
 
-                <Tbody>
-                  {surgeries ? (
-                    surgeries.map((surgery: any) => (
-                      <Tr key={surgery.id}>
-                        <Td borderColor="black">
-                          <Text fontWeight="bold" color="gray.800">
-                            {surgery.name}
-                          </Text>
-                        </Td>
-                        <Td borderColor="black" fontWeight="bold">
-                          {" "}
-                          {surgery.price}
-                        </Td>
-
-                        <Td borderColor="black">
-                          <Flex gap="2" ml="30%">
+                  <Tbody>
+                    {surgeriesData?.surgeries?.length > 0 ? (
+                      surgeriesData?.surgeries.map((surgery: ISurgerie) => (
+                        <Tr key={surgery.id}>
+                          <Td fontSize="sm">{surgery.name}</Td>
+                          <Td fontSize="sm"> {surgery.price}</Td>
+                          <Td>
+                            {" "}
                             <Button
-                              as="a"
                               size="sm"
                               fontSize="sm"
                               colorScheme="yellow"
                               leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => openModalTwo()}
+                              onClick={() => handleSurgeryEditing(surgery)}
                             >
                               Editar Cirurgia
                             </Button>
-                            {/* <Button
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="red"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => handleDeleteSector("")}
-                            >
-                              Deletar Cirurgia
-                            </Button> */}
+                          </Td>
 
+                          <Td>
                             <ConfirmationDialog
                               disabled={false}
                               icon={<BsFillTrashFill fill="white" size={16} />}
                               buttonTitle="Deletar Cirurgia"
-                              whatIsConfirmerd="Tem certeza que deseja Excluir essa Cirurgia?"
+                              whatIsConfirmerd={`Tem certeza que deseja Excluir a Cirurgia ${surgery.name}?`}
                               describreConfirm="Excluir a Cirurgia é uma ação irreversivel, tem certeza que deseja excluir?"
                               callbackFn={() => DeleteSurgery(surgery.id)}
                             />
-                          </Flex>
-                        </Td>
-                      </Tr>
-                    ))
-                  ) : (
-                    <LoadingSpinner />
-                  )}
-                </Tbody>
-              </Table>
+                          </Td>
+                        </Tr>
+                      ))
+                    ) : (
+                      <LoadingSpinner />
+                    )}
+                  </Tbody>
+                </Table>
+              </TableContainer>
               <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleCreateSector)}
+                  onSubmit={handleSubmit(handleCreateSurgery)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
@@ -251,34 +311,41 @@ export function AdminSurgery() {
               >
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleEditSector)}
+                  onSubmit={handleSubmit(handleEditSurgery)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
                 >
-                  <Text pb="15">Editar Centro cirurgico</Text>
+                  <Text pb="15">Editar Cirurgia</Text>
+
                   <Input
-                    {...register("id")}
-                    name="id"
-                    label="Id da cirurgia"
-                    mb="4"
-                  />
-                  <Input
-                    {...register("name")}
+                    onChange={(ev) =>
+                      setSurgerySelected({
+                        ...surgerySelected,
+                        name: ev.target.value,
+                      })
+                    }
+                    value={surgerySelected.name}
                     name="name"
                     label="Nome da cirurgia"
                     mb="4"
                   />
 
                   <Input
-                    {...register("id")}
-                    name="id"
+                    onChange={(ev) =>
+                      setSurgerySelected({
+                        ...surgerySelected,
+                        price: ev.target.value,
+                      })
+                    }
+                    value={surgerySelected.price}
+                    name="price"
                     label="Preço da cirurgia"
                     mb="4"
                   />
 
-                  <Button w="100%" type="submit" colorScheme="green" m="2">
-                    Cadastrar
+                  <Button w="100%" type="submit" colorScheme="yellow" m="2">
+                    Editar
                   </Button>
                 </FormControl>
               </GenericModal>
