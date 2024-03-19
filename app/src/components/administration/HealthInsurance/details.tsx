@@ -10,239 +10,58 @@ import {
   TableContainer,
   Button,
   Grid,
+  useMenuState,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router";
+import { useQuery } from "react-query";
+import { api } from "../../../lib/axios";
+import { LoadingSpinner } from "../../Loading";
+
+
+interface HealthInsurance {
+  id:                    number;
+  planName:              string;
+  disponible:            boolean;
+  planProvider:          string;
+  graceDays:             number;
+  coverageLimit:         number;
+  admissionDeduction:    number;
+  disponibleAtAdmission: boolean;
+  exams:                 any[];
+  procedures:            any[];
+  surgeries:             any[];
+  vaccines:              any[];
+}
 
 export default function DetailsHealthInsurance() {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const [procedures, setProcedures] = useState([]);
-  const [vaccines, setVaccines] = useState([]);
-  const [exams, setExams] = useState([]);
-  const [surgeries, setSurgeries] = useState([]);
-  const [Health, setHealth] = useState<IHealth[] | any>([]);
+  const [healthInsurance, setHealthInsurance] = useState({} as HealthInsurance)
 
-  interface IHealth {
-    name: string;
-    id: number;
+
+  async function getAllHealthInsuranceById() {
+    const response = await api.get(`/health/insurance/${id}`)
+    setHealthInsurance(response.data.healthInsurance)
   }
 
-  const HealthInsuranceList = [
-    {
-      id: 1,
-      name: "PetLove",
-    },
-    {
-      id: 2,
-      name: "ComVet",
-    },
-    {
-      id: 3,
-      name: "PlanVet",
-    },
-  ];
+  const {isLoading} = useQuery('healthInsuranceDetails', getAllHealthInsuranceById)
 
-  const navigate = useNavigate();
-  const ProdeduresList = [
-    {
-      idPlano: 1,
-      id: 1,
-      name: "Vacinação",
-      descricao:
-        "Administre as vacinas recomendadas pelo veterinário para proteger o gato contra doenças infecciosas.",
-    },
-    {
-      idPlano: 1,
-      name: "Desparasitação",
-      descricao:
-        "Realize a desparasitação interna e externa conforme orientação do veterinário, para controlar vermes e parasitas.",
-    },
-    {
-      idPlano: 1,
-      id: 2,
-      name: "Esterilização/Castração",
-      descricao:
-        "Considere a esterilização/castração para controlar a reprodução e reduzir riscos de doenças.",
-    },
-    {
-      idPlano: 1,
-      id: 3,
-      name: "Check-ups Regulares",
-      descricao:
-        "Agende consultas periódicas com o veterinário para avaliar a saúde geral do gato e detectar problemas precocemente.",
-    },
-    {
-      idPlano: 1,
-      id: 4,
-      name: "Tratamento de Doenças",
-      descricao:
-        "Administre medicamentos conforme prescrição do veterinário em casos de doenças ou infecções.",
-    },
-    {
-      idPlano: 2,
-      id: 5,
-      name: "Cuidados Dentários",
-      descricao:
-        "Realize limpezas dentárias regulares e mantenha uma boa higiene oral para prevenir problemas dentários.",
-    },
-  ];
-  const VaccinesList = [
-    {
-      idPlano: 1,
-      id: 1,
-      name: "Vacinação contra Raiva",
-      descricao:
-        "Administre as vacinas recomendadas pelo veterinário para proteger o gato contra doenças infecciosas.",
-    },
-    {
-      idPlano: 1,
-      name: "Vacinação V8 ou V10",
-      descricao:
-        "Realize a desparasitação interna e externa conforme orientação do veterinário, para controlar vermes e parasitas.",
-    },
-    {
-      idPlano: 1,
-      id: 2,
-      name: "Vacinação contra Tosse dos Canis",
-      descricao:
-        "Considere a esterilização/castração para controlar a reprodução e reduzir riscos de doenças.",
-    },
-    {
-      idPlano: 1,
-      id: 3,
-      name: "Vacinação contra Leptospirose",
-      descricao:
-        "Agende consultas periódicas com o veterinário para avaliar a saúde geral do gato e detectar problemas precocemente.",
-    },
-    {
-      idPlano: 1,
-      id: 4,
-      name: "Vacinação contra Parainfluenza",
-      descricao:
-        "Administre medicamentos conforme prescrição do veterinário em casos de doenças ou infecções.",
-    },
-    {
-      idPlano: 2,
-      id: 5,
-      name: "Vacinação contra Coronavírus Canino",
-      descricao:
-        "Realize limpezas dentárias regulares e mantenha uma boa higiene oral para prevenir problemas dentários.",
-    },
-  ];
+  if(isLoading) {
+    return <LoadingSpinner/>
+  }
 
-  const ExamsList = [
-    {
-      idPlano: 1,
-      id: 1,
-      name: "Exame de Sangue Completo",
-      descricao:
-        "Administre as vacinas recomendadas pelo veterinário para proteger o gato contra doenças infecciosas.",
-    },
-    {
-      idPlano: 1,
-      name: "Exame de Urina",
-      descricao:
-        "Realize a desparasitação interna e externa conforme orientação do veterinário, para controlar vermes e parasitas.",
-    },
-    {
-      idPlano: 1,
-      id: 2,
-      name: "Exame de Fezes",
-      descricao:
-        "Considere a esterilização/castração para controlar a reprodução e reduzir riscos de doenças.",
-    },
-    {
-      idPlano: 1,
-      id: 3,
-      name: "Radiografia (Raio-X)",
-      descricao:
-        "Agende consultas periódicas com o veterinário para avaliar a saúde geral do gato e detectar problemas precocemente.",
-    },
-    {
-      idPlano: 1,
-      id: 4,
-      name: "Ultrassonografia",
-      descricao:
-        "Administre medicamentos conforme prescrição do veterinário em casos de doenças ou infecções.",
-    },
-    {
-      idPlano: 2,
-      id: 5,
-      name: "Exame de Sangue para Doenças Infecciosas",
-      descricao:
-        "Realize limpezas dentárias regulares e mantenha uma boa higiene oral para prevenir problemas dentários.",
-    },
-  ];
 
-  const SurgeriesList = [
-    {
-      idPlano: 1,
-      id: 1,
-      name: "Exame de Sangue Completo",
-      descricao:
-        "Administre as vacinas recomendadas pelo veterinário para proteger o gato contra doenças infecciosas.",
-    },
-    {
-      idPlano: 1,
-      name: "Exame de Urina",
-      descricao:
-        "Realize a desparasitação interna e externa conforme orientação do veterinário, para controlar vermes e parasitas.",
-    },
-    {
-      idPlano: 1,
-      id: 2,
-      name: "Exame de Fezes",
-      descricao:
-        "Considere a esterilização/castração para controlar a reprodução e reduzir riscos de doenças.",
-    },
-    {
-      idPlano: 1,
-      id: 3,
-      name: "Radiografia (Raio-X)",
-      descricao:
-        "Agende consultas periódicas com o veterinário para avaliar a saúde geral do gato e detectar problemas precocemente.",
-    },
-    {
-      idPlano: 1,
-      id: 4,
-      name: "Ultrassonografia",
-      descricao:
-        "Administre medicamentos conforme prescrição do veterinário em casos de doenças ou infecções.",
-    },
-    {
-      idPlano: 2,
-      id: 5,
-      name: "Exame de Sangue para Doenças Infecciosas",
-      descricao:
-        "Realize limpezas dentárias regulares e mantenha uma boa higiene oral para prevenir problemas dentários.",
-    },
-  ];
 
-  useEffect(() => {
-    const proc: any = ProdeduresList.filter((procedure: any) =>
-      procedure.idPlano == id ? procedure : null
-    );
-    setProcedures(proc);
 
-    const Vaccines: any = VaccinesList.filter((vaccine: any) =>
-      vaccine.idPlano == id ? vaccine : null
-    );
-    setVaccines(Vaccines);
 
-    const Exams: any = ExamsList.filter((exam: any) =>
-      exam.idPlano == id ? exam : null
-    );
-    setExams(Exams);
 
-    const Surgeries: any = SurgeriesList.filter((surgerie: any) =>
-      surgerie.idPlano == id ? surgerie : null
-    );
-    setSurgeries(Surgeries);
 
-    const Health: any = HealthInsuranceList.filter((Health: any) =>
-      Health.id == id ? setHealth(Health) : null
-    );
-  }, []);
-  console.log(Health);
+  
+
+ 
+
+ 
+
 
   return (
     <Flex
@@ -271,7 +90,7 @@ export default function DetailsHealthInsurance() {
               gap={{ base: 5, xl: 0 }}
               justifyContent="space-between"
             >
-              Edição de Plano de Saúde {Health.name}
+              Edição de Plano de Saúde {healthInsurance?.planName}
               <Grid
                 gap="1"
                 templateColumns={{
@@ -328,14 +147,14 @@ export default function DetailsHealthInsurance() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {procedures.length === 0 ? (
+                  {healthInsurance?.procedures?.length === 0 ? (
                     <Tr>
                       <Td fontSize={{ base: "12", lg: "sm" }} fontWeight="bold">
                         Este plano no momento não tem Procedimentos no momento
                       </Td>
                     </Tr>
                   ) : (
-                    procedures?.map((procedure: any) => (
+                    healthInsurance?.procedures?.map((procedure: any) => (
                       <Tr>
                         <>
                           <Td fontSize={{ base: "12", lg: "sm" }}>
@@ -354,14 +173,14 @@ export default function DetailsHealthInsurance() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {vaccines.length === 0 ? (
+                  {healthInsurance?.vaccines?.length === 0 ? (
                     <Tr>
                       <Td fontWeight="bold" fontSize={{ base: "12", lg: "sm" }}>
                         Este plano no momento não tem Vacinas no momento
                       </Td>
                     </Tr>
                   ) : (
-                    vaccines.map((vaccine: any) => (
+                    healthInsurance?.vaccines?.map((vaccine: any) => (
                       <Tr>
                         <>
                           <Td fontSize={{ base: "12", lg: "sm" }}>
@@ -389,14 +208,14 @@ export default function DetailsHealthInsurance() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {exams.length === 0 ? (
+                  {healthInsurance?.exams?.length === 0 ? (
                     <Tr>
                       <Td fontWeight="bold" fontSize={{ base: "12", lg: "sm" }}>
                         Este plano no momento não tem Exames no momento
                       </Td>
                     </Tr>
                   ) : (
-                    exams?.map((exam: any) => (
+                    healthInsurance?.exams?.map((exam: any) => (
                       <Tr>
                         <>
                           <Td fontSize={{ base: "12", lg: "sm" }}>
@@ -415,14 +234,14 @@ export default function DetailsHealthInsurance() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {surgeries.length === 0 ? (
+                  {healthInsurance?.surgeries?.length === 0 ? (
                     <Tr>
                       <Td fontWeight="bold" fontSize={{ base: "12", lg: "sm" }}>
                         Este plano no momento não tem Cirurgias no momento
                       </Td>
                     </Tr>
                   ) : (
-                    surgeries?.map((surgerie: any) => (
+                    healthInsurance?.surgeries?.map((surgerie: any) => (
                       <Tr>
                         <>
                           <Td fontSize={{ base: "12", lg: "sm" }}>

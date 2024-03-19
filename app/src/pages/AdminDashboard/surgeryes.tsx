@@ -13,21 +13,18 @@ import {
   Thead,
   Tr,
   FormControl,
-  HStack,
-  CheckboxGroup,
-  Checkbox,
-  TableContainer,
   Grid,
+  TableContainer,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
-import { Paginaton } from "../../components/admin/Pagination";
+
 import { Sidebar } from "../../components/admin/Sidebar";
 import { LoadingSpinner } from "../../components/Loading";
-import { DbContext } from "../../contexts/DbContext";
+
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
@@ -35,8 +32,10 @@ import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
+import { Query, QueryClient, useQuery } from "react-query";
+import data from "pdfkit/js/data";
 
-interface ISurgerie {
+interface ISurgery {
   id: number;
   name: string;
   price: string;
@@ -45,46 +44,33 @@ interface ISurgerie {
   sector_id: number;
 }
 
-interface ISurgerieData {
+interface ISurgeryData {
   currentPage: number;
   totalPages: number;
   totalSurgeries: number;
-  surgeries: ISurgerie[];
+  surgeries: ISurgery[];
 }
+const queryClient = new QueryClient();
 
 export function AdminSurgery() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
-  const [surgeriesData, setSurgeriesData] = useState({} as ISurgerieData);
-  const [reloadData, setReloadData] = useState<boolean>(true);
   const [pageActual, setPageActual] = useState(1);
-  const [surgerySelected, setSurgerySelected] = useState({} as ISurgerie);
+  const [surgerySelected, setSurgerySelected] = useState({} as ISurgery);
 
-  const navigate = useNavigate();
+  console.log(surgerySelected);
 
-  function openModal() {
-    setIsModalOpen(true);
-  }
-  function closeModal() {
-    setIsModalOpen(false);
-  }
-
-  function openModalTwo() {
-    setIsModalOpenTwo(true);
-  }
-  function closeModalTwo() {
-    setIsModalOpenTwo(false);
-  }
-
-  const handleCreateSurgery: SubmitHandler<FieldValues> = async (values) => {
+  const handleCreateSurgerie: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
         name: values.name,
         price: parseInt(values.price),
       };
       await api.post("surgeries", data);
-      setReloadData(true);
+      queryClient.invalidateQueries("surgeries");
+      refetch();
+      reset();
       toast.success("Cirurgia criada com sucesso");
     } catch (error) {
       toast.error("Falha ao criar nova cirurgia");
@@ -94,8 +80,9 @@ export function AdminSurgery() {
   async function DeleteSurgery(id: string | number) {
     try {
       await api.delete(`surgeries/${id}`);
-      setReloadData(true);
+      queryClient.invalidateQueries("surgeries");
       toast.success("Vacina deletada com sucesso!!");
+      refetch();
     } catch (error) {
       toast.error("Falha ao Excluir Vacina!!");
     }
@@ -109,47 +96,34 @@ export function AdminSurgery() {
       };
       await api.put(`surgeries/${surgerySelected.id}`, data);
       toast.success("Vacina editada com sucesso");
-      setReloadData(true);
+      refetch();
     } catch (error) {
-      toast.error("Falha ao editar novo setor");
+      toast.error("Falha ao editar vacina");
     }
   };
 
-  const handleSurgeryEditing = (surgery: ISurgerie) => {
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["surgeries", pageActual],
+    queryFn: async () =>
+      await api.get(`/surgeries?page=${pageActual}`).then((res) => res.data),
+  });
+
+  const nextPage = () => {
+    if (pageActual < data.totalPages) setPageActual((prev) => prev + 1);
+  };
+
+  const backPage = () => {
+    if (pageActual > 1) setPageActual((prev) => prev - 1);
+  };
+
+  const handleSurgerySelected = (surgery: ISurgery) => {
     setSurgerySelected(surgery);
-    openModalTwo();
+    setIsModalOpenTwo(true);
   };
 
-  async function getSurgeryes() {
-    await api.get(`/surgeries?page=${pageActual}`).then((res) => {
-      setSurgeriesData(res.data);
-    });
+  if (isLoading) {
+    return <LoadingSpinner />;
   }
-
-  function getNextSurgeriesByPage() {
-    if (pageActual < surgeriesData.totalPages) {
-      setPageActual(pageActual + 1);
-      setReloadData(true);
-    }
-  }
-
-  function getBackSurgeriesByPage() {
-    if (pageActual > 1) {
-      setPageActual(pageActual - 1);
-      setReloadData(true);
-    }
-  }
-
-  useEffect(() => {
-    if (reloadData) {
-      getSurgeryes();
-      setReloadData(false);
-    }
-  }, [reloadData, pageActual]);
-
-  // useEffect(() => {
-  //   getSurgeryes();
-  // }, []);
 
   return (
     <ChakraProvider>
@@ -191,7 +165,7 @@ export function AdminSurgery() {
                   colorScheme="whatsapp"
                   cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
-                  onClick={() => openModal()}
+                  onClick={() => setIsModalOpen(true)}
                 >
                   Cadastrar nova Cirurgia
                 </Button>
@@ -208,7 +182,7 @@ export function AdminSurgery() {
                   fontSize={{ base: "sm", lg: "md" }}
                   colorScheme="teal"
                   w="full"
-                  onClick={getBackSurgeriesByPage}
+                  onClick={backPage}
                 >
                   Voltar Página
                 </Button>
@@ -217,11 +191,11 @@ export function AdminSurgery() {
                   colorScheme="teal"
                   w="full"
                 >
-                  Página atual:{surgeriesData.currentPage}
+                  Página atual:{pageActual}
                 </Button>
                 <Button
                   fontSize={{ base: "sm", lg: "md" }}
-                  onClick={getNextSurgeriesByPage}
+                  onClick={nextPage}
                   colorScheme="teal"
                   w="full"
                 >
@@ -241,8 +215,8 @@ export function AdminSurgery() {
                   </Thead>
 
                   <Tbody>
-                    {surgeriesData?.surgeries?.length > 0 ? (
-                      surgeriesData?.surgeries.map((surgery: ISurgerie) => (
+                    {data?.surgeries?.length > 0 ? (
+                      data?.surgeries.map((surgery: ISurgery) => (
                         <Tr key={surgery.id}>
                           <Td fontSize="sm">{surgery.name}</Td>
                           <Td fontSize="sm"> {surgery.price}</Td>
@@ -253,7 +227,7 @@ export function AdminSurgery() {
                               fontSize="sm"
                               colorScheme="yellow"
                               leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => handleSurgeryEditing(surgery)}
+                              onClick={() => handleSurgerySelected(surgery)}
                             >
                               Editar Cirurgia
                             </Button>
@@ -277,10 +251,13 @@ export function AdminSurgery() {
                   </Tbody>
                 </Table>
               </TableContainer>
-              <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+              <GenericModal
+                isOpen={isModalOpen}
+                onRequestClose={() => setIsModalOpen(false)}
+              >
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleCreateSurgery)}
+                  onSubmit={handleSubmit(handleCreateSurgerie)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
@@ -307,7 +284,7 @@ export function AdminSurgery() {
 
               <GenericModal
                 isOpen={isModalOpenTwo}
-                onRequestClose={closeModalTwo}
+                onRequestClose={() => setIsModalOpenTwo(false)}
               >
                 <FormControl
                   as="form"
