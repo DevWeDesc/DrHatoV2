@@ -16,21 +16,24 @@ import {
   Select,
   Grid,
 } from "@chakra-ui/react";
-import { useContext, useState, useEffect } from "react";
+import { useState} from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { DbContext } from "../../contexts/DbContext";
+import { useNavigate, useParams } from "react-router-dom";
+
 import { Input } from "../../components/admin/Input";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 import { GenericModal } from "../Modal/GenericModal";
+import { QueryClient, useQuery } from "react-query";
+import { LoadingSpinner } from "../Loading";
 
 type ProcedureFormProps = {
-  procedureId?: string;
+  procedureId: number;
   isEditable?: boolean;
 };
 
 type ProceduresDTO = {
+  healthInsuranceId: any;
   id: number;
   codProcedimento: number;
   name: string;
@@ -69,86 +72,139 @@ type EspeciesDTO = {
     especiesId: number;
   }>;
 };
+
+ interface HealthInsurance {
+  id:                    number;
+  planName:              string;
+  disponible:            boolean;
+  planProvider:          string;
+  graceDays:             number;
+  coverageLimit:         number;
+  admissionDeduction:    number;
+  disponibleAtAdmission: boolean;
+
+}
 export function CreateProcedureForm({
   procedureId,
-  isEditable,
+  isEditable
 }: ProcedureFormProps) {
-  const { groups, sectors } = useContext(DbContext);
+
   const [procedures, setProcedures] = useState({} as ProceduresDTO);
   const [especies, setEspecies] = useState<EspeciesDTO[]>([]);
   const [especiesModalIsOpen, setEspeciesModalIsOpen] = useState(false);
-  const [shouldReloadProcedures, setShouldReloadProcedures] = useState(false);
+  const queryClient = new QueryClient()
   const { register, handleSubmit } = useForm();
+  const [groups, setGroups] = useState<any[]>([])
+  const [sectors, setSectors] = useState<any[]>([])
+  const [healthInsurance, setHealthInsurance] = useState<HealthInsurance[]>([])
   const navigate = useNavigate();
 
+
+  async function getSectorsAndGroupsHealthInsurances () {
+    const groupsResponse = await api.get("/groups")
+    const sectorsResponse = await api.get("/sectors")
+    const healthInsuranceResponse = await api.get("/health/insurance")
+    setGroups(groupsResponse.data)
+    setSectors(sectorsResponse.data)
+    setHealthInsurance(healthInsuranceResponse.data.healthInsurance)
+  }
+
   async function getProceduresData() {
-    try {
-      const response = await api.get(`/procedures/${procedureId}`);
-      setProcedures(response.data);
-    } catch (error) {
-      console.error(error);
-    }
+    const response = await api.get(`/procedures/${procedureId}`);
+    setProcedures(response.data);
   }
 
   async function getEspeciesData() {
-    try {
-      const response = await api.get("/pets/especie");
-      setEspecies(response.data);
-    } catch (error) {
-      console.error(error);
-    }
+    const response = await api.get("/pets/especie");
+    setEspecies(response.data);
   }
+
+  const {isLoading: especiesIsLoading} = useQuery('especiesList', getEspeciesData)
+
+  if(isEditable) {
+    const {isLoading: proceduresIsLoading} = useQuery('proceduresList', getProceduresData)
+  }
+
+  const {isLoading: groupAndSectorsIsLoading} = useQuery('groupsAndSectorsAndHealthInsurances', getSectorsAndGroupsHealthInsurances)
+
+  if(groupAndSectorsIsLoading) {
+    return <LoadingSpinner />
+  }
+
+ 
+
 
   async function setEspecieInProcedure(especieId: number) {
     await api.put(`/procedures/especies/${procedureId}/${especieId}`);
-    setShouldReloadProcedures(true);
+    queryClient.invalidateQueries("proceduresList")
+
     toast.success("Especie Adicionada!");
   }
 
   async function setAllEspecieInProcedure() {
     await api.put(`/procedures/especies/all/${procedureId}`);
-    setShouldReloadProcedures(true);
+    queryClient.invalidateQueries("proceduresList")
     toast.success("Todas Especies Adicionada!");
   }
 
   async function removeEspecieInProcedure() {
     await api.put(`/procedures/especies/all/remove/${procedureId}`);
-    setShouldReloadProcedures(true);
+      queryClient.invalidateQueries("proceduresList")
     toast.success("Todas Especies Removidas!!");
   }
 
   const handleCreateProcedure: SubmitHandler<FieldValues> = async (values) => {
-    let rangeAges = [values.minAge, values.maxAge];
-    const data = {
-      name: values.name,
-      price: Number(values.price),
-      available: values.available,
-      applicationInterval: values.applicationInterval,
-      ageRange: rangeAges,
-      applicationGender: values.applicableGender,
-      observations: values.observations,
-      group_id: Number(values.group),
-      sector_id: Number(values.sector),
-    };
-
     try {
+      let rangeAges = [values.minAge, values.maxAge];
+  
+    
+    if(values.health) {
+      const healthPlan = healthInsurance.find(h => h.id === Number(values.health))
+
+      if(!healthPlan) {
+        throw new Error()
+      }
+      const data = {
+        name: `${values.name} - ${healthPlan.planName}(${healthPlan.planProvider})`,
+        price: Number(values.price),
+        available: values.available,
+        applicationInterval: values.applicationInterval,
+        ageRange: rangeAges,
+        applicationGender: values.applicableGender,
+        observations: values.observations,
+        group_id: Number(values.group),
+        sector_id: Number(values.sector),
+        health_id: Number(values.health)
+      };
+      
       await api.post("procedures", data);
       toast.success("Procedimento criado com sucesso!");
       navigate("/Admin/Procedures");
-    } catch (error) {
-      toast.error("Falha ao criar procedimento");
+ 
+    } else {
+      const data = {
+        name: values.name,
+        price: Number(values.price),
+        available: values.available,
+        applicationInterval: values.applicationInterval,
+        ageRange: rangeAges,
+        applicationGender: values.applicableGender,
+        observations: values.observations,
+        group_id: Number(values.group),
+        sector_id: Number(values.sector),
+        health_id: Number(values.health)
+      };
+
+      await api.post("procedures", data);
+      toast.success("Procedimento criado com sucesso!");
+      navigate("/Admin/Procedures");
     }
+
+    } catch (error) {
+      toast.error("Falha ao cadastrar procedimento!")
+    }
+    
   };
-
-  useEffect(() => {
-    getProceduresData();
-    setShouldReloadProcedures(false);
-  }, [shouldReloadProcedures]);
-
-  useEffect(() => {
-    getProceduresData();
-    getEspeciesData();
-  }, []);
 
   return (
     <>
@@ -349,19 +405,29 @@ export function CreateProcedureForm({
                   <Text fontSize={{ base: "sm", lg: "md" }}>Disponível</Text>
                 </Flex>
                 <Flex gap="2">
-                  <Checkbox
-                    type="radio"
-                    {...register("applicableGender")}
-                    value={"macho"}
-                    colorScheme="green"
-                    name="applicableGender"
-                    borderColor="gray.800"
-                  />
-                  <Text fontSize={{ base: "sm", lg: "md" }}>
-                    Plano de Saúde PetLove
-                  </Text>
+              
+                <Text fontWeight="bold" fontSize={{ base: "sm", lg: "md" }}>
+                  PERTENCE A ALGUM CONVÊNIO?
+                </Text>
+                <Select
+                 value={Number(
+                  healthInsurance.find(
+                    (health) => health?.id === procedures?.healthInsuranceId
+                  )?.id
+                )}
+                  {...register("health")}
+                  placeholder="SELECIONE O CONVÊNIO"
+                  bgColor="gray.300"
+                >
+                  {healthInsurance.map((health) => (
+                    <option key={health.id} value={health.id}>
+                      {health.planName}
+                    </option>
+                  ))}
+                </Select>
                 </Flex>
               </Flex>
+
               <Flex
                 shadow="0px 0px 10px rgba(0, 0, 0, 0.5)"
                 direction="column"
@@ -375,6 +441,13 @@ export function CreateProcedureForm({
                 py="10"
                 px="10"
               >
+
+
+
+
+
+
+
                 <Text fontWeight="bold" fontSize={{ base: "sm", lg: "md" }}>
                   PERTENCE A ALGUM GRUPO?
                 </Text>
@@ -581,17 +654,23 @@ export function CreateProcedureForm({
                     <Text fontSize={{ base: "sm", lg: "md" }}>Disponível</Text>
                   </Flex>
                   <Flex gap="2">
-                    <Checkbox
-                      type="radio"
-                      {...register("applicableGender")}
-                      value={"macho"}
-                      colorScheme="green"
-                      name="applicableGender"
-                      borderColor="gray.800"
-                    />
-                    <Text fontSize={{ base: "sm", lg: "md" }}>
-                      Plano de Saúde PetLove
-                    </Text>
+                  <Text fontWeight="bold" fontSize={{ base: "sm", lg: "md" }}>
+                    PERTENCE A ALGUM CONVÊNIO?
+                  </Text>
+                  <Select
+                  
+                    fontSize={{ base: "sm", lg: "md" }}
+                    {...register("health")}
+                    placeholder="SELECIONE O CONVÊNIO"
+                    bgColor="gray.300"
+                  >
+                    {healthInsurance.map((health) => (
+                      <option key={health.id} value={health.id}>
+                        {health.planName}
+                      </option>
+                    ))}
+                  </Select>
+            
                   </Flex>
                 </Flex>
                 <Flex

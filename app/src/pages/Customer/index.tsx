@@ -33,6 +33,7 @@ import {
 import { PetProps } from "../Pets/details";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { CreatePetsForm } from "../../components/Forms/CreatePetsForm";
+import { QueryClient, useQuery } from "react-query";
 
 interface CustomerProps {
   id: string | number;
@@ -55,12 +56,18 @@ type VetsProps = {
   consultName: string;
 }
 
-
+type HealthInsuranceProps = {
+  id: number;
+	planName: string;
+	disponible: boolean
+	planProvider: string;
+}
 
 export function CustomerDetails() {
   const { id } = useParams<{ id: string }>();
   const user = JSON.parse(localStorage.getItem("user") as string);
   const navigate = useNavigate();
+  const queryClient = new QueryClient()
   const [petId, setPetId] = useState("");
   const [userVets, setUserVets] = useState<VetsProps[]>([])
   const [queryType, setQueryType] = useState("");
@@ -83,14 +90,21 @@ export function CustomerDetails() {
   });
   const [petSelected, setPetSelected] = useState<any>([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [reload, setReload] = useState(false);
   const [vetName, setVetName] = useState("");
+  const [healthInsurance, setHealthInsurance] = useState<HealthInsuranceProps[]>([])
+  const [healthSelected, setHealthSelected] = useState({
+    healthInsuranceId: 0, 
+    healthInsuranceName: ""
+  })
 
-
+  async function loadHealthInsurances() {
+    const response = await api.get("/health/insurance")
+    setHealthInsurance(response.data.healthInsurance)
+  }
 
   async function loadCustomer() {
     const response = await api.get(`/customers/${id}`);
-    setCustomer(response.data.customer);
+    setCustomer(response.data.customer); 
   }
 
   async function loadVets() {
@@ -98,52 +112,47 @@ export function CustomerDetails() {
     setUserVets(response.data.vets);
   }
 
+  
+  useQuery('healthInsuranceReception', loadHealthInsurances)
+  useQuery('customerReception', loadCustomer)
+  useQuery('vetsReception', loadVets)
+
   async function loadVetsByName() {
     const response = await api.get(`/users/vets/name/${vetName}`);
     setUserVets(response.data);
+    queryClient.invalidateQueries('vetsReception')
   }
 
-  useEffect(() => {
-    loadVets()
-    loadCustomer();
-  }, []);
 
-  useEffect(() => {
-    loadVetsByName()
-  }, [vetName])
 
-  useEffect(() => {
-    if (reload === true) {
-      loadCustomer();
-      setReload(false);
-    }
-  }, [reload]);
 
   async function setPetInQueue() {
     try {
-
-      const data = {
-        removePreference: notPreferences,
-        vetPreference: vetPreference,
-        queryType: queryType,
-        openedBy: user.consultName.length >= 1 ? user.consultName : `${user.name} - Id: ${user.id}`,
-        moreInfos: moreInfos,
-      };
-
-
-      if (!!queryType && !!petSelected.id) {
-        if(notPreferences === false && vetPreference.length <= 1) {
-          toast.error("Selecione uma preferência")
-          return 
-        }
+      console.log(healthSelected)
+      // const data = {
+      //   healthInsuranceId, 
+      //   healthInsuranceName,
+      //   removePreference: notPreferences,
+      //   vetPreference: vetPreference,
+      //   queryType: queryType,
+      //   openedBy: user.consultName.length >= 1 ? user.consultName : `${user.name} - Id: ${user.id}`,
+      //   moreInfos: moreInfos,
+      // };
 
 
-        await api.put(`queue/${petSelected.id}`, data);
-        navigate("/Recepcao/Change")
-        toast.success("Pet colocado na fila com sucesso!");
-      } else {
-        toast.error(`Selecione Pet/Tipo de Atendimento/Veterinário`);
-      }
+      // if (!!queryType && !!petSelected.id) {
+      //   if(notPreferences === false && vetPreference.length <= 1) {
+      //     toast.error("Selecione uma preferência")
+      //     return 
+      //   }
+
+
+      //   await api.put(`queue/${petSelected.id}`, data);
+      //   navigate("/Recepcao/Change")
+      //   toast.success("Pet colocado na fila com sucesso!");
+      // } else {
+      //   toast.error(`Selecione Pet/Tipo de Atendimento/Veterinário`);
+      // }
     } catch (error) {
       toast.error("Falha ao colocar na fila");
     }
@@ -486,9 +495,16 @@ export function CustomerDetails() {
                       <Tr>
                         <Th py="0.5">Plano de Saúde</Th>
                         <Th py="0.5" colSpan={3}>
-                          <Select bg={"white"} borderColor="black">
-                            <option value="">Não possui</option>
-                            <option value="">PetLove</option>
+                          <Select bg={"white"} borderColor="black" onChange={(ev: any) => setHealthSelected({
+                            healthInsuranceId: ev.target.value.id,
+                            healthInsuranceName: ev.target.value.planName
+                          })}>
+                           <option value="none">Não possui</option>
+                            {
+                              healthInsurance.map((health) => <option value={health.id}>{health.planName}</option>)
+                            }
+                            
+                     
                           </Select>
                         </Th>
                       </Tr>
@@ -562,6 +578,7 @@ export function CustomerDetails() {
                 onChange={(ev) => {
                   setVetName(ev.target.value)
                   setVetPreference("")
+                  loadVetsByName()
                 }}
                 />
                 </Flex>
@@ -711,7 +728,7 @@ export function CustomerDetails() {
               </Text>
               <CreatePetsForm
                 onRequestClose={() => setModalOpen(false)}
-                reloadPets={() => setReload(true)}
+                
               />
             </GenericModal>
           </Flex>

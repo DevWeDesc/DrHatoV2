@@ -6,13 +6,14 @@ import {
   Heading,
   Text,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { CreateProcedureForm } from "../../components/Forms/CreateProcedureForm";
 import { AdminContainer } from "../AdminDashboard/style";
 
 export function ProcedureCreate() {
+  const { id: procedureId  } = useParams<{ id: any;  }>();
   const navigate = useNavigate();
   return (
     <ChakraProvider>
@@ -67,7 +68,7 @@ export function ProcedureCreate() {
                   </Heading>
                 </Flex>
 
-                <CreateProcedureForm />
+                <CreateProcedureForm procedureId={procedureId} />
               </Box>
             </Flex>
           </Flex>

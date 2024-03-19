@@ -21,7 +21,7 @@ export default function Releases() {
           border="2px"
           bgColor="white"
           h="300px" defaultValue={
-            "Administração: possivel criar/editar/excluir plano de saúde - Dilan. \n Corrigido bug de navegação na área administrativa cirurgias - Dilan.\n Realizado todo crud de planos de saúde no backend - Dilan \n Cirurgias refatoradas para React Query - Dilan \n Data de atualização: 18/03/24 "
+            "Administração: possivel criar/editar/excluir plano de saúde - Dilan. \n Corrigido bug de navegação na área administrativa cirurgias - Dilan.\n Realizado todo crud de planos de saúde no backend - Dilan \n Cirurgias refatoradas para React Query - Dilan \n Data de atualização: 18/03/24\n Refatorado procedimentos para React Query - Dilan\n Corrigido listagem de grupos e setores dos procedimentoes -Dilan \n "
             
           } />
            
