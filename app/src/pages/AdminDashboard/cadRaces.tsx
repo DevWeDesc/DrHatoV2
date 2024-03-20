@@ -38,7 +38,7 @@ interface EspProps {
 export function AdminCadRaces() {
   const [especies, setEspecies] = useState({} as EspProps);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reloadData, setReloadData] = useState(false);
+  const [reloadData, setReloadData] = useState(true);
   const { espId } = useParams<{ espId: string }>();
   const [raceName, setRaceName] = useState("");
 
@@ -47,9 +47,9 @@ export function AdminCadRaces() {
     setEspecies(especie.data.esp);
   }
 
-  useEffect(() => {
-    getEspecies();
-  }, []);
+  // useEffect(() => {
+  //   getEspecies();
+  // }, []);
 
   function openModal() {
     setIsModalOpen(true);
