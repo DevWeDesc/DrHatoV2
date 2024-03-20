@@ -92,10 +92,7 @@ export function CustomerDetails() {
   const [modalOpen, setModalOpen] = useState(false);
   const [vetName, setVetName] = useState("");
   const [healthInsurance, setHealthInsurance] = useState<HealthInsuranceProps[]>([])
-  const [healthSelected, setHealthSelected] = useState({
-    healthInsuranceId: 0, 
-    healthInsuranceName: ""
-  })
+  const [healthId, setHealthId] = useState(0)
 
   async function loadHealthInsurances() {
     const response = await api.get("/health/insurance")
@@ -128,31 +125,32 @@ export function CustomerDetails() {
 
   async function setPetInQueue() {
     try {
-      console.log(healthSelected)
-      // const data = {
-      //   healthInsuranceId, 
-      //   healthInsuranceName,
-      //   removePreference: notPreferences,
-      //   vetPreference: vetPreference,
-      //   queryType: queryType,
-      //   openedBy: user.consultName.length >= 1 ? user.consultName : `${user.name} - Id: ${user.id}`,
-      //   moreInfos: moreInfos,
-      // };
+      const selectedHealth = healthInsurance.find(h => h.id === healthId)
+
+      const data = {
+        healthInsuranceId: selectedHealth?.id, 
+        healthInsuranceName: selectedHealth?.planName,
+        removePreference: notPreferences,
+        vetPreference: vetPreference,
+        queryType: queryType,
+        openedBy: user.consultName.length >= 1 ? user.consultName : `${user.name} - Id: ${user.id}`,
+        moreInfos: moreInfos,
+      };
 
 
-      // if (!!queryType && !!petSelected.id) {
-      //   if(notPreferences === false && vetPreference.length <= 1) {
-      //     toast.error("Selecione uma preferência")
-      //     return 
-      //   }
+      if (!!queryType && !!petSelected.id) {
+        if(notPreferences === false && vetPreference.length <= 1) {
+          toast.error("Selecione uma preferência")
+          return 
+        }
 
 
-      //   await api.put(`queue/${petSelected.id}`, data);
-      //   navigate("/Recepcao/Change")
-      //   toast.success("Pet colocado na fila com sucesso!");
-      // } else {
-      //   toast.error(`Selecione Pet/Tipo de Atendimento/Veterinário`);
-      // }
+        await api.put(`queue/${petSelected.id}`, data);
+        navigate("/Recepcao/Change")
+        toast.success("Pet colocado na fila com sucesso!");
+      } else {
+        toast.error(`Selecione Pet/Tipo de Atendimento/Veterinário`);
+      }
     } catch (error) {
       toast.error("Falha ao colocar na fila");
     }
@@ -495,10 +493,7 @@ export function CustomerDetails() {
                       <Tr>
                         <Th py="0.5">Plano de Saúde</Th>
                         <Th py="0.5" colSpan={3}>
-                          <Select bg={"white"} borderColor="black" onChange={(ev: any) => setHealthSelected({
-                            healthInsuranceId: ev.target.value.id,
-                            healthInsuranceName: ev.target.value.planName
-                          })}>
+                          <Select bg={"white"} borderColor="black" onChange={(ev) => setHealthId(Number(ev.target.value))}>
                            <option value="none">Não possui</option>
                             {
                               healthInsurance.map((health) => <option value={health.id}>{health.planName}</option>)

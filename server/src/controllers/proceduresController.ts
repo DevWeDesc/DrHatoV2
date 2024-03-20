@@ -213,6 +213,43 @@ export const proceduresController = {
     } catch (error) {}
   },
 
+
+  getProcedureByHealthInsurance: async (request: FastifyRequest,reply: FastifyReply) => {
+    try {
+      const GetHealthInsuranceProcedureSchema = z.object({
+        planName: z.string(),
+        // planProvider: z.string(),
+        page: z.coerce.number()
+      })
+   
+      const {planName,page} = GetHealthInsuranceProcedureSchema.parse(request.params)
+      const currentPage = page || 1;
+      const procedures = await prisma.procedures.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {
+          HealthInsurance: {
+            planName: {contains: planName},
+            // planProvider: {equals: planProvider}
+          }
+        }
+      })
+
+     
+      const totalPages = Math.ceil(procedures.length / 35);
+
+      reply.send({
+        procedures,
+        currentPage,
+        totalPages,
+        totalProceds: procedures.length
+      })
+
+    } catch (error) {
+        console.log(error)
+    }
+  },
+
   getWithId: async (
     request: FastifyRequest,
     reply: FastifyReply
