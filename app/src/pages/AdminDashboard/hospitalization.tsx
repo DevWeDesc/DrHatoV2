@@ -59,7 +59,7 @@ export function Hospitalization() {
   function closeModalTwo() {
     setIsModalOpenTwo(false);
   }
-  const handleSelectSector = (bed: IBeds) => {
+  const handleSelectBeds = (bed: IBeds) => {
     setBedSelected({
       id: bed.id,
       name: bed.name,
@@ -68,7 +68,7 @@ export function Hospitalization() {
     });
   };
 
-  const handleCreateSector: SubmitHandler<FieldValues> = async (values) => {
+  const handleCreateBeds: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
         name: values.name,
@@ -84,7 +84,7 @@ export function Hospitalization() {
     }
   };
 
-  async function handleDeleteSector(id: string | number) {
+  async function handleDeleteBeds(id: string | number) {
     try {
       await api.delete(`admissions/${id}`);
       setReloadData(true);
@@ -94,14 +94,14 @@ export function Hospitalization() {
     }
   }
 
-  const handleEditSector: SubmitHandler<FieldValues> = async (values) => {
+  const handleEditBeds: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
         name: bedSelected.name,
       };
-      await api.put(`sectors/${bedSelected.id}`, data);
+      await api.put(`admissions/${bedSelected.id}`, data);
       setReloadData(true);
-      toast.success("Leitos editado com sucesso");
+      toast.success("Leito editado com sucesso");
     } catch (error) {
       toast.error("Falha ao editar novo Leitos");
     }
@@ -221,7 +221,7 @@ export function Hospitalization() {
                                   leftIcon={<Icon as={RiPencilLine} />}
                                   onClick={() => {
                                     openModalTwo();
-                                    handleSelectSector(bed);
+                                    handleSelectBeds(bed);
                                   }}
                                 >
                                   Editar Leito
@@ -235,7 +235,7 @@ export function Hospitalization() {
                                   buttonTitle="Deletar Leito"
                                   whatIsConfirmerd="Tem certeza que deseja Excluir esse Leito?"
                                   describreConfirm="Excluir Leito é uma ação irreversivel, tem certeza que deseja excluir?"
-                                  callbackFn={() => handleDeleteSector(bed.id)}
+                                  callbackFn={() => handleDeleteBeds(bed.id)}
                                 />
                               </Td>
                             </Tr>
@@ -251,7 +251,7 @@ export function Hospitalization() {
                 <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
                   <FormControl
                     as="form"
-                    onSubmit={handleSubmit(handleCreateSector)}
+                    onSubmit={handleSubmit(handleCreateBeds)}
                     display="flex"
                     flexDir="column"
                     alignItems="center"
@@ -294,7 +294,7 @@ export function Hospitalization() {
                 >
                   <FormControl
                     as="form"
-                    onSubmit={handleSubmit(handleEditSector)}
+                    onSubmit={handleSubmit(handleEditBeds)}
                     display="flex"
                     flexDir="column"
                     alignItems="center"
