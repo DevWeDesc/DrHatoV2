@@ -35,14 +35,42 @@ import { Input } from "../../components/admin/Input";
 import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
 
+interface ISector {
+  id: string;
+  name: string;
+  sectorId: string;
+  examId: null | string | number;
+  proced_id: null | string | number;
+  sectorsId: null | string | number;
+}
+
+interface IGroup {
+  id: number;
+  codGroup: number;
+  name: string;
+}
+
+interface IDataSelected {
+  groupSelected: IGroup;
+  sectorSelected: ISector;
+}
+
 export function SectorsList() {
   // const { sectors } = useContext(DbContext);
-  const [sectors, setSectors] = useState([]);
-  const [groups, setGroups] = useState([]);
+  const [sectors, setSectors] = useState<ISector[]>([]);
+  const [groups, setGroups] = useState<IGroup[]>([]);
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [typeModals, setTypeModals] = useState({
+    typeModal: "",
+    typeModalTwo: "",
+  });
+  const [dataSelected, setDataSelected] = useState({
+    sectorSelected: { name: "" },
+    groupSelected: { name: "" },
+  } as IDataSelected);
   const navigate = useNavigate();
 
   const getSectorsListData = async () => {
@@ -54,11 +82,6 @@ export function SectorsList() {
     const response = await api.get("groups");
     setGroups(response.data);
   };
-
-  useEffect(() => {
-    getSectorsListData();
-    getGroupsListData();
-  }, []);
 
   useEffect(() => {
     if (loading === true) {
@@ -82,6 +105,27 @@ export function SectorsList() {
     setIsModalOpenTwo(false);
   }
 
+  const handleCreateFeatureType = (type: string) => {
+    setTypeModals({ ...typeModals, typeModal: type });
+    openModal();
+  };
+
+  const handleEditFeatureType = (
+    type: string,
+    dataSector: ISector,
+    dataGroup: IGroup
+  ) => {
+    setDataSelected({
+      ...dataSelected,
+      sectorSelected: dataSector,
+      groupSelected: dataGroup,
+    });
+    setTypeModals({ ...typeModals, typeModalTwo: type });
+    openModalTwo();
+  };
+
+  // Sectors
+
   const handleCreateSector: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
@@ -95,16 +139,17 @@ export function SectorsList() {
     }
   };
 
-  const handleCreateGroups: SubmitHandler<FieldValues> = async (values) => {
+  const handleEditSector: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
-        name: values.name,
+        name: dataSelected.sectorSelected.name,
       };
-      await api.post("groups", data);
-      toast.success("Grupo criado com sucesso");
+      const sectorId = dataSelected.sectorSelected.id;
+      await api.put(`sectors/${sectorId}`, data);
+      toast.success("Setor editado com sucesso");
       setLoading(true);
     } catch (error) {
-      toast.error("Falha ao criar novo grupo");
+      toast.error("Falha ao editar novo setor");
     }
   };
 
@@ -118,6 +163,35 @@ export function SectorsList() {
     }
   }
 
+  // Groups
+  const handleCreateGroups: SubmitHandler<FieldValues> = async (values) => {
+    try {
+      const data = {
+        name: values.name,
+      };
+      await api.post("groups", data);
+      toast.success("Grupo criado com sucesso");
+      setLoading(true);
+    } catch (error) {
+      toast.error("Falha ao criar novo grupo");
+    }
+  };
+
+  const handleEditGroup: SubmitHandler<FieldValues> = async (values) => {
+    try {
+      const data = {
+        name: dataSelected.groupSelected.name,
+      };
+      const groupId = dataSelected.groupSelected.id;
+
+      await api.put(`groups/${groupId}`, data);
+      toast.success("Grupo Editado com sucesso");
+      setLoading(true);
+    } catch (error) {
+      toast.error("Falha ao deletar Grupo");
+    }
+  };
+
   async function handleDeleteGroup(id: string | number) {
     try {
       await api.delete(`groups/${id}`);
@@ -128,17 +202,24 @@ export function SectorsList() {
     }
   }
 
-  const handleEditSector: SubmitHandler<FieldValues> = async (values) => {
-    try {
-      const data = {
-        name: values.name,
-      };
-      await api.put(`sectors/${values.id}`, data);
-      toast.success("Setor editado com sucesso");
-      setLoading(true);
-    } catch (error) {
-      toast.error("Falha ao editar novo setor");
-    }
+  const handleInformationsInputModalTwo = (
+    ev: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    typeModals?.typeModalTwo === "editSector"
+      ? setDataSelected({
+          ...dataSelected,
+          sectorSelected: {
+            ...dataSelected.sectorSelected,
+            name: ev.target.value,
+          },
+        })
+      : setDataSelected({
+          ...dataSelected,
+          groupSelected: {
+            ...dataSelected.groupSelected,
+            name: ev.target.value,
+          },
+        });
   };
 
   return (
@@ -192,7 +273,7 @@ export function SectorsList() {
                       colorScheme="whatsapp"
                       cursor="pointer"
                       leftIcon={<Icon as={RiAddLine} />}
-                      onClick={() => openModal()}
+                      onClick={() => handleCreateFeatureType("newSector")}
                     >
                       Cadastrar novo Setor
                     </Button>
@@ -209,7 +290,7 @@ export function SectorsList() {
 
                     <Tbody>
                       {sectors ? (
-                        sectors.map((sector: any) => (
+                        sectors.map((sector) => (
                           <Tr key={sector.id}>
                             <Td fontSize={{ base: "12", lg: "sm" }}>
                               {sector.name}
@@ -225,7 +306,13 @@ export function SectorsList() {
                                 fontSize="sm"
                                 colorScheme="yellow"
                                 leftIcon={<Icon as={RiPencilLine} />}
-                                onClick={() => openModalTwo()}
+                                onClick={() =>
+                                  handleEditFeatureType(
+                                    "editSector",
+                                    sector,
+                                    dataSelected.groupSelected
+                                  )
+                                }
                               >
                                 Editar setor
                               </Button>
@@ -235,7 +322,7 @@ export function SectorsList() {
                                   <BsFillTrashFill fill="white" size={16} />
                                 }
                                 buttonTitle="Deletar Setor"
-                                whatIsConfirmerd="Tem certeza que deseja Excluir esse Setor?"
+                                whatIsConfirmerd={`Tem certeza que deseja Excluir o Setor ${sector.name}?`}
                                 describreConfirm="Excluir o Setor é uma ação irreversivel, tem certeza que deseja excluir?"
                                 callbackFn={() => handleDeleteSector(sector.id)}
                               />
@@ -267,7 +354,7 @@ export function SectorsList() {
                       colorScheme="whatsapp"
                       cursor="pointer"
                       leftIcon={<Icon as={RiAddLine} />}
-                      onClick={() => openModalTwo()}
+                      onClick={() => handleCreateFeatureType("newGroup")}
                     >
                       Cadastrar novo Grupo
                     </Button>
@@ -284,7 +371,7 @@ export function SectorsList() {
 
                     <Tbody>
                       {groups ? (
-                        groups.map((group: any) => (
+                        groups.map((group) => (
                           <Tr key={group.id}>
                             <Td fontSize={{ base: "12", lg: "sm" }}>
                               {group.name}
@@ -300,7 +387,13 @@ export function SectorsList() {
                                 fontSize="sm"
                                 colorScheme="yellow"
                                 leftIcon={<Icon as={RiPencilLine} />}
-                                onClick={() => openModalTwo()}
+                                onClick={() =>
+                                  handleEditFeatureType(
+                                    "editGroup",
+                                    dataSelected.sectorSelected,
+                                    group
+                                  )
+                                }
                               >
                                 Editar Grupo
                               </Button>
@@ -310,9 +403,9 @@ export function SectorsList() {
                                   <BsFillTrashFill fill="white" size={16} />
                                 }
                                 buttonTitle="Deletar Grupo"
-                                whatIsConfirmerd="Tem certeza que deseja Excluir esse Grupo?"
+                                whatIsConfirmerd={`Tem certeza que deseja Excluir o Grupo ${group.name}?`}
                                 describreConfirm="Excluir o Grupo é uma ação irreversivel, tem certeza que deseja excluir?"
-                                callbackFn={() => handleDeleteSector(group.id)}
+                                callbackFn={() => handleDeleteGroup(group.id)}
                               />
                             </Td>
                           </Tr>
@@ -351,21 +444,36 @@ export function SectorsList() {
               >
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleCreateGroups)}
+                  onSubmit={handleSubmit(
+                    typeModals.typeModalTwo === "editSector"
+                      ? handleEditSector
+                      : handleEditGroup
+                  )}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
+                  gap={4}
                 >
-                  <Text>Editar Setor</Text>
+                  <Text>
+                    Editar{" "}
+                    {typeModals.typeModalTwo === "editSector"
+                      ? "Setor"
+                      : "Grupo"}
+                  </Text>
                   <Input
-                    {...register("name")}
-                    name="name"
+                    name=""
+                    value={
+                      typeModals?.typeModalTwo === "editSector"
+                        ? dataSelected?.sectorSelected?.name
+                        : dataSelected?.groupSelected?.name
+                    }
+                    onChange={(ev) => handleInformationsInputModalTwo(ev)}
                     label="Nome do Setor"
                     mb="4"
                   />
-
-                  <Button w="100%" type="submit" colorScheme="green" m="2">
-                    Cadastrar
+                  <Button type="submit" w="full" colorScheme="yellow">
+                    {" "}
+                    Editar
                   </Button>
                 </FormControl>
               </GenericModal>

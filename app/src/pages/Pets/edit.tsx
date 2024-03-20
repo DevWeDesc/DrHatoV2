@@ -14,7 +14,7 @@ import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 
 export function EditPets() {
-  const { id , queueId} = useParams<{ id: string; queueId: string; }>();
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate();
   return (
     <ChakraProvider>
@@ -41,7 +41,7 @@ export function EditPets() {
             <Button
               colorScheme="yellow"
               leftIcon={<TbArrowBack size={24} />}
-              onClick={() => navigate("/Vets/Menu")}
+              onClick={() => navigate(`/Vets/workspace/${id}/${queueId}`)}
             >
               Voltar
             </Button>

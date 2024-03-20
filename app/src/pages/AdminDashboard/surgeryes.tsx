@@ -13,6 +13,8 @@ import {
   Thead,
   Tr,
   FormControl,
+  Grid,
+  TableContainer,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -30,18 +32,34 @@ import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
-import { QueryClient, useQuery } from "react-query";
+import { Query, QueryClient, useQuery } from "react-query";
+import data from "pdfkit/js/data";
+
+interface ISurgery {
+  id: number;
+  name: string;
+  price: string;
+  applicableToMale: boolean;
+  applicableToFemale: boolean;
+  sector_id: number;
+}
+
+interface ISurgeryData {
+  currentPage: number;
+  totalPages: number;
+  totalSurgeries: number;
+  surgeries: ISurgery[];
+}
+const queryClient = new QueryClient();
 
 export function AdminSurgery() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
-  const [surgeries, setSurgeries] = useState([]);
-  const queryClient = new QueryClient()
+  const [pageActual, setPageActual] = useState(1);
+  const [surgerySelected, setSurgerySelected] = useState({} as ISurgery);
 
-  const navigate = useNavigate();
-
-
+  console.log(surgerySelected);
 
   const handleCreateSurgerie: SubmitHandler<FieldValues> = async (values) => {
     try {
@@ -50,8 +68,9 @@ export function AdminSurgery() {
         price: parseInt(values.price),
       };
       await api.post("surgeries", data);
-      queryClient.invalidateQueries("surgeries")
-    
+      queryClient.invalidateQueries("surgeries");
+      refetch();
+      reset();
       toast.success("Cirurgia criada com sucesso");
     } catch (error) {
       toast.error("Falha ao criar nova cirurgia");
@@ -61,37 +80,50 @@ export function AdminSurgery() {
   async function DeleteSurgery(id: string | number) {
     try {
       await api.delete(`surgeries/${id}`);
-      queryClient.invalidateQueries("surgeries")
+      queryClient.invalidateQueries("surgeries");
       toast.success("Vacina deletada com sucesso!!");
+      refetch();
     } catch (error) {
-      toast.error("Falha ao Excluir Vacina!!");
+      toast.error("Falha ao Excluir cirurgia!!");
     }
   }
 
-  const handleEditSector: SubmitHandler<FieldValues> = async (values) => {
+  const handleEditSurgery: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
-        name: values.name,
+        name: surgerySelected.name,
+        price: parseFloat(surgerySelected.price),
       };
-      await api.put(`sectors/${values.id}`, data);
-      toast.success("Setor editado com sucesso");
-      navigate(0);
+      await api.put(`surgeries/${surgerySelected.id}`, data);
+      toast.success("Cirurgia editada com sucesso");
+      refetch();
     } catch (error) {
-      toast.error("Falha ao editar novo setor");
+      toast.error("Falha ao editar cirurgia");
     }
   };
 
-  async function getAllSurgeries() {
-    const Surgeries = await api.get("/surgeries");
-    setSurgeries(Surgeries.data.surgeries);
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["surgeries", pageActual],
+    queryFn: async () =>
+      await api.get(`/surgeries?page=${pageActual}`).then((res) => res.data),
+  });
+
+  const nextPage = () => {
+    if (pageActual < data.totalPages) setPageActual((prev) => prev + 1);
+  };
+
+  const backPage = () => {
+    if (pageActual > 1) setPageActual((prev) => prev - 1);
+  };
+
+  const handleSurgerySelected = (surgery: ISurgery) => {
+    setSurgerySelected(surgery);
+    setIsModalOpenTwo(true);
+  };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
   }
-
-  const { isLoading} = useQuery("surgeries", getAllSurgeries)
-
-  if(isLoading) {
-    return <LoadingSpinner/>
-  }
-
 
   return (
     <ChakraProvider>
@@ -99,31 +131,37 @@ export function AdminSurgery() {
         <Flex direction="column" h="100vh">
           <Header title="Painel de Cirurgia" url="/Admin/" />
 
-          <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
+          <Flex
+            w="100%"
+            my="6"
+            direction={{ base: "column", xl: "row" }}
+            mx="auto"
+            px="6"
+          >
             <Sidebar />
             <Box
               flex="1"
               borderRadius={8}
-              bg="gray.200"
-              p="8"
+              // bg="gray.200"
+              py={{ base: "8", xl: "0" }}
               maxH="44rem"
               overflow="auto"
             >
-              <Flex
-                mb="8"
-                justify="space-between"
-                direction="column"
-                align="center"
+              <Heading
+                fontSize={{ base: "xl", lg: "2xl" }}
+                fontWeight="bold"
+                w="100%"
+                mb="5"
+                display="flex"
+                flexDirection={{ base: "column", md: "row" }}
+                justifyContent="space-between"
+                gap={{ base: "2", md: 0 }}
               >
-                <Heading size="lg" fontWeight="bold" w="100%" mb="5">
-                  Painel de Cirurgia
-                </Heading>
-
+                Painel de Cirurgia
                 <Button
-                  as="a"
-                  width="100%"
-                  fontSize="20"
-                  py="8"
+                  width={{ base: "100%", md: "auto" }}
+                  fontSize={{ base: "md", lg: "lg" }}
+                  py="6"
                   colorScheme="whatsapp"
                   cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
@@ -131,76 +169,92 @@ export function AdminSurgery() {
                 >
                   Cadastrar nova Cirurgia
                 </Button>
-              </Flex>
+              </Heading>
+              <Grid
+                templateColumns={{
+                  base: "repeat(1, 1fr)",
+                  md: "repeat(3, 1fr)",
+                }}
+                placeItems="center"
+                gap="2"
+              >
+                <Button
+                  fontSize={{ base: "sm", lg: "md" }}
+                  colorScheme="teal"
+                  w="full"
+                  onClick={backPage}
+                >
+                  Voltar Página
+                </Button>
+                <Button
+                  fontSize={{ base: "sm", lg: "md" }}
+                  colorScheme="teal"
+                  w="full"
+                >
+                  Página atual:{pageActual}
+                </Button>
+                <Button
+                  fontSize={{ base: "sm", lg: "md" }}
+                  onClick={nextPage}
+                  colorScheme="teal"
+                  w="full"
+                >
+                  Próxima página
+                </Button>
+              </Grid>
 
-              <Table colorScheme="blackAlpha">
-                <Thead>
-                  <Tr>
-                    <Th fontSize="18" borderColor="black">
-                      Nome
-                    </Th>
-                    <Th fontSize="18" borderColor="black">
-                      Preço
-                    </Th>
-                    <Th borderColor="black"></Th>
-                  </Tr>
-                </Thead>
+              <TableContainer w="full">
+                <Table colorScheme="blackAlpha">
+                  <Thead>
+                    <Tr>
+                      <Th>Nome</Th>
+                      <Th>Preço</Th>
+                      <Th>Editar</Th>
+                      <Th>Deletar</Th>
+                    </Tr>
+                  </Thead>
 
-                <Tbody>
-                  {surgeries ? (
-                    surgeries.map((surgery: any) => (
-                      <Tr key={surgery.id}>
-                        <Td borderColor="black">
-                          <Text fontWeight="bold" color="gray.800">
-                            {surgery.name}
-                          </Text>
-                        </Td>
-                        <Td borderColor="black" fontWeight="bold">
-                          {" "}
-                          {surgery.price}
-                        </Td>
-
-                        <Td borderColor="black">
-                          <Flex gap="2" ml="30%">
+                  <Tbody>
+                    {data?.surgeries?.length > 0 ? (
+                      data?.surgeries.map((surgery: ISurgery) => (
+                        <Tr key={surgery.id}>
+                          <Td fontSize="sm">{surgery.name}</Td>
+                          <Td fontSize="sm"> {surgery.price}</Td>
+                          <Td>
+                            {" "}
                             <Button
-                              as="a"
                               size="sm"
                               fontSize="sm"
                               colorScheme="yellow"
                               leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => setIsModalOpenTwo(true)}
+                              onClick={() => handleSurgerySelected(surgery)}
                             >
                               Editar Cirurgia
                             </Button>
-                            {/* <Button
-                              as="a"
-                              size="md"
-                              fontSize="md"
-                              colorScheme="red"
-                              leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => handleDeleteSector("")}
-                            >
-                              Deletar Cirurgia
-                            </Button> */}
+                          </Td>
 
+                          <Td>
                             <ConfirmationDialog
                               disabled={false}
                               icon={<BsFillTrashFill fill="white" size={16} />}
                               buttonTitle="Deletar Cirurgia"
-                              whatIsConfirmerd="Tem certeza que deseja Excluir essa Cirurgia?"
+                              whatIsConfirmerd={`Tem certeza que deseja Excluir a Cirurgia ${surgery.name}?`}
                               describreConfirm="Excluir a Cirurgia é uma ação irreversivel, tem certeza que deseja excluir?"
                               callbackFn={() => DeleteSurgery(surgery.id)}
                             />
-                          </Flex>
-                        </Td>
-                      </Tr>
-                    ))
-                  ) : (
-                    <LoadingSpinner />
-                  )}
-                </Tbody>
-              </Table>
-              <GenericModal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
+                          </Td>
+                        </Tr>
+                      ))
+                    ) : (
+                      <LoadingSpinner />
+                    )}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+              <GenericModal
+                isOpen={isModalOpen}
+                onRequestClose={() => setIsModalOpen(false)}
+              >
                 <FormControl
                   as="form"
                   onSubmit={handleSubmit(handleCreateSurgerie)}
@@ -234,34 +288,41 @@ export function AdminSurgery() {
               >
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleEditSector)}
+                  onSubmit={handleSubmit(handleEditSurgery)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
                 >
-                  <Text pb="15">Editar Centro cirurgico</Text>
+                  <Text pb="15">Editar Cirurgia</Text>
+
                   <Input
-                    {...register("id")}
-                    name="id"
-                    label="Id da cirurgia"
-                    mb="4"
-                  />
-                  <Input
-                    {...register("name")}
+                    onChange={(ev) =>
+                      setSurgerySelected({
+                        ...surgerySelected,
+                        name: ev.target.value,
+                      })
+                    }
+                    value={surgerySelected.name}
                     name="name"
                     label="Nome da cirurgia"
                     mb="4"
                   />
 
                   <Input
-                    {...register("id")}
-                    name="id"
+                    onChange={(ev) =>
+                      setSurgerySelected({
+                        ...surgerySelected,
+                        price: ev.target.value,
+                      })
+                    }
+                    value={surgerySelected.price}
+                    name="price"
                     label="Preço da cirurgia"
                     mb="4"
                   />
 
-                  <Button w="100%" type="submit" colorScheme="green" m="2">
-                    Cadastrar
+                  <Button w="100%" type="submit" colorScheme="yellow" m="2">
+                    Editar
                   </Button>
                 </FormControl>
               </GenericModal>

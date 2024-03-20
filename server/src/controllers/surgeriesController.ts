@@ -40,6 +40,32 @@ export const surgeriesController = {
     }
   },
 
+  editSurgery: async (request: FastifyRequest, reply: FastifyReply) => {
+    const SurgerieSchema = z.object({
+      name: z.string(),
+      price: z.number(),
+    });
+    const SurgerieParams = z.object({
+      id: z.string(),
+    });
+    const { name, price } = SurgerieSchema.parse(request.body);
+    const { id } = SurgerieParams.parse(request.params);
+    try {
+      await prisma.surgeries.update({
+        where: { id: parseInt(id) },
+        data: {
+          name,
+          price,
+        },
+      });
+
+      reply.send("cirurgia editada com sucesso!").status(200);
+    } catch (error) {
+      reply.send({ message: error });
+      console.log(error);
+    }
+  },
+
   getSurgeries: async (
     request: FastifyRequest<{
       Querystring: { page: string; sex?: string };
@@ -106,75 +132,67 @@ export const surgeriesController = {
     }
   },
 
-  getSurgeriesByLetters: async (request: FastifyRequest, reply: FastifyReply) => {
-      try {
-          const getSurgeriesByLetterSchema = z.object({
-            letter: z.string(),
-            page: z.coerce.number()
-          })
-          const {letter, page} = getSurgeriesByLetterSchema.parse(request.params)
-          const currentPage = page || 1;
-          // Obtenha o número total de usuários.
-          const totalSurgeries = await prisma.surgeries.count();
-          // Calcule o número de páginas.
-          const totalPages = Math.ceil(totalSurgeries / 35);
+  getSurgeriesByLetters: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
+    try {
+      const getSurgeriesByLetterSchema = z.object({
+        letter: z.string(),
+        page: z.coerce.number(),
+      });
+      const { letter, page } = getSurgeriesByLetterSchema.parse(request.params);
+      const currentPage = page || 1;
+      // Obtenha o número total de usuários.
+      const totalSurgeries = await prisma.surgeries.count();
+      // Calcule o número de páginas.
+      const totalPages = Math.ceil(totalSurgeries / 35);
 
-          const surgeries =  await prisma.surgeries.findMany({
-            skip: (currentPage - 1) * 35,
-            take: 35,
-            where: {name: {startsWith: letter.toUpperCase()}}
-          })
+      const surgeries = await prisma.surgeries.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: { name: { startsWith: letter.toUpperCase() } },
+      });
 
-          reply.
-          status(200).send({
-            currentPage,
-            totalPages,
-            totalSurgeries,
-            surgeries,
-          })
-          
-
-
-      } catch (error) {
-          console.log(error);
-      }
-  },
-  
-  getSurgeriesByName: async (request: FastifyRequest, reply: FastifyReply) => {
-   
-      try {
-        const getSurgeriesByLetterSchema = z.object({
-          name: z.string(),
-          page: z.coerce.number()
-        })
-        const {name, page} = getSurgeriesByLetterSchema.parse(request.params)
-        const currentPage = page || 1;
-        // Obtenha o número total de usuários.
-        const totalSurgeries = await prisma.surgeries.count();
-        // Calcule o número de páginas.
-        const totalPages = Math.ceil(totalSurgeries / 35);
-
-        const surgeries =  await prisma.surgeries.findMany({
-          skip: (currentPage - 1) * 35,
-          take: 35,
-          where: {name: {contains: name}}
-        })
-
-        reply.
-        status(200).send({
-          currentPage,
-          totalPages,
-          totalSurgeries,
-          surgeries,
-        })
-        
-
-
+      reply.status(200).send({
+        currentPage,
+        totalPages,
+        totalSurgeries,
+        surgeries,
+      });
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-  
+  },
 
+  getSurgeriesByName: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const getSurgeriesByLetterSchema = z.object({
+        name: z.string(),
+        page: z.coerce.number(),
+      });
+      const { name, page } = getSurgeriesByLetterSchema.parse(request.params);
+      const currentPage = page || 1;
+      // Obtenha o número total de usuários.
+      const totalSurgeries = await prisma.surgeries.count();
+      // Calcule o número de páginas.
+      const totalPages = Math.ceil(totalSurgeries / 35);
+
+      const surgeries = await prisma.surgeries.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: { name: { contains: name } },
+      });
+
+      reply.status(200).send({
+        currentPage,
+        totalPages,
+        totalSurgeries,
+        surgeries,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   setSurgerieInPet: async (
@@ -430,36 +448,31 @@ export const surgeriesController = {
     }
   },
 
+  getSurgeriePetDetails: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
+    try {
+      const GetSurgeriePetDetailSchema = z.object({
+        surgerieId: z.coerce.number(),
+      });
 
-  getSurgeriePetDetails: async (request: FastifyRequest,
-    reply: FastifyReply) => {
-      try {
-          const GetSurgeriePetDetailSchema = z.object({
-            surgerieId: z.coerce.number()
-          })
+      const { surgerieId } = GetSurgeriePetDetailSchema.parse(request.params);
 
-          const {surgerieId} = GetSurgeriePetDetailSchema.parse(request.params)
+      const surgerie = await prisma.surgeriesForPet.findUnique({
+        where: {
+          id: surgerieId,
+        },
+        include: { surgeriesReport: true },
+      });
 
-          const surgerie =  await prisma.surgeriesForPet.findUnique({
-            where: {
-              id: surgerieId
-            },
-            include: {surgeriesReport: true}
-          })
-
-          reply.send({
-            surgerie
-          })
-
-      } catch (error) {
-          reply.status(404).send({
-            message: error
-          })
-      }
-
-  }, 
-
-
-
-
+      reply.send({
+        surgerie,
+      });
+    } catch (error) {
+      reply.status(404).send({
+        message: error,
+      });
+    }
+  },
 };

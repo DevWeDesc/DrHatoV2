@@ -72,6 +72,9 @@ export const VaccineSchema = z.object({
   name: z.string(),
   price: z.number(),
   description: z.string(),
+  disponible: z.boolean().optional(),
+  applicableFemale: z.boolean().optional(),
+  applicableMale: z.boolean().optional(),
 });
 
 export const AdmissionSchema = z.object({
@@ -137,6 +140,9 @@ export const ExamSchema = z.object({
 
 export const GroupSchema = z.object({
   name: z.string(),
+});
+export const groupParams = z.object({
+  id: z.string(),
 });
 
 export const ProcedureSchema = z.object({

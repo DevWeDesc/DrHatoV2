@@ -4,6 +4,7 @@ import { surgeriesController } from "../controllers/surgeriesController";
 export async function surgeriesRoutes(app: FastifyInstance) {
   app.post("/surgeries", surgeriesController.createSurgerie);
   app.get("/surgeries", surgeriesController.getSurgeries);
+  app.put("/surgeries/:id", surgeriesController.editSurgery);
   app.post(
     "/surgeries/:id/:petId/:accId/:queueId",
     surgeriesController.setSurgerieInPet
@@ -30,10 +31,14 @@ export async function surgeriesRoutes(app: FastifyInstance) {
     surgeriesController.getPetOpenedSugerie
   );
 
+  app.get(
+    "/surgerie/details/:surgerieId",
+    surgeriesController.getSurgeriePetDetails
+  );
 
-  app.get('/surgerie/details/:surgerieId', surgeriesController.getSurgeriePetDetails)
-
-  app.get('/surgerie/letter/:letter/:page', surgeriesController.getSurgeriesByLetters)
-  app.get('/surgerie/name/:name/:page', surgeriesController.getSurgeriesByName)
-  
+  app.get(
+    "/surgerie/letter/:letter/:page",
+    surgeriesController.getSurgeriesByLetters
+  );
+  app.get("/surgerie/name/:name/:page", surgeriesController.getSurgeriesByName);
 }
