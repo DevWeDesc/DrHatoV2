@@ -301,7 +301,31 @@ export function ListExams() {
                         />
                       </Td>
                     </Tr>
-
+                    <Tr>
+                      <Td
+                        fontSize={{ base: "sm", lg: "md" }}
+                        fontWeight="medium"
+                        py={1}
+                      >
+                        Laboratório{" "}
+                      </Td>
+                      <Td py={1}>
+                        <Select
+                          borderColor="blackAlpha.800"
+                          _hover={{
+                            backgroundColor: "gray.100",
+                            borderColor: "blackAlpha.800",
+                          }}
+                          // {...register("sector")}
+                          name="sector"
+                        >
+                          <option value="Veterinário">Não Terceirizado</option>
+                          <option value="Veterinário">
+                            Laboratório de imagem
+                          </option>
+                        </Select>
+                      </Td>
+                    </Tr>
                     <Tr>
                       <Td
                         fontSize={{ base: "sm", lg: "md" }}
