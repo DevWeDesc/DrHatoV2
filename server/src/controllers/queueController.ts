@@ -18,7 +18,7 @@ export const queueController = {
     request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
   ) => {
-    const { queryType, vetPreference, moreInfos, openedBy, removePreference } = QueueSchema.parse(
+    const { queryType, vetPreference, moreInfos, openedBy, removePreference, healthInsuranceId, healthInsuranceName } = QueueSchema.parse(
       request.body
     );
     const { id } = request.params;
@@ -39,6 +39,8 @@ export const queueController = {
           isClosed: false,
           observations: moreInfos,
           openedBy,
+          healthInsuranceId,
+          healthInsuranceName,
           MedicineRecord: {
             connect: { petId: parseInt(id) },
           },

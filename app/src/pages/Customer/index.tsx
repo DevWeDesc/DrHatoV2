@@ -20,10 +20,10 @@ import {
   Input,
   Select,
   Checkbox,
-  Grid,
 } from "@chakra-ui/react";
 import { AiFillTags, BiHome, TbArrowBack } from "react-icons/all";
 import { toast } from "react-toastify";
+
 
 import {
   WorkSpaceContainer,
@@ -33,6 +33,7 @@ import {
 import { PetProps } from "../Pets/details";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { CreatePetsForm } from "../../components/Forms/CreatePetsForm";
+import { QueryClient, useQuery } from "react-query";
 
 interface CustomerProps {
   id: string | number;
@@ -53,14 +54,22 @@ type VetsProps = {
   username: string;
   id: number;
   consultName: string;
-};
+}
+
+type HealthInsuranceProps = {
+  id: number;
+	planName: string;
+	disponible: boolean
+	planProvider: string;
+}
 
 export function CustomerDetails() {
   const { id } = useParams<{ id: string }>();
   const user = JSON.parse(localStorage.getItem("user") as string);
   const navigate = useNavigate();
+  const queryClient = new QueryClient()
   const [petId, setPetId] = useState("");
-  const [userVets, setUserVets] = useState<VetsProps[]>([]);
+  const [userVets, setUserVets] = useState<VetsProps[]>([])
   const [queryType, setQueryType] = useState("");
   const [notPreferences, setNotPreferences] = useState(false);
   const [vetPreference, setVetPreference] = useState("");
@@ -81,12 +90,18 @@ export function CustomerDetails() {
   });
   const [petSelected, setPetSelected] = useState<any>([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [reload, setReload] = useState(false);
   const [vetName, setVetName] = useState("");
+  const [healthInsurance, setHealthInsurance] = useState<HealthInsuranceProps[]>([])
+  const [healthId, setHealthId] = useState(0)
+
+  async function loadHealthInsurances() {
+    const response = await api.get("/health/insurance")
+    setHealthInsurance(response.data.healthInsurance)
+  }
 
   async function loadCustomer() {
     const response = await api.get(`/customers/${id}`);
-    setCustomer(response.data.customer);
+    setCustomer(response.data.customer); 
   }
 
   async function loadVets() {
@@ -94,48 +109,44 @@ export function CustomerDetails() {
     setUserVets(response.data.vets);
   }
 
+  
+  useQuery('healthInsuranceReception', loadHealthInsurances)
+  useQuery('customerReception', loadCustomer)
+  useQuery('vetsReception', loadVets)
+
   async function loadVetsByName() {
     const response = await api.get(`/users/vets/name/${vetName}`);
     setUserVets(response.data);
+    queryClient.invalidateQueries('vetsReception')
   }
 
-  useEffect(() => {
-    loadVets();
-    loadCustomer();
-  }, []);
 
-  useEffect(() => {
-    loadVetsByName();
-  }, [vetName]);
 
-  useEffect(() => {
-    if (reload === true) {
-      loadCustomer();
-      setReload(false);
-    }
-  }, [reload]);
 
   async function setPetInQueue() {
     try {
+      const selectedHealth = healthInsurance.find(h => h.id === healthId)
+
       const data = {
+        healthInsuranceId: selectedHealth?.id, 
+        healthInsuranceName: selectedHealth?.planName,
         removePreference: notPreferences,
         vetPreference: vetPreference,
         queryType: queryType,
-        openedBy:
-          user.consultName.length >= 1
-            ? user.consultName
-            : `${user.name} - Id: ${user.id}`,
+        openedBy: user.consultName.length >= 1 ? user.consultName : `${user.name} - Id: ${user.id}`,
         moreInfos: moreInfos,
       };
 
+
       if (!!queryType && !!petSelected.id) {
-        if (notPreferences === false && vetPreference.length <= 1) {
-          toast.error("Selecione uma preferência");
-          return;
+        if(notPreferences === false && vetPreference.length <= 1) {
+          toast.error("Selecione uma preferência")
+          return 
         }
 
+
         await api.put(`queue/${petSelected.id}`, data);
-        navigate("/Recepcao/Change");
+        navigate("/Recepcao/Change")
         toast.success("Pet colocado na fila com sucesso!");
       } else {
         toast.error(`Selecione Pet/Tipo de Atendimento/Veterinário`);
@@ -155,80 +166,51 @@ export function CustomerDetails() {
             width="100%"
             height="100%"
           >
-            <Flex
-              alignItems="center"
-              w="full"
-              justifyContent="space-between"
-              gap="2"
-              flexDirection={{ base: "column", md: "row" }}
-              p={{ base: "4", lg: "2" }}
-            >
-              <Text
-                m="2"
-                fontSize={{ base: "xl", lg: "2xl" }}
-                fontWeight="bold"
-              >
+            <Flex align="center" gap="2">
+              <Text m="2" fontSize="2xl" fontWeight="bold">
                 WorkSpace Recepção
               </Text>
-              <Grid
-                w="full"
-                templateColumns={{
-                  base: "repeat(2, 1fr)",
-                  lg: "repeat(4, 1fr)",
-                }}
-                gap={1}
+              <Button
+                colorScheme="teal"
+                leftIcon={<BiHome size={24} />}
+                onClick={() => navigate("/Home")}
               >
-                <Button
-                  fontSize={{ base: "sm", lg: "md" }}
-                  colorScheme="teal"
-                  leftIcon={<BiHome />}
-                  onClick={() => navigate("/Home")}
-                >
-                  Home
-                </Button>
-                <Button
-                  fontSize={{ base: "sm", lg: "md" }}
-                  colorScheme="yellow"
-                  leftIcon={<TbArrowBack />}
-                  onClick={() => navigate("/Recepcao/Consultas")}
-                >
-                  Voltar
-                </Button>
-                <Grid
-                  gap={1}
-                  gridColumn="span 2"
-                  w="full"
-                  templateColumns={{ lg: "repeat(4, 1fr)" }}
-                >
-                  <Button
-                    fontSize={{ base: "sm", lg: "md" }}
-                    gridColumn="span 2"
-                    w="full"
-                    colorScheme="whatsapp"
-                    onClick={() => navigate("/Recepcao/Consultas")}
-                  >
-                    Consultas
-                  </Button>
-                  <Button
-                    gridColumn="span 2"
-                    fontSize={{ base: "sm", lg: "md" }}
-                    w="full"
-                    colorScheme="whatsapp"
-                    onClick={() => navigate("/Recepcao/Create")}
-                  >
-                    Cadastro de cliente
-                  </Button>
-                </Grid>
-              </Grid>
+                HOME
+              </Button>
+
+              <Button
+                colorScheme="yellow"
+                leftIcon={<TbArrowBack size={24} />}
+                onClick={() => navigate("/Recepcao/Consultas")}
+              >
+                Voltar
+              </Button>
+            </Flex>
+
+            <Flex justify="space-between" gap="2" m="2">
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate("/Recepcao/Consultas")}
+              >
+                Ir até consultas
+              </Button>
+              <Button
+                height={8}
+                colorScheme="whatsapp"
+                onClick={() => navigate("/Recepcao/Create")}
+              >
+                Ir até cadastro de cliente
+              </Button>
             </Flex>
           </Flex>
         </WorkSpaceHeader>
-        <WorkSpaceContent>
+        <WorkSpaceContent style={{ height: "90vh" }}>
           <Flex
             direction="column"
             w="100%"
             align="center"
-            // bgColor="gray.100"
+            bgColor="gray.100"
             rounded={4}
             p="4"
             className="div1"
@@ -249,7 +231,7 @@ export function CustomerDetails() {
                 <Text
                   fontWeight="black"
                   bgColor="white"
-                  // width="400px"
+                  width="400px"
                   rounded={4}
                 >
                   {customer.name}
@@ -265,7 +247,7 @@ export function CustomerDetails() {
                 <Text
                   fontWeight="black"
                   bgColor="white"
-                  // width="400px"
+                  width="400px"
                   rounded={4}
                 >
                   {customer.adress}
@@ -273,7 +255,7 @@ export function CustomerDetails() {
                 <Text
                   fontWeight="black"
                   bgColor="white"
-                  // width="400px"
+                  width="400px"
                   rounded={4}
                 >
                   {customer.tell ? customer.tell : "Não informado"}
@@ -281,7 +263,7 @@ export function CustomerDetails() {
                 <Text
                   fontWeight="black"
                   bgColor="white"
-                  // width="400px"
+                  width="400px"
                   rounded={4}
                 >
                   {customer.phone}
@@ -297,7 +279,7 @@ export function CustomerDetails() {
                 <Text
                   fontWeight="black"
                   bgColor="white"
-                  // width="400px"
+                  width="400px"
                   rounded={4}
                 >
                   {customer.rg ? customer.rg : "Não informado"}
@@ -336,7 +318,7 @@ export function CustomerDetails() {
                 <Text
                   fontWeight="black"
                   bgColor="green.100"
-                  // width="500px"
+                  width="500px"
                   rounded={4}
                 >
                   SELECIONE UM ANIMAL PARA CONTINUAR
@@ -511,9 +493,13 @@ export function CustomerDetails() {
                       <Tr>
                         <Th py="0.5">Plano de Saúde</Th>
                         <Th py="0.5" colSpan={3}>
-                          <Select bg={"white"} borderColor="black">
-                            <option value="">Não possui</option>
-                            <option value="">PetLove</option>
+                          <Select bg={"white"} borderColor="black" onChange={(ev) => setHealthId(Number(ev.target.value))}>
+                           <option value="none">Não possui</option>
+                            {
+                              healthInsurance.map((health) => <option value={health.id}>{health.planName}</option>)
+                            }
+                            
+                     
                           </Select>
                         </Th>
                       </Tr>
@@ -554,7 +540,7 @@ export function CustomerDetails() {
               borderColor="gray.900"
               bgColor="white"
               height="80%"
-            />
+            ></Textarea>
           </Flex>
 
           <Flex
@@ -572,47 +558,40 @@ export function CustomerDetails() {
               w="100%"
               overflow="auto"
               height="100%"
-              maxH="40vh"
             >
-              <Flex direction="column" overflow="auto" height="100%">
-                <Flex
-                  align="center"
-                  justify="space-between"
-                  gap={8}
-                  w="100%"
-                  p="2"
-                  mb="2"
-                  position="relative"
-                >
-                  <Text fontWeight="bold">SELECIONAR VETERINÁRIO:</Text>
-                  <Input
-                    bgColor="white"
-                    w="180px"
-                    border="1px"
-                    placeholder="Pesquisar"
-                    name="searchVet"
-                    onChange={(ev) => {
-                      setVetName(ev.target.value);
-                      setVetPreference("");
-                    }}
-                  />
+              <Flex direction="column" overflow="auto" height="100%"  >
+                <Flex align="center" justify="space-between" gap={8} w="100%" p="2" mb="2" position="relative">
+                <Text  fontWeight="bold" >
+                  SELECIONAR VETERINÁRIO:
+                </Text>
+                <Input
+                bgColor="white"
+                w="180px"
+                border="1px"
+                placeholder="Pesquisar"
+                name="searchVet"
+                onChange={(ev) => {
+                  setVetName(ev.target.value)
+                  setVetPreference("")
+                  loadVetsByName()
+                }}
+                />
                 </Flex>
-                <HStack>
-                  <Checkbox
-                    onChange={(ev) => setNotPreferences(ev.target.checked)}
-                    border="2px"
-                    mb="4px"
-                  />
-                  <Text fontWeight="bold">Sem preferência</Text>
-                </HStack>
+                        <HStack>
+                          <Checkbox
+                          onChange={(ev) => setNotPreferences(ev.target.checked)}
+                           border='2px' mb="4px"  />
+                          <Text fontWeight="bold">Sem preferência</Text>
+                        </HStack>
                 {userVets.map((vet) => (
                   <RadioGroup
                     mt={2}
                     key={vet.id}
                     onChange={setVetPreference}
-                    value={notPreferences === true ? "" : vetPreference}
+                    value={notPreferences === true ? '' : vetPreference}
                   >
                     <Flex direction="column">
+                       
                       <Radio
                         mb="2"
                         borderColor="teal.800"
@@ -744,7 +723,7 @@ export function CustomerDetails() {
               </Text>
               <CreatePetsForm
                 onRequestClose={() => setModalOpen(false)}
-                reloadPets={() => setReload(true)}
+                
               />
             </GenericModal>
           </Flex>
@@ -753,3 +732,4 @@ export function CustomerDetails() {
     </ChakraProvider>
   );
 }
+

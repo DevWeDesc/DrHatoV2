@@ -36,6 +36,7 @@ export const proceduresController = {
       minAge,
       maxAge,
       sector_id,
+      health_id
     } = ProcedureSchema.parse(request.body);
     try {
       await prisma.procedures.create({
@@ -52,7 +53,10 @@ export const proceduresController = {
           applicableMale,
           maxAge,
           minAge,
-          sector: { connect: { id: parseInt(sector_id) } },
+          sector: { connect: { id: parseInt(sector_id) }, },
+          HealthInsurance: {
+            connect: {id:  health_id}
+          }
         },
       });
       reply.status(201).send("Procedimento criado!");
@@ -209,17 +213,58 @@ export const proceduresController = {
     } catch (error) {}
   },
 
+
+  getProcedureByHealthInsurance: async (request: FastifyRequest,reply: FastifyReply) => {
+    try {
+      const GetHealthInsuranceProcedureSchema = z.object({
+        planName: z.string(),
+        // planProvider: z.string(),
+        page: z.coerce.number()
+      })
+   
+      const {planName,page} = GetHealthInsuranceProcedureSchema.parse(request.params)
+      const currentPage = page || 1;
+      const procedures = await prisma.procedures.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {
+          HealthInsurance: {
+            planName: {contains: planName},
+            // planProvider: {equals: planProvider}
+          }
+        }
+      })
+
+     
+      const totalPages = Math.ceil(procedures.length / 35);
+
+      reply.send({
+        procedures,
+        currentPage,
+        totalPages,
+        totalProceds: procedures.length
+      })
+
+    } catch (error) {
+        console.log(error)
+    }
+  },
+
   getWithId: async (
-    request: FastifyRequest<{ Params: params }>,
+    request: FastifyRequest,
     reply: FastifyReply
   ) => {
-    const { id } = request.params;
+    const GetProceduresByIdSchema = z.object({
+      id: z.coerce.number()
+    })
+    const { id } = GetProceduresByIdSchema.parse(request.params);
     try {
       const procedure = await prisma.procedures.findUnique({
-        where: { id: parseInt(id) },
+        where: { id: id },
         include: {
           groups: { select: { name: true } },
           sector: { select: { name: true } },
+          HealthInsurance: true,
           appicableEspecies: true,
         },
       });

@@ -16,9 +16,10 @@ import {
 import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
+import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { PetDetaisl } from "../../interfaces";
+import { ConsultsPetDetails, PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
 
 interface ProceduresProps {
@@ -51,6 +52,9 @@ export default function ProceduresVets({
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [pagination, SetPagination] = useState(1)
+  const [consultDetails, setConsultDetails] = useState(
+    {} as ConsultsPetDetails
+  );
   const [paginationInfos, setPaginationInfos] = useState({
     totalPages: 0,
     currentPage: 0,
@@ -68,6 +72,15 @@ export default function ProceduresVets({
     const pet = await api.get(`/pets/${id}`);
     setPetDetails(pet.data);
   }
+
+  async function getQueueDetails() {
+    const response = await api.get(`/queue/details/${queueId}`)
+    setConsultDetails(response.data)
+  }
+
+
+ useQuery('queueDetails', getQueueDetails)
+
   async function GetData() {
     switch (true) {
       case query.length >= 1:
@@ -102,17 +115,17 @@ export default function ProceduresVets({
         InAdmission,
       };
 
-      // const validateEspecie = procedures
-      //   .find((p) => p.id === procedureId)
-      //   ?.appicableEspecies?.some((e) => e.name === petDetails.especie);
+      const validateEspecie = procedures
+        .find((p) => p.id === procedureId)
+        ?.appicableEspecies?.some((e) => e.name === petDetails.especie);
 
-      // console.log("VALIDATE ESP", validateEspecie);
 
-      // if (validateEspecie === false) {
-      //   return toast.warning(
-      //     "Essa especie não e permitida para esse procedimento!"
-      //   );
-      // }
+
+      if (validateEspecie === false) {
+        return toast.warning(
+          "Essa especie não e permitida para esse procedimento!"
+        );
+      }
 
       if (InAdmission === true) {
         await api.post(
@@ -160,6 +173,16 @@ export default function ProceduresVets({
     }
   }
 
+
+  async function getProcedureByHealthInsurance() {
+    const response = await api.get(`/procedures/health/${consultDetails.healthInsuranceName}/${pagination}`)
+    setProcedures(response.data.procedures);
+    setPaginationInfos({
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      totalProceds: response.data.totalProceds,
+    });
+  }
   useEffect(() => {
     GetData();
     GetPet();
@@ -262,10 +285,14 @@ export default function ProceduresVets({
           overflowY="auto"
         >
           <HStack>
-            {" "}
+      
+                {
+                  consultDetails ? <Button onClick={() => getProcedureByHealthInsurance()} colorScheme="whatsapp" w="300px">Plano de Saúde</Button> : <></>
+                }
             <Button colorScheme="teal" w="300px">
               Pesquisar
-            </Button>{" "}
+            </Button>
+          
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <AiOutlineSearch />

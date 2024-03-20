@@ -311,6 +311,8 @@ export interface PetDetaisl {
 }
 
 export type ConsultsPetDetails = {
+  healthInsuranceName: string;
+  healthInsuranceId: number;
   id: string;
   openedDate: string;
   openedBy: string;

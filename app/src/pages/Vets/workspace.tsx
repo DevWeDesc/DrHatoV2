@@ -13,15 +13,11 @@ import {
   Td,
   Tbody,
   HStack,
-  VStack,
-  Select,
   TableContainer,
   Th,
-  Input,
   Text,
   Flex,
   Grid,
-  Radio,
   Checkbox,
 } from "@chakra-ui/react";
 import {
@@ -153,9 +149,12 @@ export function WorkSpaceVet() {
     });
   }
 
+
+
   const { isLoading } = useQuery("getPetDetailsInfos", {
     queryFn: getDetailsInformations,
   });
+
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -297,6 +296,7 @@ export function WorkSpaceVet() {
       break;
   }
 
+  console.log("QUEUE DETAILS", consultDetails)
   return (
     <ChakraProvider>
       <WorkSpaceContainer>
@@ -574,11 +574,13 @@ export function WorkSpaceVet() {
                     <Th borderRight="1px solid black">
                       <Text fontWeight="bold">Plano de Saúde</Text>
                     </Th>
-                    <Th>
-                      <Text fontWeight="bold">
-                        {pet.more != "" ? "PetLove" : "Sem plano de Saúde"}
-                      </Text>
-                    </Th>
+
+               
+                        {
+                          consultDetails.healthInsuranceId ? <Th fontWeight="black" bgColor="green.100">{consultDetails.healthInsuranceName}</Th> : <Th fontWeight="bold">Sem plano para está consulta</Th>
+                        }
+                   
+                  
                   </Tr>
                 </Thead>
               </Table>

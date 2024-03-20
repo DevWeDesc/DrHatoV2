@@ -107,6 +107,8 @@ export const QueueSchema = z.object({
   observations: z.string().optional(),
   openedBy: z.string().optional(),
   removePreference: z.boolean().optional(),
+  healthInsuranceId: z.number().optional(),
+  healthInsuranceName: z.string().optional(),
 });
 
 export const ExamsType = ["lab", "image"];
@@ -151,6 +153,7 @@ export const ProcedureSchema = z.object({
   priceFour: z.any().optional(),
   minAge: z.any().optional(),
   maxAge: z.any().optional(),
+  health_id: z.any().optional(),
 });
 
 export const SearchSchema = z.object({
