@@ -13,22 +13,16 @@ import {
   Thead,
   Tr,
   FormControl,
-  HStack,
-  CheckboxGroup,
-  Checkbox,
   Textarea,
   FormLabel,
   TableContainer,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
-import { Paginaton } from "../../components/admin/Pagination";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { LoadingSpinner } from "../../components/Loading";
-import { DbContext } from "../../contexts/DbContext";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
@@ -37,11 +31,19 @@ import { Input } from "../../components/admin/Input";
 import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
 
+interface IBeds {
+  id: number | string;
+  name: string;
+  totalBeds: string;
+  price: number;
+}
+
 export function Hospitalization() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
-  const [beds, setBeds] = useState<any>([]);
+  const [beds, setBeds] = useState<IBeds[]>([]);
+  const [bedSelected, setBedSelected] = useState({} as IBeds);
   const [reloadData, setReloadData] = useState<boolean>(false);
 
   function openModal() {
@@ -57,6 +59,14 @@ export function Hospitalization() {
   function closeModalTwo() {
     setIsModalOpenTwo(false);
   }
+  const handleSelectSector = (bed: IBeds) => {
+    setBedSelected({
+      id: bed.id,
+      name: bed.name,
+      totalBeds: bed.totalBeds,
+      price: bed.price,
+    });
+  };
 
   const handleCreateSector: SubmitHandler<FieldValues> = async (values) => {
     try {
@@ -87,10 +97,9 @@ export function Hospitalization() {
   const handleEditSector: SubmitHandler<FieldValues> = async (values) => {
     try {
       const data = {
-        name: values.name,
-        totalBeds: values.totalBeds,
+        name: bedSelected.name,
       };
-      await api.put(`sectors/${values.id}`, data);
+      await api.put(`sectors/${bedSelected.id}`, data);
       setReloadData(true);
       toast.success("Leitos editado com sucesso");
     } catch (error) {
@@ -186,7 +195,7 @@ export function Hospitalization() {
                       </Thead>
                       <Tbody>
                         {beds ? (
-                          beds.map((bed: any) => (
+                          beds.map((bed: IBeds) => (
                             <Tr key={bed.id}>
                               <Td fontSize={{ base: "12", lg: "sm" }}>
                                 {bed.name}
@@ -210,7 +219,10 @@ export function Hospitalization() {
                                   fontSize="sm"
                                   colorScheme="yellow"
                                   leftIcon={<Icon as={RiPencilLine} />}
-                                  onClick={() => openModalTwo()}
+                                  onClick={() => {
+                                    openModalTwo();
+                                    handleSelectSector(bed);
+                                  }}
                                 >
                                   Editar Leito
                                 </Button>
@@ -288,28 +300,40 @@ export function Hospitalization() {
                     alignItems="center"
                   >
                     <Text pb="15">Editar Leito</Text>
-                    <Input
+                    {/* <Input
                       {...register("id")}
                       name="id"
                       label="Id do Leito"
                       mb="4"
-                    />
+                    /> */}
                     <Input
-                      {...register("name")}
+                      defaultValue={bedSelected.name}
+                      onChange={(ev) =>
+                        setBedSelected({
+                          ...bedSelected,
+                          name: ev.target.value,
+                        })
+                      }
                       name="name"
                       label="Nome do Leito"
                       mb="4"
                     />
 
                     <Input
-                      {...register("id")}
+                      defaultValue={bedSelected.totalBeds}
+                      onChange={(ev) =>
+                        setBedSelected({
+                          ...bedSelected,
+                          totalBeds: ev.target.value,
+                        })
+                      }
                       name="id"
                       label="Quantidade de Leitos"
                       mb="4"
                     />
 
-                    <Button w="100%" type="submit" colorScheme="green" m="2">
-                      Cadastrar
+                    <Button w="100%" type="submit" colorScheme="yellow" m="2">
+                      Editar
                     </Button>
                   </FormControl>
                 </GenericModal>

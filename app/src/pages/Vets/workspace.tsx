@@ -304,7 +304,7 @@ export function WorkSpaceVet() {
           <Flex
             justify="space-between"
             align="center"
-            width="100vw"
+            width="100%"
             height="100%"
             direction={{ base: "column", md: "row" }}
           >
@@ -356,6 +356,7 @@ export function WorkSpaceVet() {
               >
                 Formulários
               </Button>
+
               <Button
                 py={4}
                 whiteSpace="normal"
@@ -395,6 +396,19 @@ export function WorkSpaceVet() {
                 onClick={() => setMedicineModalOpen(true)}
               >
                 Medicar Animal
+              </Button>
+              <Button
+                py={4}
+                whiteSpace="normal"
+                onClick={
+                  () => setIsMedicineRecordOpen(true)
+                  // navigate(`/Pets/MedicineRecord/${id}/${queueId}`)
+                }
+                leftIcon={<MdPets />}
+                colorScheme="linkedin"
+                fontSize={{ base: "sm" }}
+              >
+                Prontuário do Pet
               </Button>
               <Button
                 isDisabled={pet.isBusy}
@@ -453,19 +467,6 @@ export function WorkSpaceVet() {
                 Exames
               </Button>
 
-              <Button
-                py={4}
-                whiteSpace="normal"
-                onClick={
-                  () => setIsMedicineRecordOpen(true)
-                  // navigate(`/Pets/MedicineRecord/${id}/${queueId}`)
-                }
-                leftIcon={<MdPets />}
-                colorScheme="linkedin"
-                fontSize={{ base: "sm" }}
-              >
-                Prontuário do Pet
-              </Button>
               <Button
                 isDisabled={queueId != "Sem consulta aberta" ? false : true}
                 colorScheme="red"

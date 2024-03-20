@@ -3,7 +3,14 @@ import React from "react";
 import InputMask, { ReactInputMask } from "react-input-mask";
 import { PropsInputs } from "./CEPInput";
 
-export function CPFInput({ value, onChange, id, name, height, width }: PropsInputs) {
+export function CPFInput({
+  value,
+  onChange,
+  id,
+  name,
+  height,
+  width,
+}: PropsInputs) {
   return (
     <InputMask
       style={{
@@ -13,6 +20,15 @@ export function CPFInput({ value, onChange, id, name, height, width }: PropsInpu
         borderRadius: "5px",
         paddingLeft: "15px",
         transition: "border-color 0.3s ease",
+      }}
+      onMouseOver={(e) => {
+        (e.target.style.backgroundColor = "#e6ebee"),
+          (e.target.style.transition = "0.3s");
+      }}
+      onMouseLeave={(e) => {
+        (e.target.style.backgroundColor = "#FFF"),
+          (e.target.style.transition = "0.3s"),
+          (e.target.style.borderColor = "#000");
       }}
       onFocus={(e) => {
         (e.target.style.backgroundColor = "#F7FAFC"),
@@ -31,6 +47,6 @@ export function CPFInput({ value, onChange, id, name, height, width }: PropsInpu
       name={name}
       width={width}
       height={height}
-      />
+    />
   );
 }
