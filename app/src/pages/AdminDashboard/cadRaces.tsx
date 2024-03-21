@@ -3,18 +3,18 @@ import {
   Button,
   ChakraProvider,
   Flex,
-  FormControl,
   Heading,
   Icon,
   Table,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { RiAddLine, RiPencilLine } from "react-icons/ri";
+import { useState } from "react";
+import { RiAddLine } from "react-icons/ri";
 import { useParams } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
 import { Sidebar } from "../../components/admin/Sidebar";
@@ -25,8 +25,15 @@ import { Input } from "../../components/admin/Input";
 import { toast } from "react-toastify";
 import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
+import { useQuery } from "react-query";
+import { LoadingSpinner } from "../../components/Loading";
+import { SubmitHandler, useForm } from "react-hook-form";
 
-interface EspProps {
+interface IEspecieData {
+  esp: IEspecieObject;
+}
+
+interface IEspecieObject {
   id: number;
   name: string;
   race: Array<{
@@ -35,61 +42,62 @@ interface EspProps {
   }>;
 }
 
+interface IFormInput {
+  raceName: string;
+}
+
 export function AdminCadRaces() {
-  const [especies, setEspecies] = useState({} as EspProps);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reloadData, setReloadData] = useState(true);
   const { espId } = useParams<{ espId: string }>();
-  const [raceName, setRaceName] = useState("");
-
-  async function getEspecies() {
-    const especie = await api.get(`/pets/especie/${espId}`);
-    setEspecies(especie.data.esp);
-  }
-
-  // useEffect(() => {
-  //   getEspecies();
-  // }, []);
+  const {
+    reset,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormInput>();
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["racesData"],
+    queryFn: async () =>
+      await api
+        .get<IEspecieData>(`/pets/especie/${espId}`)
+        .then((res) => res.data.esp),
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   function openModal() {
     setIsModalOpen(true);
   }
+
   function closeModal() {
     setIsModalOpen(false);
   }
 
-  async function hadleNewRace() {
-    try {
-      const data = {
-        espId: Number(espId),
-        name: raceName,
-      };
-      await api.post(`/pets/races`, data);
-      toast.success("Raça cadastrada com sucesso");
-      setReloadData(true);
-    } catch (error) {
-      toast.error("Falha ao realizar cadastro de nova raça");
-    }
-  }
+  const onSubmit: SubmitHandler<IFormInput> = async (values) => {
+    const data = {
+      espId: Number(espId),
+      name: values.raceName,
+    };
+    await api
+      .post(`/pets/races`, data)
+      .then(() => {
+        reset();
+        refetch();
+        closeModal();
+        toast.success("Raça cadastrada com sucesso");
+      })
+      .catch(() => toast.error("Falha ao realizar cadastro de nova raça"));
+  };
 
   async function DeleteRace(RaceId: string | number) {
-    console.log(RaceId);
     await api
       .delete(`/pets/races/${RaceId}`)
       .then(() => {
         toast.success("Raça deletada com sucesso!!");
-        setReloadData(true);
+        refetch();
       })
       .catch(() => toast.error("Algo deu errado!!"));
   }
 
-  useEffect(() => {
-    if (reloadData === true) {
-      getEspecies();
-      setReloadData(false);
-    }
-  }, [reloadData]);
-
+  if (isLoading) return <LoadingSpinner />;
   return (
     <ChakraProvider>
       <AdminContainer>
@@ -122,7 +130,7 @@ export function AdminCadRaces() {
                 w="100%"
                 mb="5"
               >
-                Painel de Raças - Especie: {especies.name}
+                Painel de Raças - Especie: {data?.name}
                 <Button
                   as="a"
                   fontSize={{ base: "md", xl: "lg" }}
@@ -131,7 +139,7 @@ export function AdminCadRaces() {
                   cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
                   mb="2"
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={openModal}
                 >
                   Cadastrar nova Raça
                 </Button>
@@ -146,7 +154,7 @@ export function AdminCadRaces() {
                 </Thead>
 
                 <Tbody>
-                  {especies?.race?.map((race) => (
+                  {data?.race?.map((race) => (
                     <Tr key={race.id}>
                       <Td>{race.name}</Td>
 
@@ -170,21 +178,29 @@ export function AdminCadRaces() {
         </Flex>
       </AdminContainer>
       <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
-        <Input
-          onChange={(ev) => setRaceName(ev.target.value)}
-          name="name"
-          label="Nome da Raça"
-          mb="4"
-        />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Input
+            mb={1}
+            {...register("raceName", { required: true })}
+            name="raceName"
+            label="Nome da Raça"
+          />
+          {errors.raceName?.type === "required" && (
+            <Text
+              mb="2"
+              textAlign="center"
+              fontWeight="semibold"
+              fontSize="sm"
+              textColor="red.500"
+            >
+              Nome da raça é Obrigatório!
+            </Text>
+          )}
 
-        <Button
-          onClick={() => hadleNewRace()}
-          w="100%"
-          colorScheme="green"
-          m="2"
-        >
-          Cadastrar
-        </Button>
+          <Button type="submit" w="100%" colorScheme="green" my="2">
+            Cadastrar
+          </Button>
+        </form>
       </GenericModal>
     </ChakraProvider>
   );
