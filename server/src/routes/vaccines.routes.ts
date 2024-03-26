@@ -7,16 +7,12 @@ export async function vaccinesRoutes(app: FastifyInstance) {
 
   app.get("/vaccines/:letter/:page", vaccinesController.getVaccinesByLetter)
   app.get("/vaccines/name/:name/:page", vaccinesController.getVaccinesByName)
-  app.post(
-    "/vaccinepet/:id/:petId/:accId/:queueId",
-    vaccinesController.setVaccineInPet
-  );
+  app.post("/vaccinepet/:id/:petId/:accId/:queueId",vaccinesController.setVaccineInPet);
+  app.get("/vaccines/health/:planName/:page", vaccinesController.getVaccineByHealthInsurance)
+
   //   app.delete(
   //     "/vaccinepet/:id/:accId/:examPrice",
   //     vaccinesController.removeVaccine
   //   );
-  app.delete(
-    "/petvaccine/:id/:accId/:vaccinePrice/:linkedDebitId",
-    vaccinesController.removePetVaccine
-  );
+  app.delete("/petvaccine/:id/:accId/:vaccinePrice/:linkedDebitId",vaccinesController.removePetVaccine);
 }

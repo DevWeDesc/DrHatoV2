@@ -1,7 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../interface/PrismaInstance";
 import { VaccineSchema } from "../schemas/schemasValidator";
-import { getFormattedDateTime } from "../utils/getCurrentDate";
 import { accumulatorService } from "../services/accumulatorService";
 import { z } from "zod";
 
@@ -22,10 +21,21 @@ type body = {
 export const vaccinesController = {
   createVaccine: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const { name, description, price } = VaccineSchema.parse(request.body);
+    const CreateVaccineSchema = z.object({
+        name: z.string(),
+        price: z.number(),
+        description: z.string(),
+        disponible: z.boolean().optional(),
+        applicableFemale: z.boolean().optional(),
+        applicableMale: z.boolean().optional(),
+        health_id: z.number(),
+      });
+      const { name, description, price, applicableFemale, applicableMale, disponible, health_id } = CreateVaccineSchema.parse(request.body);
 
       await prisma.vaccines.create({
-        data: { name, description, price },
+        data: { name, description, price,disponible, applicableFemale, applicableMale, HealthInsurance: {
+          connect: {id: health_id }
+        }},
       });
       reply.send("Sucesso ao criar nova Vacina").status(200);
     } catch (error) {
@@ -244,12 +254,48 @@ export const vaccinesController = {
       await accumulatorService.removePriceToAccum(Number(examPrice), accId);
 
       await prisma.vaccinesForPet.delete({
-        where: { id: parseInt(id) },
+        where: { id: parseInt(id), },
       });
 
       reply.status(200).send("Sucesso ao deletar");
     } catch (error) {
       console.log(error);
+    }
+  },
+
+  getVaccineByHealthInsurance: async (request: FastifyRequest,reply: FastifyReply) => {
+    try {
+      const GetHealthInsuranceVaccineSchema = z.object({
+        planName: z.string(),
+        // planProvider: z.string(),
+        page: z.coerce.number()
+      })
+   
+      const {planName,page} = GetHealthInsuranceVaccineSchema.parse(request.params)
+      const currentPage = page || 1;
+      const vaccines = await prisma.vaccines.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {
+          HealthInsurance: {
+            planName: {contains: planName},
+            // planProvider: {equals: planProvider}
+          }
+        }
+      })
+
+     
+      const totalPages = Math.ceil(vaccines.length / 35);
+
+      reply.send({
+        vaccines,
+        currentPage,
+        totalPages,
+        totalProceds: vaccines.length
+      })
+
+    } catch (error) {
+        console.log(error)
     }
   },
 };

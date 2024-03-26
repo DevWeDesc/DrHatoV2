@@ -9,6 +9,8 @@ export async function examsRoutes(app: FastifyInstance) {
     examsController.removePetExam
   );
   app.get("/exams/old/detail/:examId", examsController.getExamDetailById);
+  
+  app.get("/exam/health/:planName/:page", examsController.getExamByHealthInsurance)
   app.get("/exams/old/all", examsController.getAllExams);
   app.get("/exams/old/:examName", examsController.getByName);
   app.get("/exams/old/letter/:firstLetter", examsController.getByLetter);
@@ -23,4 +25,5 @@ export async function examsRoutes(app: FastifyInstance) {
 
   app.patch('/exams/especies/:examId/:especieId', examsController.setEspecieInExam)
   app.patch('/exams/especies/remove/:examId/:especieId', examsController.removeEspecieInExam)
+
 }

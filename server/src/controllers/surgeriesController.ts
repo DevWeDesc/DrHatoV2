@@ -20,16 +20,27 @@ type body = {
 };
 export const surgeriesController = {
   createSurgerie: async (request: FastifyRequest, reply: FastifyReply) => {
-    const SurgerieSchema = z.object({
+    const CreateSurgerieSchema = z.object({
       name: z.string(),
       price: z.number(),
+      applicableToFemale: z.boolean(),
+      applicableToMale: z.boolean(),
+      healt_id: z.number()
     });
-    const { name, price } = SurgerieSchema.parse(request.body);
+    const { name, price, applicableToFemale, applicableToMale, healt_id } = CreateSurgerieSchema.parse(request.body);
     try {
       await prisma.surgeries.create({
         data: {
           name,
           price,
+          applicableToFemale,
+          applicableToMale,
+          HealthInsurance: {
+            connect: {
+                id:healt_id
+            }
+          }
+
         },
       });
 
@@ -192,6 +203,41 @@ export const surgeriesController = {
       });
     } catch (error) {
       console.log(error);
+    }
+  },
+  getSurgerieByHealthInsurance: async (request: FastifyRequest,reply: FastifyReply) => {
+    try {
+      const GetHealthInsuranceSurgerieSchema = z.object({
+        planName: z.string(),
+        // planProvider: z.string(),
+        page: z.coerce.number()
+      })
+   
+      const {planName,page} = GetHealthInsuranceSurgerieSchema.parse(request.params)
+      const currentPage = page || 1;
+      const surgeries = await prisma.surgeries.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {
+          HealthInsurance: {
+            planName: {contains: planName},
+            // planProvider: {equals: planProvider}
+          }
+        }
+      })
+
+     
+      const totalPages = Math.ceil(surgeries.length / 35);
+
+      reply.send({
+        surgeries,
+        currentPage,
+        totalPages,
+        totalProceds: surgeries.length
+      })
+
+    } catch (error) {
+        console.log(error)
     }
   },
 

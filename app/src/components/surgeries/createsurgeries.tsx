@@ -16,10 +16,11 @@ import {
   Checkbox,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
 import { useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { PetDetaisl } from "../../interfaces";
+import { ConsultsPetDetails, PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
 import { LoadingSpinner } from "../Loading";
 
@@ -44,7 +45,23 @@ export function Createsurgeries({
   const user = JSON.parse(localStorage.getItem("user") as string);
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [surgerieName, setSurgerieName] = useState("")
+  const [paginationInfos, setPaginationInfos] = useState({
+    totalPages: 0,
+    currentPage: 0,
+    totalProceds: 0
+  })
+  const [consultDetails, setConsultDetails] = useState(
+    {} as ConsultsPetDetails
+  );
   const queryClient = useQueryClient();
+
+  function incrementPage() {
+    setPagination(prevCount => pagination < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
+  }
+
+  function decrementPage() {
+    setPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+  }
   async function getSurgeriesData() {
     const pet = await api.get(`/pets/${id}`);
     setPetDetails(pet.data);
@@ -52,6 +69,10 @@ export function Createsurgeries({
       `/surgeries?page=${pagination}&sex=${petDetails.sexo}`
     );
     setSugeries(sugeries.data.surgeries);
+  }
+  async function getQueueDetails() {
+    const response = await api.get(`/queue/details/${queueId}`)
+    setConsultDetails(response.data)
   }
 
   async function getSurgerieByLetter(letter: string)   {
@@ -64,9 +85,20 @@ export function Createsurgeries({
     setSugeries(response.data.surgeries);
   }
 
+  async function getProcedureByHealthInsurance() {
+    const response = await api.get(`/surgerie/health/${consultDetails.healthInsuranceName}/${pagination}`)
+    setSugeries(response.data.surgeries);
+    setPaginationInfos({
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      totalProceds: response.data.totalProceds,
+    });
+  }
+
   ///surgerie/letter/:letter/:page
 
   const {isLoading} = useQuery('surgeriesData', getSurgeriesData)
+  useQuery('queueDetails', getQueueDetails)
   const SearchAlfabet = [
     "a",
     "b",
@@ -265,19 +297,49 @@ export function Createsurgeries({
             ))}
           </HStack>
             <Flex bg="gray.200" py="2" justify="center">
-              <Flex>
-                <Input borderColor="black" rounded="0" w="20vw" bg="white"
-                name="name"
-                onChange={(ev) => setSurgerieName(ev.target.value)}
-                />
-         
-                <HStack>
-                  <Button 
+              <Flex gap={2}>
+              {
+                  consultDetails?.healthInsuranceId ? <Button onClick={() => getProcedureByHealthInsurance()} colorScheme="whatsapp" w="300px">Plano de Saúde</Button> : <></>
+                }
+              <Button 
                   onClick={() => getSurgerieByName ()}
-                  color="white" rounded="0" colorScheme="twitter">
-                    Procurar
+                  color="white" w={160} colorScheme="twitter">
+                    Particular
                   </Button>
-                </HStack>
+                <Input borderColor="black"  bg="white"
+                name="name"
+                placeholder="Nome da cirurgia"
+                onChange={(ev) => {
+                  setSurgerieName(ev.target.value)
+                  getSurgerieByName ()
+                }}
+                />
+              <HStack>
+        
+              <Button colorScheme="teal">
+                Páginas {paginationInfos?.totalPages}
+              </Button>
+              <Button colorScheme="teal">
+                Página Atual {paginationInfos?.currentPage}
+              </Button>
+              <Button
+                colorScheme="yellow"
+                gap={4}
+                onClick={() => decrementPage()}
+              >
+                <BiLeftArrow />
+                Página Anterior
+              </Button>
+              <Button
+                colorScheme="yellow"
+                gap={4}
+                onClick={() => incrementPage()}
+              >
+                Próxima Página
+                <BiRightArrow />
+              </Button>
+            </HStack>
+                
               </Flex>
             </Flex>
 

@@ -1,9 +1,9 @@
 import {
   Button,
   ChakraProvider,
-  Checkbox,
   Flex,
   HStack,
+  Input,
   Table,
   TableContainer,
   Tbody,
@@ -13,15 +13,15 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
-import { BiHome } from "react-icons/bi";
+import { useState } from "react";
+import { BiHome, BiLeftArrow, BiRightArrow } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
 import { QueryClient, useQuery } from "react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Input } from "../../../components/admin/Input";
+
 import { LoadingSpinner } from "../../../components/Loading";
-import { PetDetaisl } from "../../../interfaces";
+import { ConsultsPetDetails, PetDetaisl } from "../../../interfaces";
 import { api } from "../../../lib/axios";
 
 interface VaccinesProps {
@@ -41,8 +41,16 @@ export function Vaccines({
   admissionQueueId,
 }: VaccineComponentProps) {
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
+  const [consultDetails, setConsultDetails] = useState(
+    {} as ConsultsPetDetails
+  );
   const [vaccines, setVaccines] = useState<VaccinesProps[]>([]);
   const [pagination, setPagination] = useState(1)
+  const [paginationInfos, setPaginationInfos] = useState({
+    totalPages: 0,
+    currentPage: 0,
+    totalProceds: 0
+  })
   const [vaccineName, setVaccineName] = useState("")
   const navigate = useNavigate();
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
@@ -87,8 +95,23 @@ export function Vaccines({
     }
   }
 
+  async function getQueueDetails() {
+    const response = await api.get(`/queue/details/${queueId}`)
+    setConsultDetails(response.data)
+  }
 
-  const {isLoading} = useQuery('vaccinesSet', GetVaccine)
+  function incrementPage() {
+    setPagination(prevCount => pagination < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
+  }
+
+  function decrementPage() {
+    setPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+  }
+
+
+  const {isLoading, refetch} = useQuery('vaccinesSet', GetVaccine)
+  useQuery('queueDetails', getQueueDetails)
+
 
   if(isLoading) {
     return <LoadingSpinner/>
@@ -118,7 +141,7 @@ export function Vaccines({
           data
         );
       
-        queryClient.invalidateQueries('vaccinesSet')
+        refetch()
 
         toast.success("Vacina criada com Sucesso");
       }
@@ -168,6 +191,16 @@ export function Vaccines({
     setVaccines(response.data.vaccines);
   }
 
+  async function getProcedureByHealthInsurance() {
+    const response = await api.get(`/vaccines/health/${consultDetails.healthInsuranceName}/${pagination}`)
+    setVaccines(response.data.vaccines);
+    setPaginationInfos({
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      totalProceds: response.data.totalProceds,
+    });
+  }
+
 
   return (
     <ChakraProvider>
@@ -198,7 +231,7 @@ export function Vaccines({
         )}
 
         <Flex height="90vh" w="100%">
-          <Flex direction="column" height="100%" width="60%" bgColor="gray.100">
+          <Flex direction="column" height="100%" width="70%" bgColor="gray.100">
             <Flex height="40%" width="100%" direction="column">
               <TableContainer width="100%" height="100%" overflowY="auto">
                 <Table>
@@ -223,23 +256,58 @@ export function Vaccines({
                 </Table>
               </TableContainer>
             </Flex>
-            <Flex height="70%" width="100" direction="column">
+            <Flex height="70%" width="100%" direction="column">
+     
               <Flex
                 width="100%"
-                height="48px"
+                height="98px"
+                direction="column"
                 bgColor="gray.300"
                 p="2"
                 align="center"
                 justify="center"
               >
+                
+                
        
-                <Flex align="center" gap="2" p="4">
-                  <Button onClick={() => getVaccinesByName()} colorScheme="teal">FILTRAR</Button>
-                  <Input  name="filter" onChange={(ev) => setVaccineName(ev.target.value)} placeholder="Nome da Vacina" />
+                <Flex align="center" gap="2" p="2">
+                  
+                  
+   		          {
+                  consultDetails?.healthInsuranceId ? <Button onClick={() => getProcedureByHealthInsurance()} colorScheme="whatsapp" w="300px">Plano de Saúde</Button> : <></>
+                }
+                  <Button width={160} onClick={() => getVaccinesByName()} colorScheme="teal">Particular</Button>
+                  <Input bgColor="white"  name="filter" onChange={(ev) => setVaccineName(ev.target.value)} placeholder="Nome da Vacina" />
+                  
+                          <HStack>
+        
+              <Button colorScheme="teal">
+                Páginas {paginationInfos?.totalPages}
+              </Button>
+              <Button colorScheme="teal">
+                Página Atual {paginationInfos?.currentPage}
+              </Button>
+              <Button
+                colorScheme="yellow"
+                gap={4}
+                onClick={() => decrementPage()}
+              >
+                <BiLeftArrow />
+                Página Anterior
+              </Button>
+              <Button
+                colorScheme="yellow"
+                gap={4}
+                onClick={() => incrementPage()}
+              >
+                Próxima Página
+                <BiRightArrow />
+              </Button>
+            </HStack>
+            
                 </Flex>
-    
-              </Flex>
-              <HStack spacing={2} w="600px">
+
+                <HStack spacing={2} w="100%">
             {SearchAlfabet.map((letter) => (
               <Button
                 _hover={{
@@ -253,7 +321,11 @@ export function Vaccines({
                 {letter.toUpperCase()}
               </Button>
             ))}
-          </HStack>
+                 </HStack>
+                
+    
+              </Flex>
+       
               <TableContainer
                 w="100%"
                 h="100%"
@@ -317,7 +389,7 @@ export function Vaccines({
               </TableContainer>
             </Flex>
           </Flex>
-          <Flex height="100%" width="40%" bgColor="gray.200" direction="column">
+          <Flex height="100%" width="30%" bgColor="gray.200" direction="column">
             <Flex
               w="100%"
               bgColor="cyan.100"

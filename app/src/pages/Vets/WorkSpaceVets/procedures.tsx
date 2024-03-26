@@ -7,7 +7,7 @@ import ProceduresVets from "../../../components/Procedures";
 export function ProceduresVet() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate();
-
+  
   return (
     <ChakraProvider>
       <Flex width="100vw" height="100vh" bgColor="white" direction="column">

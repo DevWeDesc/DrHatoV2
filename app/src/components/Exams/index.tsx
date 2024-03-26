@@ -16,11 +16,12 @@ import { Suspense, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
-import { ExamsProps, PetDetaisl } from "../../interfaces";
+import { ConsultsPetDetails, ExamsProps, PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
 import { useQuery } from "react-query";
 import { LoadingSpinner } from "../Loading";
 import { NotAllowedError } from "../../errors/NotAllowedError";
+import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
 
 type ExamsVetProps = {
   InAdmission: boolean;
@@ -36,122 +37,14 @@ type ExamsDTO = {
 export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
-  const [reloadData, setReloadData] = useState(true);
+  const [exams, setExams] = useState<any[]>([])
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [examName, setExamName] = useState("");
   const [searchByLetter, setSearchByLetter] = useState("");
-
-
-
-  async function getPetExams() {
-    const response = await api.get(`/pets/${id}`);
-    setPetDetails(response.data);
-
-    // const exams = await api.get("/exams/old/all");
-    // setExams(exams.data.exams);
-  }
-
-
-  const { data: examData, isLoading, refetch } = useQuery({
-    queryKey: ["examsData"],
-    queryFn: async () => {
-      if (searchByLetter) {
-        return await api
-          .get(`/exams/old/letter/${searchByLetter}`)
-          .then((res) => res.data);
-      }
-      if (examName.length >= 1) {
-        return await api.get(`/exams/old/${examName}`).then((res) => res.data);
-      } else {
-        return await api.get("/exams/old/all").then((res) => res.data.exams);
-      }
-    },
-  });
-
-  // console.log(data);
-
-
-
-  // async function searchExamByName() {
-  //   const response = await api.get(`/exams/old/${examName}`);
-  //   setExams(response.data);
-  // }
-
-  // async function searchByFirstLetter() {
-  //   const response = await api.get(`/exams/old/letter/${searchByLetter}`);
-  //   setExams(response.data);
-  // }
-
-  async function setOldExamInPet(examId: number) {
-
-    try {
-      const allowedEspecie = examData.find((esp: any, ind: any) => esp.codexam === examId);
-      const allowedSetExam =  allowedEspecie.appicableEspecies.map((esp: any) => {
-           if(esp.name.includes(petDetails.especie)){
-             throw new NotAllowedError('Especie não permitida!')
-           }
-   
-     
-         })
-      const data = {
-        RequestedByVetId: user.id,
-        RequestedByVetName: user.consultName,
-        RequestedCrm: user.crm,
-        isAdmission: InAdmission,
-      };
-
-      if (InAdmission === true) {
-        await api.post(
-          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
-          data
-        );
-        setReloadData(true);
-        toast.success("Exame adicionado Ala Internação!");
-      } else {
-        await api.post(
-          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
-          data
-        );
-        setReloadData(true);
-        toast.success("Exame adicionado Ala Veterinários");
-      }
-    } catch (error) {
-  
-      if(error instanceof NotAllowedError) {
-        toast.error(error.message)
-      } else {
-        toast.error("Falha ao cadastar exame!")
-      }
-      
-     
-    }
-  }
-
-  async function deleteExam(
-    examId: string | number,
-    examPrice: string | number,
-    linkedDebitId: number | null
-  ) {
-    try {
-      const confirmation = window.confirm(
-        "DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
-      );
-
-      if (confirmation === true) {
-        await api.delete(
-          `/petexam/${examId}/${petDetails.totalAcc.id}/${examPrice}/${linkedDebitId}`
-        );
-        setReloadData(true);
-        toast.warning("Deletado com sucesso!");
-      } else {
-        return;
-      }
-    } catch (error) {
-      toast.error("Falha ao Deletar!");
-      console.log(error);
-    }
-  }
-
+  const [pagination, SetPagination] = useState(1)
+  const [consultDetails, setConsultDetails] = useState(
+    {} as ConsultsPetDetails
+  );
   const SearchAlfabet = [
     "a",
     "b",
@@ -180,30 +73,162 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
     "y",
     "z",
   ];
+  const [paginationInfos, setPaginationInfos] = useState({
+    totalPages: 0,
+    currentPage: 0,
+    totalProceds: 0
+  })
 
-  useEffect(() => {
-    if (!!examName || searchByLetter)
-      refetch({ queryKey: ["examsData", examName, searchByLetter] });
-  }, [examName, searchByLetter]);
 
-  useEffect(() => {
-    if (reloadData === true) {
-      getPetExams();
-      setReloadData(false); // Reseta o estado para evitar chamadas infinitas
+  function incrementPage() {
+    SetPagination(prevCount => pagination < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
+  }
+
+  function decrementPage() {
+    SetPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+  }
+
+  async function getExamsByHealthInsurance() {
+    const response = await api.get(`/exam/health/${consultDetails.healthInsuranceName}/${pagination}`)
+    setExams(response.data.procedures);
+    setPaginationInfos({
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      totalProceds: response.data.totalProceds,
+    });
+  }
+  async function getQueueDetails() {
+    const response = await api.get(`/queue/details/${queueId}`)
+    setConsultDetails(response.data)
+  }
+
+  async function getExams () {
+    if (examName.length >= 1) {
+      const response = await api.get(`/exams/old/${examName}`)
+      setExams(response.data.exams)
+      setPaginationInfos({
+       currentPage: response.data.currentPage,
+       totalPages: response.data.totalPages,
+       totalProceds: response.data.totalProceds,
+     });
+    } else {
+   const response = await api.get("/exams/old/all");
+   setExams(response.data.exams)
+   setPaginationInfos({
+    currentPage: response.data.currentPage,
+    totalPages: response.data.totalPages,
+    totalProceds: response.data.totalProceds,
+  });
+
     }
-  }, [reloadData]);
+  }
 
-  // useEffect(() => {
-  //   getPetExams();
-  // }, []);
+  async function getPetExams() {
+    const response = await api.get(`/pets/${id}`);
+    setPetDetails(response.data);
+  }
 
-  // useEffect(() => {
-  //   searchExamByName();
-  // }, [examName]);
+  useQuery('queueDetails', getQueueDetails)
 
-  // useEffect(() => {
-  //   searchByFirstLetter();
-  // }, [searchByLetter]);
+  const {refetch: refetchPets} = useQuery('petExamsDetails', getPetExams)
+  
+  const {isLoading, refetch } = useQuery("examsDetails", getExams);
+
+
+  async function searchExamByName() {
+    const response = await api.get(`/exams/old/${examName}`);
+    setExams(response.data);
+    setPaginationInfos({
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      totalProceds: response.data.totalProceds,
+    });
+  }
+
+  async function searchByFirstLetter() {
+    const response = await api.get(`/exams/old/letter/${searchByLetter}`);
+    setExams(response.data);
+    setPaginationInfos({
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      totalProceds: response.data.totalProceds,
+    });
+  }
+
+  async function setOldExamInPet(examId: number) {
+
+    try {
+      const allowedEspecie = exams.find((esp: any, ind: any) => esp.codexam === examId);
+      const allowedSetExam =  allowedEspecie.appicableEspecies.map((esp: any) => {
+           if(esp.name.includes(petDetails.especie)){
+             throw new NotAllowedError('Especie não permitida!')
+           }
+   
+     
+         })
+      const data = {
+        RequestedByVetId: user.id,
+        RequestedByVetName: user.consultName,
+        RequestedCrm: user.crm,
+        isAdmission: InAdmission,
+      };
+
+      if (InAdmission === true) {
+        await api.post(
+          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
+          data
+        );
+        refetch()
+        refetchPets()
+        toast.success("Exame adicionado Ala Internação!");
+      } else {
+        await api.post(
+          `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
+          data
+        );
+        refetch()
+        refetchPets()
+        toast.success("Exame adicionado Ala Veterinários");
+      }
+    } catch (error) {
+  
+      if(error instanceof NotAllowedError) {
+        toast.error(error.message)
+      } else {
+        toast.error("Falha ao cadastar exame!")
+      }
+      
+     
+    }
+  }
+
+  async function deleteExam(
+    examId: string | number,
+    examPrice: string | number,
+    linkedDebitId: number | null
+  ) {
+    try {
+      const confirmation = window.confirm(
+        "DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
+      );
+
+      if (confirmation === true) {
+        await api.delete(
+          `/petexam/${examId}/${petDetails.totalAcc.id}/${examPrice}/${linkedDebitId}`
+        );
+        refetch()
+        refetchPets()
+        toast.warning("Deletado com sucesso!");
+      } else {
+        return;
+      }
+    } catch (error) {
+      toast.error("Falha ao Deletar!");
+      console.log(error);
+    }
+  }
+
+
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -293,21 +318,56 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
 
       <Flex w="100%" height="65vh" direction="column">
         <Flex
-          height="48px"
+          height="98px"
           w="100%"
+          p={2}
+          direction="column"
           bgColor="cyan.100"
           align="center"
           justify="center"
-          gap={4}
+          gap={2}
         >
           <HStack>
-            <Button colorScheme="teal">Filtrar</Button>
+            
+   	      	{
+                  consultDetails?.healthInsuranceId ? <Button onClick={() => getExamsByHealthInsurance()} colorScheme="whatsapp" w="300px">Plano de Saúde</Button> : <></>
+                }
+            <Button width="180px" onClick={() => getExams()} colorScheme="teal">Particular</Button>
             <Input
               placeholder="Nome do Exame"
               height="38px"
               name="filter"
-              onChange={(ev) => setExamName(ev.target.value)}
+              onChange={(ev) => {
+                setExamName(ev.target.value)
+                searchExamByName()
+              }}
             />
+            
+      <HStack>
+           
+              <Button colorScheme="teal">
+                Páginas {paginationInfos?.totalPages}
+              </Button>
+              <Button colorScheme="teal">
+                Página Atual {paginationInfos?.currentPage}
+              </Button>
+              <Button
+                colorScheme="yellow"
+                gap={4}
+                onClick={() => decrementPage()}
+              >
+                <BiLeftArrow />
+                Página Anterior
+              </Button>
+              <Button
+                colorScheme="yellow"
+                gap={4}
+                onClick={() => incrementPage()}
+              >
+                Próxima Página
+                <BiRightArrow />
+              </Button>
+            </HStack>
           </HStack>
           <HStack spacing={2}>
             {SearchAlfabet.map((letter) => (
@@ -316,7 +376,10 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
                   bgColor: "green.300",
                 }}
                 colorScheme="whatsapp"
-                onClick={() => setSearchByLetter(letter)}
+                onClick={() => {
+                  setSearchByLetter(letter)
+                  searchByFirstLetter()}
+                }
                 fontWeight="bold"
                 fontSize="22px"
               >
@@ -324,6 +387,7 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
               </Button>
             ))}
           </HStack>
+      
         </Flex>
         <TableContainer w="100%" height="100%" overflowY="auto">
           <Table>
@@ -341,7 +405,7 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
               </Tr>
             </Thead>
             <Tbody>
-              {examData?.map((exam: ExamsDTO) => (
+              {exams?.map((exam: ExamsDTO) => (
                 <Tr key={exam.codexam}>
                   <Td border="2px">{exam.name}</Td>
                   <Td border="2px">R$ {exam.price}</Td>

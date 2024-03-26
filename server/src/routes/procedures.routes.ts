@@ -36,4 +36,7 @@ export async function proceduresRoutes(app: FastifyInstance) {
 
 
   app.get("/procedures/health/:planName/:page", proceduresController.getProcedureByHealthInsurance)
+
+
+  app.get("/procedures/letters/:letter/:page", proceduresController.getProceduresByLetters)
 }
