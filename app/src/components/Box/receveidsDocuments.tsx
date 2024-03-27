@@ -12,35 +12,33 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { BoxContext } from "../../contexts/BoxContext";
 import { api } from "../../lib/axios";
-import { IDocBox } from "../../interfaces";
+import { BoxProps, IDocBox } from "../../interfaces";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
 
-interface ReceveidDocumentsProps {
-  refresh: boolean;
-  handleRefresh: () => void;
-}
 
-export function ReceveidDocuments({
-  refresh,
-  handleRefresh,
-}: ReceveidDocumentsProps) {
-  const { fatherBox } = useContext(BoxContext);
+export function ReceveidDocuments() {
+
   const [documents, setDocuments] = useState({} as IDocBox);
+  const [fatherBox, setFatherBox] = useState({} as BoxProps);
   const navigate = useNavigate();
 
-  const requestDocumentsByAPi = async () => {
-    let response = await api.get(`/account/debitByBox/${fatherBox.id}`);
+  async function getFatherBox () {
+    const response = await api.get("/vetbox")
+    setFatherBox(response.data)
+
+  } 
+
+  async function getBoxDocuments ()  {
+    const response = await api.get(`/account/debitByBox/${fatherBox.id}`);
     setDocuments(response.data);
   };
+  
+  const {isLoading: isFatherBoxLoading, refetch: refetchFather} = useQuery('fatherBox', getFatherBox)
+  const {} = useQuery("boxDocuments", getBoxDocuments)  
 
-  useEffect(() => {
-    if (refresh) {
-      requestDocumentsByAPi();
-      handleRefresh();
-    }
-  }, [refresh]);
+  
 
-  // console.log(documents);
 
   return (
     <>

@@ -339,13 +339,9 @@ export function MenuVet() {
                         {petsByVetPreference
                           .map((pet: any) => (
                             <Tr
-                              onClick={() => {
-                                if(pet.vetPreference != "Sem preferência") {
-                                  navigate(
-                                    `/Vets/Workspace/${pet.id}/${pet.queueId}`
-                                  )
-                                }
-                              }}
+                              onClick={() => navigate(
+                                `/Vets/Workspace/${pet.id}/${pet.queueId}`
+                              )}
                               key={pet.id}
                               cursor="pointer" 
                             >
@@ -377,14 +373,7 @@ export function MenuVet() {
 
                                 {
                                   pet.vetPreference == "Sem preferência" ? <Td>
-                                         <ConfirmationDialog
-                                    icon={
-                                      <BsFillTrashFill fill="white" size={16} />
-                                    }
-                                    buttonTitle={pet.vetPreference} callbackFn={() => updateQueuePetPreference(pet.queueId, pet.id)} describreConfirm="Deseja atribuir essa consulta a seu nome?" whatIsConfirmerd="Este animal está sem preferência" disabled={false}
-                               
-                                    
-                                    />
+                                         <Button colorScheme="teal">Sem preferência</Button>
                                   </Td> :  <Td>
                                 {pet.vetPreference == user.consultName
                                   ? pet.vetPreference

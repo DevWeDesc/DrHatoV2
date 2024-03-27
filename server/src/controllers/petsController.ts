@@ -230,14 +230,7 @@ export const petsController = {
     const { id }: any = request.params;
 
     try {
-      const petAlreadyExists = await prisma.pets.findFirst({
-        where: { name: name },
-      });
 
-      if (petAlreadyExists) {
-        reply.status(404).send("Pet already exists");
-        return;
-      }
 
       await prisma.pets.create({
         data: {
@@ -245,7 +238,7 @@ export const petsController = {
           especie,
           sexo,
           race,
-          weigth,
+          weigth: parseFloat(weigth),
           haveChip,
           isCastred,
           corPet,
@@ -278,7 +271,7 @@ export const petsController = {
 
       reply.status(201).send("Sucesso");
     } catch (error) {
-      reply.send("FALHA");
+      console.error(error);
     }
   },
 

@@ -59,6 +59,34 @@ export default function ListProcedures() {
   const [procedures, setProcedures] = useState<ProceduresProps[]>([]);
   const [query, setQuery] = useState("");
   const [pagination, SetPagination] = useState(1);
+  const SearchAlfabet = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+  ];
   const [paginationInfos, setPaginationInfos] = useState({
     totalPages: 0,
     currentPage: 0,
@@ -83,6 +111,16 @@ export default function ListProcedures() {
         setLoading(true);
       })
       .catch(() => toast.error("Algo deu errado!!"));
+  }
+
+  async function getProcedureByLetter(letter: string){
+    const response = await api.get(`/procedures/letters/${letter}/${pagination}`)
+    setProcedures(response.data.procedures);
+    setPaginationInfos({
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      totalProceds: response.data.totalProceds,
+    });
   }
 
   async function getProcedure() {
@@ -215,7 +253,21 @@ export default function ListProcedures() {
               </Button>
             </Grid>
           </Flex>
-
+          <HStack spacing={2} m="2">
+            {SearchAlfabet.map((letter) => (
+              <Button
+                _hover={{
+                  bgColor: "green.300",
+                }}
+                colorScheme="whatsapp"
+                 onClick={() => getProcedureByLetter(letter.toUpperCase())}
+                fontWeight="bold"
+                fontSize="22px"
+              >
+                {letter.toUpperCase()}
+              </Button>
+            ))}
+          </HStack>
           <Link to="/Admin/Procedures/Create" style={{ width: "100%" }}>
             <Button
               as="a"

@@ -19,7 +19,7 @@ export const petSchema = z.object({
   especie: z.string(),
   sexo: z.string(),
   race: z.string(),
-  weigth: z.number().optional(),
+  weigth: z.string(),
   haveChip: z.boolean().optional(),
   isCastred: z.boolean().optional(),
   corPet: z.string(),

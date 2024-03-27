@@ -39,8 +39,12 @@ export function BoxReception() {
     setFatherBox(response.data)
   } 
 
-  async function handleCloseBox() {
 
+  const {isLoading: isDailyBoxLoading, refetch: refetchDaily} = useQuery('dailyBox', GetDailyBox)
+  const {isLoading: isFatherBoxLoading, refetch: refetchFather} = useQuery('fatherBox', getFatherBox)
+
+  
+  async function handleCloseBox() {
     const data = {
       entryValues: 1000,
       exitValues: 500,
@@ -51,6 +55,8 @@ export function BoxReception() {
       await api
         .patch(`/closehistbox/${fatherBox?.id}/${dailyBox?.id}`, data)
         toast.success("Caixa fechado com sucesso!");
+        refetchDaily()
+        refetchFather()
          navigate("/Recepcao");
     
     } catch (error) {
@@ -59,8 +65,7 @@ export function BoxReception() {
     }
   }
 
-  const {isLoading: isDailyBoxLoading} = useQuery('dailyBox', GetDailyBox)
-  const {isLoading: isFatherBoxLoading} = useQuery('fatherBox', getFatherBox)
+
 
   if(isDailyBoxLoading || isFatherBoxLoading) {
     return <LoadingSpinner/>
