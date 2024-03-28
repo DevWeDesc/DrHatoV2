@@ -89,22 +89,23 @@ model Pets {
 }
 
 model OldExamsHistory {
-  id         Int       @id @default(autoincrement())
-  name       String?
-  vetId      Int?
-  codConsult Int?
-  codExam    Int?
-  codAnimal  Int?
-  codCli     Int?
-  madeAt     DateTime?
-  vetName    String?
-  obsOne     String
-  obsTwo     String
-  metodology String?
-  image      Boolean?
-  laboratory Boolean?
-  Pets       Pets?     @relation(fields: [petsId], references: [CodAnimal])
-  petsId     Int?
+  id              Int       @id @default(autoincrement())
+  name            String?
+  vetId           Int?
+  codConsult      Int?
+  codExam         Int?
+  codAnimal       Int?
+  codCli          Int?
+  CodExamConsulta Int?
+  madeAt          DateTime?
+  vetName         String?
+  obsOne          String
+  obsTwo          String
+  metodology      String?
+  image           Boolean?
+  laboratory      Boolean?
+  Pets            Pets?     @relation(fields: [petsId], references: [CodAnimal])
+  petsId          Int?
 }
 
 model OldConsults {

@@ -551,8 +551,10 @@ export const petsController = {
     try {
       const { petId } = request.params;
 
+  
+
       const oldConsults = await prisma.pets.findUnique({
-        where: { CodAnimal: parseInt(petId) },
+        where: { id: parseInt(petId) },
         include: {
           petOldConsults: true,
           customer: true,

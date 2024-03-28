@@ -90,6 +90,7 @@ interface OldExamsHistorie {
   name:       string;
   vetId:      number;
   codConsult: number;
+  CodExamConsulta: number;
   codExam:    number;
   codAnimal:  number;
   codCli:     number;
@@ -103,10 +104,25 @@ interface OldExamsHistorie {
   petsId:     number;
 }
 
+type OpenOldExamsProps = {
+CodCli: number;
+CodConsulta: number;
+}
+
 export function MedicineRecordOld() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate();
 
+  function handleOpenOldResultExams({
+    CodCli,
+    CodConsulta
+  }: OpenOldExamsProps) {
+
+      // window.open(" https://drhatomf.ddns.net/vet/scr/PrintExamNewONLINE.asp?CodCli=9091&text=|4317|", "_blank")
+      window.open(`https://drhatomf.ddns.net/vet/scr/PrintExamNewONLINE.asp?CodCli=${CodCli}&text=|${CodConsulta}|`, "_blank");
+      // https://drhatomf.ddns.net/vet/scr/PrintExamNewONLINE.asp?CodCli=9091&text=|4317|
+  
+  }
 
   async function getConsults(): Promise<OldConsultsHistories> {
     try {
@@ -650,7 +666,9 @@ export function MedicineRecordOld() {
                   </Thead>
                   <Tbody>
                      {examsData?.map((exam) => (
-                      <Tr bgColor="green.200" key={exam.id}>
+                      <Tr
+                      onClick={() => handleOpenOldResultExams({CodCli: exam.codCli, CodConsulta: exam.CodExamConsulta})}
+                      bgColor="green.200" key={exam.id}>
                  
                       <Td borderY="1px solid black">{exam.name}</Td>
                     
