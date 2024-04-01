@@ -351,6 +351,29 @@ model Surgeries {
   healthInsuranceId  Int?
 }
 
+model SurgeriesCentral {
+  id                  Int             @id @default(autoincrement())
+  centralName         String
+  isOpen              Boolean
+  openHours           String
+  closedHours         String
+  maxSlots            Int
+  movimentedValues    Float?
+  surgeriesCompleteds Int?
+  surgerieSlots       SurgerieSlots[]
+}
+
+model SurgerieSlots {
+  id                 Int               @id @default(autoincrement())
+  petName            String?
+  petId              Int?
+  surgerieName       String?
+  vetName            String?
+  vetCrmv            String?
+  SurgeriesCentral   SurgeriesCentral? @relation(fields: [surgeriesCentralId], references: [id])
+  surgeriesCentralId Int?
+}
+
 enum SurgerieStatus {
   FINISHED
   STARTED
