@@ -118,9 +118,9 @@ export function MedicineRecordOld() {
     CodConsulta
   }: OpenOldExamsProps) {
 
-      // window.open(" https://drhatomf.ddns.net/vet/scr/PrintExamNewONLINE.asp?CodCli=9091&text=|4317|", "_blank")
+
       window.open(`https://drhatomf.ddns.net/vet/scr/PrintExamNewONLINE.asp?CodCli=${CodCli}&text=|${CodConsulta}|`, "_blank");
-      // https://drhatomf.ddns.net/vet/scr/PrintExamNewONLINE.asp?CodCli=9091&text=|4317|
+ 
   
   }
 

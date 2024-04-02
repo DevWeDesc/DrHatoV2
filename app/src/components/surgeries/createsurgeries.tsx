@@ -13,12 +13,12 @@ import {
   Th,
   Tbody,
   Td,
-  Checkbox,
+
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
 import { useQuery, useQueryClient } from "react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { ConsultsPetDetails, PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
@@ -35,6 +35,24 @@ type SurgerieVetProps = {
   admissionQueueId?: string;
 };
 
+export interface SurgerieCentral {
+  id: number
+  centralName: string;
+  closedHours: string;
+  openHours:   string;
+  isOpen:      boolean;
+  maxSlots:    number;
+  surgerieSlots: Array<{
+    id: number,
+    petName: string,
+    petId: number,
+    surgerieName: string,
+    vetName: string,
+    vetCrmv: string,
+    surgeriesCentralId: number
+  }>
+}
+
 export function Createsurgeries({
   InAdmission,
   admissionQueueId,
@@ -43,8 +61,10 @@ export function Createsurgeries({
   const [sugeries, setSugeries] = useState<SugeriesProps[]>([]);
   const [pagination, setPagination] = useState(1);
   const user = JSON.parse(localStorage.getItem("user") as string);
+  const [surgerieCentral, setSurgerieCentral] = useState({} as SurgerieCentral)
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [surgerieName, setSurgerieName] = useState("")
+  const [selectedCentral, setSelectedCentral] = useState(0)
   const [paginationInfos, setPaginationInfos] = useState({
     totalPages: 0,
     currentPage: 0,
@@ -95,47 +115,39 @@ export function Createsurgeries({
     });
   }
 
-  ///surgerie/letter/:letter/:page
 
-  const {isLoading} = useQuery('surgeriesData', getSurgeriesData)
-  useQuery('queueDetails', getQueueDetails)
-  const SearchAlfabet = [
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-    "n",
-    "o",
-    "p",
-    "q",
-    "r",
-    "s",
-    "t",
-    "u",
-    "v",
-    "w",
-    "x",
-    "y",
-    "z",
-  ];
+  
 
-  if(isLoading) {
-    return <LoadingSpinner/>
+  async function getCentralSurgeries(): Promise<SurgerieCentral[]> {
+    const response = await api.get("/surgeries/central")
+    return response.data.centralSurgerie
   }
 
-
+  async function getCentralSurgerieById() {
+    const response = await api.get(`/surgeries/central/${selectedCentral}`)
+    setSurgerieCentral(response.data.centralSurgerie)
+  }
 
   async function setSugeriesInPet(surgerieId: number) {
     try {
+
+      let slotFound = false;
+
+      const reservedSlot = surgerieCentral?.surgerieSlots.map((slot, index) => {
+          if(!slot.petName?.includes(petDetails?.name) || !slot.petId?.toString().includes(petDetails?.id?.toString())) {
+              return null; 
+          } else {
+              slotFound = true; 
+              return slot
+          }
+      });
+
+      if (!slotFound) {
+          toast.warning("Reserve ao menos 1 slot para cirurgia");
+          return
+      }
+
+          
       const data = {
         RequestedByVetId: user.id,
         RequestedByVetName: user.consultName,
@@ -189,6 +201,81 @@ export function Createsurgeries({
       console.log(error);
     }
   };
+
+  const {data: centralSurgeries, refetch} = useQuery('surgeriesCentral', getCentralSurgeries)
+  const {isLoading} = useQuery('surgeriesData', getSurgeriesData)
+
+  async function reserveSurgerieSlot (slotId: number)  {
+      try {
+
+        
+      let slotFound = false;
+
+       surgerieCentral?.surgerieSlots.map((slot, index) => {
+          if(!slot.petName?.includes(petDetails?.name) || !slot.petId?.toString().includes(petDetails?.id?.toString())) {
+              return null; 
+          } else {
+              slotFound = true; 
+        
+          }
+      });
+
+      if (!slotFound) {
+        const data = {
+          slotId: slotId,
+          petName: petDetails.name,
+          petId: petDetails.id,
+          vetName: user.consultName,
+          vetCrmv: user.crm,
+        }
+
+        await api.put("/surgeries/central/reserve", data)
+        refetch()
+        toast.success("Reserva efetuada com sucesso!")
+      } else {
+        toast.warning("Animal já possui reserva!")
+      }
+
+
+      } catch (error) {
+        toast.error("Falha ao efetuar reserva!")
+      }
+    
+  }
+  let selectedCentralSurgerie = centralSurgeries?.find((central) => central.id === selectedCentral);
+  useQuery('queueDetails', getQueueDetails)
+  const SearchAlfabet = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+  ];
+
+  if(isLoading) {
+    return <LoadingSpinner/>
+  }
 
   return (
     <ChakraProvider>
@@ -408,7 +495,7 @@ export function Createsurgeries({
             pl="2"
             py="2"
           >
-            Consulta n° 10045
+            ID da Consulta {consultDetails?.id}
           </Text>
           <Flex
             bg="gray.200"
@@ -416,25 +503,7 @@ export function Createsurgeries({
             fontSize="20"
             direction="column"
           >
-            <Flex align="center">
-              <Text
-                border="1px solid black"
-                borderRight="2px solid black"
-                fontWeight="bold"
-                pl="2"
-                py="1"
-                w="15rem"
-              >
-                Data
-              </Text>
-              <Input
-                borderColor="black"
-                type="date"
-                rounded="0"
-                fontWeight="bold"
-                bg="white"
-              />
-            </Flex>
+         
             <Flex align="center">
               <Text
                 border="1px solid black"
@@ -447,16 +516,21 @@ export function Createsurgeries({
                 C. Cirúrgico
               </Text>
               <Select
+                onChange={(ev) => setSelectedCentral(Number(ev.target.value))}
                 borderColor="black"
                 rounded="0"
                 fontWeight="bold"
                 bg="white"
               >
-                <option value="Centro Cirurgico">Centro Cirurgico</option>
+                {
+                  centralSurgeries?.map((central) => <option key={central.id} value={central.id}>{central.centralName}</option> )
+                }
+                
               </Select>
             </Flex>
           </Flex>
           <Button
+          onClick={() => getCentralSurgerieById()}
             bg="whatsapp.600"
             fontSize="2xl"
             fontWeight="bold"
@@ -468,28 +542,40 @@ export function Createsurgeries({
             Verificar
           </Button>
           <Flex direction="column">
-            <Flex fontSize="20" fontWeight="bold" bg="gray.200">
-              <Text pl="2" border="1px solid black" w="10vw">
-                Slot
-              </Text>
-              <Text pl="2" border="1px solid black" w="10vw">
-                Animal
-              </Text>{" "}
-              <Text pl="2" border="1px solid black" w="15vw">
-                Cirurgia
-              </Text>
-            </Flex>
-            <Flex bg="green.100">
-              <Text pl="2" border="1px solid black" w="10vw">
-                1
-              </Text>
-              <Text pl="2" border="1px solid black" w="10vw">
-                -
-              </Text>
-              <Text pl="2" border="1px solid black" w="15vw">
-                -
-              </Text>
-            </Flex>
+
+            <Table>
+              <Thead>
+                <Tr  bg="gray.200" >
+                  <Th  color="black" pl="2" border="1px " w="10vw">Slot</Th>
+                  <Th  color="black" pl="2" border="1px" w="10vw">Animal</Th>
+                  <Th  color="black" pl="2" border="1px" w="10vw">Cirurgia</Th>
+                  <Th  color="black" pl="2" border="1px" w="10vw">Incluir</Th>
+                </Tr>
+              </Thead>
+                <Tbody>
+                  {
+                    surgerieCentral ? surgerieCentral?.surgerieSlots?.map((slot, index) => 
+                    <Tr key={slot.id} bg="green.100">
+                    <Td pl="2" border="1px solid black" w="10vw">{index}</Td>
+                    <Td pl="2" border="1px solid black" w="10vw">{slot?.petName}</Td>
+                    <Td pl="2" border="1px solid black" w="10vw">{slot?.surgerieName}</Td>
+                    <Td pl="2" border="1px solid black" w="10vw">
+                      <Button onClick={() => reserveSurgerieSlot(slot.id)} w="90%" colorScheme="facebook">Reservar</Button></Td>
+                  </Tr>
+                    ) : (
+                      <Tr bg="green.100">
+                      <Td pl="2" border="1px solid black" w="10vw">1</Td>
+                      <Td pl="2" border="1px solid black" w="10vw">-</Td>
+                      <Td pl="2" border="1px solid black" w="10vw">-</Td>
+                    </Tr>
+                    )
+                  }
+                 
+                </Tbody>
+              
+            </Table>
+        
+            
           </Flex>
         </Flex>
       </Flex>

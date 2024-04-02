@@ -22,10 +22,9 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Header } from "../../components/admin/Header";
-import { Paginaton } from "../../components/admin/Pagination";
+
 import { Sidebar } from "../../components/admin/Sidebar";
-import { LoadingSpinner } from "../../components/Loading";
-import { DbContext } from "../../contexts/DbContext";
+
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { AdminContainer } from "../AdminDashboard/style";
 import { api } from "../../lib/axios";
@@ -33,63 +32,87 @@ import { toast } from "react-toastify";
 import { Input } from "../../components/admin/Input";
 import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
+import { useQuery } from "react-query";
+import { LoadingSpinner } from "../../components/Loading";
 
+interface SurgerieCentral {
+    id: number;
+    centralName: string;
+    closedHours: string;
+    openHours:   string;
+    isOpen:      boolean;
+    maxSlots:    number;
+}
 export function SurgeryCenter() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
-  const [surgeryCenter, setSurgeryCenter] = useState([]);
+  const [surgerieCentralId, setSurgerieCentralId] = useState(0);
   const navigate = useNavigate();
 
-  function openModal() {
-    setIsModalOpen(true);
-  }
-  function closeModal() {
-    setIsModalOpen(false);
+
+
+  async function getAllSurgeriesCentral (): Promise<SurgerieCentral[]> {
+    const response = await api.get("/surgeries/central")
+    return response.data.centralSurgerie
   }
 
-  function openModalTwo() {
-    setIsModalOpenTwo(true);
-  }
-  function closeModalTwo() {
-    setIsModalOpenTwo(false);
+  const {refetch, data: surgeriesCentral, isLoading} = useQuery("surgeriesCentral", getAllSurgeriesCentral)
+
+
+  if(isLoading || !surgeriesCentral) {
+    return <LoadingSpinner/>
   }
 
-  const handleCreateSurgeryCenter: SubmitHandler<FieldValues> = async (
+  const handleCreateSurgerie: SubmitHandler<FieldValues> = async (
     values
   ) => {
     try {
       const data = {
-        name: values.name,
+        centralName: values.name,
+        closedHours: values.endHour,
+        openHours: values.openHour,
+        isOpen: values.isOpen,
+        maxSlots: values.maxSlots,
       };
-      await api.post("/surgeryCenter", data);
+
+      await api.post("/surgeries/central", data);
+      refetch()
       toast.success("Centro cirurgico criado com sucesso!!");
-      navigate(0);
+      setIsModalOpen(false)
+    
     } catch (error) {
       toast.error("Falha ao criar novo Centro cirurgico!!");
     }
   };
 
-  async function DeleteSurgeryCenter(id: string | number) {
+  async function handleDeleteSurgerieCentral(id: string | number) {
     try {
-      await api.delete(`surgeryCenter/${id}`);
+      await api.delete(`/surgeries/central/${id}`);
+      refetch()
       toast.success("Centro Cirurgico deletado com sucesso!!");
-      navigate(0);
     } catch (error) {
       toast.error("Falha ao Deletar Centro Cirurgico!!");
     }
   }
 
-  const handleEditSurgeryCenter: SubmitHandler<FieldValues> = async (
+  const handleEditSurgeriesCentral: SubmitHandler<FieldValues> = async (
     values
   ) => {
     try {
       const data = {
-        name: values.name,
+        centralId:  surgerieCentralId,
+        centralName: values.name,
+        closedHours: values.endHour,
+        openHours: values.openHour,
+        isOpen: values.isOpen,
+        maxSlots: values.maxSlots,
       };
-      await api.put(`surgeryCenter/${values.id}`, data);
-      toast.success("Centro Cirurgico editado com sucesso!!");
-      navigate(0);
+      await api.put(`/surgeries/central/edit`, data);
+      refetch()
+      toast.success("Centro cirurgico editado com sucesso!!");
+      setIsModalOpen(false)
+ 
     } catch (error) {
       toast.error("Falha ao editar Centro Cirurgico!!");
     }
@@ -129,7 +152,7 @@ export function SurgeryCenter() {
                   colorScheme="whatsapp"
                   cursor="pointer"
                   leftIcon={<Icon as={RiAddLine} />}
-                  onClick={() => openModal()}
+                  onClick={() => setIsModalOpen(true)}
                 >
                   Cadastrar novo Centro Cirúrgico
                 </Button>
@@ -145,11 +168,15 @@ export function SurgeryCenter() {
                 </Thead>
 
                 <Tbody>
-                  {surgeryCenter.length > 0 ? (
-                    surgeryCenter.map((surgeryCenter) => (
-                      <Tr key="0">
-                        <Td fontSize={{ base: "12", lg: "sm" }}></Td>
-                        <Td fontSize={{ base: "12", lg: "sm" }}></Td>
+                  {surgeriesCentral.length > 0 ? (
+                    surgeriesCentral.map((central) => (
+                      <Tr fontWeight="bold" key={central.id}>
+                        <Td fontSize={{ base: "12", lg: "sm" }} >
+                          {central.centralName}
+                        </Td>
+                        <Td fontSize={{ base: "12", lg: "sm" }}>
+                        {central.maxSlots}
+                        </Td>
 
                         <Td>
                           <Flex gap="2" ml="40%">
@@ -159,7 +186,9 @@ export function SurgeryCenter() {
                               fontSize="sm"
                               colorScheme="yellow"
                               leftIcon={<Icon as={RiPencilLine} />}
-                              onClick={() => openModalTwo()}
+                              onClick={() => {
+                                setSurgerieCentralId(central.id)
+                                setIsModalOpenTwo(true)}}
                             >
                               Editar Centro Cirúrgico
                             </Button>
@@ -170,7 +199,7 @@ export function SurgeryCenter() {
                               buttonTitle="Deletar Centro Cirurgico"
                               whatIsConfirmerd="Tem certeza que deseja Excluir esse Centro Cirurgico?"
                               describreConfirm="Excluir o Centro Cirurgico é uma ação irreversivel, tem certeza que deseja excluir?"
-                              callbackFn={() => DeleteSurgeryCenter(1)}
+                              callbackFn={() => handleDeleteSurgerieCentral(central.id)}
                             />
                           </Flex>
                         </Td>
@@ -185,10 +214,10 @@ export function SurgeryCenter() {
                   )}
                 </Tbody>
               </Table>
-              <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+              <GenericModal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)}>
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleCreateSurgeryCenter)}
+                  onSubmit={handleSubmit(handleCreateSurgerie)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
@@ -200,26 +229,36 @@ export function SurgeryCenter() {
                     mb="4"
                   />
 
+                    <HStack>
+                      <Text fontWeight="bold">Aberto ?</Text>
+                    <Checkbox {...register('isOpen')} name="isOpen" border="2px" size="lg" />
+                    </HStack>
+                  
+
                   <Input
-                    {...register("name")}
-                    name="name"
+                    {...register("maxSlots")}
+                    name="maxSlots"
+                    placeholder="Número de slots"
+                    type="number"
                     label="Slots"
                     mb="4"
                   />
                   <Input
+                    {...register("openHour")}
                     placeholder="08:00"
-                    name=""
+                    name="openHour"
                     label="Horário de abertura"
                     mb="4"
                   />
                   <Input
+                  {...register("endHour")}
                     placeholder="22:00"
                     type="date-time"
-                    name=""
+                    name="endHour"
                     label="Horário de fechamento"
                     mb="4"
                   />
-
+                    <Text>Obs: utilize o formato 00:00 para os horários</Text>
                   <Button w="100%" type="submit" colorScheme="green" m="2">
                     Cadastrar
                   </Button>
@@ -228,22 +267,16 @@ export function SurgeryCenter() {
 
               <GenericModal
                 isOpen={isModalOpenTwo}
-                onRequestClose={closeModalTwo}
+                onRequestClose={() => setIsModalOpenTwo(false)}
               >
                 <FormControl
                   as="form"
-                  onSubmit={handleSubmit(handleEditSurgeryCenter)}
+                  onSubmit={handleSubmit(handleEditSurgeriesCentral)}
                   display="flex"
                   flexDir="column"
                   alignItems="center"
                 >
                   <Text pb="15">Editar Centro cirúrgico</Text>
-                  <Input
-                    {...register("id")}
-                    name="id"
-                    label="Id do Centro cirúrgico"
-                    mb="4"
-                  />
                   <Input
                     {...register("name")}
                     name="name"
@@ -251,15 +284,38 @@ export function SurgeryCenter() {
                     mb="4"
                   />
 
+                    <HStack>
+                      <Text fontWeight="bold">Aberto ?</Text>
+                    <Checkbox {...register('isOpen')} name="isOpen" border="2px" size="lg" />
+                    </HStack>
+                  
+
                   <Input
-                    {...register("id")}
-                    name="id"
-                    label="Slots do Centro cirúrgico"
+                    {...register("maxSlots")}
+                    name="maxSlots"
+                    placeholder="Número de slots"
+                    type="number"
+                    label="Slots"
                     mb="4"
                   />
-
-                  <Button w="100%" type="submit" colorScheme="green" m="2">
-                    Cadastrar
+                  <Input
+                    {...register("openHour")}
+                    placeholder="08:00"
+                    name="openHour"
+                    label="Horário de abertura"
+                    mb="4"
+                  />
+                  <Input
+                  {...register("endHour")}
+                    placeholder="22:00"
+                    type="date-time"
+                    name="endHour"
+                    label="Horário de fechamento"
+                    mb="4"
+                  />
+                    <Text>Obs: utilize o formato 00:00 para os horários</Text>
+                  <Button w="100%" type="submit" colorScheme="yellow" m="2">
+                    Editar
                   </Button>
                 </FormControl>
               </GenericModal>

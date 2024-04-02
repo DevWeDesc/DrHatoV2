@@ -17,8 +17,8 @@ export const surgeriesCentralController = {
           centralName: z.string(),
           closedHours: z.string(),
           openHours: z.string(),
-          isOpen: z.boolean(),
-          maxSlots: z.number(),
+          isOpen: z.coerce.boolean(),
+          maxSlots: z.coerce.number(),
           movimentedValues: z.number().optional(),
           surgeriesCompleteds: z.number().optional(),
 
@@ -30,7 +30,7 @@ export const surgeriesCentralController = {
       surgeriesCompleteds, maxSlots} = createCentralSurgerieSchema.parse(request.body)
 
       const allSlots = [];
-      for (let index = 0; index <= maxSlots; index++) {
+      for (let index = 1; index <= maxSlots; index++) {
         allSlots.push({});
       }
 
@@ -66,9 +66,8 @@ export const surgeriesCentralController = {
           centralName: z.string().optional(),
           closedHours: z.string().optional(),
           openHours: z.string().optional(),
-          isOpen: z.boolean().optional(),
-          usedSlots: z.number().optional(),
-          maxSlots: z.number().optional(),
+          isOpen: z.coerce.boolean().optional(),
+          maxSlots: z.coerce.number().optional(),
           movimentedValues: z.number().optional(),
           surgeriesCompleteds: z.number().optional(),
 
@@ -107,7 +106,7 @@ export const surgeriesCentralController = {
     try {
       
       const excludeCentralSurgerieSchema = z.object({
-         centralId: z.number()})
+         centralId: z.coerce.number()})
 
       const {centralId} = excludeCentralSurgerieSchema.parse(request.params)
 
@@ -129,7 +128,7 @@ export const surgeriesCentralController = {
     try {
       
       const findCentralSurgerieSchema = z.object({
-         centralId: z.number()})
+         centralId: z.coerce.number()})
 
       const {centralId} = findCentralSurgerieSchema.parse(request.params)
 
@@ -138,6 +137,9 @@ export const surgeriesCentralController = {
         where: {
           id: centralId
         },
+        include: {
+          surgerieSlots: true
+        }
       })
 
       reply.send({
@@ -151,7 +153,13 @@ export const surgeriesCentralController = {
   findAllCentralSurgeries:  async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       
-    const centralSurgerie = await prisma.surgeriesCentral.findMany()
+    const centralSurgerie = await prisma.surgeriesCentral.findMany(
+      {
+        include: {
+          surgerieSlots: true
+        }
+      }
+    )
 
       reply.send({
         centralSurgerie
@@ -160,5 +168,33 @@ export const surgeriesCentralController = {
       console.log(error)
     }
   },
+
+  reserveSlot: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+        const reserveSlotSchema = z.object({
+          slotId: z.number(),
+					petName: z.string().optional(),
+					petId: z.number().optional(),
+					surgerieName: z.string().optional(),
+					vetName: z.string().optional(),
+					vetCrmv: z.string().optional(),
+        })  
+
+        const {petId, petName, slotId, vetCrmv, vetName,surgerieName} = reserveSlotSchema.parse(request.body)
+
+         await prisma.surgerieSlots.update({
+          where: {id: slotId},data: {
+            petId,petName, surgerieName, vetCrmv, vetName
+          }
+         })
+
+
+         reply.status(204).send({message: 'Reservado com sucesso!'})
+    } catch (error) {
+        console.log(error)
+    }
+  }
+
+
 
 } 
