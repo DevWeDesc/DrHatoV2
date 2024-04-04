@@ -132,26 +132,38 @@ export function Createsurgeries({
     try {
 
       let slotFound = false;
+      let hasSurgerie = false;
 
-      const reservedSlot = surgerieCentral?.surgerieSlots.map((slot, index) => {
+      const reservedSlot = surgerieCentral?.surgerieSlots?.map((slot, index) => {
           if(!slot.petName?.includes(petDetails?.name) || !slot.petId?.toString().includes(petDetails?.id?.toString())) {
               return null; 
-          } else {
+          } 
               slotFound = true; 
               return slot
-          }
       });
+
+      petDetails.surgeries.map((surgerie) => {
+        if(surgerie.name == reservedSlot.find((s) => s?.id != null)?.surgerieName) {
+          hasSurgerie = true
+        }
+      })
 
       if (!slotFound) {
           toast.warning("Reserve ao menos 1 slot para cirurgia");
           return
       }
 
-          
+      if(hasSurgerie) {
+        toast.warning("Animal já possui cirurgia em andamento");
+        return
+      }
+    
+ 
       const data = {
         RequestedByVetId: user.id,
         RequestedByVetName: user.consultName,
         isAdmission: InAdmission,
+        slotId: reservedSlot.find((s) => s?.id != null)?.id
       };
 
       if (InAdmission === true) {
@@ -170,12 +182,14 @@ export function Createsurgeries({
         toast.success("Cirurgia adicionada - Veterinários");
       }
     } catch (error) {
+      console.log(error);
       toast.error("Falha ao cadastrar Cirurgia!");
     }
   }
 
+
   const handleDeleteSugerie = async (
-    did: number,
+    slotId: number,
     sugPrice: string | number,
     linkedConsultId: number
   ) => {
@@ -187,7 +201,7 @@ export function Createsurgeries({
       if (confirm === true) {
         await api
           .delete(
-            `/petsurgery/${did}/${petDetails.totalAcc.id}/${sugPrice}/${linkedConsultId}`
+            `/petsurgery/${slotId}/${petDetails.totalAcc.id}/${sugPrice}/${linkedConsultId}`
           )
           .then((res) => {
             queryClient.invalidateQueries('surgeriesData');
@@ -242,7 +256,7 @@ export function Createsurgeries({
       }
     
   }
-  let selectedCentralSurgerie = centralSurgeries?.find((central) => central.id === selectedCentral);
+
   useQuery('queueDetails', getQueueDetails)
   const SearchAlfabet = [
     "a",
@@ -276,6 +290,7 @@ export function Createsurgeries({
   if(isLoading) {
     return <LoadingSpinner/>
   }
+
 
   return (
     <ChakraProvider>
@@ -338,7 +353,7 @@ export function Createsurgeries({
                           isDisabled={surgerie.surgerieStatus === "FINISHED"}
                           onClick={() =>
                             handleDeleteSugerie(
-                              surgerie.id,
+                              surgerie.slotId,
                               surgerie.price,
                               surgerie.linkedConsultId
                             )

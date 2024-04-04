@@ -316,43 +316,45 @@ export const proceduresController = {
     reply: FastifyReply
   ) => {
 
-    const editProcedureSchema = z.object({
-      procedureId: z.coerce.number(),
-      name                : z.string().optional(),
-      price               : z.number().optional(),
-      priceTwo            : z.number().optional(),
-      priceThree          : z.number().optional(),
-      priceFour           : z.number().optional(),
-      minAge              : z.number().optional(),
-      maxAge              : z.number().optional(),
-      applicableMale      : z.boolean().optional(),
-      applicableFemale    : z.boolean().optional(),
-      applicationInterval : z.string().optional(),
-      available           : z.boolean().optional(),
-      observations        : z.string(),
-      group_id            : z.number().optional(),
-      sector_id           : z.number().optional(),
-    })
-
-    const {
-      procedureId,
-      name,
-      price,
-      available,
-      observations,
-      applicationInterval,
-      applicableFemale,
-      applicableMale,
-      group_id,
-      maxAge,
-      minAge,
-      priceFour,
-      priceThree,
-      priceTwo,
-      sector_id,
-    } = editProcedureSchema.parse(request.body);
-
     try {
+      const editProcedureSchema = z.object({
+        procedureId: z.coerce.number(),
+        name                : z.string().optional(),
+        price               : z.coerce.number().optional(),
+        priceTwo            : z.coerce.number().optional(),
+        priceThree          : z.coerce.number().optional(),
+        priceFour           : z.coerce.number().optional(),
+        minAge              : z.coerce.number().optional(),
+        maxAge              : z.coerce.number().optional(),
+        applicableMale      : z.boolean().optional(),
+        applicableFemale    : z.boolean().optional(),
+        applicationInterval : z.string().optional(),
+        available           : z.boolean().optional(),
+        observations        : z.string().optional(),
+        group_id            : z.coerce.number().optional(),
+        sector_id           : z.coerce.number().optional(),
+   
+      })
+  
+      const {
+        procedureId,
+        name,
+        price,
+        available,
+        observations,
+        applicationInterval,
+        applicableFemale,
+        applicableMale,
+        group_id,
+        maxAge,
+        minAge,
+        priceFour,
+        priceThree,
+        priceTwo,
+        sector_id,
+    
+      } = editProcedureSchema.parse(request.body);
+  
       await prisma.procedures.update({
         where: { id: procedureId },
         data: {
@@ -364,18 +366,23 @@ export const proceduresController = {
           applicableFemale,
           applicableMale,
           group_id,
+          sector_id,
           maxAge,
           minAge,
           priceFour,
           priceThree,
           priceTwo,
-          sector_id,
         },
       });
 
+    
+
       reply.status(200)
     } catch (error) {
-      console.error(error);
+      reply.send({
+        message: error
+      })
+      console.log(error);
     }
   },
 

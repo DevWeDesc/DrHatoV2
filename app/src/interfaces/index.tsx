@@ -153,6 +153,7 @@ enum SurgerieStatus {
 }
 
 export interface SugeriesProps {
+  slotId: number;
   id: number;
   name: string;
   price: number;

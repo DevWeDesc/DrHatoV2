@@ -162,6 +162,7 @@ export const petsController = {
             surgerieStatus: surgerie.status,
             linkedConsultId: surgerie.linkedConsultDebitId,
             linkedAdmissionId: surgerie.LinkedAdmissionDebitId,
+            slotId: surgerie.slotId
           };
           return surgeriesData;
         }),

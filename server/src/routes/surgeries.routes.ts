@@ -10,7 +10,7 @@ export async function surgeriesRoutes(app: FastifyInstance) {
     surgeriesController.setSurgerieInPet
   );
   app.delete(
-    "/petsurgery/:id/:accId/:sugPrice/:linkedDebitId",
+    "/petsurgery/:slotId/:accId/:sugPrice/:linkedDebitId",
     surgeriesController.excludePetSugerie
   );
 
