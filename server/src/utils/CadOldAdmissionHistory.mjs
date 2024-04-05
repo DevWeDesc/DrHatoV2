@@ -50,4 +50,3 @@ const filteredData = data
     }
   }
   
-  PopulateOldAdmission()

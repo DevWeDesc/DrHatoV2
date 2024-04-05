@@ -59,4 +59,3 @@ const filteredData = data.map(exam => ({
      }
  } 
 
- PopulateOldExamsHistorie()

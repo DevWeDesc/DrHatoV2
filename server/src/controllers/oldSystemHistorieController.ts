@@ -2,6 +2,7 @@
 import { FastifyRequest, FastifyReply } from "fastify"
 import { prisma } from "../interface/PrismaInstance"
 import { ResourceNotFoundError } from "../errors/ResouceNotFoundError"
+import { z } from "zod"
 
 
 
@@ -45,7 +46,34 @@ export const oldSystemHistorieController =  {
 
   getPetOldAdmissions: async (request: FastifyRequest, reply :FastifyReply) => {
     try {
-      const oldAdmissions = await prisma.oldAdmissionsHistory.findMany()
+      const oldAdmissions = await prisma.oldAdmissionsHistory.findMany({
+        include: {
+          OldAdmissionProcedures: true
+        }
+      })
+
+      reply.send({
+        oldAdmissions
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
+  getPetOldAdmissionsById: async (request: FastifyRequest, reply :FastifyReply) => {
+    try {
+      const getPetOldAdmissionsByIdSchema = z.object({
+        codAnimal: z.coerce.number()
+      })
+      const {codAnimal} = getPetOldAdmissionsByIdSchema.parse(request.params)
+      const oldAdmissions = await prisma.oldAdmissionsHistory.findMany({
+        where: {
+        CodAnimal:codAnimal
+        },
+        include: {
+          OldAdmissionProcedures: true
+        }
+      })
 
       reply.send({
         oldAdmissions
@@ -54,4 +82,5 @@ export const oldSystemHistorieController =  {
       console.log(error)
     }
   }
+
 }

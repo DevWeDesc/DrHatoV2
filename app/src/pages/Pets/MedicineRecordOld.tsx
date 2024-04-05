@@ -19,6 +19,7 @@ import { api } from "../../lib/axios";
 import { MedicineContainer } from "./style";
 import { useQuery, useQueryClient } from "react-query";
 import { LoadingSpinner } from "../../components/Loading";
+import { useState } from "react";
 
 
 export interface OldConsultsHistories {
@@ -111,6 +112,7 @@ CodConsulta: number;
 
 export function MedicineRecordOld() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
+  const [typeShowHistorie, setTypeShowHistorie] = useState("")
   const navigate = useNavigate();
 
   function handleOpenOldResultExams({
@@ -148,14 +150,363 @@ export function MedicineRecordOld() {
   }
 
 
+
+
   const { data: consultsData, isLoading: consultsLoading } = useQuery('oldHistory', {queryFn: getConsults})
   const { data: examsData, isLoading: examsLoading } = useQuery('oldExams', {queryFn: getOldExamsHistorie})
+
+  async function getOldHistorieAdmission(): Promise<any[]> {
+    try {
+      const response =  await api.get(`/admission/historie/old/all/${consultsData?.CodAnimal}`)
+      return  response.data.oldAdmissions
+    } catch (error) {
+        throw error
+    }
+  }
+  const { data: oldHistorieData} = useQuery('oldHistorie', {queryFn: getOldHistorieAdmission})
 
   if(consultsLoading || examsLoading) {
     return <LoadingSpinner/>
   }
 
+  let typeShowHistorieComponent;
+  switch(true) {
+    case typeShowHistorie == "Internações":
+      typeShowHistorieComponent = (
+       <Flex direction="column" w="100%" h="100%">
+          {
+            oldHistorieData?.map((historie) => (
+              <Flex direction="column" textAlign="center" key={historie.id}> 
+                <Text color="black"  fontWeight="bold" border="2px"  fontSize="lg" w="100%" bgColor="gray.300">
+                  {`Inicio da internação: ${new Intl.DateTimeFormat("pt-BR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: '2-digit'
+                }).format(new Date(historie.entryDay))} - ${historie.entryHour}. Fim da internação ${new Intl.DateTimeFormat("pt-BR", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: '2-digit'
+              }).format(new Date(historie.exitDay))} - ${historie.exitHour}`}
+                </Text>
+                <Flex direction="column" w="100%" h="100%"> 
+                     <TableContainer>
+                          <Table>
+                            <Thead>
+                              <Tr bgColor="white">
+                                <Th fontWeight="bold" fontSize="md" color="black" border="2px">Procedimento</Th>
+                                <Th fontWeight="bold" fontSize="md" color="black" border="2px">Valor</Th>
+                                </Tr></Thead>
+                            <Tbody>
+                              <Tr bgColor="white">
+                                <Td   fontWeight="bold" fontSize="md" color="black" border="2px"  >{ historie?.OldAdmissionProcedures?.procedureName}</Td>
+                                <Td   fontWeight="bold" fontSize="md" color="black" border="2px"  >{
+                                  new Intl.NumberFormat("pt-BR", {currency: 'BRL', style: 'currency'}).format(Number(historie?.OldAdmissionProcedures?.procedureValue))
+                                }</Td>
+                                </Tr></Tbody>
+                          </Table>
+                        </TableContainer>
+               
+                </Flex>
+              </Flex>
+            ))
+          }
+       </Flex>
+      )
+    break;
+    case typeShowHistorie == "Consultas":
+      typeShowHistorieComponent = (
+        <Flex  color="black"  fontWeight="bold"   fontSize="lg" border="2px" direction="column" w="100%" h="100%">
+        {consultsData?.petOldConsults?.map((consult) => (
+          <Flex
+            textAlign="center"
+            direction="column"
+            w="100%"
+            key={consult.id}
+          >
+            <Text
+              border="2px"
+              fontSize="lg"
+              bg="gray.300"
+              color="black"
+              fontWeight="bold"
+            >{`Entrada: ${new Intl.DateTimeFormat("pt-BR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: '2-digit'
+            }).format(new Date(consult.date))}: ${consult.startAt} 
+            - 
+            Saida: ${new Intl.DateTimeFormat("pt-BR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: '2-digit'
+            }).format(new Date(consult.date))}: ${consult.endAt}
+            -
+            ${consult.consulType} - ${consult.vetName}`}</Text>
+            <Flex align="center" textAlign="center" gap="0">
+              <Text
+                borderY="2px"
+                fontWeight="bold"
+                fontSize="lg"
+                bgColor="gray.300"
+                h="38px"
+                w="20%"
+              >
+                Peso
+              </Text>
+              <Text
+                border="2px"
+                fontWeight="black"
+                fontSize="lg"
+                bgColor="white"
+                h="38px"
+                w="80%"
+              >
+                {consult.petWeight != 0 ? `${consult.petWeight}Kgs` : "Não informado"} 
+              </Text>
+              <Button
+                maxH="38px"
+                borderRadius="0px"
+                colorScheme="red"
+                isDisabled
+              >
+                Desconcluir
+              </Button>
+            </Flex>
 
+            <Flex direction="column">
+              <Text
+                pl="40px"
+                textAlign="left"
+                border="2px"
+                fontWeight="bold"
+                fontSize="lg"
+                bgColor="gray.300"
+                py="4px"
+                w="100%"
+              >
+                {" "}
+                Sintomas
+              </Text>
+              <Textarea
+                borderRadius="0"
+                bgColor="white"
+                fontSize="md"
+                fontWeight="bold"
+                border="2px"
+                w="100%"
+               
+                defaultValue={consult.symptoms}
+              />
+              {
+                consult.diagnostic.length >= 1  ? (<>
+                   <Text
+                pl="40px"
+                textAlign="left"
+                border="2px"
+                fontWeight="bold"
+                fontSize="lg"
+                bgColor="gray.300"
+                py="4px"
+                w="100%"
+              >
+                {" "}
+                Diagnóstico
+              </Text>
+              <Textarea
+                borderRadius="0"
+                bgColor="white"
+                fontSize="md"
+                fontWeight="bold"
+                border="2px"
+                w="100%"
+               
+                defaultValue={consult.diagnostic}
+              />
+                </>) : (<></>)
+              }
+                         {
+                consult.request.length >= 1  ? (<>
+                   <Text
+                pl="40px"
+                textAlign="left"
+                border="2px"
+                fontWeight="bold"
+                fontSize="lg"
+                bgColor="gray.300"
+                py="4px"
+                w="100%"
+              >
+                {" "}
+                Solicitação
+              </Text>
+              <Textarea
+                borderRadius="0"
+                bgColor="white"
+                fontSize="md"
+                fontWeight="bold"
+                border="2px"
+                w="100%"
+               
+                defaultValue={consult.request}
+              />
+                </>) : (<></>)
+              }
+              
+            </Flex>
+          </Flex>
+        ))}
+      </Flex>
+      )
+
+    break;
+    default: 
+    typeShowHistorieComponent = (
+      <Flex direction="column" w="100%" h="100%">
+      {consultsData?.petOldConsults?.map((consult) => (
+        <Flex
+          textAlign="center"
+          direction="column"
+          w="100%"
+          key={consult.id}
+        >
+          <Text
+            border="2px"
+            fontSize="lg"
+            bg="gray.300"
+            color="black"
+            fontWeight="bold"
+          >{`Entrada: ${new Intl.DateTimeFormat("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: '2-digit'
+          }).format(new Date(consult.date))}: ${consult.startAt} 
+          - 
+          Saida: ${new Intl.DateTimeFormat("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: '2-digit'
+          }).format(new Date(consult.date))}: ${consult.endAt}
+          -
+          ${consult.consulType} - ${consult.vetName}`}</Text>
+          <Flex align="center" textAlign="center" gap="0">
+            <Text
+              borderY="2px"
+              fontWeight="bold"
+              fontSize="lg"
+              bgColor="gray.300"
+              h="38px"
+              w="20%"
+            >
+              Peso
+            </Text>
+            <Text
+              border="2px"
+              fontWeight="black"
+              fontSize="lg"
+              bgColor="white"
+              h="38px"
+              w="80%"
+            >
+              {consult.petWeight != 0 ? `${consult.petWeight}Kgs` : "Não informado"} 
+            </Text>
+            <Button
+              maxH="38px"
+              borderRadius="0px"
+              colorScheme="red"
+              isDisabled
+            >
+              Desconcluir
+            </Button>
+          </Flex>
+
+          <Flex direction="column">
+            <Text
+              pl="40px"
+              textAlign="left"
+              border="2px"
+              fontWeight="bold"
+              fontSize="lg"
+              bgColor="gray.300"
+              py="4px"
+              w="100%"
+            >
+              {" "}
+              Sintomas
+            </Text>
+            <Textarea
+              borderRadius="0"
+              bgColor="white"
+              fontSize="md"
+              fontWeight="bold"
+              border="2px"
+              w="100%"
+             
+              defaultValue={consult.symptoms}
+            />
+            {
+              consult.diagnostic.length >= 1  ? (<>
+                 <Text
+              pl="40px"
+              textAlign="left"
+              border="2px"
+              fontWeight="bold"
+              fontSize="lg"
+              bgColor="gray.300"
+              py="4px"
+              w="100%"
+            >
+              {" "}
+              Diagnóstico
+            </Text>
+            <Textarea
+              borderRadius="0"
+              bgColor="white"
+              fontSize="md"
+              fontWeight="bold"
+              border="2px"
+              w="100%"
+             
+              defaultValue={consult.diagnostic}
+            />
+              </>) : (<></>)
+            }
+                       {
+              consult.request.length >= 1  ? (<>
+                 <Text
+              pl="40px"
+              textAlign="left"
+              border="2px"
+              fontWeight="bold"
+              fontSize="lg"
+              bgColor="gray.300"
+              py="4px"
+              w="100%"
+            >
+              {" "}
+              Solicitação
+            </Text>
+            <Textarea
+              borderRadius="0"
+              bgColor="white"
+              fontSize="md"
+              fontWeight="bold"
+              border="2px"
+              w="100%"
+             
+              defaultValue={consult.request}
+            />
+              </>) : (<></>)
+            }
+            
+          </Flex>
+        </Flex>
+      ))}
+    </Flex>
+    )
+    break;
+  }
+
+  console.log(oldHistorieData)
   return (
     <ChakraProvider>
       <Flex direction="column" h="100vh" w="100vw">
@@ -275,6 +626,7 @@ export function MedicineRecordOld() {
                   borderY="4px solid green"
                   borderLeft="4px solid green"
                   borderRadius={0}
+                  onClick={() => setTypeShowHistorie("Consultas")}
                 >
                   Consultas
                 </Button>
@@ -284,6 +636,7 @@ export function MedicineRecordOld() {
                   borderX="2px solid green"
                   borderY="4px solid green"
                   borderRadius={0}
+                  onClick={() => setTypeShowHistorie("Internações")}
                 >
                   Internações
                 </Button>
@@ -301,147 +654,10 @@ export function MedicineRecordOld() {
               
         
               <Flex w="100%" h="100%" overflowY="auto">
-                <Flex direction="column" w="100%" h="100%">
-                  {consultsData?.petOldConsults?.map((consult) => (
-                    <Flex
-                      textAlign="center"
-                      direction="column"
-                      w="100%"
-                      key={consult.id}
-                    >
-                      <Text
-                        border="2px"
-                        fontSize="lg"
-                        bg="gray.300"
-                        color="black"
-                        fontWeight="bold"
-                      >{`Entrada: ${new Intl.DateTimeFormat("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: '2-digit'
-                      }).format(new Date(consult.date))}: ${consult.startAt} 
-                      - 
-                      Saida: ${new Intl.DateTimeFormat("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: '2-digit'
-                      }).format(new Date(consult.date))}: ${consult.endAt}
-                      -
-                      ${consult.consulType} - ${consult.vetName}`}</Text>
-                      <Flex align="center" textAlign="center" gap="0">
-                        <Text
-                          borderY="2px"
-                          fontWeight="bold"
-                          fontSize="lg"
-                          bgColor="gray.300"
-                          h="38px"
-                          w="20%"
-                        >
-                          Peso
-                        </Text>
-                        <Text
-                          border="2px"
-                          fontWeight="black"
-                          fontSize="lg"
-                          bgColor="white"
-                          h="38px"
-                          w="80%"
-                        >
-                          {consult.petWeight != 0 ? `${consult.petWeight}Kgs` : "Não informado"} 
-                        </Text>
-                        <Button
-                          maxH="38px"
-                          borderRadius="0px"
-                          colorScheme="red"
-                          isDisabled
-                        >
-                          Desconcluir
-                        </Button>
-                      </Flex>
-
-                      <Flex direction="column">
-                        <Text
-                          pl="40px"
-                          textAlign="left"
-                          border="2px"
-                          fontWeight="bold"
-                          fontSize="lg"
-                          bgColor="gray.300"
-                          py="4px"
-                          w="100%"
-                        >
-                          {" "}
-                          Sintomas
-                        </Text>
-                        <Textarea
-                          borderRadius="0"
-                          bgColor="white"
-                          fontSize="md"
-                          fontWeight="bold"
-                          border="2px"
-                          w="100%"
-                         
-                          defaultValue={consult.symptoms}
-                        />
-                        {
-                          consult.diagnostic.length >= 1  ? (<>
-                             <Text
-                          pl="40px"
-                          textAlign="left"
-                          border="2px"
-                          fontWeight="bold"
-                          fontSize="lg"
-                          bgColor="gray.300"
-                          py="4px"
-                          w="100%"
-                        >
-                          {" "}
-                          Diagnóstico
-                        </Text>
-                        <Textarea
-                          borderRadius="0"
-                          bgColor="white"
-                          fontSize="md"
-                          fontWeight="bold"
-                          border="2px"
-                          w="100%"
-                         
-                          defaultValue={consult.diagnostic}
-                        />
-                          </>) : (<></>)
-                        }
-                                   {
-                          consult.request.length >= 1  ? (<>
-                             <Text
-                          pl="40px"
-                          textAlign="left"
-                          border="2px"
-                          fontWeight="bold"
-                          fontSize="lg"
-                          bgColor="gray.300"
-                          py="4px"
-                          w="100%"
-                        >
-                          {" "}
-                          Solicitação
-                        </Text>
-                        <Textarea
-                          borderRadius="0"
-                          bgColor="white"
-                          fontSize="md"
-                          fontWeight="bold"
-                          border="2px"
-                          w="100%"
-                         
-                          defaultValue={consult.request}
-                        />
-                          </>) : (<></>)
-                        }
-                        
-                      </Flex>
-                    </Flex>
-                  ))}
-                </Flex>
+                {
+                  typeShowHistorieComponent
+                }
+               
               </Flex>
 
             </Flex>

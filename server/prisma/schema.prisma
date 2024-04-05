@@ -262,27 +262,27 @@ model QueuesForPet {
 //  ------------- ADMISSIONS -------------   //
 
 model OldAdmissionsHistory {
-  id            Int                      @id @default(autoincrement())
-  CodAnimal     Int?                     @unique
-  CodLeito      Int?
-  CodInternacao Int?                     @unique
-  entryDay      DateTime?
-  exitDay       DateTime?
-  exitHour      String?
-  entryHour     String?
-  procedures    OldAdmissionProcedures[]
-  Pets          Pets?                    @relation(fields: [petsId], references: [id])
-  petsId        Int?
+  id                       Int                     @id @default(autoincrement())
+  CodAnimal                Int?
+  CodLeito                 Int?
+  CodInternacao            Int?                    @unique
+  entryDay                 DateTime?
+  exitDay                  DateTime?
+  exitHour                 String?
+  entryHour                String?
+  Pets                     Pets?                   @relation(fields: [petsId], references: [id])
+  petsId                   Int?
+  OldAdmissionProcedures   OldAdmissionProcedures? @relation(fields: [oldAdmissionProceduresId], references: [id])
+  oldAdmissionProceduresId Int?
 }
 
 model OldAdmissionProcedures {
-  id                     Int                   @id @default(autoincrement())
-  CodAnimal              Int?                  @unique
-  CodInternacao          Int?                  @unique
-  procedureName          String?
-  procedureValue         Float?
-  OldAdmissionsHistory   OldAdmissionsHistory? @relation(fields: [oldAdmissionsHistoryId], references: [id])
-  oldAdmissionsHistoryId Int?
+  id               Int                    @id @default(autoincrement())
+  CodAnimal        Int?
+  CodInternacao    Int?
+  procedureName    String?
+  procedureValue   Float?
+  admissionHistory OldAdmissionsHistory[]
 }
 
 //  ------------- ADMISSIONS -------------   //
