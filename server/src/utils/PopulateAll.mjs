@@ -1,5 +1,7 @@
 import { PopulateOldExams } from "./CadExamsOld.mjs";
 import { PopulateOldExamsHistorie } from "./CadExamsOldHistory.mjs";
+import { PopulateOldDetailsAdmission } from "./CadOldAdmissionDetails.mjs";
+import { PopulateOldAdmission } from "./CadOldAdmissionHistory.mjs";
 import { PopulateOldCaractersExams } from "./CadPartDetailsOld.mjs";
 import { PopulatePartDetails } from "./CadPartExamsOld.mjs";
 import { PopulateUsers } from "./transformExcell.mjs";
@@ -20,6 +22,7 @@ import { PopulateVaccines } from "./transformExcellVaccines.mjs";
 
 export async function PopulateDataBase() {
     try {
+
         await PopulateUsers();
         await PopulateCustomer();
         await PopulatePets();
@@ -37,8 +40,10 @@ export async function PopulateDataBase() {
         await PopulateRaces();
         await PopulateInstructions();
         await PopulateInstructAlta();
-        await PopulateOldConsults()
-        await PopulateOldExamsHistorie ()
+        await PopulateOldConsults();
+        await PopulateOldExamsHistorie();
+        await PopulateOldAdmission();
+        await PopulateOldDetailsAdmission();
 
         console.log("Todo Banco Populado com Sucesso!")
         

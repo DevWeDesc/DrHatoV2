@@ -14,6 +14,7 @@ const filteredData = data.map(exam => ({
     vetId     :  parseInt(exam.veterinário),
     codConsult:  parseInt(exam.CodConsulta),
     codExam   :  parseInt(exam.Codexame),
+    CodExamConsulta: parseInt(exam.CodExameConsulta),
     codAnimal :  parseInt(exam.codanimal),
     codCli    :  parseInt(exam.Codcli),
   madeAt     : new Date(exam.Data),
@@ -35,6 +36,7 @@ const filteredData = data.map(exam => ({
         await prisma.oldExamsHistory.create({
           data: {
             ...exams,
+
           Pets: {
             connect: {
               CodAnimal: exams.codAnimal

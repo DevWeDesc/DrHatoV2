@@ -52,6 +52,34 @@ export default function ProceduresVets({
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [pagination, SetPagination] = useState(1)
+  const SearchAlfabet = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+  ];
   const [consultDetails, setConsultDetails] = useState(
     {} as ConsultsPetDetails
   );
@@ -173,6 +201,11 @@ export default function ProceduresVets({
     }
   }
 
+  async function getProcedureByLetter(letter: string){
+    const response = await api.get(`/procedures/letters/${letter}/${pagination}`)
+    setProcedures(response.data.procedures);
+  }
+ 
 
   async function getProcedureByHealthInsurance() {
     const response = await api.get(`/procedures/health/${consultDetails.healthInsuranceName}/${pagination}`)
@@ -194,6 +227,8 @@ export default function ProceduresVets({
     setReloadData(false); // Reseta o estado para evitar chamadas infinitas
   }, [reloadData, query, pagination]);
 
+
+  console.log(consultDetails)
   return (
     <>
       <Flex w="100%" height="45vh" align="center">
@@ -275,22 +310,25 @@ export default function ProceduresVets({
         </TableContainer>
       </Flex>
       <Flex w="100%" height="55vh" direction="column">
+     
         <Flex
-          height="48px"
+        direction="column"
+          height="132px"
           w="100%"
           bgColor="cyan.100"
           align="center"
           justify="center"
           gap={4}
-          overflowY="auto"
+          overflowY="hidden"
         >
+       
           <HStack>
       
                 {
-                  consultDetails ? <Button onClick={() => getProcedureByHealthInsurance()} colorScheme="whatsapp" w="300px">Plano de Saúde</Button> : <></>
+                  consultDetails?.healthInsuranceId ? <Button onClick={() => getProcedureByHealthInsurance()} colorScheme="whatsapp" w="300px">Plano de Saúde</Button> : <></>
                 }
-            <Button colorScheme="teal" w="300px">
-              Pesquisar
+            <Button onClick={() => GetData()} colorScheme="teal" w="300px">
+              Particular
             </Button>
           
             <InputGroup>
@@ -334,8 +372,27 @@ export default function ProceduresVets({
               </Button>
             </HStack>
           </HStack>
+          <HStack spacing={2}>
+            {SearchAlfabet.map((letter) => (
+              <Button
+                _hover={{
+                  bgColor: "green.300",
+                }}
+                colorScheme="whatsapp"
+                 onClick={() => getProcedureByLetter(letter.toUpperCase())}
+                fontWeight="bold"
+                fontSize="22px"
+              >
+                {letter.toUpperCase()}
+              </Button>
+            ))}
+          </HStack>
+          
         </Flex>
+  
+    
         <TableContainer w="100%" height="100%" overflowY="auto">
+          
           <Table>
             <Thead>
               <Tr>

@@ -119,10 +119,10 @@ export function CreateProcedureForm({
     setEspecies(response.data);
   }
 
-  const {isLoading: especiesIsLoading} = useQuery('especiesList', getEspeciesData)
+  useQuery('especiesList', getEspeciesData)
 
   if(isEditable) {
-    const {isLoading: proceduresIsLoading} = useQuery('proceduresList', getProceduresData)
+  useQuery('proceduresList', getProceduresData)
   }
 
   const {isLoading: groupAndSectorsIsLoading} = useQuery('groupsAndSectorsAndHealthInsurances', getSectorsAndGroupsHealthInsurances)
@@ -206,12 +206,70 @@ export function CreateProcedureForm({
     
   };
 
+  const handleEditProcedure: SubmitHandler<FieldValues> = async (values) => {
+    try {
+      let rangeAges = [values.minAge, values.maxAge];
+  
+    
+    if(values.health) {
+      const healthPlan = healthInsurance.find(h => h.id === Number(values.health))
+
+      if(!healthPlan) {
+        throw new Error()
+      }
+      const data = {
+        procedureId: procedures.id,
+        name: `${values.name} - ${healthPlan.planName}(${healthPlan.planProvider})`,
+        price: Number(values.price),
+        available: values.available,
+        applicationInterval: values.applicationInterval,
+        ageRange: rangeAges,
+        applicationGender: values.applicableGender,
+        observations: values.observations,
+        group_id: Number(values.group),
+        sector_id: Number(values.sector),
+        health_id: Number(values.health)
+      };
+      
+      await api.put(`/procedures/edit`, data);
+      toast.success("Procedimento Editado com sucesso!");
+      navigate("/Admin/Procedures");
+ 
+    } else {
+      const data = {
+        procedureId: procedures.id,
+        name: values.name,
+        price: Number(values.price),
+        priceTwo: values.priceTwo,
+        priceThree: values.priceThree,
+        priceFour: values.priceFour,
+        available: values.available,
+        applicationInterval: values.applicationInterval,
+        ageRange: rangeAges,
+        applicationGender: values.applicableGender,
+        observations: values.observations,
+        group_id: Number(values.group),
+        sector_id: Number(values.sector),
+
+      };
+
+      await api.put(`/procedures/edit`, data);
+      toast.success("Procedimento Editado com sucesso!");
+      navigate("/Admin/Procedures");
+    }
+
+    } catch (error) {
+      toast.error("Falha ao editar procedimento!")
+    }
+    
+  };
+
   return (
     <>
       {isEditable ? (
         <FormControl
           as="form"
-          onSubmit={handleSubmit(handleCreateProcedure)}
+          onSubmit={handleSubmit(handleEditProcedure)}
           display="flex"
           flexDir="column"
           alignItems="center"
@@ -470,11 +528,7 @@ export function CreateProcedureForm({
                   {...register("sector")}
                   placeholder="SELECIONE O SETOR"
                   bgColor="gray.300"
-                  value={Number(
-                    sectors.find(
-                      (sector) => sector?.id === procedures?.sector_id
-                    )?.id
-                  )}
+              
                 >
                   {sectors.map((sector) => (
                     <option key={sector.id} value={sector.id}>
@@ -493,7 +547,7 @@ export function CreateProcedureForm({
             py="8"
             fontSize={{ base: "md", lg: "lg" }}
             type="submit"
-            isDisabled //TODO
+            
           >
             Editar Procedimento
           </Button>

@@ -9,7 +9,7 @@ export async function proceduresRoutes(app: FastifyInstance) {
   );
   app.get("/procedures", proceduresController.getProcedures);
   app.get("/procedures/:id", proceduresController.getWithId);
-  app.put("/procedures/:id", proceduresController.editProcedure);
+  app.put("/procedures/edit", proceduresController.editProcedure);
   app.delete("/procedures/:id", proceduresController.deleteProcedure);
   //   app.delete(
   //     "/proceduresfp/:id/:accId/:procedPrice",
@@ -36,4 +36,7 @@ export async function proceduresRoutes(app: FastifyInstance) {
 
 
   app.get("/procedures/health/:planName/:page", proceduresController.getProcedureByHealthInsurance)
+
+
+  app.get("/procedures/letters/:letter/:page", proceduresController.getProceduresByLetters)
 }

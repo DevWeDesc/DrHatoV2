@@ -210,6 +210,43 @@ export const examsController = {
     }
   },
 
+  getExamByHealthInsurance: async (request: FastifyRequest,reply: FastifyReply) => {
+    try {
+      const GetHealthInsuranceExamSchema = z.object({
+        planName: z.string(),
+        // planProvider: z.string(),
+        page: z.coerce.number()
+      })
+   
+      const {planName,page} = GetHealthInsuranceExamSchema.parse(request.params)
+      const currentPage = page || 1;
+      const exams = await prisma.oldExams.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {
+          HealthInsurance: {
+            planName: {contains: planName},
+            // planProvider: {equals: planProvider}
+          }
+        }
+      })
+
+     
+      const totalPages = Math.ceil(exams.length / 35);
+
+      reply.send({
+        exams,
+        currentPage,
+        totalPages,
+        totalProceds: exams.length
+      })
+
+    } catch (error) {
+        console.log(error)
+    }
+  },
+
+
   setExamInPet: async (
     request: FastifyRequest<{
       Params: params;
@@ -321,10 +358,11 @@ export const examsController = {
         onePart: z.boolean(),
         twoPart: z.boolean(),
         report: z.boolean(),
-        sector: z.coerce.number()
+        sector: z.coerce.number(),
+        health_id: z.number().optional()
       })
       
-      const {disponible, name, onePart, price, report, twoPart, sector} = CreateExamSchema.parse(request.body)
+      const {disponible, name, onePart, price, report, twoPart, sector, health_id} = CreateExamSchema.parse(request.body)
 
 
       await prisma.oldExams.create({
@@ -335,7 +373,10 @@ export const examsController = {
           twoPart,
           byReport: report,
           disponible,
-          sector
+          sector,
+          HealthInsurance: {
+            connect: {id: health_id}
+          }
 
         }
       })

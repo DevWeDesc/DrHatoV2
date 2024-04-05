@@ -60,9 +60,9 @@ model Customer {
 }
 
 model Pets {
-  id                 Int                @id @default(autoincrement())
+  id                 Int                    @id @default(autoincrement())
   CodCli             Int?
-  CodAnimal          Int?               @unique
+  CodAnimal          Int?                   @unique
   name               String
   especie            String
   sexo               String
@@ -70,41 +70,43 @@ model Pets {
   weigth             Float?
   haveChip           Boolean?
   corPet             String?
-  sizePet            String?            @default("")
+  sizePet            String?                @default("")
   bornDate           String
   dateAge            String?
   observations       String?
   customer_id        Int
-  codPet             String             @unique @default(uuid())
+  codPet             String                 @unique @default(uuid())
   isCastred          Boolean?
   debits             Decimal?
   priceAccumulator   PricesAccumulator?
   medicineRecords    MedicineRecord?
-  customer           Customer           @relation(fields: [customer_id], references: [id])
+  customer           Customer               @relation(fields: [customer_id], references: [id])
   queue              Queues?
   bed                Bed?
   petOldConsults     OldConsults[]
   petOldExamsHistory OldExamsHistory[]
+  petOldAdmission    OldAdmissionsHistory[]
   ResultsOld         ResultsOld[]
 }
 
 model OldExamsHistory {
-  id         Int       @id @default(autoincrement())
-  name       String?
-  vetId      Int?
-  codConsult Int?
-  codExam    Int?
-  codAnimal  Int?
-  codCli     Int?
-  madeAt     DateTime?
-  vetName    String?
-  obsOne     String
-  obsTwo     String
-  metodology String?
-  image      Boolean?
-  laboratory Boolean?
-  Pets       Pets?     @relation(fields: [petsId], references: [CodAnimal])
-  petsId     Int?
+  id              Int       @id @default(autoincrement())
+  name            String?
+  vetId           Int?
+  codConsult      Int?
+  codExam         Int?
+  codAnimal       Int?
+  codCli          Int?
+  CodExamConsulta Int?
+  madeAt          DateTime?
+  vetName         String?
+  obsOne          String
+  obsTwo          String
+  metodology      String?
+  image           Boolean?
+  laboratory      Boolean?
+  Pets            Pets?     @relation(fields: [petsId], references: [CodAnimal])
+  petsId          Int?
 }
 
 model OldConsults {
@@ -259,6 +261,30 @@ model QueuesForPet {
 
 //  ------------- ADMISSIONS -------------   //
 
+model OldAdmissionsHistory {
+  id                       Int                     @id @default(autoincrement())
+  CodAnimal                Int?
+  CodLeito                 Int?
+  CodInternacao            Int?                    @unique
+  entryDay                 DateTime?
+  exitDay                  DateTime?
+  exitHour                 String?
+  entryHour                String?
+  Pets                     Pets?                   @relation(fields: [petsId], references: [id])
+  petsId                   Int?
+  OldAdmissionProcedures   OldAdmissionProcedures? @relation(fields: [oldAdmissionProceduresId], references: [id])
+  oldAdmissionProceduresId Int?
+}
+
+model OldAdmissionProcedures {
+  id               Int                    @id @default(autoincrement())
+  CodAnimal        Int?
+  CodInternacao    Int?
+  procedureName    String?
+  procedureValue   Float?
+  admissionHistory OldAdmissionsHistory[]
+}
+
 //  ------------- ADMISSIONS -------------   //
 model Kennel {
   id          Int      @id @default(autoincrement())
@@ -350,6 +376,29 @@ model Surgeries {
   healthInsuranceId  Int?
 }
 
+model SurgeriesCentral {
+  id                  Int             @id @default(autoincrement())
+  centralName         String
+  isOpen              Boolean
+  openHours           String
+  closedHours         String
+  maxSlots            Int
+  movimentedValues    Float?
+  surgeriesCompleteds Int?
+  surgerieSlots       SurgerieSlots[]
+}
+
+model SurgerieSlots {
+  id                 Int               @id @default(autoincrement())
+  petName            String?
+  petId              Int?
+  surgerieName       String?
+  vetName            String?
+  vetCrmv            String?
+  SurgeriesCentral   SurgeriesCentral? @relation(fields: [surgeriesCentralId], references: [id])
+  surgeriesCentralId Int?
+}
+
 enum SurgerieStatus {
   FINISHED
   STARTED
@@ -368,6 +417,7 @@ model SurgeriesForPet {
   medicine               MedicineRecord    @relation(fields: [medicine_id], references: [id])
   linkedConsultDebitId   Int?              @unique
   LinkedAdmissionDebitId Int?              @unique
+  slotId                 Int?
 }
 
 model OpenedConsultsForPet {

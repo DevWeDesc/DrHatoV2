@@ -162,6 +162,7 @@ export const petsController = {
             surgerieStatus: surgerie.status,
             linkedConsultId: surgerie.linkedConsultDebitId,
             linkedAdmissionId: surgerie.LinkedAdmissionDebitId,
+            slotId: surgerie.slotId
           };
           return surgeriesData;
         }),
@@ -230,14 +231,7 @@ export const petsController = {
     const { id }: any = request.params;
 
     try {
-      const petAlreadyExists = await prisma.pets.findFirst({
-        where: { name: name },
-      });
 
-      if (petAlreadyExists) {
-        reply.status(404).send("Pet already exists");
-        return;
-      }
 
       await prisma.pets.create({
         data: {
@@ -245,7 +239,7 @@ export const petsController = {
           especie,
           sexo,
           race,
-          weigth,
+          weigth: parseFloat(weigth),
           haveChip,
           isCastred,
           corPet,
@@ -278,7 +272,7 @@ export const petsController = {
 
       reply.status(201).send("Sucesso");
     } catch (error) {
-      reply.send("FALHA");
+      console.error(error);
     }
   },
 
@@ -558,8 +552,10 @@ export const petsController = {
     try {
       const { petId } = request.params;
 
+  
+
       const oldConsults = await prisma.pets.findUnique({
-        where: { CodAnimal: parseInt(petId) },
+        where: { id: parseInt(petId) },
         include: {
           petOldConsults: true,
           customer: true,

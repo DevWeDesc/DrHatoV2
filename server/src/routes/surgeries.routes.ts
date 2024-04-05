@@ -10,7 +10,7 @@ export async function surgeriesRoutes(app: FastifyInstance) {
     surgeriesController.setSurgerieInPet
   );
   app.delete(
-    "/petsurgery/:id/:accId/:sugPrice/:linkedDebitId",
+    "/petsurgery/:slotId/:accId/:sugPrice/:linkedDebitId",
     surgeriesController.excludePetSugerie
   );
 
@@ -41,4 +41,6 @@ export async function surgeriesRoutes(app: FastifyInstance) {
     surgeriesController.getSurgeriesByLetters
   );
   app.get("/surgerie/name/:name/:page", surgeriesController.getSurgeriesByName);
+  app.get("/surgerie/health/:planName/:page", surgeriesController.getSurgerieByHealthInsurance)
+
 }

@@ -22,17 +22,17 @@ export function CPFInput({
         transition: "border-color 0.3s ease",
       }}
       onMouseOver={(e) => {
-                  //@ts-ignore
+        //@ts-ignore
         (e.target.style.backgroundColor = "#e6ebee"),
-                    //@ts-ignore
+               //@ts-ignore
           (e.target.style.transition = "0.3s");
       }}
       onMouseLeave={(e) => {
-                  //@ts-ignore
+               //@ts-ignore
         (e.target.style.backgroundColor = "#FFF"),
-                    //@ts-ignore
+               //@ts-ignore
           (e.target.style.transition = "0.3s"),
-                    //@ts-ignore
+                 //@ts-ignore
           (e.target.style.borderColor = "#000");
       }}
       onFocus={(e) => {
