@@ -41,5 +41,17 @@ export const oldSystemHistorieController =  {
       }
       
     }
+  },
+
+  getPetOldAdmissions: async (request: FastifyRequest, reply :FastifyReply) => {
+    try {
+      const oldAdmissions = await prisma.oldAdmissionsHistory.findMany()
+
+      reply.send({
+        oldAdmissions
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 }

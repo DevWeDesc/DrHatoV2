@@ -60,9 +60,9 @@ model Customer {
 }
 
 model Pets {
-  id                 Int                @id @default(autoincrement())
+  id                 Int                    @id @default(autoincrement())
   CodCli             Int?
-  CodAnimal          Int?               @unique
+  CodAnimal          Int?                   @unique
   name               String
   especie            String
   sexo               String
@@ -70,21 +70,22 @@ model Pets {
   weigth             Float?
   haveChip           Boolean?
   corPet             String?
-  sizePet            String?            @default("")
+  sizePet            String?                @default("")
   bornDate           String
   dateAge            String?
   observations       String?
   customer_id        Int
-  codPet             String             @unique @default(uuid())
+  codPet             String                 @unique @default(uuid())
   isCastred          Boolean?
   debits             Decimal?
   priceAccumulator   PricesAccumulator?
   medicineRecords    MedicineRecord?
-  customer           Customer           @relation(fields: [customer_id], references: [id])
+  customer           Customer               @relation(fields: [customer_id], references: [id])
   queue              Queues?
   bed                Bed?
   petOldConsults     OldConsults[]
   petOldExamsHistory OldExamsHistory[]
+  petOldAdmission    OldAdmissionsHistory[]
   ResultsOld         ResultsOld[]
 }
 
@@ -259,6 +260,30 @@ model QueuesForPet {
 }
 
 //  ------------- ADMISSIONS -------------   //
+
+model OldAdmissionsHistory {
+  id            Int                      @id @default(autoincrement())
+  CodAnimal     Int?                     @unique
+  CodLeito      Int?
+  CodInternacao Int?                     @unique
+  entryDay      DateTime?
+  exitDay       DateTime?
+  exitHour      String?
+  entryHour     String?
+  procedures    OldAdmissionProcedures[]
+  Pets          Pets?                    @relation(fields: [petsId], references: [id])
+  petsId        Int?
+}
+
+model OldAdmissionProcedures {
+  id                     Int                   @id @default(autoincrement())
+  CodAnimal              Int?                  @unique
+  CodInternacao          Int?                  @unique
+  procedureName          String?
+  procedureValue         Float?
+  OldAdmissionsHistory   OldAdmissionsHistory? @relation(fields: [oldAdmissionsHistoryId], references: [id])
+  oldAdmissionsHistoryId Int?
+}
 
 //  ------------- ADMISSIONS -------------   //
 model Kennel {

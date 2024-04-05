@@ -4,4 +4,5 @@ import { oldSystemHistorieController } from '../controllers/oldSystemHistorieCon
 
 export async function oldSystemHistorieRoutes(app: FastifyInstance){
 app.get('/exams/historie/old/:petId', oldSystemHistorieController.getPetOldExams)
+app.get('/admission/historie/old/all', oldSystemHistorieController.getPetOldAdmissions)
 }
