@@ -3,6 +3,8 @@ import { prisma } from "../interface/PrismaInstance";
 import { labService } from "../services/labsService";
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
+import templateMultiPartExamResultPdf from "../genericPDFs/templateMultiPartExamResultPdf";
+import templateByTextExamResultPdf from "../genericPDFs/templateByTextExamResultPdf";
 
 export const labsController = {
   getOpenExamsInLab: async (request:FastifyRequest, reply: FastifyReply) => {
@@ -287,6 +289,33 @@ export const labsController = {
         console.log(error)
         reply.send(error)
     }
+  },
+
+  
+  sendMultiPartExamResultById: async (request: FastifyRequest<{Params:{ examId: string}, Body: { examDetails: any, examCharacs: any} }  >, reply: FastifyReply) => {
+
+    const { examId } = request.params;
+    const { examDetails, examCharacs } = request.body;
+
+    const result = await templateMultiPartExamResultPdf({ examDetails, examCharacs })
+
+    // console.log(result)
+
+    reply.send("ok").status(200)
+    
+  },
+
+  sendByTextExamResultPdf: async (request: FastifyRequest<{Params:{ examId: string}, Body: { examDetails: any} }  >, reply: FastifyReply) => {
+
+    const { examId } = request.params;
+    const { examDetails } = request.body;
+
+    const result = await templateByTextExamResultPdf({ examDetails })
+
+    // console.log(result)
+
+    reply.send("ok").status(200)
+    
   },
 
   getMultiPartExamResultById: async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) =>  {

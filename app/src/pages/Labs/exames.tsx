@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../../lib/axios'
 import { BiHome } from 'react-icons/all'
 import { Input } from '../../components/admin/Input'
+import React from 'react'
 
 interface QueueProps {
   response: []
@@ -111,6 +112,35 @@ export function LabExames() {
     } 
   }
 
+  async function handleSendEmailResultExams({isOnePart, isMultiPart, isReportByText, examId}: OpenExamProps) {
+    // if (isOnePart === true) {
+    //   window.open(`/WorkSpace/ExamResultsOnePart/${examId}`, '_blank');
+    // } 
+
+    // if (isMultiPart === true) {
+    //   const response = await api.get(`/lab/multipart/${examId}`);
+
+    //     const data = {
+    //       examDetails: response.data.petExamResult,
+    //       examCharacs: response.data.examRefs
+    //     }
+    //   const teste = await api.post(`/sendemail/onepart/multipart/${examId}`, data)
+    //   console.log(teste)
+    // } 
+
+    // if (isReportByText === true) {
+    //   const response = await api.get(`/lab/bytext/${examId}`);
+
+    //     const data = {
+    //       examDetails: response.data.petExamResult,
+    //     }
+    //   const teste = await api.post(`/sendemail/onepart/text/${examId}`, data)
+    //   console.log(teste)
+    // } 
+
+    console.log(isOnePart, "isOnePart", isMultiPart, "isMultiPart", isReportByText, "isReportByText")
+  }
+
 
 
   useEffect(() => {
@@ -179,13 +209,14 @@ export function LabExames() {
                 <Th>Status</Th>
                 <Th>Responsável</Th>
                 <Th>Resultado</Th>
+                <Th whiteSpace={'nowrap'}>Resultado por Email</Th>
               </Tr>
             </Thead>
 
             <Tbody>
               {labs.map((exam) => {
                 return (
-                  <>
+                  <React.Fragment key={exam.id}>
                     {exam.doneExame === true && (
                       <Tr
                         key={exam.id}
@@ -222,10 +253,20 @@ export function LabExames() {
                          })} >
                           Visualizar</Button> 
                         </Th>
+                        <Th >
+                         <Button colorScheme="teal" 
+                         onClick={() => handleSendEmailResultExams({
+                          examId: exam.id,
+                          isMultiPart: exam.twoPart,
+                          isOnePart: exam.onePart,
+                          isReportByText: exam.byReport
+                         })} >
+                          Enviar Email</Button> 
+                        </Th>
                         
                       </Tr>
                     )}
-                  </>
+                  </React.Fragment>
                 )
               })}
             </Tbody>
@@ -251,7 +292,7 @@ export function LabExames() {
             <Tbody>
               {labs.map((exam: any) => {
                 return (
-                  <>
+                  <React.Fragment key={exam.id}>
                     {exam.doneExame === false && (
                       <Tr
                         key={exam.id}
@@ -288,7 +329,7 @@ export function LabExames() {
                         </Th>
                       </Tr>
                     )}
-                  </>
+                  </React.Fragment>
                 )
               })}
             </Tbody>
@@ -317,11 +358,13 @@ export function LabExames() {
         break
       case showEndExams === true: 
       await api.get('/labs/end').then((res) => {
+        console.log(res.data.exams, "labs.data.exams")
         setLabs(res.data.exams)
       })
       break;  
       case showEndExams === false: 
       const labs = await api.get('/labs')
+      console.log(labs.data.exams, "labs.data.exams")
       setLabs(labs.data.exams)
       break;
 
@@ -381,8 +424,8 @@ export function LabExames() {
                         w={320}
                         border="2px"
                       >
-                        {exams.map((exam: { name: string; id: string }) => (
-                          <option key={exam.id}>{exam?.name}</option>
+                        {exams.map((exam: { name: string; id: string }, index: { index: number }) => (
+                          <option key={`${exam.id}-${index}`}>{exam.name}</option>
                         ))}
                       </Select>
                     </Flex>
