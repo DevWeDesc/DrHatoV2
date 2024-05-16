@@ -5,6 +5,14 @@ import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import templateMultiPartExamResultPdf from "../genericPDFs/templateMultiPartExamResultPdf";
 import templateByTextExamResultPdf from "../genericPDFs/templateByTextExamResultPdf";
+import nodemailer from "nodemailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
+import { Readable } from 'stream';
+import { templateContent } from "../genericPDFs/templateContent";
+import { send } from "process";
+import templateOnePartExamResultPdf from "../genericPDFs/templateOnePartExamResultPdf";
+
+
 
 export const labsController = {
   getOpenExamsInLab: async (request:FastifyRequest, reply: FastifyReply) => {
@@ -233,7 +241,6 @@ export const labsController = {
        // reply.type('application/pdf');
         // Ler o arquivo PDF usando fs.createReadStream() 
         reply.header('Content-Disposition', `attachment; filename="${examId}"`);
-
         const data  = await labService.returnExamFile(examId)
 
         reply.send(data)
@@ -276,7 +283,9 @@ export const labsController = {
       petSex: examDetails.medicine.pet.sexo,
       petCod: examDetails.medicine.pet.CodAnimal,
       petCustomer: examDetails.medicine.pet.customer.name,
-      result: examDetails.reportExams[0].report
+      // result: examDetails.reportExams[0].report
+      result: examDetails.reportExams.find((item) => item.report !== null)?.report,
+      resultPDF: examDetails.reportExams.filter((item) => item.externalReportIds.length > 0)
      }
 
      const petExamRefs = examRefs?.partExams
@@ -290,41 +299,84 @@ export const labsController = {
         reply.send(error)
     }
   },
+  emailService: async({ email, pdf }: { email: string, pdf: any}): Promise<SMTPTransport.SentMessageInfo> => {
+    const transporter = nodemailer.createTransport({
+      host: "smtp-mail.outlook.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: "glaucoteste@hotmail.com",
+        pass: "Glaucoed@1",
+      },
+    });
+    
+    const info = await transporter.sendMail({
+      from: `"Dr Hato Hospital Veterinário" <glaucoteste@hotmail.com>`, // sender address
+      to: email, 
+      subject: "Resultado de Exame",
+      html: templateContent,
+      attachments: [
+        {
+          filename: 'ResultadoExame.pdf',
+          content: pdf,
+          contentType: 'application/pdf'
+        }
+      
+      ]
+    });
+    return info;
 
+  },
   
   sendMultiPartExamResultById: async (request: FastifyRequest<{Params:{ examId: string}, Body: { examDetails: any, examCharacs: any} }  >, reply: FastifyReply) => {
+    try {
+      const { examDetails, examCharacs } = request.body;
 
-    const { examId } = request.params;
-    const { examDetails, examCharacs } = request.body;
+      const result = await templateMultiPartExamResultPdf({ examDetails, examCharacs })
+      const data = await labsController.emailService({email: 'glauco.powergames@gmail.com', pdf: result})
+      reply.send(data).status(200);
 
-    const result = await templateMultiPartExamResultPdf({ examDetails, examCharacs })
+    } catch (error) {
+      reply.send(error).status(500)    
+    }
 
-    // console.log(result)
+  },
 
-    reply.send("ok").status(200)
+  sendByTextExamResultPdf: async (request: FastifyRequest<{Params:{ examId: string}, Body: { examDetails: any} }  >, reply: FastifyReply) => { 
+    try {
+      const { examDetails } = request.body;
+
+      const result = await templateByTextExamResultPdf({ examDetails })
+      const data = await labsController.emailService({email: 'glauco.powergames@gmail.com', pdf: result})
+      reply.send(data).status(200);
+      
+    } catch (error) {
+      reply.send(error).status(500)    
+    }
     
   },
 
-  sendByTextExamResultPdf: async (request: FastifyRequest<{Params:{ examId: string}, Body: { examDetails: any} }  >, reply: FastifyReply) => {
+  sendOnePartExamResultPdf: async (request: FastifyRequest<{Body: { examDetails: any, examCharacs: any} }  >, reply: FastifyReply) => {
+    try {
+      const { examDetails, examCharacs } = request.body;
 
-    const { examId } = request.params;
-    const { examDetails } = request.body;
-
-    const result = await templateByTextExamResultPdf({ examDetails })
-
-    // console.log(result)
-
-    reply.send("ok").status(200)
+      const result = await templateOnePartExamResultPdf({ examDetails, examCharacs })
+      const data = await labsController.emailService({email: 'glauco.powergames@gmail.com', pdf: result})
+      reply.send(data).status(200);
+      
+    } catch (error) {
+      console.log(error)
+      reply.send(error).status(500)    
+    }
     
   },
 
   getMultiPartExamResultById: async (request: FastifyRequest<{Params:{ examId: string}}>, reply: FastifyReply) =>  {
     try {
       const {examId} = request.params
-    const examDetails =  await prisma.examsForPet.findUnique({
+      const examDetails =  await prisma.examsForPet.findUnique({
           where: {id: parseInt(examId)}, include: {reportExams: true, medicine:{include: {pet: {include: {customer: {select: {name: true}}}}}}}
         })
-
 
       if(!examDetails){
         return
@@ -333,7 +385,6 @@ export const labsController = {
      const examRefs =  await prisma.oldExams.findFirst({
       where: {name: {contains: examDetails.name}},include: {partExams: {include: {examsDetails: true}}}
      }) 
-
 
      const petExamResult = {
       solicitedBy: examDetails.requestedFor,
@@ -349,10 +400,11 @@ export const labsController = {
       petSex: examDetails.medicine.pet.sexo,
       petCod: examDetails.medicine.pet.CodAnimal,
       petCustomer: examDetails.medicine.pet.customer.name,
-      result: examDetails.reportExams[0]
+      petCustomerEmail: examDetails.medicine.pet.customer_id,
+      // result: examDetails.reportExams[0],
+      result: examDetails.reportExams.find((item) => item.report !== null),
+      resultPDF: examDetails.reportExams.find((item) => item.externalReportIds),
      }
-
-  
 
       reply.send({petExamResult, examRefs }).status(200)
 
@@ -366,11 +418,8 @@ export const labsController = {
     try {
       const {examId} = request.params
     const examDetails =  await prisma.examsForPet.findUnique({
-          where: {id: parseInt(examId)}, include: {reportExams: {
-          
-          }, medicine:{include: {pet: {include: {customer: {select: {name: true}}}}}}}
+          where: {id: parseInt(examId)}, include: {reportExams: true, medicine:{include: {pet: {include: {customer: {select: {name: true}}}}}}}
         })
-
 
       if(!examDetails){
         return
@@ -391,7 +440,9 @@ export const labsController = {
       petSex: examDetails.medicine.pet.sexo,
       petCod: examDetails.medicine.pet.CodAnimal,
       petCustomer: examDetails.medicine.pet.customer.name,
-      result: examDetails.reportExams[0].textReport
+      // result: examDetails.reportExams[0].textReport
+      result: examDetails.reportExams.find((item) => item.textReport !== null)?.textReport,
+      resultPDF: examDetails.reportExams.find((item) => item.externalReportIds)
      }
 
   

@@ -22,6 +22,7 @@ export async function labsRoutes(app: FastifyInstance) {
   app.get("/lab/multipart/:examId", labsController.getMultiPartExamResultById);
   app.get("/lab/bytext/:examId", labsController.getTextExamResultById);
 
-  app.post("/sendemail/onepart/multipart/:examId", labsController.sendMultiPartExamResultById);
-  app.post("/sendemail/onepart/text/:examId", labsController.sendByTextExamResultPdf);
+  app.post("/sendemail/report/multipart/:examId", labsController.sendMultiPartExamResultById);
+  app.post("/sendemail/report/text/:examId", labsController.sendByTextExamResultPdf);
+  app.post("/sendemail/report/onepart/:examId", labsController.sendOnePartExamResultPdf);
 }

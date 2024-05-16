@@ -4,8 +4,6 @@ import ReactPDF, {
   Text,
   View,
   Document,
-  StyleSheet,
-  PDFViewer,
   Image,
 } from "@react-pdf/renderer";
 import path from "path";
@@ -484,9 +482,9 @@ const PDF = ({
               textDecoration: "underline",
             }}
           >
-            <Text style={{ fontSize: "12px", fontWeight: "bold" }}>
+            {/* <Text style={{ fontSize: "12px", fontWeight: "bold" }}>
               Assinado eletrônicamente por Laboratório:{" "}
-            </Text>
+            </Text> */}
             <Text style={{ fontSize: "12px", fontWeight: "bold" }}>
               {examDetails?.reportedBy} - CRMV: {examDetails?.reportedByCrm}
             </Text>
@@ -505,8 +503,6 @@ export default async ({
   examDetails: ExamDetailsDTO;
   examCharacs: ExamRefDTO;
 }) => {
-  return await ReactPDF.renderToFile(
-    <PDF {...{ examDetails, examCharacs }} />,
-    `${__dirname}/my-doc.pdf`
-  );
+  return await ReactPDF.renderToStream(
+    <PDF {...{ examDetails, examCharacs }} />) as any;
 };

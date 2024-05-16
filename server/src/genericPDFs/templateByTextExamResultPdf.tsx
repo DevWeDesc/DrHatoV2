@@ -4,8 +4,6 @@ import ReactPDF, {
   Text,
   View,
   Document,
-  StyleSheet,
-  PDFViewer,
   Image,
 } from "@react-pdf/renderer";
 import path from "path";
@@ -113,8 +111,7 @@ export default async ({
 }: {
   examDetails: ExamDetailsDTO;
 }) => {
-  return await ReactPDF.renderToFile(
-    <PDF {...{ examDetails }} />,
-    `${__dirname}/my-doc.pdf`
+  return await ReactPDF.renderToStream(
+    <PDF {...{ examDetails }} /> as any
   );
 };

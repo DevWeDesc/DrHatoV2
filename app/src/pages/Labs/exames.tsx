@@ -28,6 +28,7 @@ import { api } from '../../lib/axios'
 import { BiHome } from 'react-icons/all'
 import { Input } from '../../components/admin/Input'
 import React from 'react'
+import { toast } from "react-toastify"
 
 interface QueueProps {
   response: []
@@ -92,7 +93,7 @@ export function LabExames() {
   async function getQueue() {
     const response = await api.get('/pets/queue')
     const labs = await api.get('/labs')
-
+    
     setLabs(labs.data.exams)
     setExams(labs.data.allExams)
     setInQueue(response.data.response)
@@ -113,32 +114,50 @@ export function LabExames() {
   }
 
   async function handleSendEmailResultExams({isOnePart, isMultiPart, isReportByText, examId}: OpenExamProps) {
-    // if (isOnePart === true) {
-    //   window.open(`/WorkSpace/ExamResultsOnePart/${examId}`, '_blank');
-    // } 
 
-    // if (isMultiPart === true) {
-    //   const response = await api.get(`/lab/multipart/${examId}`);
+    if (isOnePart === true) {
+      const response = await api.get(`/lab/onepart/${examId}`);
+      const data = {
+        examDetails: response.data.petExamResult,
+        examCharacs: response.data.petExamRefs
+      }
+      console.log(data, "data")
 
-    //     const data = {
-    //       examDetails: response.data.petExamResult,
-    //       examCharacs: response.data.examRefs
-    //     }
-    //   const teste = await api.post(`/sendemail/onepart/multipart/${examId}`, data)
-    //   console.log(teste)
-    // } 
+      const res = await api.post(`/sendemail/report/onepart/${examId}`, data)
 
-    // if (isReportByText === true) {
-    //   const response = await api.get(`/lab/bytext/${examId}`);
+      if (res.status === 200) {
+        toast.success("Email enviado com sucesso")
+      }
+    } 
 
-    //     const data = {
-    //       examDetails: response.data.petExamResult,
-    //     }
-    //   const teste = await api.post(`/sendemail/onepart/text/${examId}`, data)
-    //   console.log(teste)
-    // } 
+    if (isMultiPart === true) {
+      const response = await api.get(`/lab/multipart/${examId}`);
 
-    console.log(isOnePart, "isOnePart", isMultiPart, "isMultiPart", isReportByText, "isReportByText")
+        const data = {
+          examDetails: response.data.petExamResult,
+          examCharacs: response.data.examRefs
+        }
+      const res = await api.post(`/sendemail/report/multipart/${examId}`, data)
+
+      if (res.status === 200) {
+        toast.success("Email enviado com sucesso")
+      }
+
+    } 
+
+    if (isReportByText === true) {
+      const response = await api.get(`/lab/bytext/${examId}`);
+
+        const data = {
+          examDetails: response.data.petExamResult,
+        }
+      const res = await api.post(`/sendemail/report/text/${examId}`, data)
+      
+      if (res.status === 200) {
+        toast.success("Email enviado com sucesso")
+      }
+
+    }   
   }
 
 
