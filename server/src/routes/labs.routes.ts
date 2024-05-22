@@ -25,4 +25,7 @@ export async function labsRoutes(app: FastifyInstance) {
   app.post("/sendemail/report/multipart/:examId", labsController.sendMultiPartExamResultById);
   app.post("/sendemail/report/text/:examId", labsController.sendByTextExamResultPdf);
   app.post("/sendemail/report/onepart/:examId", labsController.sendOnePartExamResultPdf);
+
+
+  app.get("/lab/reportInserted/:pdfId", labsController.getInsertedExam);
 }

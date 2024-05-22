@@ -34,6 +34,22 @@ export function ByTextExamResultPdf () {
     async function getExamDetails() {
       try {
         const response = await api.get(`/lab/bytext/${examId}`);
+        const pdfs = response.data.petExamResult.resultPDF.externalReportIds;
+       
+        
+        if(pdfs){      
+          const result = await Promise.all(pdfs.map(async (pdf: string) => {
+            const response = await api.get(`/lab/reportInserted/${pdf}`, { responseType: 'arraybuffer' });
+            return response.data;
+          }))
+          
+          result.forEach((pdfData) => {
+            const blob = new Blob([pdfData], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+          });
+        }
+
         setExamDetails(response.data.petExamResult);
       } catch (error) {
         console.log(error);

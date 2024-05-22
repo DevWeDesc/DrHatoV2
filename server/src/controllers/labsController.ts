@@ -11,6 +11,8 @@ import { Readable } from 'stream';
 import { templateContent } from "../genericPDFs/templateContent";
 import { send } from "process";
 import templateOnePartExamResultPdf from "../genericPDFs/templateOnePartExamResultPdf";
+import path from "path";
+import fs from "fs";
 
 
 
@@ -356,6 +358,31 @@ export const labsController = {
     
   },
 
+  getInsertedExam: async (request: FastifyRequest<{Params:{ pdfId: string }}>, reply: FastifyReply): Promise<Buffer> => {
+    try {
+
+      const { pdfId } = request.params;
+
+      const filePath = path.join(__dirname, "..", "pdfs_images", pdfId)
+
+      const pdf = fs.readFileSync(filePath);
+
+      if (!fs.existsSync(filePath)) {
+        throw new Error("File not found");
+      }
+
+      const dataPDF = await Promise.resolve(pdf);
+
+      reply.type("application/pdf");
+
+      return reply.send(dataPDF)
+
+    } catch (error) {
+      console.log(error)
+      throw error;
+    }
+  },
+
   sendOnePartExamResultPdf: async (request: FastifyRequest<{Body: { examDetails: any, examCharacs: any} }  >, reply: FastifyReply) => {
     try {
       const { examDetails, examCharacs } = request.body;
@@ -403,7 +430,7 @@ export const labsController = {
       petCustomerEmail: examDetails.medicine.pet.customer_id,
       // result: examDetails.reportExams[0],
       result: examDetails.reportExams.find((item) => item.report !== null),
-      resultPDF: examDetails.reportExams.find((item) => item.externalReportIds),
+      resultPDF: examDetails.reportExams.filter((item) => item.externalReportIds.length > 0)
      }
 
       reply.send({petExamResult, examRefs }).status(200)

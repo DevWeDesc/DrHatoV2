@@ -121,7 +121,6 @@ export function LabExames() {
         examDetails: response.data.petExamResult,
         examCharacs: response.data.petExamRefs
       }
-      console.log(data, "data")
 
       const res = await api.post(`/sendemail/report/onepart/${examId}`, data)
 
