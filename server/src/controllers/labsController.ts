@@ -7,12 +7,14 @@ import templateMultiPartExamResultPdf from "../genericPDFs/templateMultiPartExam
 import templateByTextExamResultPdf from "../genericPDFs/templateByTextExamResultPdf";
 import nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
-import { Readable } from "stream";
 import { templateContent } from "../genericPDFs/templateContent";
-import { send } from "process";
 import templateOnePartExamResultPdf from "../genericPDFs/templateOnePartExamResultPdf";
 import path from "path";
 import fs from "fs";
+
+interface CustomFastifyRequest extends FastifyRequest {
+  files: () => any;
+}
 
 export const labsController = {
   getOpenExamsInLab: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -220,11 +222,11 @@ export const labsController = {
   },
 
   reportWithPdf: async (
-    request: FastifyRequest<{ Params: { examId: string } }>,
+    request: CustomFastifyRequest,
     reply: FastifyReply
   ) => {
     try {
-      const { examId } = request.params;
+      const { examId } = request.params as { examId: string };
       const files = request.files();
 
       const paths = await labService.saveExamPdfs(files);
@@ -324,54 +326,40 @@ export const labsController = {
 
       reply.send({ petExamResult, petExamRefs, refByEspecie }).status(200);
     } catch (error) {
-      console.log(error);
       reply.send(error);
     }
   },
-  emailService: async ({
-    email,
-    pdf1,
-    pdf2,
-  }: {
-    email: string;
-    pdf1: any;
-    pdf2: any;
-  }): Promise<SMTPTransport.SentMessageInfo> => {
+  emailService: async ({ email, pdfs }: { email: string; pdfs: Buffer[]; }): Promise<SMTPTransport.SentMessageInfo> => {
+    
     const transporter = nodemailer.createTransport({
       host: "smtp-mail.outlook.com",
       port: 587,
       secure: false,
       auth: {
-        user: "glaucoteste@hotmail.com",
+        user: "glaucoedteste@hotmail.com",
         pass: "Glaucoed@1",
       },
     });
 
-    const info = await transporter.sendMail({
-      from: `"Dr Hato Hospital Veterinário" <glaucoteste@hotmail.com>`, // sender address
+    const responseSendEmail = await transporter.sendMail({
+      from: `"Dr Hato Hospital Veterinário" <glaucoedteste@hotmail.com>`,
       to: email,
       subject: "Resultado de Exame",
       html: templateContent,
-      attachments: [
-        {
-          filename: "ResultadoExame1.pdf",
-          content: pdf1,
+      attachments: pdfs.map((pdf, index: number) => {
+        return {
+          filename: `ResultadoExame${index +1}.pdf`,
+          content: pdf,
           contentType: "application/pdf",
-        },
-        {
-          filename: "ResultadoExame2.pdf",
-          content: pdf2,
-          contentType: "application/pdf",
-        },
-      ],
+        };
+      }),
     });
-    return info;
+    return responseSendEmail;
   },
 
   generatePdf: async (pdfId: string): Promise<Buffer> => {
     try {
       const filePath = path.join(__dirname, "..", "pdfs_images", pdfId);
-
       const pdf = fs.readFileSync(filePath);
 
       if (!fs.existsSync(filePath)) {
@@ -379,8 +367,8 @@ export const labsController = {
       }
 
       const dataPDF = await Promise.resolve(pdf);
-
       return dataPDF;
+
     } catch (error) {
       console.log(error);
       throw error;
@@ -395,24 +383,24 @@ export const labsController = {
     reply: FastifyReply
   ) => {
     try {
+
       const { examDetails, examCharacs } = request.body;
+      const result = await templateMultiPartExamResultPdf({ examDetails, examCharacs });
+      let data:Buffer[] = [];
 
-      const result = await templateMultiPartExamResultPdf({
-        examDetails,
-        examCharacs,
-      });
-      // const data = await labsController.emailService({email: 'glauco.powergames@gmail.com', pdf: result})
+      if(examDetails.resultPDF.length > 0){
+        const  pdfName =  examDetails.resultPDF[0].externalReportIds[0]
+        const pdfGenerated  = await labsController.generatePdf(pdfName);
+        data = [pdfGenerated, result];
+      }
 
-      const pdf = await labsController.generatePdf(
-        "131bc73a-a567-45f3-bd55-f8463b0755ee.pdf"
-      );
-
-      const data = await labsController.emailService({
+      const responseEmailService = await labsController.emailService({
         email: "glauco.powergames@gmail.com",
-        pdf1: pdf,
-        pdf2: result,
+        pdfs: data.length > 0 ? data : [result],
       });
-      reply.send(data).status(200);
+
+      reply.send(responseEmailService).status(200);
+
     } catch (error) {
       reply.send(error).status(500);
     }
@@ -420,22 +408,57 @@ export const labsController = {
 
   sendByTextExamResultPdf: async (
     request: FastifyRequest<{
-      Params: { examId: string };
+      Params: { examId: string };   
       Body: { examDetails: any };
     }>,
     reply: FastifyReply
   ) => {
     try {
-      const { examDetails } = request.body;
 
+      const { examDetails } = request.body;
+      let data:Buffer[] = [];
       const result = await templateByTextExamResultPdf({ examDetails });
-      const data = await labsController.emailService({
+
+      if(examDetails.resultPDF.length > 0){
+        const  pdfName =  examDetails.resultPDF[0].externalReportIds[0]
+        const pdfGenerated  = await labsController.generatePdf(pdfName);
+        data = [ pdfGenerated, result];
+      }
+
+      const responseEmailService = await labsController.emailService({
         email: "glauco.powergames@gmail.com",
-        // pdfs: result,
-        pdf1: result,
-        pdf2: result,
+        pdfs: data.length > 0 ? data : [result],
       });
-      reply.send(data).status(200);
+
+      reply.send(responseEmailService).status(200);
+
+    } catch (error) {
+      reply.send(error).status(500);
+    }
+  },
+
+  sendOnePartExamResultPdf: async (
+    request: FastifyRequest<{ Body: { examDetails: any; examCharacs: any } }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const { examDetails, examCharacs } = request.body;
+      const result = await templateOnePartExamResultPdf({ examDetails, examCharacs });
+      let data:Buffer[] = [];
+
+      if(examDetails.resultPDF.length > 0){
+        const  pdfName =  examDetails.resultPDF[0].externalReportIds[0]
+        const pdfGenerated  = await labsController.generatePdf(pdfName);
+        data = [ pdfGenerated, result];
+      }
+
+      const responseEmailService = await labsController.emailService({
+        email: "glauco.powergames@gmail.com",
+        pdfs: data.length > 0 ? data : [result],
+      });
+
+      reply.send(responseEmailService).status(200);
+
     } catch (error) {
       reply.send(error).status(500);
     }
@@ -447,9 +470,7 @@ export const labsController = {
   ): Promise<Buffer> => {
     try {
       const { pdfId } = request.params;
-
       const filePath = path.join(__dirname, "..", "pdfs_images", pdfId);
-
       const pdf = fs.readFileSync(filePath);
 
       if (!fs.existsSync(filePath)) {
@@ -459,37 +480,15 @@ export const labsController = {
       const dataPDF = await Promise.resolve(pdf);
 
       reply.type("application/pdf");
-
       return reply.send(dataPDF);
+      
     } catch (error) {
       console.log(error);
       throw error;
     }
   },
 
-  sendOnePartExamResultPdf: async (
-    request: FastifyRequest<{ Body: { examDetails: any; examCharacs: any } }>,
-    reply: FastifyReply
-  ) => {
-    try {
-      const { examDetails, examCharacs } = request.body;
 
-      const result = await templateOnePartExamResultPdf({
-        examDetails,
-        examCharacs,
-      });
-      const data = await labsController.emailService({
-        email: "glauco.powergames@gmail.com",
-        // pdfs: result,
-        pdf1: result,
-        pdf2: result,
-      });
-      reply.send(data).status(200);
-    } catch (error) {
-      console.log(error);
-      reply.send(error).status(500);
-    }
-  },
 
   getMultiPartExamResultById: async (
     request: FastifyRequest<{ Params: { examId: string } }>,
@@ -535,9 +534,7 @@ export const labsController = {
         petCustomerEmail: examDetails.medicine.pet.customer_id,
         // result: examDetails.reportExams[0],
         result: examDetails.reportExams.find((item) => item.report !== null),
-        resultPDF: examDetails.reportExams.filter(
-          (item) => item.externalReportIds.length > 0
-        ),
+        resultPDF: examDetails.reportExams.filter((item) => item.externalReportIds.length > 0),
       };
 
       reply.send({ petExamResult, examRefs }).status(200);
@@ -584,11 +581,8 @@ export const labsController = {
         petCod: examDetails.medicine.pet.CodAnimal,
         petCustomer: examDetails.medicine.pet.customer.name,
         // result: examDetails.reportExams[0].textReport
-        result: examDetails.reportExams.find((item) => item.textReport !== null)
-          ?.textReport,
-        resultPDF: examDetails.reportExams.find(
-          (item) => item.externalReportIds
-        ),
+        result: examDetails.reportExams.find((item) => item.textReport !== null)?.textReport, 
+        resultPDF: examDetails.reportExams.filter((item) => item.externalReportIds.length > 0),
       };
 
       reply.send({ petExamResult }).status(200);
@@ -604,7 +598,7 @@ export const labsController = {
   ) => {
     try {
       const GetDetailsSchema = z.object({
-        petId: z.coerce.number(),
+        petId: z.coerce.number(), 
       });
       const { petId } = GetDetailsSchema.parse(request.params);
 

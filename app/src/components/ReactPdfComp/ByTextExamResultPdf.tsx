@@ -29,17 +29,16 @@ interface ExamDetailsDTO {
 export function ByTextExamResultPdf () {
     const { examId } = useParams<{ examId: string }>();
     const [examDetails, setExamDetails] = useState({} as ExamDetailsDTO);
-    
 
     async function getExamDetails() {
       try {
         const response = await api.get(`/lab/bytext/${examId}`);
-        const pdfs = response.data.petExamResult.resultPDF.externalReportIds;
-       
         
-        if(pdfs){      
+        if(response.data.petExamResult.resultPDF.length > 0){      
+          const pdfs = response.data.petExamResult.resultPDF[0].externalReportIds;
           const result = await Promise.all(pdfs.map(async (pdf: string) => {
             const response = await api.get(`/lab/reportInserted/${pdf}`, { responseType: 'arraybuffer' });
+            console.log(response.data, 'response')
             return response.data;
           }))
           

@@ -80,11 +80,9 @@ export function MultiPartExamResultPdf () {
     async function getExamDetails() {
       try {
         const response = await api.get(`/lab/multipart/${examId}`);
-
-        const pdfs = response.data.petExamResult.resultPDF[0].externalReportIds;
-       
         
-        if(pdfs){      
+        if(response.data.petExamResult.resultPDF.length > 0){      
+          const pdfs = response.data.petExamResult.resultPDF[0].externalReportIds;
           const result = await Promise.all(pdfs.map(async (pdf: string) => {
             const response = await api.get(`/lab/reportInserted/${pdf}`, { responseType: 'arraybuffer' });
             return response.data;
