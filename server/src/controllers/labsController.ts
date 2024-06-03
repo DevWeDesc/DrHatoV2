@@ -336,7 +336,7 @@ export const labsController = {
       port: 587,
       secure: false,
       auth: {
-        user: "glaucoedteste@hotmail.com",
+        user: "glaucoedtester@outlook.com",
         pass: "Glaucoed@1",
       },
     });
@@ -433,6 +433,7 @@ export const labsController = {
       reply.send(responseEmailService).status(200);
 
     } catch (error) {
+      console.log(error);
       reply.send(error).status(500);
     }
   },

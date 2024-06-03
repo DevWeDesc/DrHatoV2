@@ -15,8 +15,9 @@ import {
   Checkbox,
   TableContainer,
   Select,
+  HStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
@@ -27,6 +28,7 @@ import { Input } from "../../../components/admin/Input";
 import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useQuery, useQueryClient, useMutation } from "react-query";
+import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
 
 type ExamsDTO = {
   codexam: number;
@@ -57,10 +59,15 @@ export function ListExams() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [exams, setExams] = useState<ExamsDTO[]>([]);
   const [sectors, setSectors] = useState<SectorsDto[]>([]);
+  const [numberOfPages, setNumberOfPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
 
   async function getExamesListData() {
-    const exams = await api.get("/exams/old/all");
+    const exams = await api.get(`/exams/old/all?page=${currentPage}`);
+    setNumberOfPages(exams.data.totalPages)
     setExams(exams.data.exams);
+    setCurrentPage(exams.data.currentPage)
   }
 
   async function getSectors() {
@@ -68,8 +75,13 @@ export function ListExams() {
     setSectors(sectors.data);
   }
 
-  const queryClient = useQueryClient();
-  const { isLoading, error } = useQuery("adminExams", () => getExamesListData);
+  const {data, isLoading} = useQuery({
+    queryKey: ['adminExams', currentPage],
+    queryFn: getExamesListData,
+
+  })
+
+   const queryClient = useQueryClient();
   const {
     isLoading: sectorLoading,
     error: sectorError,
@@ -89,6 +101,15 @@ export function ListExams() {
       },
     }
   );
+
+  function incrementPage() {
+    setCurrentPage(prevCount => currentPage < numberOfPages ? prevCount + 1 : numberOfPages);
+  }
+
+  function decrementPage() {
+    setCurrentPage(prevCount => currentPage > 1 ? prevCount - 1 : 1);
+    
+  }
 
   const handleCreateExam: SubmitHandler<FieldValues> = (values) => {
     try {
@@ -160,6 +181,33 @@ export function ListExams() {
                 Cadastrar Exame
               </Button>
             </Heading>
+            <Flex align="center" gap="2" p="2">
+              <Input bgColor="white"  name="filter"  placeholder="Nome do Exame" />   
+              <HStack>
+                <Button colorScheme="teal">
+                  Páginas {numberOfPages}
+                </Button>
+                <Button colorScheme="teal">
+                  Página Atual {currentPage}
+                </Button>
+                <Button
+                  colorScheme="yellow"
+                  gap={4}
+                  onClick={()=> {decrementPage()}}
+                >
+                  <BiLeftArrow />
+                  Página Anterior
+                </Button>
+                <Button
+                  colorScheme="yellow"
+                  gap={4}
+                  onClick={()=> {incrementPage()}}
+                >
+                  Próxima Página
+                  <BiRightArrow />
+                </Button>
+              </HStack>
+            </Flex>
             <TableContainer w="full">
               <Table variant="simple">
                 <Thead>

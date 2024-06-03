@@ -119,7 +119,7 @@ export const examsController = {
         }
       });
 
-      reply.send({ totalPages, totalExams, exams });
+      reply.send({ totalPages, totalExams, currentPage, exams });
     } catch (error) {
       reply.send({
         message: error,

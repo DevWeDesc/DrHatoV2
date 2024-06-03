@@ -403,7 +403,7 @@ export function LabExames() {
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Painel Veterinário" url="/Labs" />
+          <Header title="Painel Veterinário" />
           <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
             <GenericSidebar>
               <GenericLink
