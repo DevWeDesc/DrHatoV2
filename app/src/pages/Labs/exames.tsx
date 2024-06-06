@@ -110,7 +110,96 @@ export function LabExames() {
 
     if (isReportByText === true) {
       window.open(`/WorkSpace/ExamResultsByText/${examId}`, '_blank');
+      
     } 
+  }
+
+  async function handlePrintTag(response: any) {
+
+    const {  petCod, petCustomer, petEspecie, petName, petRace, petSex , petAge ,solicitedBy, reportedByCrm } = response.data.petExamResult;
+
+    const printWindow = window.open('', '', 'width=800,height=600');
+  
+    if (!printWindow) {
+      return;
+    }
+  
+    const container = printWindow.document.createElement('div');
+
+    container.innerHTML = `
+        <div class="label-container">
+            <p class="hospital-name">HOSPITAL VETERINARIO DR.HATO</p>
+            <p><span>Cod:</span> ${petCod}</p>
+            <p><span>Prop:</span> ${petCustomer}, ${petEspecie}, ${petName}, ${petRace}, ${petSex}, ${petAge}</p>
+            <p><span>Dr:</span> ${solicitedBy} - <span>CRMV:</span> ${reportedByCrm}</p>
+            <p>${new Date().toLocaleDateString()}</p>
+        </div>`;
+
+    printWindow.document.body.appendChild(container);
+
+    const style = printWindow.document.createElement('style');
+    style.textContent = `
+      @media print {
+        @page {
+          size: 8cm 4cm;
+          margin: 0;
+        }
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: Arial, sans-serif;
+      }
+      .label-container {
+          width: 8cm;
+          height: 4cm;
+          padding: 5px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          box-sizing: border-box;
+          padding: 0px 50px;
+      }
+      .hospital-name {
+          font-size: 12px;
+          font-weight: bold;
+          text-align: center;
+          margin-bottom: 5px;
+      }
+      p {
+          font-size: 10px;
+          margin: 2px 0;
+      }
+      span {
+          font-weight: bold;       
+      }
+    `;
+    printWindow.document.head.appendChild(style);
+  
+    setTimeout(() => {
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }, 1000);
+  }
+
+  async function printTag({isOnePart, isMultiPart, isReportByText, examId}: OpenExamProps) {
+
+    if (isOnePart === true) {
+      const response = await api.get(`/lab/onepart/${examId}`);
+      await handlePrintTag(response)
+      
+    }
+
+    if (isMultiPart === true) {
+      const response = await api.get(`/lab/multipart/${examId}`);
+      await handlePrintTag(response)
+    }
+
+    if (isReportByText === true) {
+      const response = await api.get(`/lab/bytext/${examId}`);
+      await handlePrintTag(response)
+    }
+
   }
 
   async function handleSendEmailResultExams({isOnePart, isMultiPart, isReportByText, examId}: OpenExamProps) {
@@ -228,6 +317,7 @@ export function LabExames() {
                 <Th>Responsável</Th>
                 <Th>Resultado</Th>
                 <Th whiteSpace={'nowrap'}>Resultado por Email</Th>
+                <Th>Impressão</Th>
               </Tr>
             </Thead>
 
@@ -280,6 +370,14 @@ export function LabExames() {
                           isReportByText: exam.byReport
                          })} >
                           Enviar Email</Button> 
+                        </Th>
+                        <Th>
+                          <Button colorScheme="teal" onClick={() => printTag({
+                            examId: exam.id,
+                            isMultiPart: exam.twoPart,
+                            isOnePart: exam.onePart,
+                            isReportByText: exam.byReport
+                          })}>Imprimir</Button>
                         </Th>
                         
                       </Tr>
