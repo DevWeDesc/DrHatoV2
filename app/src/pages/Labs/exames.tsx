@@ -93,8 +93,9 @@ export function LabExames() {
   async function getQueue() {
     const response = await api.get('/pets/queue')
     const labs = await api.get('/labs')
+    const filteredLabs = labs.data.exams.filter((exam: any) => exam.examsType[0] === "lab")
     
-    setLabs(labs.data.exams)
+    setLabs(filteredLabs)
     setExams(labs.data.allExams)
     setInQueue(response.data.response)
   }
@@ -272,7 +273,7 @@ export function LabExames() {
             </Thead>
 
             <Tbody>
-              {examsData?.map(exam => {
+              {examsData?.filter((exam: any) => exam.examsType[0] === "lab").map(exam => {
                 return exam?.medicineRecords?.petExams?.map(exams => (
                   <Tr key={exams.id}>
                     <Td>
@@ -474,14 +475,15 @@ export function LabExames() {
         break
       case showEndExams === true: 
       await api.get('/labs/end').then((res) => {
-        console.log(res.data.exams, "labs.data.exams")
-        setLabs(res.data.exams)
+        const filteredLabs = res.data.exams.filter((exam: any) => exam.examsType[0] === "lab")
+
+        setLabs(filteredLabs)
       })
       break;  
       case showEndExams === false: 
       const labs = await api.get('/labs')
-      console.log(labs.data.exams, "labs.data.exams")
-      setLabs(labs.data.exams)
+      const filteredLabs = labs.data.exams.filter((exam: any) => exam.examsType[0] === "lab")
+      setLabs(filteredLabs)
       break;
 
     }

@@ -105,7 +105,11 @@ export const examsController = {
   ) => {
     try {
       const currentPage = Number(request.query.page) || 1;
-      const totalExams = await prisma.oldExams.count();
+      const totalExams = await prisma.oldExams.count({
+        where: {
+          disponible: true,
+        }
+      });
       const totalPages = Math.ceil(totalExams / 35);
 
       const exams = await prisma.oldExams.findMany({

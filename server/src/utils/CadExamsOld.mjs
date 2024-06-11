@@ -25,7 +25,7 @@ const filteredData = data.map(exam => ({
     defaultMetodology: exam.MetodologiaPadrao,
     uniqueCod:         exam.CodigoUnico,
     sector:            exam.Setor,
-    ImageLab:          exam.Imagem,
+    ImageLab:          exam.imagem,
     defaultLab:        exam.Laboratorial,
     healthPlan:        exam.PlanoSaude,
     impressName: exam.NomeNaImpressao
