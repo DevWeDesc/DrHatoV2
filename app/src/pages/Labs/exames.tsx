@@ -200,7 +200,6 @@ export function LabExames() {
       const response = await api.get(`/lab/bytext/${examId}`);
       await handlePrintTag(response)
     }
-
   }
 
   async function handleSendEmailResultExams({isOnePart, isMultiPart, isReportByText, examId}: OpenExamProps) {
@@ -459,17 +458,17 @@ export function LabExames() {
   async function searchDataLabs() {
     switch (true) {
       case petName?.length >= 1:
-        await api.get(`labmenusearch?petName=${petName}`).then(res => {
+        await api.get(`/labmenusearch?petName=${petName}`).then(res => {
           setExamsData(res.data.data)
         })
         break
       case codPet?.length >= 1:
-        await api.get(`labmenusearch?petCode=${codPet}`).then(res => {
+        await api.get(`/labmenusearch?petCode=${codPet}`).then(res => {
           setExamsData(res.data.data)
         })
         break
       case solicitedBy?.length >= 1:
-        await api.get(`labmenusearch?solicitedBy=${solicitedBy}`).then(res => {
+        await api.get(`/labmenusearch?solicitedBy=${solicitedBy}`).then(res => {
           setExamsData(res.data.data)
         })  
         break

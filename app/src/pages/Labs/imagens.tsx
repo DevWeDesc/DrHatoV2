@@ -17,7 +17,6 @@ import {
 } from "@chakra-ui/react";
 import { Input } from "../../components/admin/Input";
 import { Header } from "../../components/admin/Header";
-import { DbContext } from "../../contexts/DbContext";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
 import {
@@ -27,10 +26,7 @@ import {
   BsImages,
 } from "react-icons/all";
 import { AdminContainer } from "../AdminDashboard/style";
-import { LabsSearch } from "../../components/Search/labsSearch";
-import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
-import axios from "axios";
 import { api } from "../../lib/axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -65,31 +61,67 @@ interface LabImagensProps {
   };
 }
 
+type OpenExamProps = {
+  isMultiPart: boolean,
+  isReportByText: boolean,
+  isOnePart: boolean,
+  examId: number
+}
+
 export function LabImagens() {
   const [showEndExams, setShowEndExams] = useState(false);
   const [exams, setExams] = useState([] as any);
-
+  const [petName, setPetName] = useState('');
+  const [codPet, setCodPet] = useState('');
+  const [solicitedBy, setSolicitedBy] = useState('');
   const navigate = useNavigate();
 
-  const { data: dataExams, isLoading } = useQuery({
-    queryKey: ["labs", showEndExams],
+
+  const { data: dataExams } = useQuery({
+    queryKey: ["labs", showEndExams, codPet, solicitedBy, petName],
     queryFn: async () => {
+      switch (true) {
 
-      if (showEndExams) {
-        const response = await api.get('/labs/end')
-        return response.data.exams.filter((exam: any) => exam.examsType[0] === "lab") as LabImagensProps[]
+        case showEndExams && petName?.length === 0:
+          const resEnd = await api.get('/labs/end');
+          return resEnd.data.exams.filter((exam: LabImagensProps) => exam.examsType[0] === "image");
+        
+        case codPet?.length >= 1:
+          const resCod = await api.get(`/labmenusearch?petCode=${codPet}`);
+          return resCod.data.exams.filter((exam: LabImagensProps) => exam.examsType[0] === "image" && exam.doneExame === showEndExams);
+        
+        case solicitedBy?.length >= 1:
+          const resSol = await api.get(`labmenusearch?solicitedBy=${solicitedBy}`)  
+          return resSol.data.exams.filter((exam: LabImagensProps) => exam.examsType[0] === "image" && exam.doneExame === showEndExams);
 
-        }else {
+        case petName?.length >= 1:
+          console.log("ntrei")
+          const resPet = await api.get(`labmenusearch?petName=${petName}`)
+          return resPet.data.exams.filter((exam: LabImagensProps) => exam.examsType[0] === "image" && exam.doneExame === showEndExams);
           
-        const response = await api.get("/labs");
-        setExams(response.data.allExams);
-        return response.data.exams.filter((exam: any) => exam.examsType[0] === "image") as LabImagensProps[];
-      }
+        default:
+          const resDef = await api.get('/labs');
+          setExams(resDef.data.allExams);
+          return resDef.data.exams.filter((exam: LabImagensProps) => exam.examsType[0] === "image");    
+        }
     },
   });
 
 
+  function handleOpenResultExams({isOnePart, isMultiPart, isReportByText, examId}: OpenExamProps) {
+    if (isOnePart === true) {
+      window.open(`/WorkSpace/ExamResultsOnePart/${examId}`, '_blank');
+    } 
 
+    if (isMultiPart === true) {
+      window.open(`/WorkSpace/ExamResultsMultiPart/${examId}`, '_blank');
+    } 
+
+    if (isReportByText === true) {
+      window.open(`/WorkSpace/ExamResultsByText/${examId}`, '_blank');
+      
+    } 
+  }
 
   return (
     <ChakraProvider>
@@ -166,19 +198,19 @@ export function LabImagens() {
                     <Input
                       label="Nome do Animal"
                       name="petName"
-                      // onChange={ev => setPetName(ev.target.value)}
+                      onChange={ev => setPetName(ev.target.value)}
                     />
 
                     <Input
                       label="Solicitante"
                       name="solicitedBy"
-                      // onChange={ev => setSolicitedBy(ev.target.value)}
+                      onChange={ev => setSolicitedBy(ev.target.value)}
                     />
 
                     <Input
                       label="Código Animal"
                       name="petCode"
-                      // onChange={ev => setCodPet(ev.target.value)}
+                      onChange={ev => setCodPet(ev.target.value)}
                     />
                   </Flex>
 
@@ -187,7 +219,7 @@ export function LabImagens() {
                   </Button>
                 </Flex>
                 <Button colorScheme="teal">
-                  <>TOTAL NA FILA: 0000</>
+                  <>TOTAL NA FILA: {dataExams?.length}</>
                 </Button>
                 <Flex textAlign="center" justify="center">
                   <Table colorScheme="blackAlpha">
@@ -248,12 +280,12 @@ export function LabImagens() {
                                             <Th>
                                               <Button
                                                 colorScheme="teal"
-                                                //  onClick={() => handleOpenResultExams({
-                                                //   examId: exam.id,
-                                                //   isMultiPart: exam.twoPart,
-                                                //   isOnePart: exam.onePart,
-                                                //   isReportByText: exam.byReport
-                                                //  })}
+                                                 onClick={() => handleOpenResultExams({
+                                                  examId: exam.id,
+                                                  isMultiPart: exam.twoPart,
+                                                  isOnePart: exam.onePart,
+                                                  isReportByText: exam.byReport
+                                                 })}
                                               >
                                                 Visualizar
                                               </Button>
@@ -306,7 +338,7 @@ export function LabImagens() {
                                 </Tr>
                               </Thead>
                               <Tbody>
-                                {dataExams && dataExams.map((exam) => {
+                                {dataExams && dataExams.map((exam: any) => {
                                   return (
                                     <React.Fragment key={exam.id}>
                                       {exam.doneExame === false && (

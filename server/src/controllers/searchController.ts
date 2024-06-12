@@ -182,14 +182,15 @@ export const searchController = {
 
       const labSearchMenu = new LabsMenuSearch();
 
-      const { data } = await labSearchMenu.getWithParams({
+      const { data: exams } = await labSearchMenu.getWithParams({
         petCode,
         petName,
         solicitedBy,
       });
 
+
       reply.send({
-        data,
+        exams,
       });
     } catch (error) {
       console.log(error);
