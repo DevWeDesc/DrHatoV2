@@ -605,6 +605,7 @@ model Transaction {
 
 model ExamsForPet {
   id                     Int              @id @default(autoincrement())
+  codeExam               Int?              
   name                   String
   price                  Decimal
   defaultMethodology     String?

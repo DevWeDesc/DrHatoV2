@@ -290,6 +290,7 @@ export const examsController = {
           .then(async (res) => {
             await prisma.examsForPet.create({
               data: {
+                codeExam: exam.codexam,
                 name: exam.name,
                 price: exam.price,
                 doneExame: false,
@@ -322,6 +323,7 @@ export const examsController = {
           .then(async (res) => {
             await prisma.examsForPet.create({
               data: {
+                codeExam: exam.codexam,
                 name: exam.name,
                 price: exam.price,
                 doneExame: false,

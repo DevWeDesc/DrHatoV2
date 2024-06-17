@@ -35,6 +35,7 @@ import { toast } from "react-toastify";
 
 interface LabImagensProps {
   id: number;
+  codeExam: number;
   name: string;
   doneExame: boolean;
   price: string;
@@ -79,6 +80,7 @@ export function LabImagens() {
   const [exams, setExams] = useState([] as any);
   const [petName, setPetName] = useState("");
   const [codPet, setCodPet] = useState("");
+  const [codExam, setCodExam] = useState(0);
   const [solicitedBy, setSolicitedBy] = useState("");
   const [filterDates, setFilterDates] = useState<filterDates>({
     initialDate: "",
@@ -87,7 +89,7 @@ export function LabImagens() {
   const navigate = useNavigate();
 
   const { data: dataExams, refetch } = useQuery({
-    queryKey: ["labs", showEndExams, codPet, solicitedBy, petName],
+    queryKey: ["labs", showEndExams, codPet, solicitedBy, petName, codExam],
     queryFn: async () => {
       switch (true) {
         case filterDates.initialDate.length >= 1 &&
@@ -101,6 +103,13 @@ export function LabImagens() {
               exam.requesteData <= filterDates.finalDate
           );
           return filterDateTrue;
+
+        case codExam !== 0:
+          const resCodeExam = await api.get(`${showEndExams ? "/labs/end" : "/labs"}`);
+          console.log(resCodeExam)
+          return resCodeExam.data.exams.filter(
+            (exam: LabImagensProps) => exam.examsType[0] === "image" && exam.codeExam === codExam
+          );
 
         case showEndExams && petName?.length === 0:
           const resEnd = await api.get("/labs/end");
@@ -142,6 +151,8 @@ export function LabImagens() {
               exam.requesteData <= filterDates.finalDate
           );
           return filterDate;
+        
+      
 
         default:
           const resDef = await api.get("/labs");
@@ -357,13 +368,14 @@ export function LabImagens() {
                         placeholder="Selecione um exame"
                         w={320}
                         border="2px"
+                        onChange={(ev) => setCodExam(Number(ev.target.value))}
                       >
                         {exams.map(
                           (
-                            exam: { name: string; id: string },
+                            exam: { name: string; codexam: number },
                             index: { index: number }
                           ) => (
-                            <option key={`${exam.id}-${index}`}>
+                            <option value={exam.codexam} key={`${exam.codexam}-${index}`} >
                               {exam.name}
                             </option>
                           )
