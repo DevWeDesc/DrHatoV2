@@ -11,20 +11,12 @@ export class LabsMenuSearch {
 
     switch (true) {
       case !!petName:
-        // exams = await prisma.pets.findMany({
-        //   where: {
-        //     name: { contains: petName },
-        //   },
-        //   include: {
-        //     medicineRecords: { select: { petExams: true } },
-        //   },
-        // });
         const name = await prisma.examsForPet.findMany({
           include: { medicine: { include: { pet: true } } },
         });
 
         const filteredExamsForPetName = name.filter(
-          (exam) => exam.medicine.pet.name.includes(petName)
+          (exam) => exam.medicine.pet.name.toLocaleLowerCase().includes(petName.toLocaleLowerCase())
         );
         exams = filteredExamsForPetName;
 
@@ -45,7 +37,7 @@ export class LabsMenuSearch {
       case !!solicitedBy:
         exams = await prisma.examsForPet.findMany({
           where: {
-            requestedFor: { contains: solicitedBy },
+            requestedFor: { contains: solicitedBy, mode: "insensitive"},
           },
           include: { medicine: { include: { pet: true } } },
         });

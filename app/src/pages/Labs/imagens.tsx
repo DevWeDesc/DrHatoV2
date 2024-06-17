@@ -105,10 +105,12 @@ export function LabImagens() {
           return filterDateTrue;
 
         case codExam !== 0:
-          const resCodeExam = await api.get(`${showEndExams ? "/labs/end" : "/labs"}`);
-          console.log(resCodeExam)
+          const resCodeExam = await api.get(
+            `${showEndExams ? "/labs/end" : "/labs"}`
+          );
           return resCodeExam.data.exams.filter(
-            (exam: LabImagensProps) => exam.examsType[0] === "image" && exam.codeExam === codExam
+            (exam: LabImagensProps) =>
+              exam.examsType[0] === "image" && exam.codeExam === codExam
           );
 
         case showEndExams && petName?.length === 0:
@@ -142,7 +144,6 @@ export function LabImagens() {
 
         case filterDates.initialDate.length >= 1 &&
           filterDates.finalDate.length >= 1:
-          console.log("Entrei2");
           const resDat = await api.get("/labs");
           const filterDate = resDat.data.exams.filter(
             (exam: LabImagensProps) =>
@@ -151,8 +152,6 @@ export function LabImagens() {
               exam.requesteData <= filterDates.finalDate
           );
           return filterDate;
-        
-      
 
         default:
           const resDef = await api.get("/labs");
@@ -375,7 +374,10 @@ export function LabImagens() {
                             exam: { name: string; codexam: number },
                             index: { index: number }
                           ) => (
-                            <option value={exam.codexam} key={`${exam.codexam}-${index}`} >
+                            <option
+                              value={exam.codexam}
+                              key={`${exam.codexam}-${index}`}
+                            >
                               {exam.name}
                             </option>
                           )
@@ -391,7 +393,6 @@ export function LabImagens() {
                         name="initialDate"
                         type="date"
                         onChange={(ev) => {
-                          console.log(ev.target.value);
                           setFilterDates({
                             ...filterDates,
                             initialDate: ev.target.value,
