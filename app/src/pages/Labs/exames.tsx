@@ -56,26 +56,6 @@ type OpenExamProps = {
   examId: number;
 };
 
-// type LabDefaultDTO = {
-// id: number;
-// name: string
-// doneExame: boolean,
-// onePart: boolean,
-// twoPart: boolean,
-// byReport: boolean,
-// requesteData: Date;
-// requestedFor: string;
-// requestedCrm: string;
-// responsibleForExam: string;
-// responsibleForCrm: string;
-// medicine: {
-//   pet: {
-//     name: string;
-//     id: number;
-//   }
-// }
-// }
-
 interface LabDefaultDTO {
   id: number;
   codeExam: number;
@@ -117,7 +97,7 @@ export function LabExames() {
   const [exams, setExams] = useState([] as any);
   const [examsData, setExamsData] = useState<ExamsDataProps[]>([]);
   const [petName, setPetName] = useState("");
-  const [codExam, setCodExam] = useState(0);
+  const [codExam, setCodExam] = useState("");
   const [codPet, setCodPet] = useState("");
   const [solicitedBy, setSolicitedBy] = useState("");
   const [showEndExams, setShowEndExams] = useState(false);
@@ -526,58 +506,15 @@ export function LabExames() {
 
   async function searchDataLabs() {
     switch (true) {
-      case filterDates.initialDate.length >= 1 &&
-        filterDates.finalDate.length >= 1 &&
-        showEndExams:
-        const resDatTrue = await api.get("/labs/end");
-        const filterDateTrue = resDatTrue.data.exams.filter(
-          (exam: LabDefaultDTO) =>
-            exam.examsType[0] === "lab" &&
-            exam.requesteData >= filterDates.initialDate &&
-            exam.requesteData <= filterDates.finalDate
+      case true:
+        const res = await api.get(
+          `/labmenusearch?petCode=${codPet}&petName=${petName}&solicitedBy=${solicitedBy}&initialDate=${filterDates.initialDate}&finalDate=${filterDates.finalDate}&codeExam=${codExam}&showEndExams=${showEndExams}`
         );
-        setLabs(filterDateTrue);
-        break;
-
-      case codExam !== 0:
-        const resCodeExam = await api.get(
-          `${showEndExams ? "/labs/end" : "/labs"}`
+        setLabs(
+          res.data.exams.filter(
+            (exam: LabDefaultDTO) => exam.examsType[0] === "lab"
+          )
         );
-        const filterResCodeExam = resCodeExam.data.exams.filter(
-          (exam: LabDefaultDTO) =>
-            exam.examsType[0] === "lab" && exam.codeExam === codExam
-        );
-        setLabs(filterResCodeExam);
-        break;
-
-      case petName?.length >= 1:
-        const resPet = await api.get(`labmenusearch?petName=${petName}`);
-        const filterResPet = resPet.data.exams.filter(
-          (exam: LabDefaultDTO) =>
-            exam.examsType[0] === "lab" && exam.doneExame === showEndExams
-        );
-
-        setLabs(filterResPet);
-        break;
-
-      case codPet?.length >= 1:
-        const resCod = await api.get(`/labmenusearch?petCode=${codPet}`);
-        const filterResCod = resCod.data.exams.filter(
-          (exam: LabDefaultDTO) =>
-            exam.examsType[0] === "lab" && exam.doneExame === showEndExams
-        );
-        setLabs(filterResCod);
-        break;
-
-      case solicitedBy?.length >= 1:
-        const resSol = await api.get(
-          `labmenusearch?solicitedBy=${solicitedBy}`
-        );
-        const filterResSol = resSol.data.exams.filter(
-          (exam: LabDefaultDTO) =>
-            exam.examsType[0] === "lab" && exam.doneExame === showEndExams
-        );
-        setLabs(filterResSol);
         break;
 
       case showEndExams === true:
@@ -587,18 +524,6 @@ export function LabExames() {
           );
           setLabs(filteredLabs);
         });
-        break;
-
-      case filterDates.initialDate.length >= 1 &&
-        filterDates.finalDate.length >= 1:
-        const resDat = await api.get("/labs");
-        const filterDate = resDat.data.exams.filter(
-          (exam: LabDefaultDTO) =>
-            exam.examsType[0] === "lab" &&
-            exam.requesteData >= filterDates.initialDate &&
-            exam.requesteData <= filterDates.finalDate
-        );
-        setLabs(filterDate);
         break;
 
       case showEndExams === false:
@@ -617,9 +542,18 @@ export function LabExames() {
     setCodPet("");
     setSolicitedBy("");
   }
+
   useEffect(() => {
     searchDataLabs();
-  }, [petName, codPet, solicitedBy, showEndExams, codExam]);
+  }, [
+    petName,
+    codPet,
+    solicitedBy,
+    showEndExams,
+    codExam,
+    filterDates.finalDate,
+    filterDates.initialDate,
+  ]);
 
   return (
     <ChakraProvider>
@@ -663,7 +597,7 @@ export function LabExames() {
                         placeholder="Selecione um exame"
                         w={320}
                         border="2px"
-                        onChange={(ev) => setCodExam(Number(ev.target.value))}
+                        onChange={(ev) => setCodExam(ev.target.value)}
                       >
                         {exams.map(
                           (
@@ -739,6 +673,7 @@ export function LabExames() {
                     <Input
                       label="Código Animal"
                       name="petCode"
+                      type="number"
                       onChange={(ev) => {
                         setCodPet(ev.target.value);
                       }}
@@ -756,7 +691,13 @@ export function LabExames() {
                   </Button>
                 </Flex>
                 <Button colorScheme="teal" onClick={() => clearExamData()}>
-                  <>TOTAL NA FILA: {labs.length}</>
+                  <>
+                    TOTAL NA FILA:{" "}
+                    {
+                      labs.filter((exam) => exam.doneExame === showEndExams)
+                        .length
+                    }
+                  </>
                 </Button>
                 <Flex textAlign="center" justify="center">
                   {typeTable}

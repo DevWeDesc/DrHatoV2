@@ -9,6 +9,9 @@ type LabSearchParams = {
   petName: string;
   petCode: string;
   solicitedBy: string;
+  initialDate: string;
+  finalDate: string;
+  codeExam: number;
 };
 
 export const searchController = {
@@ -80,7 +83,7 @@ export const searchController = {
 
   searchVetMenu: async (
     request: FastifyRequest<{
-        Querystring: {
+      Querystring: {
         petName: string;
         customerName: string;
         petCode: string;
@@ -178,16 +181,25 @@ export const searchController = {
     reply: FastifyReply
   ) => {
     try {
-      const { petCode, petName, solicitedBy } = request.query;
-
-      const labSearchMenu = new LabsMenuSearch();
-
-      const { data: exams } = await labSearchMenu.getWithParams({
+      const {
         petCode,
         petName,
         solicitedBy,
-      });
+        initialDate,
+        finalDate,
+        codeExam,
+      } = request.query;
 
+      const labSearchMenu = new LabsMenuSearch();
+
+      const exams = await labSearchMenu.getWithParams({
+        petCode,
+        petName,
+        solicitedBy,
+        initialDate,
+        finalDate,
+        codeExam,
+      });
 
       reply.send({
         exams,

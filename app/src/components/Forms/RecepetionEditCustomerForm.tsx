@@ -24,6 +24,7 @@ interface CreateNewClienteProps {
   name: string;
   adress: string;
   phone: string;
+  kindPerson: string;
   cpf: string;
   email: string;
   birthday: Date | string | number;
@@ -41,7 +42,7 @@ const customerSchema = object({
   adress: string().required("Endereço é Obrigatório"),
   district: string().optional(),
   email: string().required("Email é Obrigatório"),
-  birthday: date().required("Data de Nascimento é Obrigatório"),
+  birthday: date().required("Data de Nascimento é Obrigatório").typeError("Data de Nascimento é Obrigatório"),
   phone: string().required("Telefone é Obrigatório"),
   tell: string().optional(),
   cpf: string().required("CPF é Obrigatório"),
@@ -64,8 +65,6 @@ export function ReceptionEditCustomerForm() {
     resolver: yupResolver(customerSchema),
   });
   const { id } = useParams<{ id: string }>();
-  const [estado, setEstado] = useState("");
-  const [kindPerson, setKindPerson] = useState("");
   const [errorInput, setErrorInput] = useState(0);
   const handleCreateNewCliente: SubmitHandler<CreateNewClienteProps> = async (
     values
@@ -82,7 +81,7 @@ export function ReceptionEditCustomerForm() {
       rg: values.rg,
       cep: values.cep,
       // howKnowUs: howKnow,
-      kindPerson: kindPerson,
+      kindPerson: values.kindPerson,
       state: values.state,
       neighbour: values.neighbour,
     };
@@ -118,7 +117,7 @@ export function ReceptionEditCustomerForm() {
             Pessoa Fisica ou Juridica ?
           </Text>
 
-          <RadioGroup onChange={setKindPerson} value={kindPerson}>
+          <RadioGroup>
             <Flex gap="2" mt="2">
               <Radio
                 mb="2"
@@ -358,8 +357,8 @@ export function ReceptionEditCustomerForm() {
               borderColor="gray.900"
               {...register("state")}
               name="state"
-              value={estado}
-              onChange={(e) => setEstado(e.target.value)}
+              // value={estado}
+              // onChange={(e) => setEstado(e.target.value)}
             >
               <option value="SP">SP</option>
               <option value="AC">AC</option>
@@ -391,7 +390,7 @@ export function ReceptionEditCustomerForm() {
             </Select>
             {errorInput > 0 && (
               <Text textAlign="start" color="red.500" fontWeight="bold">
-                {estado != "" ? null : "O campo Estado é obrigatório"}
+                {errors?.state?.message} 
               </Text>
             )}
           </Flex>

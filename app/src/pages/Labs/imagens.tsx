@@ -80,7 +80,7 @@ export function LabImagens() {
   const [exams, setExams] = useState([] as any);
   const [petName, setPetName] = useState("");
   const [codPet, setCodPet] = useState("");
-  const [codExam, setCodExam] = useState(0);
+  const [codExam, setCodExam] = useState("");
   const [solicitedBy, setSolicitedBy] = useState("");
   const [filterDates, setFilterDates] = useState<filterDates>({
     initialDate: "",
@@ -88,77 +88,30 @@ export function LabImagens() {
   });
   const navigate = useNavigate();
 
+  const { data } = useQuery({
+    queryKey: ["allExams"],
+    queryFn: async () => {
+      const res = await api.get("/labs");
+      setExams(res.data.allExams);
+      return res.data.allExams;
+    },
+  });
+
   const { data: dataExams, refetch } = useQuery({
     queryKey: ["labs", showEndExams, codPet, solicitedBy, petName, codExam],
     queryFn: async () => {
       switch (true) {
-        case filterDates.initialDate.length >= 1 &&
-          filterDates.finalDate.length >= 1 &&
-          showEndExams:
-          const resDatTrue = await api.get("/labs/end");
-          const filterDateTrue = resDatTrue.data.exams.filter(
-            (exam: LabImagensProps) =>
-              exam.examsType[0] === "image" &&
-              exam.requesteData >= filterDates.initialDate &&
-              exam.requesteData <= filterDates.finalDate
-          );
-          return filterDateTrue;
+      case true: 
+        const res = await api.get(`/labmenusearch?petCode=${codPet}&petName=${petName}&solicitedBy=${solicitedBy}&initialDate=${filterDates.initialDate}&finalDate=${filterDates.finalDate}&codeExam=${codExam}&showEndExams=${showEndExams}`);
+        
+        return res.data.exams.filter((exam: LabImagensProps)=> exam.examsType[0] === "image") as LabImagensProps[];
 
-        case codExam !== 0:
-          const resCodeExam = await api.get(
-            `${showEndExams ? "/labs/end" : "/labs"}`
-          );
-          return resCodeExam.data.exams.filter(
-            (exam: LabImagensProps) =>
-              exam.examsType[0] === "image" && exam.codeExam === codExam
-          );
-
-        case showEndExams && petName?.length === 0:
-          const resEnd = await api.get("/labs/end");
-          return resEnd.data.exams.filter(
-            (exam: LabImagensProps) => exam.examsType[0] === "image"
-          );
-
-        case codPet?.length >= 1:
-          const resCod = await api.get(`/labmenusearch?petCode=${codPet}`);
-          return resCod.data.exams.filter(
-            (exam: LabImagensProps) =>
-              exam.examsType[0] === "image" && exam.doneExame === showEndExams
-          );
-
-        case solicitedBy?.length >= 1:
-          const resSol = await api.get(
-            `labmenusearch?solicitedBy=${solicitedBy}`
-          );
-          return resSol.data.exams.filter(
-            (exam: LabImagensProps) =>
-              exam.examsType[0] === "image" && exam.doneExame === showEndExams
-          );
-
-        case petName?.length >= 1:
-          const resPet = await api.get(`labmenusearch?petName=${petName}`);
-          return resPet.data.exams.filter(
-            (exam: LabImagensProps) =>
-              exam.examsType[0] === "image" && exam.doneExame === showEndExams
-          );
-
-        case filterDates.initialDate.length >= 1 &&
-          filterDates.finalDate.length >= 1:
-          const resDat = await api.get("/labs");
-          const filterDate = resDat.data.exams.filter(
-            (exam: LabImagensProps) =>
-              exam.examsType[0] === "image" &&
-              exam.requesteData >= filterDates.initialDate &&
-              exam.requesteData <= filterDates.finalDate
-          );
-          return filterDate;
-
-        default:
-          const resDef = await api.get("/labs");
-          setExams(resDef.data.allExams);
-          return resDef.data.exams.filter(
-            (exam: LabImagensProps) => exam.examsType[0] === "image"
-          );
+      default:
+        const resDef = await api.get("/labs");
+        setExams(resDef.data.allExams);
+        return resDef.data.exams.filter(
+          (exam: LabImagensProps) => exam.examsType[0] === "image"
+        ) as LabImagensProps[];
       }
     },
   });
@@ -333,7 +286,7 @@ export function LabImagens() {
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Painel Lab Imagens" />
+          <Header title="Painel Lab Imagens" url="/Labs" />
           <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
             <GenericSidebar>
               <GenericLink icon={BsArrowLeft} name="Voltar" path="/Home" />
@@ -367,7 +320,7 @@ export function LabImagens() {
                         placeholder="Selecione um exame"
                         w={320}
                         border="2px"
-                        onChange={(ev) => setCodExam(Number(ev.target.value))}
+                        onChange={(ev) => setCodExam(ev.target.value)}
                       >
                         {exams.map(
                           (
@@ -458,7 +411,7 @@ export function LabImagens() {
                   </Button>
                 </Flex>
                 <Button colorScheme="teal">
-                  <>TOTAL NA FILA: {dataExams?.length}</>
+                  <>TOTAL NA FILA: {dataExams?.filter((exam)=> exam.examsType[0] === "image" && exam.doneExame === showEndExams)?.length}</>
                 </Button>
                 <Flex textAlign="center" justify="center">
                   <Table colorScheme="blackAlpha">
@@ -594,16 +547,7 @@ export function LabImagens() {
                                           <Tr
                                             key={exam.id}
                                             cursor="pointer"
-                                            onClick={() =>
-                                              navigate(
-                                                `/Labs/Set/${exam.id}/${
-                                                  exams.find(
-                                                    (data: any) =>
-                                                      data.name === exam.name
-                                                  ).codexam
-                                                }/${exam.medicine?.pet.id}`
-                                              )
-                                            }
+                                            onClick={() => navigate(`/Labs/Set/${exam.id}/${exam.codeExam}/${exam.medicine?.pet.id}`)}
                                           >
                                             <Td>
                                               {new Intl.DateTimeFormat(
