@@ -4,11 +4,9 @@ import {
   FormControl,
   FormLabel,
   Button,
-  VStack,
   Text,
   RadioGroup,
   Radio,
-  HStack,
   Select,
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -19,6 +17,39 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { object, string, date } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation, useQuery } from "react-query";
+import { set } from "lodash";
+
+const states = [
+  "SP",
+  "AC",
+  "AL",
+  "AP",
+  "AM",
+  "BA",
+  "CE",
+  "DF",
+  "ES",
+  "GO",
+  "MA",
+  "MT",
+  "MS",
+  "MG",
+  "PA",
+  "PB",
+  "PR",
+  "PE",
+  "PI",
+  "RJ",
+  "RN",
+  "RS",
+  "RO",
+  "RR",
+  "SC",
+  "SE",
+  "TO",
+];
+
 
 interface CreateNewClienteProps {
   name: string;
@@ -27,14 +58,17 @@ interface CreateNewClienteProps {
   kindPerson: string;
   cpf: string;
   email: string;
-  birthday: Date | string | number;
+  birthday?: Date | string | number;
   cep: string;
   district: string;
   tell: string;
   rg: string;
-  vetPreference: string;
   state: string;
   neighbour: string;
+  number?: number;
+  complement?: string;
+  // howKnowUs?: string;
+  // vetPreference: string;
 }
 
 const customerSchema = object({
@@ -60,12 +94,52 @@ export function ReceptionEditCustomerForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(customerSchema),
   });
   const { id } = useParams<{ id: string }>();
   const [errorInput, setErrorInput] = useState(0);
+  const [isCheckedProps, setIsCheckedProps] = useState("");
+
+  const { data: dataCustomer, refetch } = useQuery({
+    queryKey: "customer",
+    queryFn: async () => {
+      const response = await api.get(`/customers/${id}`);
+
+      setValue("name", response.data.customer.name);
+      setValue("adress", response.data.customer.adress);
+      setValue("district", response.data.customer.district);
+      setValue("email", response.data.customer.email);
+      // setValue("birthday", response.data.customer.birthday);
+      setValue("phone", response.data.customer.phone);
+      setValue("tell", response.data.customer.tell || "");
+      setValue("cpf", response.data.customer.cpf);
+      setValue("rg", response.data.customer.rg);
+      setValue("cep", response.data.customer.cep);
+      setValue("kindPerson", response.data.customer.kindPerson);
+      setIsCheckedProps(response.data.customer.kindPerson);
+      setValue("state", response.data.customer.state);
+      setValue("neighbour", response.data.customer.neighbour);
+
+      return response.data.customer as CreateNewClienteProps;
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: async (data: CreateNewClienteProps) => {
+      return await api.put(`/customers/${id}`, data);
+    },
+    onSuccess: () => {
+      toast.success("Cliente editado com sucesso");
+      refetch();
+    },
+  });
+
+  
+
+
   const handleCreateNewCliente: SubmitHandler<CreateNewClienteProps> = async (
     values
   ) => {
@@ -74,7 +148,7 @@ export function ReceptionEditCustomerForm() {
       adress: values.adress,
       district: values.district,
       email: values.email,
-      birthday: values.birthday.toString(),
+      birthday: "1999-01-01",
       phone: values.phone,
       tell: values.tell,
       cpf: values.cpf,
@@ -86,9 +160,7 @@ export function ReceptionEditCustomerForm() {
       neighbour: values.neighbour,
     };
     try {
-      // await api.put(`/customer/${id}`, data);
-      toast.success("Usuário Editado com sucesso");
-      console.log(data);
+      await mutation.mutateAsync(data);
     } catch (error) {
       toast.error("Falha ao editar usuário");
       console.log(error);
@@ -117,7 +189,10 @@ export function ReceptionEditCustomerForm() {
             Pessoa Fisica ou Juridica ?
           </Text>
 
-          <RadioGroup>
+          <RadioGroup value={isCheckedProps} onChange={(value)=> {
+            setIsCheckedProps(value)
+            setValue("kindPerson", value)
+          } }>
             <Flex gap="2" mt="2">
               <Radio
                 mb="2"
@@ -134,6 +209,7 @@ export function ReceptionEditCustomerForm() {
                 colorScheme="green"
                 value="Juridica"
                 {...register("kindPerson")}
+                isChecked={dataCustomer?.kindPerson === "Juridica"}
               >
                 PESSOA JURÍDICA
               </Radio>
@@ -334,6 +410,7 @@ export function ReceptionEditCustomerForm() {
               id="cep"
               minWidth={320}
               name="cep"
+
             />
             <Text color="red.500" fontWeight="bold" textAlign="left">
               {errors?.cep?.message}
@@ -344,7 +421,7 @@ export function ReceptionEditCustomerForm() {
           <Flex direction="column" w="33%">
             <FormLabel
               color="red.400"
-              htmlFor="State"
+              htmlFor="state"
               mb="0"
               fontSize="17"
               w="100%"
@@ -357,36 +434,13 @@ export function ReceptionEditCustomerForm() {
               borderColor="gray.900"
               {...register("state")}
               name="state"
-              // value={estado}
-              // onChange={(e) => setEstado(e.target.value)}
+              id="state"
             >
-              <option value="SP">SP</option>
-              <option value="AC">AC</option>
-              <option value="AL">AL</option>
-              <option value="AP">AP</option>
-              <option value="AM">AM</option>
-              <option value="BA">BA</option>
-              <option value="CE">CE</option>
-              <option value="DF">DF</option>
-              <option value="ES">ES</option>
-              <option value="GO">GO</option>
-              <option value="MA">MA</option>
-              <option value="MT">MT</option>
-              <option value="MS">MS</option>
-              <option value="MG">MG</option>
-              <option value="PA">PA</option>
-              <option value="PB">PB</option>
-              <option value="PR">PR</option>
-              <option value="PE">PE</option>
-              <option value="PI">PI</option>
-              <option value="RJ">RJ</option>
-              <option value="RN">RN</option>
-              <option value="RS">RS</option>
-              <option value="RO">RO</option>
-              <option value="RR">RR</option>
-              <option value="SC">SC</option>
-              <option value="SE">SE</option>
-              <option value="TO">TO</option>
+              {
+                states.map((state, index) => (
+                  <option key={index} selected={dataCustomer?.state === state} value={state}>{state}</option>
+                ))
+              }
             </Select>
             {errorInput > 0 && (
               <Text textAlign="start" color="red.500" fontWeight="bold">
@@ -460,6 +514,7 @@ export function ReceptionEditCustomerForm() {
               id="number"
               minWidth={320}
               name="number"
+
             />
             <Text color="red.500" fontWeight="bold" textAlign="left">
               {errors?.number?.message}
