@@ -19,6 +19,7 @@ import { object, string, date } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation, useQuery } from "react-query";
 import { set } from "lodash";
+import moment from "moment";
 
 const states = [
   "SP",
@@ -58,7 +59,7 @@ interface CreateNewClienteProps {
   kindPerson: string;
   cpf: string;
   email: string;
-  birthday?: Date | string | number;
+  birthday: Date | string | number | any;
   cep: string;
   district: string;
   tell: string;
@@ -112,7 +113,7 @@ export function ReceptionEditCustomerForm() {
       setValue("adress", response.data.customer.adress);
       setValue("district", response.data.customer.district);
       setValue("email", response.data.customer.email);
-      // setValue("birthday", response.data.customer.birthday);
+      setValue("birthday", response.data.customer.birthday);
       setValue("phone", response.data.customer.phone);
       setValue("tell", response.data.customer.tell || "");
       setValue("cpf", response.data.customer.cpf);
@@ -148,7 +149,7 @@ export function ReceptionEditCustomerForm() {
       adress: values.adress,
       district: values.district,
       email: values.email,
-      birthday: "1999-01-01",
+      birthday: values.birthday ? moment(values.birthday).format("YYYY-MM-DD"): "Atualizar",
       phone: values.phone,
       tell: values.tell,
       cpf: values.cpf,
