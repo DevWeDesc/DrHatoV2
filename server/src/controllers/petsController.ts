@@ -276,51 +276,77 @@ export const petsController = {
     }
   },
 
-  petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
+  petsInQueue: async (request: FastifyRequest<{Querystring: { vetName: string, isClosed: string, initialDate: string, finalDate: string }}>, reply: FastifyReply) => {
+
+    const { vetName, isClosed, initialDate, finalDate }  = request.query;
+
     try {
       const pets = await prisma.pets.findMany({
         where: {
           medicineRecords: {
             petConsults: {
               some: {
-                isClosed: false,
+                isClosed: isClosed === "true" ? true : false,
+                vetPreference: { contains: vetName },
+                openedDate: {
+                  gte: new Date(initialDate),
+                  lte: new Date(finalDate),
+                }
               },
+              
             },
           },
         },
         include: {
           medicineRecords: {
-            include: { petConsults: true },
+              include: { 
+                  petConsults: {
+                      where: {
+                          isClosed: isClosed === "true",
+                          openedDate: {
+                              gte: new Date(initialDate),
+                              lte: new Date(finalDate),
+                          },
+                          vetPreference: { contains: vetName },
+                      }
+                  }
+              }
           },
-
           customer: { select: { name: true, vetPreference: true, cpf: true } },
-        },
+      },
       });
 
       const totalInQueue = await prisma.openedConsultsForPet.count({
-        where: { isClosed: false },
+        where: { 
+          isClosed: isClosed === "true" ? true : false, 
+          vetPreference: { contains: vetName }, 
+          openedDate: {
+            gte: new Date(initialDate),
+            lte: new Date(finalDate),
+          }
+        },
       });
 
-      const response = pets.map((pet) => {
-        let data = {
-          name: pet.name,
-          id: pet.id,
-          customerName: pet.customer.name,
-          vetPreference:
-            pet.medicineRecords?.petConsults[0]?.vetPreference ??
-            "Sem preferência",
-          queueId: pet.medicineRecords?.petConsults[0]?.id,
-          openedBy: pet.medicineRecords?.petConsults[0]?.openedBy,
-          codPet: pet.CodAnimal,
-          queueEntry: pet.medicineRecords?.petConsults[0]?.openedDate,
-          especie: pet.especie,
-          more: pet.medicineRecords?.petConsults[0]?.observations,
-          race: pet.race,
-          customerCpf: pet.customer.cpf,
-          queryType: pet.medicineRecords?.petConsults[0]?.consultType,
-          totalInQueue,
-        };
-        return data;
+      
+      const response = pets.flatMap((pet) => {
+        return pet.medicineRecords?.petConsults.map((consult) => {
+          return {
+            name: pet.name,
+            id: pet.id,
+            customerName: pet.customer.name,
+            vetPreference: consult.vetPreference ?? "Sem preferência",
+            queueId: consult.id,
+            openedBy: consult.openedBy,
+            codPet: pet.CodAnimal,
+            queueEntry: consult.openedDate,
+            especie: pet.especie,
+            more: consult.observations,
+            race: pet.race,
+            customerCpf: pet.customer.cpf,
+            queryType: consult.consultType,
+            totalInQueue, 
+          };
+        }) || [];
       });
 
       return reply.send({ response, totalInQueue });
@@ -390,6 +416,71 @@ export const petsController = {
       });
 
       return reply.send({ response, totalInQueue });
+    } catch (error) {
+      reply.status(404).send(error);
+    }
+  },
+
+  petsQueueDefault: async (
+    request: FastifyRequest<{ Params: { vetName: string, isClosed: string } }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const { vetName, isClosed } = request.params;
+
+      const pets = await prisma.pets.findMany({
+        where: {
+          medicineRecords: {
+            petConsults: {
+              some: {
+                isClosed: isClosed === "true" ? true : false,
+              },
+            },
+          },
+          AND: {
+            medicineRecords: {
+              petConsults: {
+                some: {
+                  vetPreference: { contains: vetName },
+                },
+              },
+            },
+          },
+        },
+        include: {
+          medicineRecords: {
+            include: { petConsults: true },
+          },
+          customer: { select: { name: true, vetPreference: true, cpf: true } },
+        },
+      });
+
+      const totalInQueue = await prisma.queues.count({
+        where: { petIsInQueue: true },
+      });
+      const response = pets.map((pet) => {
+        let data = {
+          name: pet.name,
+          id: pet.id,
+          customerName: pet.customer.name,
+          vetPreference:
+            pet.medicineRecords?.petConsults[0]?.vetPreference ??
+            "Sem preferência",
+          queueId: pet.medicineRecords?.petConsults[0]?.id,
+          openedBy: pet.medicineRecords?.petConsults[0]?.openedBy,
+          codPet: pet.CodAnimal,
+          queueEntry: pet.medicineRecords?.petConsults[0]?.openedDate,
+          especie: pet.especie,
+          more: pet.medicineRecords?.petConsults[0]?.observations,
+          race: pet.race,
+          customerCpf: pet.customer.cpf,
+          queryType: pet.medicineRecords?.petConsults[0]?.consultType,
+          totalInQueue,
+        };
+        return data;
+      });
+
+      return reply.send({ pets, totalInQueue });
     } catch (error) {
       reply.status(404).send(error);
     }
