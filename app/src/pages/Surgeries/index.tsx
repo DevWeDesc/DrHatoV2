@@ -102,7 +102,6 @@ export default function Surgeries() {
       case isFinishied === true:
         await api.get(`vetmenusearch?isFinished=true`).then(res => {
           setPetData(res.data)
-          console.log(res.data)
         })
         break
         case isAddmited === true:
@@ -124,7 +123,6 @@ export default function Surgeries() {
     case isAddmited === true:
       await api.get(`vetmenusearch?isAddmited=true&initialDate=${initialDate}&finalDate=${finalDate}`).then((res) =>
       {  setPetData(res.data)
-        console.log(res.data)
       })
     break
   }

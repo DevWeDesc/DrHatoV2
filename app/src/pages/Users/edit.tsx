@@ -63,7 +63,6 @@ export function EditUser() {
   }, [id]);
 
   const handleEditUser: SubmitHandler<EditUserProps> = async (values) => {
-    console.log(values);
     const data = {
       email: values.email,
       username: values.username,

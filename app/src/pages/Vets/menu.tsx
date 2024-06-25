@@ -47,7 +47,12 @@ export function MenuVet() {
     customerName: "",
   });
 
+
+  console.log(initialDate, finalDate)
+
   async function getDefaultQueue() {
+    console.log("entrei")
+    console.log(user)
     const response = await api.get(
       `/pets/queue/preference/${user.consultName}`
     );
@@ -60,40 +65,42 @@ export function MenuVet() {
     return <LoadingSpinner />;
   }
 
-  async function getQueueVetPreference() {
-    const response = await api.get("/pets/queue");
-    setPetData([]);
-    setTotalInQueue(response.data.totalInQueue);
-    setPetsByVetPreference(response.data.response);
-  }
+  // async function getQueueVetPreference() {
+  //   console.log("entrei2")
+  //   const response = await api.get("/pets/queue");
+  //   setPetData([]);
+  //   setTotalInQueue(response.data.totalInQueue);
+  //   setPetsByVetPreference(response.data.response);
+  // }
 
-  async function searchDataVet() {
-    const data = {
-      page: pagination,
-      petCode: searchBody.codPet,
-      customerName: searchBody.customerName,
-      petName: searchBody.petName,
-      isFinished: isFinishied,
-      isAddmited: isAddmited,
-      initialDate: initialDate,
-      finalDate: finalDate,
-    };
-    const response = await api.post("/engine/veterinary", data);
-    setPetData(response.data.data);
+  // async function searchDataVet() {
+  //   console.log("entrei3")
+  //   const data = {
+  //     page: pagination,
+  //     petCode: searchBody.codPet,
+  //     customerName: searchBody.customerName,
+  //     petName: searchBody.petName,
+  //     isFinished: isFinishied,
+  //     isAddmited: isAddmited,
+  //     initialDate: initialDate,
+  //     finalDate: finalDate,
+  //   };
+  //   const response = await api.post("/engine/veterinary", data);
+  //   setPetData(response.data.data);
 
-    setNumberOfPages(response.data.totalPages);
-  }
+  //   setNumberOfPages(response.data.totalPages);
+  // }
 
   function incrementPage() {
     SetPagination((prevCount) =>
       pagination < numberOfPages ? prevCount + 1 : numberOfPages
     );
-    searchDataVet();
+    // searchDataVet();
   }
 
   function decrementPage() {
     SetPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
-    searchDataVet();
+    // searchDataVet();
   }
 
   async function updateQueuePetPreference(queueId: string, petId: number)   {
@@ -172,7 +179,7 @@ export function MenuVet() {
                           <Checkbox
                             onChange={(ev) => {
                               setShowAllVets(ev.target.checked);
-                              getQueueVetPreference();
+                              // getQueueVetPreference();
                             }}
                             border="2px"
                             size="lg"
@@ -218,8 +225,10 @@ export function MenuVet() {
                     />
                   </HStack>
                   <Button
-                    isDisabled={showAllVets}
-                    onClick={() => searchDataVet()}
+                    // isDisabled={showAllVets}
+                    // onClick={() => 
+                    //   searchDataVet()
+                    // }
                     mt="4"
                     colorScheme="whatsapp"
                   >

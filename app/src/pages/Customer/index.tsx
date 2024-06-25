@@ -173,15 +173,16 @@ export function CustomerDetails() {
           toast.error("Selecione uma preferência")
           return 
         }
-
-
         await api.put(`queue/${petSelected.id}`, data);
         navigate("/Recepcao/Change")
         toast.success("Pet colocado na fila com sucesso!");
       } else {
         toast.error(`Selecione Pet/Tipo de Atendimento/Veterinário`);
       }
-    } catch (error) {
+    } catch (error: any) {
+      if(error.response.status === 409) {
+        return toast.error(`${error.response.data.message}`)
+      }
       toast.error("Falha ao colocar na fila");
     }
   }
@@ -439,7 +440,6 @@ export function CustomerDetails() {
       console.error(error);
       toast.error("Falha ao cadastrar pet, verifique se o mesmo ja não existe");
     }
-    console.log(data);
   };
 
 
