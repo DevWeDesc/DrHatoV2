@@ -2,6 +2,8 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { petSchema } from "../schemas/schemasValidator";
 import { prisma } from "../interface/PrismaInstance";
 import { z } from "zod";
+import { StringifyOptions } from "querystring";
+import { StringDecoder } from "string_decoder";
 
 export const petsController = {
   getAllPets: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -232,7 +234,6 @@ export const petsController = {
 
     try {
 
-
       await prisma.pets.create({
         data: {
           name,
@@ -276,22 +277,33 @@ export const petsController = {
     }
   },
 
-  petsInQueue: async (request: FastifyRequest<{Querystring: { vetName: string, isClosed: string, initialDate: string, finalDate: string }}>, reply: FastifyReply) => {
+  petsInQueue: async (request: FastifyRequest<{Querystring: { vetName: string, isClosed: string, initialDate: string, finalDate: string, petName: string, petCode: string, customerName: string }}>, reply: FastifyReply) => {
 
-    const { vetName, isClosed, initialDate, finalDate }  = request.query;
+    const { vetName, isClosed, initialDate, finalDate, petName, petCode, customerName }  = request.query;
+
+    const filter: { openedDate?: { gte: Date; lte: Date } } = {};
+
+    if (initialDate && finalDate) {
+      filter.openedDate = {
+        gte: new Date(initialDate),
+        lte: new Date(finalDate),
+      };
+    }
 
     try {
       const pets = await prisma.pets.findMany({
         where: {
+          CodAnimal: petCode ? Number(petCode) : undefined,
+          name: { contains: petName },
+          customer: { name: { contains: customerName }},
           medicineRecords: {
             petConsults: {
               some: {
+                petName: { contains: petName },
+
                 isClosed: isClosed === "true" ? true : false,
                 vetPreference: { contains: vetName },
-                openedDate: {
-                  gte: new Date(initialDate),
-                  lte: new Date(finalDate),
-                }
+                openedDate: filter.openedDate,
               },
               
             },
@@ -302,11 +314,8 @@ export const petsController = {
               include: { 
                   petConsults: {
                       where: {
-                          isClosed: isClosed === "true",
-                          openedDate: {
-                              gte: new Date(initialDate),
-                              lte: new Date(finalDate),
-                          },
+                          isClosed: isClosed === "true" ? true : false,
+                          openedDate: filter.openedDate,
                           vetPreference: { contains: vetName },
                       }
                   }
@@ -318,18 +327,15 @@ export const petsController = {
 
       const totalInQueue = await prisma.openedConsultsForPet.count({
         where: { 
+          
           isClosed: isClosed === "true" ? true : false, 
           vetPreference: { contains: vetName }, 
-          openedDate: {
-            gte: new Date(initialDate),
-            lte: new Date(finalDate),
-          }
         },
       });
 
       
-      const response = pets.flatMap((pet) => {
-        return pet.medicineRecords?.petConsults.map((consult) => {
+      const response = pets.flatMap((pet: any) => {
+        return pet.medicineRecords?.petConsults.map((consult: any) => {
           return {
             name: pet.name,
             id: pet.id,
