@@ -1,42 +1,23 @@
-import {
-  Box,
-  ChakraProvider,
-  Flex,
-  Table,
-  Tr,
-  Td,
-  Thead,
-  Tbody,
-  Th,
-  Text,
-  Button,
-  HStack,
-  VStack,
-  Checkbox,
-  FormLabel,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import {  Box,  ChakraProvider, Flex, Table, Tr, Td, Thead, Tbody, Th, Text, Button, HStack, VStack, Checkbox, FormLabel } from "@chakra-ui/react";
+import { useState } from "react";
 import { Header } from "../../components/admin/Header";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import { AiOutlineSearch, BiLeftArrow, BiRightArrow, BsFillTrashFill } from "react-icons/all";
+import { AiOutlineSearch, BiLeftArrow, BiRightArrow } from "react-icons/all";
 import { AdminContainer } from "../AdminDashboard/style";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/axios";
 import { Input } from "../../components/admin/Input";
 import { useQuery } from "react-query";
 import { LoadingSpinner } from "../../components/Loading";
-import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 
 export function MenuVet() {
   const [isFinishied, setIsFinishied] = useState(false);
   const [isAddmited, setIsAddmited] = useState(false);
   const [showAllVets, setShowAllVets] = useState(false);
-  const [pagination, SetPagination] = useState(1);
+  const [pagination, setPagination] = useState(1);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [totalInQueue, setTotalInQueue] = useState(0);
-  const [petsByVetPreference, setPetsByVetPreference] = useState([]);
-  // const [petData, setPetData] = useState([] as any);
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
@@ -48,49 +29,12 @@ export function MenuVet() {
   });
 
 
-  // async function getDefaultQueue() {
-  //   const response = await api.get(
-  //     `/pets/queue`
-  //   );
-  //   setPetsByVetPreference(response.data.response);
-  // }
-
-  // const { isLoading } = useQuery("queueVets", getDefaultQueue);
-
-  // if (isLoading) {
-  //   return <LoadingSpinner />;
-  // }
-
-  // async function getQueueVetPreference() {
-  //   console.log("entrei2")
-  //   const response = await api.get("/pets/queue");
-  //   setPetData([]);
-  //   setTotalInQueue(response.data.totalInQueue);
-  //   setPetsByVetPreference(response.data.response);
-  // }
-
-  // async function searchDataVet() {
-  //   console.log("entrei3")
-  //   const data = {
-  //     page: pagination,
-  //     petCode: searchBody.codPet,
-  //     customerName: searchBody.customerName,
-  //     petName: searchBody.petName,
-  //     isFinished: isFinishied,
-  //     isAddmited: isAddmited,
-  //     initialDate: initialDate,
-  //     finalDate: finalDate,
-  //   };
-  //   const response = await api.post("/engine/veterinary", data);
-  //   setPetData(response.data.data);
-
-  //   setNumberOfPages(response.data.totalPages);
-  // }
-
-  const { data: PetData, isLoading } = useQuery({
-    queryKey: ["queueVets", isFinishied, initialDate, finalDate, pagination, isAddmited, showAllVets, searchBody],
+  const { data: PetData, isLoading, refetch } = useQuery({
+    queryKey: ["queueVets"],
     queryFn: async () => {
-      const res = await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}`);
+      const res = await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`);
+      setTotalInQueue(res.data.totalInQueue);
+      setNumberOfPages(res.data.totalPages);
       return res.data.response;
     },
   });
@@ -100,15 +44,15 @@ export function MenuVet() {
     }
 
   function incrementPage() {
-    SetPagination((prevCount) =>
+    setPagination((prevCount) =>
       pagination < numberOfPages ? prevCount + 1 : numberOfPages
     );
-    // searchDataVet();
+    refetch();
   }
 
   function decrementPage() {
-    SetPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
-    // searchDataVet();
+    setPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
+    refetch();
   }
 
   async function updateQueuePetPreference(queueId: string, petId: number)   {
@@ -123,7 +67,6 @@ export function MenuVet() {
     })
   
   }
-
 
   return (
     <ChakraProvider>
@@ -159,11 +102,7 @@ export function MenuVet() {
                         <VStack>
                           <FormLabel>Finalizados</FormLabel>
                           <Checkbox
-                            onChange={(ev) =>
-                              ev.target.checked === true
-                                ? setIsFinishied(true)
-                                : setIsFinishied(false)
-                            }
+                            onChange={(ev) => setIsFinishied(ev.target.checked) }
                             border="2px"
                             size="lg"
                           />
@@ -172,11 +111,7 @@ export function MenuVet() {
                         <VStack>
                           <FormLabel>Internados</FormLabel>
                           <Checkbox
-                            onChange={(ev) =>
-                              ev.target.checked === true
-                                ? setIsAddmited(true)
-                                : setIsAddmited(false)
-                            }
+                            onChange={(ev) => setIsAddmited(ev.target.checked)}
                             border="2px"
                             size="lg"
                           />
@@ -187,7 +122,6 @@ export function MenuVet() {
                           <Checkbox
                             onChange={(ev) => {
                               setShowAllVets(ev.target.checked);
-                              // getQueueVetPreference();
                             }}
                             border="2px"
                             size="lg"
@@ -234,10 +168,7 @@ export function MenuVet() {
                     />
                   </HStack>
                   <Button
-                    // isDisabled={showAllVets}
-                    // onClick={() => 
-                    //   searchDataVet()
-                    // }
+                    onClick={() => refetch()}
                     mt="4"
                     colorScheme="whatsapp"
                   >
@@ -287,7 +218,6 @@ export function MenuVet() {
                           <Th>Animal</Th>
                           <Th>Código</Th>
                           <Th>Data</Th>
-
                           <Th>Preferência</Th>
                           <Th>Especialidade</Th>
                         </Tr>
