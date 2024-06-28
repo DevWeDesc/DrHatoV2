@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsup --ignore-watch '*.xlxs' src --out-dir build ",
+    "build": "tsup src --format cjs",
     "dev": "ts-node-dev src/server.ts",
     "test": "jest"
   },
@@ -37,6 +37,7 @@
     "jsonwebtoken": "^9.0.1",
     "nodemailer": "^6.9.13",
     "react": "^18.3.1",
+    "tsup": "^8.1.0",
     "xlsx": "^0.18.5",
     "zod": "^3.21.4"
   }
