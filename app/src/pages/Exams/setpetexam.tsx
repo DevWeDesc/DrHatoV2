@@ -107,6 +107,7 @@ export interface MedicineRecords {
 export interface PetExam {
   id: number;
   name: string;
+  codeExam: string;
   price: string;
   defaultMethodology: null;
   impressName: null;
@@ -133,10 +134,12 @@ export function SetPetExam() {
     examId: string;
     codAnimal: string;
   }>();
+
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [pet, setPet] = useState({} as PetProps);
   const [disableRequest, setDisableRequest] = useState(false);
   const [textReport, setTextReport] = useState("");
+  const [typeExame, setTypeExame] = useState("");
   const [exam, setExam] = useState({} as ExamProps);
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
@@ -146,6 +149,7 @@ export function SetPetExam() {
   }
   async function Exam() {
     const exam = await api.get(`/exams/${examId}`);
+    setTypeExame(exam.data.ImageLab ? "Imagens" : "Exames");
     setExam(exam.data);
   }
 
@@ -154,7 +158,6 @@ export function SetPetExam() {
     Exam();
   }, []);
 
-  console.log(pet);
   const handleSetTextReport = async () => {
     try {
       const data = {
@@ -659,7 +662,7 @@ export function SetPetExam() {
     <ChakraProvider>
       <Flex direction="column" h="100vh">
         <Box>
-          <Header title="Tabela de Laboratórios" url="/Labs/Exames" />
+          <Header title="Tabela de Laboratórios" url={`/Labs/${typeExame}`} />
         </Box>
         <Flex
           w="100%"
@@ -747,9 +750,7 @@ export function SetPetExam() {
                     </Td>
                     <Td py={3} colSpan={2} bg="white" border="1px solid black">
                       {
-                        pet?.medicineRecords?.petExams.find(
-                          (exam) => exam.name === exam.name
-                        )?.name
+                        pet?.medicineRecords?.petExams?.find((exam) => Number(exam.codeExam) === Number(examId))?.name
                       }
                     </Td>
                     <Td

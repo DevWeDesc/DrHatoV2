@@ -18,6 +18,23 @@ export function ExamMultiPartPdf () {
     const user = JSON.parse(localStorage.getItem("user") as string);
     async function getAutorization() {
         const response  = await api.get(`/autorizations/${id}`)
+
+        const pdfs = response.data.petExamResult.resultPDF.externalReportIds;
+       
+        
+        if(pdfs){      
+          const result = await Promise.all(pdfs.map(async (pdf: string) => {
+            const response = await api.get(`/lab/reportInserted/${pdf}`, { responseType: 'arraybuffer' });
+            return response.data;
+          }))
+          
+          result.forEach((pdfData) => {
+            const blob = new Blob([pdfData], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+          });
+        }
+
         setAutorization(response.data)
     }
     useEffect(() => {

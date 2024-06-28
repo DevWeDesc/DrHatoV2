@@ -30,6 +30,17 @@ export const queueController = {
         return
       }
 
+      const verifyConsult = await prisma.openedConsultsForPet.findFirst({
+        where: { 
+          medicineRecordId: parseInt(id),
+          isClosed: false
+         },
+      });
+
+      if(verifyConsult) {
+        return reply.status(409).send({message: "Já existe uma consulta aberta para este pet!"})
+      }
+
       await prisma.openedConsultsForPet.create({
         data: {
           petName: pet.name,

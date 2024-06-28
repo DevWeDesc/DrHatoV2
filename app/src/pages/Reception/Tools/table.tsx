@@ -64,8 +64,6 @@ export function ToolsTable() {
     getQueue();
   }, [inQueue.length]);
 
-  //console.log(totalInQueue);
-
   const handleNavigateWorkSpace = () => {
     if (!petValue) {
       toast.error("Selecione um PET");
@@ -73,7 +71,6 @@ export function ToolsTable() {
     }
     navigate(`/Vets/Workspace/${petValue}`);
   };
-  //console.log("PET RESPONSE", dataPet);
 
   const petTot = [
     {

@@ -1,0 +1,21 @@
+Sprint - Construção de novas telas descobertas no sistema antigo
+
+Tasks:
+- Adicionar paginação na criação de exames
+- Cadastro de exames - colocar pesquisar exames (filtro pesquisa / Letra A-Z)
+
+
+Subir exames lab padrão e lab imagens (Porque não sobe o true e false?)
+Obs: ajustar os exames existentes entre lab e padrão (TABELA "OLDEXAMES")
+
+
+Criar o botão ETIQUETA  (apresentar a etiqueta que será impressa)
+Botão imprimir, selecionar impressora
+Obs: Caminho: Recepção - Internações e exames - "Clicou Exames" 
+
+
+[x]Ao sair da tela voltar para a recepção, botão voltar
+[x](rever a logica de voltar do botão "internações e exames" e do "exames da recepção")
+[x]Obs: Recepção - Internações e exames - "Clicou Exames" 
+
+

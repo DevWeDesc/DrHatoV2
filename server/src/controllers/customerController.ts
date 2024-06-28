@@ -233,6 +233,55 @@ export const customerController = {
       }
   },
 
+  updateCustomer: async (request: FastifyRequest, reply: FastifyReply) => {
+    const { id }: any = request.params;
+
+    const {
+      name,
+      adress,
+      district,
+      rg,
+      phone,
+      tell,
+      email,
+      cpf,
+      birthday,
+      cep,
+      kindPerson,
+      neighbour,
+      state,
+    } = createCustomer.parse(request.body);
+
+    try {
+
+      const updatedCustomer =  await prisma.customer.update({
+        where: { id: parseInt(id) },
+        data: {
+          name,
+          adress,
+          district,
+          cep,
+          neighbour,
+          state,
+          phone,
+          tell,
+          cpf,
+          rg,
+          email,
+          kindPerson,
+          birthday,
+        }
+      });
+
+      return reply.status(201).send(updatedCustomer);
+      
+    } catch (error) {
+      console.log(error)
+      
+    }
+    
+  },
+
   getInstallmentDetails: async(request: FastifyRequest, reply: FastifyReply) => {
     const { id }: any = request.params;
     
