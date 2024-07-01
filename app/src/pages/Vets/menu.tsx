@@ -230,6 +230,7 @@ export function MenuVet() {
                               onClick={() => navigate(
                                 `/Vets/Workspace/${pet.id}/${pet.queueId}`
                               )}
+                              color={pet.petAdmitted ? "red.500" : "black"}
                               key={pet.id}
                               cursor="pointer" 
                             >
