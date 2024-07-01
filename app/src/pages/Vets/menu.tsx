@@ -213,6 +213,7 @@ export function MenuVet() {
                     <Table colorScheme="blackAlpha">
                       <Thead>
                         <Tr>
+                          <Th>Tipo</Th>
                           <Th>CPF</Th>
                           <Th>Cliente</Th>
                           <Th>Animal</Th>
@@ -236,10 +237,10 @@ export function MenuVet() {
                             >
                               <Td>
                                 <Text colorScheme="whatsapp">
-                                  {pet.customerCpf}
+                                  {pet.queryType}
                                 </Text>
                               </Td>
-
+                              <Td>{pet.customerName}</Td>
                               <Td>{pet.customerName}</Td>
 
                               <Td
