@@ -15,6 +15,7 @@ export function MenuVet() {
   const [isFinishied, setIsFinishied] = useState(false);
   const [isAddmited, setIsAddmited] = useState(false);
   const [showAllVets, setShowAllVets] = useState(false);
+  const [showOldConsults, setShowOldConsults] = useState(false);
   const [pagination, setPagination] = useState(1);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [totalInQueue, setTotalInQueue] = useState(0);
@@ -118,7 +119,7 @@ export function MenuVet() {
                         </VStack>
 
                         <VStack w={160}>
-                          <FormLabel>Todos Veterinários</FormLabel>
+                          <FormLabel whiteSpace={"nowrap"}>Todos Veterinários</FormLabel>
                           <Checkbox
                             onChange={(ev) => {
                               setShowAllVets(ev.target.checked);
@@ -127,6 +128,18 @@ export function MenuVet() {
                             size="lg"
                           />
                         </VStack>
+                        {
+                          isFinishied && (
+                            <VStack>
+                          <FormLabel whiteSpace={"nowrap"}>Histórico Consultas</FormLabel>
+                          <Checkbox
+                            onChange={(ev) => setShowOldConsults(ev.target.checked)}
+                            border="2px"
+                            size="lg"
+                          />
+                        </VStack>
+                          )
+                        }
                       </HStack>
                     </HStack>
                   </Flex>
