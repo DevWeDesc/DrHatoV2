@@ -32,10 +32,14 @@ export function MenuVet() {
 
   const { data: PetData, isLoading, refetch } = useQuery({
     queryKey: ["queueVets"],
-    queryFn: async () => {
-      const res = await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`);
+    queryFn: async () => { 
+      
+      console.log(pagination)
+
+      const res = showOldConsults ? await api.get(`/consults/historie/old?initialDate=${initialDate}&finalDate=${finalDate}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`)  : await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`) ;
       setTotalInQueue(res.data.totalInQueue);
       setNumberOfPages(res.data.totalPages);
+      
       return res.data.response;
     },
   });
@@ -253,7 +257,7 @@ export function MenuVet() {
                                   {pet.queryType}
                                 </Text>
                               </Td>
-                              <Td>{pet.customerName}</Td>
+                              <Td>{pet.customerCpf}</Td>
                               <Td>{pet.customerName}</Td>
 
                               <Td
@@ -267,6 +271,7 @@ export function MenuVet() {
                               <Td>{pet.codPet}</Td>
                               <Td>
                                 {new Intl.DateTimeFormat("pt-BR", {
+                                  year: "2-digit",
                                   month: "2-digit",
                                   day: "2-digit",
                                   hour: "2-digit",
