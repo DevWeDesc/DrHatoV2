@@ -13,13 +13,14 @@ import {
   Th,
   Tbody,
   Td,
-  Checkbox,
+
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
+import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
 import { useQuery, useQueryClient } from "react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { PetDetaisl } from "../../interfaces";
+import { ConsultsPetDetails, PetDetaisl } from "../../interfaces";
 import { api } from "../../lib/axios";
 import { LoadingSpinner } from "../Loading";
 
@@ -34,6 +35,24 @@ type SurgerieVetProps = {
   admissionQueueId?: string;
 };
 
+export interface SurgerieCentral {
+  id: number
+  centralName: string;
+  closedHours: string;
+  openHours:   string;
+  isOpen:      boolean;
+  maxSlots:    number;
+  surgerieSlots: Array<{
+    id: number,
+    petName: string,
+    petId: number,
+    surgerieName: string,
+    vetName: string,
+    vetCrmv: string,
+    surgeriesCentralId: number
+  }>
+}
+
 export function Createsurgeries({
   InAdmission,
   admissionQueueId,
@@ -42,9 +61,27 @@ export function Createsurgeries({
   const [sugeries, setSugeries] = useState<SugeriesProps[]>([]);
   const [pagination, setPagination] = useState(1);
   const user = JSON.parse(localStorage.getItem("user") as string);
+  const [surgerieCentral, setSurgerieCentral] = useState({} as SurgerieCentral)
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [surgerieName, setSurgerieName] = useState("")
+  const [selectedCentral, setSelectedCentral] = useState(0)
+  const [paginationInfos, setPaginationInfos] = useState({
+    totalPages: 0,
+    currentPage: 0,
+    totalProceds: 0
+  })
+  const [consultDetails, setConsultDetails] = useState(
+    {} as ConsultsPetDetails
+  );
   const queryClient = useQueryClient();
+
+  function incrementPage() {
+    setPagination(prevCount => pagination < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
+  }
+
+  function decrementPage() {
+    setPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+  }
   async function getSurgeriesData() {
     const pet = await api.get(`/pets/${id}`);
     setPetDetails(pet.data);
@@ -52,6 +89,10 @@ export function Createsurgeries({
       `/surgeries?page=${pagination}&sex=${petDetails.sexo}`
     );
     setSugeries(sugeries.data.surgeries);
+  }
+  async function getQueueDetails() {
+    const response = await api.get(`/queue/details/${queueId}`)
+    setConsultDetails(response.data)
   }
 
   async function getSurgerieByLetter(letter: string)   {
@@ -64,9 +105,159 @@ export function Createsurgeries({
     setSugeries(response.data.surgeries);
   }
 
-  ///surgerie/letter/:letter/:page
+  async function getProcedureByHealthInsurance() {
+    const response = await api.get(`/surgerie/health/${consultDetails.healthInsuranceName}/${pagination}`)
+    setSugeries(response.data.surgeries);
+    setPaginationInfos({
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      totalProceds: response.data.totalProceds,
+    });
+  }
 
+
+  
+
+  async function getCentralSurgeries(): Promise<SurgerieCentral[]> {
+    const response = await api.get("/surgeries/central")
+    return response.data.centralSurgerie
+  }
+
+  async function getCentralSurgerieById() {
+    const response = await api.get(`/surgeries/central/${selectedCentral}`)
+    setSurgerieCentral(response.data.centralSurgerie)
+  }
+
+  async function setSugeriesInPet(surgerieId: number) {
+    try {
+
+      let slotFound = false;
+      let hasSurgerie = false;
+
+      const reservedSlot = surgerieCentral?.surgerieSlots?.map((slot, index) => {
+          if(!slot.petName?.includes(petDetails?.name) || !slot.petId?.toString().includes(petDetails?.id?.toString())) {
+              return null; 
+          } 
+              slotFound = true; 
+              return slot
+      });
+
+      petDetails.surgeries.map((surgerie) => {
+        if(surgerie.name == reservedSlot.find((s) => s?.id != null)?.surgerieName) {
+          hasSurgerie = true
+        }
+      })
+
+      if (!slotFound) {
+          toast.warning("Reserve ao menos 1 slot para cirurgia");
+          return
+      }
+
+      if(hasSurgerie) {
+        toast.warning("Animal já possui cirurgia em andamento");
+        return
+      }
+    
+ 
+      const data = {
+        RequestedByVetId: user.id,
+        RequestedByVetName: user.consultName,
+        isAdmission: InAdmission,
+        slotId: reservedSlot.find((s) => s?.id != null)?.id
+      };
+
+      if (InAdmission === true) {
+        await api.post(
+          `surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
+          data
+        );
+        queryClient.invalidateQueries('surgeriesData');
+        toast.success("Cirurgia adicionada - Internações");
+      } else {
+        await api.post(
+          `surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
+          data
+        );
+        queryClient.invalidateQueries('surgeriesData');
+        toast.success("Cirurgia adicionada - Veterinários");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Falha ao cadastrar Cirurgia!");
+    }
+  }
+
+
+  const handleDeleteSugerie = async (
+    slotId: number,
+    sugPrice: string | number,
+    linkedConsultId: number
+  ) => {
+    try {
+      const confirm = window.confirm(
+        "DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
+      );
+
+      if (confirm === true) {
+        await api
+          .delete(
+            `/petsurgery/${slotId}/${petDetails.totalAcc.id}/${sugPrice}/${linkedConsultId}`
+          )
+          .then((res) => {
+            queryClient.invalidateQueries('surgeriesData');
+            toast.warning("EXCLUIDO COM SUCESSO");
+          });
+      } else {
+        return;
+      }
+    } catch (error) {
+      toast.error("FALHA AO PROCESSAR EXCLUSÃO");
+      console.log(error);
+    }
+  };
+
+  const {data: centralSurgeries, refetch} = useQuery('surgeriesCentral', getCentralSurgeries)
   const {isLoading} = useQuery('surgeriesData', getSurgeriesData)
+
+  async function reserveSurgerieSlot (slotId: number)  {
+      try {
+
+        
+      let slotFound = false;
+
+       surgerieCentral?.surgerieSlots.map((slot, index) => {
+          if(!slot.petName?.includes(petDetails?.name) || !slot.petId?.toString().includes(petDetails?.id?.toString())) {
+              return null; 
+          } else {
+              slotFound = true; 
+        
+          }
+      });
+
+      if (!slotFound) {
+        const data = {
+          slotId: slotId,
+          petName: petDetails.name,
+          petId: petDetails.id,
+          vetName: user.consultName,
+          vetCrmv: user.crm,
+        }
+
+        await api.put("/surgeries/central/reserve", data)
+        refetch()
+        toast.success("Reserva efetuada com sucesso!")
+      } else {
+        toast.warning("Animal já possui reserva!")
+      }
+
+
+      } catch (error) {
+        toast.error("Falha ao efetuar reserva!")
+      }
+    
+  }
+
+  useQuery('queueDetails', getQueueDetails)
   const SearchAlfabet = [
     "a",
     "b",
@@ -100,63 +291,6 @@ export function Createsurgeries({
     return <LoadingSpinner/>
   }
 
-
-
-  async function setSugeriesInPet(surgerieId: number) {
-    try {
-      const data = {
-        RequestedByVetId: user.id,
-        RequestedByVetName: user.consultName,
-        isAdmission: InAdmission,
-      };
-
-      if (InAdmission === true) {
-        await api.post(
-          `surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
-          data
-        );
-        queryClient.invalidateQueries('surgeriesData');
-        toast.success("Cirurgia adicionada - Internações");
-      } else {
-        await api.post(
-          `surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
-          data
-        );
-        queryClient.invalidateQueries('surgeriesData');
-        toast.success("Cirurgia adicionada - Veterinários");
-      }
-    } catch (error) {
-      toast.error("Falha ao cadastrar Cirurgia!");
-    }
-  }
-
-  const handleDeleteSugerie = async (
-    did: number,
-    sugPrice: string | number,
-    linkedConsultId: number
-  ) => {
-    try {
-      const confirm = window.confirm(
-        "DELETAR E UMA AÇÃO IRREVERSIVEL TEM CERTEZA QUE DESEJA CONTINUAR?"
-      );
-
-      if (confirm === true) {
-        await api
-          .delete(
-            `/petsurgery/${did}/${petDetails.totalAcc.id}/${sugPrice}/${linkedConsultId}`
-          )
-          .then((res) => {
-            queryClient.invalidateQueries('surgeriesData');
-            toast.warning("EXCLUIDO COM SUCESSO");
-          });
-      } else {
-        return;
-      }
-    } catch (error) {
-      toast.error("FALHA AO PROCESSAR EXCLUSÃO");
-      console.log(error);
-    }
-  };
 
   return (
     <ChakraProvider>
@@ -219,7 +353,7 @@ export function Createsurgeries({
                           isDisabled={surgerie.surgerieStatus === "FINISHED"}
                           onClick={() =>
                             handleDeleteSugerie(
-                              surgerie.id,
+                              surgerie.slotId,
                               surgerie.price,
                               surgerie.linkedConsultId
                             )
@@ -265,19 +399,49 @@ export function Createsurgeries({
             ))}
           </HStack>
             <Flex bg="gray.200" py="2" justify="center">
-              <Flex>
-                <Input borderColor="black" rounded="0" w="20vw" bg="white"
-                name="name"
-                onChange={(ev) => setSurgerieName(ev.target.value)}
-                />
-         
-                <HStack>
-                  <Button 
+              <Flex gap={2}>
+              {
+                  consultDetails?.healthInsuranceId ? <Button onClick={() => getProcedureByHealthInsurance()} colorScheme="whatsapp" w="300px">Plano de Saúde</Button> : <></>
+                }
+              <Button 
                   onClick={() => getSurgerieByName ()}
-                  color="white" rounded="0" colorScheme="twitter">
-                    Procurar
+                  color="white" w={160} colorScheme="twitter">
+                    Particular
                   </Button>
-                </HStack>
+                <Input borderColor="black"  bg="white"
+                name="name"
+                placeholder="Nome da cirurgia"
+                onChange={(ev) => {
+                  setSurgerieName(ev.target.value)
+                  getSurgerieByName ()
+                }}
+                />
+              <HStack>
+        
+              <Button colorScheme="teal">
+                Páginas {paginationInfos?.totalPages}
+              </Button>
+              <Button colorScheme="teal">
+                Página Atual {paginationInfos?.currentPage}
+              </Button>
+              <Button
+                colorScheme="yellow"
+                gap={4}
+                onClick={() => decrementPage()}
+              >
+                <BiLeftArrow />
+                Página Anterior
+              </Button>
+              <Button
+                colorScheme="yellow"
+                gap={4}
+                onClick={() => incrementPage()}
+              >
+                Próxima Página
+                <BiRightArrow />
+              </Button>
+            </HStack>
+                
               </Flex>
             </Flex>
 
@@ -346,7 +510,7 @@ export function Createsurgeries({
             pl="2"
             py="2"
           >
-            Consulta n° 10045
+            ID da Consulta {consultDetails?.id}
           </Text>
           <Flex
             bg="gray.200"
@@ -354,25 +518,7 @@ export function Createsurgeries({
             fontSize="20"
             direction="column"
           >
-            <Flex align="center">
-              <Text
-                border="1px solid black"
-                borderRight="2px solid black"
-                fontWeight="bold"
-                pl="2"
-                py="1"
-                w="15rem"
-              >
-                Data
-              </Text>
-              <Input
-                borderColor="black"
-                type="date"
-                rounded="0"
-                fontWeight="bold"
-                bg="white"
-              />
-            </Flex>
+         
             <Flex align="center">
               <Text
                 border="1px solid black"
@@ -385,16 +531,21 @@ export function Createsurgeries({
                 C. Cirúrgico
               </Text>
               <Select
+                onChange={(ev) => setSelectedCentral(Number(ev.target.value))}
                 borderColor="black"
                 rounded="0"
                 fontWeight="bold"
                 bg="white"
               >
-                <option value="Centro Cirurgico">Centro Cirurgico</option>
+                {
+                  centralSurgeries?.map((central) => <option key={central.id} value={central.id}>{central.centralName}</option> )
+                }
+                
               </Select>
             </Flex>
           </Flex>
           <Button
+          onClick={() => getCentralSurgerieById()}
             bg="whatsapp.600"
             fontSize="2xl"
             fontWeight="bold"
@@ -406,28 +557,40 @@ export function Createsurgeries({
             Verificar
           </Button>
           <Flex direction="column">
-            <Flex fontSize="20" fontWeight="bold" bg="gray.200">
-              <Text pl="2" border="1px solid black" w="10vw">
-                Slot
-              </Text>
-              <Text pl="2" border="1px solid black" w="10vw">
-                Animal
-              </Text>{" "}
-              <Text pl="2" border="1px solid black" w="15vw">
-                Cirurgia
-              </Text>
-            </Flex>
-            <Flex bg="green.100">
-              <Text pl="2" border="1px solid black" w="10vw">
-                1
-              </Text>
-              <Text pl="2" border="1px solid black" w="10vw">
-                -
-              </Text>
-              <Text pl="2" border="1px solid black" w="15vw">
-                -
-              </Text>
-            </Flex>
+
+            <Table>
+              <Thead>
+                <Tr  bg="gray.200" >
+                  <Th  color="black" pl="2" border="1px " w="10vw">Slot</Th>
+                  <Th  color="black" pl="2" border="1px" w="10vw">Animal</Th>
+                  <Th  color="black" pl="2" border="1px" w="10vw">Cirurgia</Th>
+                  <Th  color="black" pl="2" border="1px" w="10vw">Incluir</Th>
+                </Tr>
+              </Thead>
+                <Tbody>
+                  {
+                    surgerieCentral ? surgerieCentral?.surgerieSlots?.map((slot, index) => 
+                    <Tr key={slot.id} bg="green.100">
+                    <Td pl="2" border="1px solid black" w="10vw">{index}</Td>
+                    <Td pl="2" border="1px solid black" w="10vw">{slot?.petName}</Td>
+                    <Td pl="2" border="1px solid black" w="10vw">{slot?.surgerieName}</Td>
+                    <Td pl="2" border="1px solid black" w="10vw">
+                      <Button onClick={() => reserveSurgerieSlot(slot.id)} w="90%" colorScheme="facebook">Reservar</Button></Td>
+                  </Tr>
+                    ) : (
+                      <Tr bg="green.100">
+                      <Td pl="2" border="1px solid black" w="10vw">1</Td>
+                      <Td pl="2" border="1px solid black" w="10vw">-</Td>
+                      <Td pl="2" border="1px solid black" w="10vw">-</Td>
+                    </Tr>
+                    )
+                  }
+                 
+                </Tbody>
+              
+            </Table>
+        
+            
           </Flex>
         </Flex>
       </Flex>

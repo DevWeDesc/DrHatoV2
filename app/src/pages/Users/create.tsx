@@ -60,7 +60,6 @@ export function CreateUser() {
       });
       toast.success("Usuário cadastrado");
 
-      console.log(values);
     } catch (error) {
       toast.error("Falha ao cadastrar usuário");
     }

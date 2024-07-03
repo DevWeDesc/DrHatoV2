@@ -1,7 +1,10 @@
 import { Text, Heading, Input, Flex, Box, Button } from "@chakra-ui/react";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { BoxContext } from "../../contexts/BoxContext";
+import { BoxProps, HistoryBoxProps } from "../../interfaces";
+import { api } from "../../lib/axios";
 import { GenericModal } from "../Modal/GenericModal";
 import { PaymentTotalized } from "./paymentTotalized";
 import { ReceveidDocuments } from "./receveidsDocuments";
@@ -9,8 +12,21 @@ import { ShowPaymentsOpenInDay } from "./showPaymentsOpenInDay";
 
 export function ClosedBox() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { dailyBox, fatherBox, lastBox } = useContext(BoxContext);
-  const [refresh, setRefresh] = useState(true);
+  const { lastBox } = useContext(BoxContext);
+  const [dailyBox, setDailyBox] = useState({} as HistoryBoxProps);
+  const [fatherBox, setFatherBox] = useState({} as BoxProps);
+
+  async function GetDailyBox () {
+    const response = await api.get("/dailybox")
+    setDailyBox(response.data)
+  }
+   async function getFatherBox () {
+    const response = await api.get("/vetbox")
+    setFatherBox(response.data)
+  } 
+  
+  const {isLoading: isDailyBoxLoading, refetch: refetchDaily} = useQuery('dailyBox', GetDailyBox)
+  const {isLoading: isFatherBoxLoading, refetch: refetchFather} = useQuery('fatherBox', getFatherBox)
 
   const openedDate = moment(dailyBox?.openBox).format("DD-MM-YYYY");
   function openModal() {
@@ -20,9 +36,7 @@ export function ClosedBox() {
     setIsModalOpen(false);
   }
 
-  useEffect(() => {
-    setRefresh(true);
-  }, []);
+ 
 
   return (
     <Flex w="100%" justifyContent="space-between">
@@ -109,13 +123,12 @@ export function ClosedBox() {
               h="51px"
               w="40%"
               bgColor="white"
-              defaultValue={`R$ ${parseFloat(
-                dailyBox?.totalValues?.toString()
-              ).toFixed(2)}`}
+              value={new Intl.NumberFormat("pt-BR").format(dailyBox?.totalValues)}
               borderX="1px solid black"
               rounded="0"
             />
           </Flex>
+
           <Flex w="100%" align="center" bg="gray.300" borderY="1px solid black">
             <Text w="60%" fontSize="18" fontWeight="bold" pl="5">
               Devoluções
@@ -160,7 +173,7 @@ export function ClosedBox() {
               Total em dinheiro no caixa
             </Text>
             <Input
-              value={`R$ ${parseFloat(dailyBox.totalValues.toString()).toFixed(
+              value={`R$ ${parseFloat(dailyBox?.totalValues?.toString()).toFixed(
                 2
               )}`}
               h="51px"
@@ -190,8 +203,7 @@ export function ClosedBox() {
       </Flex>
       <Flex w="60%" direction="column">
         <ReceveidDocuments
-          refresh={refresh}
-          handleRefresh={() => setRefresh(false)}
+   
         />
       </Flex>
       <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>

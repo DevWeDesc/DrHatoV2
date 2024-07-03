@@ -1,58 +1,50 @@
 import { prisma } from "../interface/PrismaInstance";
 
 type LabParamsProps = {
-    petName: string;
-    solicitedBy: string;
-    petCode: string;
-}
+  petName: string;
+  solicitedBy: string;
+  petCode: string;
+  initialDate: string;
+  finalDate: string;
+  codeExam: number;
+};
 export class LabsMenuSearch {
+  async getWithParams({
+    petName,
+    petCode,
+    solicitedBy,
+    initialDate,
+    finalDate,
+    codeExam,
+  }: LabParamsProps) {
+    const filter: { requesteData?: { gte: string; lte: string } } = {};
 
-    async getWithParams({petName, petCode, solicitedBy}: LabParamsProps) {
-        let data;
-        
-        switch(true) {
-            case !!petName: 
-
-            data = await prisma.pets.findMany({
-                where: {
-                    name: {contains: petName},
-                }, include: {
-                    medicineRecords: {select: {petExams: true}}
-                }
-            })
-
-            break;
-
-            case !!petCode:
-            data =  []
-           const pet =  await prisma.pets.findFirst({
-                where: {
-                    CodAnimal: Number(petCode),
-                },include: {
-                    medicineRecords: {select: {petExams: true}}
-                }
-            })
-
-            data.push(pet)
-            break;
-            
-            case !!solicitedBy: 
-
-            data = await prisma.examsForPet.findMany({
-                where: {
-                    requestedFor: {contains: solicitedBy}
-                }, include: {medicine: {include: {pet: true}}}
-            })
-
-            break;
-            
-        }
-
-
-        return {
-            data
-        }
+    if (initialDate && finalDate) {
+      filter.requesteData = {
+        gte: initialDate,
+        lte: finalDate,
+      };
     }
 
-    
+    return await prisma.examsForPet.findMany({
+      where: {
+        medicine: {
+          pet: {
+            name: { contains: petName, mode: "insensitive" },
+            id: petCode ? Number(petCode) : undefined,
+          },
+        },
+        codeExam: { equals: codeExam ? Number(codeExam) : undefined },
+        requestedFor: { contains: solicitedBy, mode: "insensitive" },
+        requesteData: filter.requesteData,
+      },
+      include: {
+        medicine: {
+          include: {
+            pet: true,
+          },
+        },
+      },
+    });
+  }
 }

@@ -1,42 +1,23 @@
-import {
-  Box,
-  ChakraProvider,
-  Flex,
-  Table,
-  Tr,
-  Td,
-  Thead,
-  Tbody,
-  Th,
-  Text,
-  Button,
-  HStack,
-  VStack,
-  Checkbox,
-  FormLabel,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import {  Box,  ChakraProvider, Flex, Table, Tr, Td, Thead, Tbody, Th, Text, Button, HStack, VStack, Checkbox, FormLabel } from "@chakra-ui/react";
+import { useState } from "react";
 import { Header } from "../../components/admin/Header";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../components/Sidebars/GenericSideBar";
-import { AiOutlineSearch, BiLeftArrow, BiRightArrow, BsFillTrashFill } from "react-icons/all";
+import { AiOutlineSearch, BiLeftArrow, BiRightArrow } from "react-icons/all";
 import { AdminContainer } from "../AdminDashboard/style";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/axios";
 import { Input } from "../../components/admin/Input";
 import { useQuery } from "react-query";
 import { LoadingSpinner } from "../../components/Loading";
-import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 
 export function MenuVet() {
   const [isFinishied, setIsFinishied] = useState(false);
   const [isAddmited, setIsAddmited] = useState(false);
   const [showAllVets, setShowAllVets] = useState(false);
-  const [pagination, SetPagination] = useState(1);
+  const [pagination, setPagination] = useState(1);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [totalInQueue, setTotalInQueue] = useState(0);
-  const [petsByVetPreference, setPetsByVetPreference] = useState([]);
-  const [petData, setPetData] = useState([] as any);
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
@@ -47,53 +28,31 @@ export function MenuVet() {
     customerName: "",
   });
 
-  async function getDefaultQueue() {
-    const response = await api.get(
-      `/pets/queue/preference/${user.consultName}`
-    );
-    setPetsByVetPreference(response.data.response);
-  }
 
-  const { isLoading } = useQuery("queueVets", getDefaultQueue);
+  const { data: PetData, isLoading, refetch } = useQuery({
+    queryKey: ["queueVets"],
+    queryFn: async () => {
+      const res = await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`);
+      setTotalInQueue(res.data.totalInQueue);
+      setNumberOfPages(res.data.totalPages);
+      return res.data.response;
+    },
+  });
 
   if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
-  async function getQueueVetPreference() {
-    const response = await api.get("/pets/queue");
-    setPetData([]);
-    setTotalInQueue(response.data.totalInQueue);
-    setPetsByVetPreference(response.data.response);
-  }
-
-  async function searchDataVet() {
-    const data = {
-      page: pagination,
-      petCode: searchBody.codPet,
-      customerName: searchBody.customerName,
-      petName: searchBody.petName,
-      isFinished: isFinishied,
-      isAddmited: isAddmited,
-      initialDate: initialDate,
-      finalDate: finalDate,
-    };
-    const response = await api.post("/engine/veterinary", data);
-    setPetData(response.data.data);
-
-    setNumberOfPages(response.data.totalPages);
-  }
+      return <LoadingSpinner />;
+    }
 
   function incrementPage() {
-    SetPagination((prevCount) =>
+    setPagination((prevCount) =>
       pagination < numberOfPages ? prevCount + 1 : numberOfPages
     );
-    searchDataVet();
+    refetch();
   }
 
   function decrementPage() {
-    SetPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
-    searchDataVet();
+    setPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
+    refetch();
   }
 
   async function updateQueuePetPreference(queueId: string, petId: number)   {
@@ -108,7 +67,6 @@ export function MenuVet() {
     })
   
   }
-
 
   return (
     <ChakraProvider>
@@ -144,11 +102,7 @@ export function MenuVet() {
                         <VStack>
                           <FormLabel>Finalizados</FormLabel>
                           <Checkbox
-                            onChange={(ev) =>
-                              ev.target.checked === true
-                                ? setIsFinishied(true)
-                                : setIsFinishied(false)
-                            }
+                            onChange={(ev) => setIsFinishied(ev.target.checked) }
                             border="2px"
                             size="lg"
                           />
@@ -157,11 +111,7 @@ export function MenuVet() {
                         <VStack>
                           <FormLabel>Internados</FormLabel>
                           <Checkbox
-                            onChange={(ev) =>
-                              ev.target.checked === true
-                                ? setIsAddmited(true)
-                                : setIsAddmited(false)
-                            }
+                            onChange={(ev) => setIsAddmited(ev.target.checked)}
                             border="2px"
                             size="lg"
                           />
@@ -172,7 +122,6 @@ export function MenuVet() {
                           <Checkbox
                             onChange={(ev) => {
                               setShowAllVets(ev.target.checked);
-                              getQueueVetPreference();
                             }}
                             border="2px"
                             size="lg"
@@ -185,6 +134,7 @@ export function MenuVet() {
                   <HStack mt="4" w="100%">
                     <Input
                       name="codPet"
+                      type="number"
                       value={searchBody?.codPet}
                       onChange={(ev) =>
                         setSearchBody({
@@ -218,8 +168,7 @@ export function MenuVet() {
                     />
                   </HStack>
                   <Button
-                    isDisabled={showAllVets}
-                    onClick={() => searchDataVet()}
+                    onClick={() => refetch()}
                     mt="4"
                     colorScheme="whatsapp"
                   >
@@ -260,67 +209,7 @@ export function MenuVet() {
                   justify="center"
                   overflowY="auto"
                 >
-                  {petData.length >= 1 ? (
-                    <Table colorScheme="blackAlpha">
-                      <Thead>
-                        <Tr>
-                          <Th>CPF</Th>
-                          <Th>Cliente</Th>
-                          <Th>Animal</Th>
-                          <Th>Cod</Th>
-                          <Th>Peso</Th>
-                          <Th>Preferência</Th>
-                        </Tr>
-                      </Thead>
-
-                      <Tbody>
-                        {petData?.map((pet: any) => (
-                          <Tr
-                            key={pet?.id}
-                            cursor="pointer"
-                            onClick={() => navigate(
-                                `/Vets/Workspace/${pet?.id}/${
-                                  pet.queueId != undefined && pet.queueId
-                                    ? pet.queueId
-                                    : "Sem consulta aberta"
-                                }`
-                              )
-                            
-                            }
-                          >
-                            <Td>
-                              <Text colorScheme="whatsapp">
-                                {pet?.customer?.cpf
-                                  ? pet?.customer?.cpf
-                                  : "Não encontrado"}
-                              </Text>
-                            </Td>
-
-                            <Td>
-                              {pet?.customer?.name
-                                ? pet?.customer?.name
-                                : "Não encontrado"}
-                            </Td>
-
-                            <Td>{pet?.name ? pet.name : "Não encontrado"}</Td>
-                            <Td>
-                              {pet?.CodAnimal
-                                ? pet.CodAnimal
-                                : "Não encontrado"}
-                            </Td>
-                            <Td>{pet?.weigth}</Td>
-                            
-                            <Td>
-                              {" "}
-                              {pet?.customer?.vetPreference == user?.consultName
-                                ? pet?.vetPreference
-                                : "Sem preferência/Consulta Aberta"}
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  ) : (
+                  
                     <Table colorScheme="blackAlpha">
                       <Thead>
                         <Tr>
@@ -329,23 +218,18 @@ export function MenuVet() {
                           <Th>Animal</Th>
                           <Th>Código</Th>
                           <Th>Data</Th>
-
                           <Th>Preferência</Th>
                           <Th>Especialidade</Th>
                         </Tr>
                       </Thead>
 
                       <Tbody>
-                        {petsByVetPreference
+                        {PetData
                           .map((pet: any) => (
                             <Tr
-                              onClick={() => {
-                                if(pet.vetPreference != "Sem preferência") {
-                                  navigate(
-                                    `/Vets/Workspace/${pet.id}/${pet.queueId}`
-                                  )
-                                }
-                              }}
+                              onClick={() => navigate(
+                                `/Vets/Workspace/${pet.id}/${pet.queueId}`
+                              )}
                               key={pet.id}
                               cursor="pointer" 
                             >
@@ -377,14 +261,7 @@ export function MenuVet() {
 
                                 {
                                   pet.vetPreference == "Sem preferência" ? <Td>
-                                         <ConfirmationDialog
-                                    icon={
-                                      <BsFillTrashFill fill="white" size={16} />
-                                    }
-                                    buttonTitle={pet.vetPreference} callbackFn={() => updateQueuePetPreference(pet.queueId, pet.id)} describreConfirm="Deseja atribuir essa consulta a seu nome?" whatIsConfirmerd="Este animal está sem preferência" disabled={false}
-                               
-                                    
-                                    />
+                                         <Button colorScheme="teal">Sem preferência</Button>
                                   </Td> :  <Td>
                                 {pet.vetPreference == user.consultName
                                   ? pet.vetPreference
@@ -398,7 +275,6 @@ export function MenuVet() {
                           .reverse()}
                       </Tbody>
                     </Table>
-                  )}
                 </Flex>
               </Flex>
             </Box>

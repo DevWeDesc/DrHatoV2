@@ -88,7 +88,6 @@ export const GenericReports = () => {
     if (condition) {
       toast.error("Insira a data de começo e final do relatório!");
     } else {
-      console.log(DateReport);
       setShowTable(true);
     }
   };
@@ -98,7 +97,6 @@ export const GenericReports = () => {
       ...DateReport,
       initialDate: new Date(ev.target.value).toISOString(),
     });
-    console.log(DateReport.initialDate);
   };
 
   const handelFinalDate = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,7 +155,6 @@ export const GenericReports = () => {
         );
       });
 
-      console.log(procedures);
       const dados: any = [];
       //@ts-ignore
       reports.map((report, index) => {

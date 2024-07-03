@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsup --ignore-watch '*.xlxs' src --out-dir build ",
+    "build": "tsup src --format cjs",
     "dev": "ts-node-dev src/server.ts",
     "test": "jest"
   },
@@ -15,6 +15,8 @@
     "@mermaid-js/mermaid-cli": "^10.1.0",
     "@types/bcrypt": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.2",
+    "@types/nodemailer": "^6.4.15",
+    "@types/react": "^18.3.1",
     "jest": "^29.5.0",
     "jest-mock-extended": "^3.0.4",
     "prisma": "^4.11.0",
@@ -27,11 +29,15 @@
     "@fastify/cors": "^8.2.1",
     "@fastify/multipart": "^7.7.3",
     "@prisma/client": "^4.11.0",
+    "@react-pdf/renderer": "^3.4.4",
     "@types/node": "^18.15.5",
     "bcrypt": "^5.1.0",
     "dayjs": "^1.11.9",
     "fastify": "^4.26.2",
     "jsonwebtoken": "^9.0.1",
+    "nodemailer": "^6.9.13",
+    "react": "^18.3.1",
+    "tsup": "^8.1.0",
     "xlsx": "^0.18.5",
     "zod": "^3.21.4"
   }

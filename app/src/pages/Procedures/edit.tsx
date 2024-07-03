@@ -13,7 +13,7 @@ import { CreateProcedureForm } from "../../components/Forms/CreateProcedureForm"
 import { AdminContainer } from "../AdminDashboard/style";
 
 export function ProcedureEdit() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: any }>();
   const navigate = useNavigate();
 
   return (

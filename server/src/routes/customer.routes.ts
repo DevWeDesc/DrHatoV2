@@ -11,6 +11,6 @@ export async function customersRoutes(app: FastifyInstance)
   app.get('/customers', customerController.showAllUsers)
   app.get("/customers/:id", customerController.findUserById)
   app.get('/installments/:id', customerController.getInstallmentDetails)
-
+  app.put('/customers/:id', customerController.updateCustomer)
   app.patch('/customer/credits', customerController.incrementCustomerCredits)
 }

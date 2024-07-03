@@ -15,18 +15,23 @@ import {
   Checkbox,
   TableContainer,
   Select,
+  HStack,
+  Input,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { RiAddLine, RiPencilLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { GenericModal } from "../../../components/Modal/GenericModal";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
-import { Input } from "../../../components/admin/Input";
 import { ConfirmationDialog } from "../../dialogConfirmComponent/ConfirmationDialog";
 import { BsFillTrashFill } from "react-icons/bs";
 import { useQuery, useQueryClient, useMutation } from "react-query";
+import { BiLeftArrow, BiRightArrow } from "react-icons/bi";
+import { AiOutlineSearch } from "react-icons/ai";
 
 type ExamsDTO = {
   codexam: number;
@@ -52,15 +57,54 @@ interface SectorsDto {
   name: string;
   id: number;
 }
+
+interface PaginationInfos {
+  totalPages: number;
+  currentPage: number;
+  totalExams: number;
+}
+
 export function ListExams() {
   const { register, handleSubmit } = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [exams, setExams] = useState<ExamsDTO[]>([]);
+  const [examsBackup, setExamsBackup] = useState<ExamsDTO[]>([]);
   const [sectors, setSectors] = useState<SectorsDto[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paginationInfos, setPaginationInfos] = useState<PaginationInfos>({
+    totalPages: 0,
+    currentPage: 0,
+    totalExams: 0,
+  });
+  const [query, setQuery] = useState("");
+  const SearchAlfabet = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
+
+
+  async function filterExams() {
+    if (query === '') {
+      setExams(examsBackup);
+    } else {
+      const filteredExams = examsBackup.filter(exam => 
+        exam.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setExams(filteredExams);
+    }
+  }
+
+  useEffect(() => { 
+    filterExams();
+  }, [query, examsBackup]);
 
   async function getExamesListData() {
-    const exams = await api.get("/exams/old/all");
+    const exams = await api.get(`/exams/old/all?page=${currentPage}`);
     setExams(exams.data.exams);
+    setExamsBackup(exams.data.exams);
+    setPaginationInfos({
+      currentPage: exams.data.currentPage,
+      totalPages: exams.data.totalPages,
+      totalExams: exams.data.totalProceds,
+    });
+
   }
 
   async function getSectors() {
@@ -68,8 +112,23 @@ export function ListExams() {
     setSectors(sectors.data);
   }
 
-  const queryClient = useQueryClient();
-  const { isLoading, error } = useQuery("adminExams", () => getExamesListData);
+  async function getProcedureByLetter(letter: string){
+    const response = await api.get(`/exams/old/letter/${letter}`);
+    setExams(response.data);
+    setExamsBackup(response.data);
+    setPaginationInfos({
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      totalExams: response.data.totalExams,
+    });
+  }
+
+  const {data, isLoading} = useQuery({
+    queryKey: ['adminExams', currentPage],
+    queryFn: getExamesListData,
+  })
+
+   const queryClient = useQueryClient();
   const {
     isLoading: sectorLoading,
     error: sectorError,
@@ -89,6 +148,15 @@ export function ListExams() {
       },
     }
   );
+
+  function incrementPage() {
+    setCurrentPage(prevCount => paginationInfos.currentPage < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
+  }
+
+  function decrementPage() {
+    setCurrentPage(prevCount => paginationInfos.currentPage > 1 ? prevCount - 1 : 1);
+    
+  }
 
   const handleCreateExam: SubmitHandler<FieldValues> = (values) => {
     try {
@@ -160,6 +228,80 @@ export function ListExams() {
                 Cadastrar Exame
               </Button>
             </Heading>
+            <Flex mb="2"
+            direction={{ base: "column", lg: "row" }}
+            align="center"
+            w="100%">
+              <Flex
+              alignItems="center"
+              gap={1}
+              mb={{ base: 2, lg: 0 }}
+              w={{ base: "full", lg: "auto" }}
+              pr="2"
+            >
+              <Text fontWeight="bold" fontSize={{ base: "sm", lg: "md" }}>
+                Pesquisar
+              </Text>
+              <InputGroup
+                w="-moz-fit-content"
+                fontSize={{ base: "sm", lg: "md" }}
+              >
+                <InputLeftElement pointerEvents="none">
+                  <AiOutlineSearch />
+                </InputLeftElement>
+                <Input
+                  fontSize={{ base: "sm", lg: "md" }}
+                  border="1px"
+                  bgColor="white"
+                  placeholder="Nome do Exame"
+                  value={query}
+                  onChange={(ev) => setQuery(ev.target.value)}
+                />
+              </InputGroup>
+            </Flex>   
+              <HStack >
+              <Button colorScheme="teal">
+                  Total de Exames {paginationInfos.totalExams}
+                </Button>
+                <Button colorScheme="teal">
+                  Páginas {paginationInfos.totalPages}
+                </Button>
+                <Button colorScheme="teal">
+                  Página Atual {paginationInfos.currentPage}
+                </Button>
+                <Button
+                  colorScheme="yellow"
+                  gap={4}
+                  onClick={()=> {decrementPage()}}
+                >
+                  <BiLeftArrow />
+                  Página Anterior
+                </Button>
+                <Button
+                  colorScheme="yellow"
+                  gap={4}
+                  onClick={()=> {incrementPage()}}
+                >
+                  Próxima Página
+                  <BiRightArrow />
+                </Button>
+              </HStack>
+            </Flex>
+            <HStack spacing={2} m="2" w={"full"}>
+            {SearchAlfabet.map((letter) => (
+              <Button
+                _hover={{
+                  bgColor: "green.300",
+                }}
+                colorScheme="whatsapp"
+                 onClick={() => getProcedureByLetter(letter.toUpperCase())}
+                fontWeight="bold"
+                fontSize="22px"
+              >
+                {letter.toUpperCase()}
+              </Button>
+            ))}
+          </HStack>
             <TableContainer w="full">
               <Table variant="simple">
                 <Thead>

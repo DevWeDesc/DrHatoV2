@@ -109,8 +109,6 @@ export function EndConsults({
     getConsultDebitsDetails();
   }, []);
 
-  console.log("GETs", consultDebitsDetails);
-
   return (
     <Flex w="800px" h="600px" direction="column">
       {consultDebitsDetails.map((consults) => (

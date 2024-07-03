@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "outDir": "./build",
     "noEmitOnError": true,
     /* Visit https://aka.ms/tsconfig to read more about this file */

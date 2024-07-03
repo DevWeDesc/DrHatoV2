@@ -79,11 +79,11 @@ export function Header({ title = "Painel Administrativo", url }: HeaderProps) {
           >
             {user.consultName ? user.consultName : "Realizar Login"}
           </Text>
-          <Link to={url ? url : "/Home"}>
+          <Flex onClick={ ()=> url ? navigate(url): navigate(-1)}>
             <Button colorScheme="yellow" leftIcon={<TbArrowBack size={24} />}>
               Voltar
             </Button>
-          </Link>
+          </Flex>
         </Flex>
       </Flex>
     </Flex>

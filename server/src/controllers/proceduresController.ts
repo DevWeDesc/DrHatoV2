@@ -36,6 +36,7 @@ export const proceduresController = {
       minAge,
       maxAge,
       sector_id,
+      health_id
     } = ProcedureSchema.parse(request.body);
     try {
       await prisma.procedures.create({
@@ -52,7 +53,10 @@ export const proceduresController = {
           applicableMale,
           maxAge,
           minAge,
-          sector: { connect: { id: parseInt(sector_id) } },
+          sector: { connect: { id: parseInt(sector_id) }, },
+          HealthInsurance: {
+            connect: {id:  health_id}
+          }
         },
       });
       reply.status(201).send("Procedimento criado!");
@@ -209,17 +213,94 @@ export const proceduresController = {
     } catch (error) {}
   },
 
+  getProceduresByLetters: async (request: FastifyRequest,reply: FastifyReply) => {
+    try {
+      const GetProceduresByLetters = z.object({
+        letter: z.string(),
+        page: z.coerce.number()
+      })
+
+      const {letter, page} = GetProceduresByLetters.parse(request.params)
+      const currentPage = page || 1;
+
+      const procedures = await prisma.procedures.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {name: { startsWith: letter}}
+      })
+
+      const totalProceds = await prisma.procedures.count({  where: {name: { startsWith: letter}}})
+
+      const totalPages = Math.ceil(totalProceds / 35);
+
+
+      reply.send({
+        totalPages,
+        totalProceds,
+        currentPage,
+        procedures
+      })
+
+
+    } catch (error) {
+
+      console.log(error)
+    
+    }
+  },
+
+
+  getProcedureByHealthInsurance: async (request: FastifyRequest,reply: FastifyReply) => {
+    try {
+      const GetHealthInsuranceProcedureSchema = z.object({
+        planName: z.string(),
+        // planProvider: z.string(),
+        page: z.coerce.number()
+      })
+   
+      const {planName,page} = GetHealthInsuranceProcedureSchema.parse(request.params)
+      const currentPage = page || 1;
+      const procedures = await prisma.procedures.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {
+          HealthInsurance: {
+            planName: {contains: planName},
+            // planProvider: {equals: planProvider}
+          }
+        }
+      })
+
+     
+      const totalPages = Math.ceil(procedures.length / 35);
+
+      reply.send({
+        procedures,
+        currentPage,
+        totalPages,
+        totalProceds: procedures.length
+      })
+
+    } catch (error) {
+        console.log(error)
+    }
+  },
+
   getWithId: async (
-    request: FastifyRequest<{ Params: params }>,
+    request: FastifyRequest,
     reply: FastifyReply
   ) => {
-    const { id } = request.params;
+    const GetProceduresByIdSchema = z.object({
+      id: z.coerce.number()
+    })
+    const { id } = GetProceduresByIdSchema.parse(request.params);
     try {
       const procedure = await prisma.procedures.findUnique({
-        where: { id: parseInt(id) },
+        where: { id: id },
         include: {
           groups: { select: { name: true } },
           sector: { select: { name: true } },
+          HealthInsurance: true,
           appicableEspecies: true,
         },
       });
@@ -231,31 +312,78 @@ export const proceduresController = {
   },
 
   editProcedure: async (
-    request: FastifyRequest<{ Params: params }>,
+    request: FastifyRequest,
     reply: FastifyReply
   ) => {
-    const { id } = request.params;
-    const {
-      name,
-      price,
-      available,
-      observations,
-      applicationInterval,
-      sector_id,
-    } = ProcedureSchema.parse(request.body);
 
     try {
+      const editProcedureSchema = z.object({
+        procedureId: z.coerce.number(),
+        name                : z.string().optional(),
+        price               : z.coerce.number().optional(),
+        priceTwo            : z.coerce.number().optional(),
+        priceThree          : z.coerce.number().optional(),
+        priceFour           : z.coerce.number().optional(),
+        minAge              : z.coerce.number().optional(),
+        maxAge              : z.coerce.number().optional(),
+        applicableMale      : z.boolean().optional(),
+        applicableFemale    : z.boolean().optional(),
+        applicationInterval : z.string().optional(),
+        available           : z.boolean().optional(),
+        observations        : z.string().optional(),
+        group_id            : z.coerce.number().optional(),
+        sector_id           : z.coerce.number().optional(),
+   
+      })
+  
+      const {
+        procedureId,
+        name,
+        price,
+        available,
+        observations,
+        applicationInterval,
+        applicableFemale,
+        applicableMale,
+        group_id,
+        maxAge,
+        minAge,
+        priceFour,
+        priceThree,
+        priceTwo,
+        sector_id,
+    
+      } = editProcedureSchema.parse(request.body);
+  
       await prisma.procedures.update({
-        where: { id: parseInt(id) },
+        where: { id: procedureId },
         data: {
           name,
           price,
           available,
           observations,
           applicationInterval,
+          applicableFemale,
+          applicableMale,
+          group_id,
+          sector_id,
+          maxAge,
+          minAge,
+          priceFour,
+          priceThree,
+          priceTwo,
         },
       });
-    } catch (error) {}
+
+    
+
+      reply.status(200)
+    } catch (error) {
+      reply.send({
+        message: error
+      })
+      console.log(error);
+    }
   },
 
   deleteProcedure: async (
@@ -280,6 +408,7 @@ export const proceduresController = {
     const { procedureId, petId, accId, queueId } = request.params;
     const { RequestedByVetId, RequestedByVetName, InAdmission } = request.body;
     try {
+      
       const procedure = await prisma.procedures.findUnique({
         where: { id: parseInt(procedureId) },
       });

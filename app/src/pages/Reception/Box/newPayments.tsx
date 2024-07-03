@@ -50,7 +50,9 @@ export function BoxNewPayments() {
   const [paymentType, setPaymentType] = useState("");
   const [dailyBox, setDailyBox] = useState({} as HistoryBoxProps);
   const [fatherBox, setFatherBox] = useState({} as BoxProps);
-  
+  const installmentsRange = [
+    1,2,3,4,5,6,7,8,9,10,11,12
+  ]
   const handleChange = (installments: number) => setInstallments(installments);
   const { id } = useParams<{ id: string }>();
 
@@ -62,6 +64,8 @@ export function BoxNewPayments() {
     const response = await api.get("/vetbox")
     setFatherBox(response.data)
   } 
+
+
 
   async function getCustomers() {
     const response = await api.get(`/customers/${id}`);
@@ -88,6 +92,7 @@ export function BoxNewPayments() {
     };
 
     try {
+
       if (valueTotal > customers.customerAccount?.debits) {
         toast.warning("Valor ultrapassa débito do cliente!");
         return;
@@ -143,7 +148,18 @@ export function BoxNewPayments() {
             <Text fontWeight="black" fontSize="1xl">
               Débito será parcelado?, quantidade de parcelas:{" "}
             </Text>
-            <NumberInput
+            <Select onChange={(ev) => setInstallments(Number(ev.target.value))}
+            value={installments}
+            fontWeight="bold" placeholder="Visualize as parcelas">
+              {
+                installmentsRange.map((installment) => 
+                <option  key={installment} value={installment}>
+                  {`Parcelado: ${installment} x  R$ ${Number(valueTotal / installment).toFixed(2) }`}
+                </option>)
+              }
+
+            </Select>
+            {/* <NumberInput
               min={1}
               max={24}
               value={installments}
@@ -155,7 +171,7 @@ export function BoxNewPayments() {
                 <NumberIncrementStepper />
                 <NumberDecrementStepper />
               </NumberInputStepper>
-            </NumberInput>
+            </NumberInput> */}
 
             <Text fontWeight="black" fontSize="1xl">
               Tipo de cartão usado:{" "}

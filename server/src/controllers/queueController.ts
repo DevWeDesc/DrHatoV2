@@ -18,7 +18,7 @@ export const queueController = {
     request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
   ) => {
-    const { queryType, vetPreference, moreInfos, openedBy, removePreference } = QueueSchema.parse(
+    const { queryType, vetPreference, moreInfos, openedBy, removePreference, healthInsuranceId, healthInsuranceName } = QueueSchema.parse(
       request.body
     );
     const { id } = request.params;
@@ -30,6 +30,17 @@ export const queueController = {
         return
       }
 
+      const verifyConsult = await prisma.openedConsultsForPet.findFirst({
+        where: { 
+          medicineRecordId: parseInt(id),
+          isClosed: false
+         },
+      });
+
+      if(verifyConsult) {
+        return reply.status(409).send({message: "Já existe uma consulta aberta para este pet!"})
+      }
+
       await prisma.openedConsultsForPet.create({
         data: {
           petName: pet.name,
@@ -39,6 +50,8 @@ export const queueController = {
           isClosed: false,
           observations: moreInfos,
           openedBy,
+          healthInsuranceId,
+          healthInsuranceName,
           MedicineRecord: {
             connect: { petId: parseInt(id) },
           },

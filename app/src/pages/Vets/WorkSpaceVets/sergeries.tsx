@@ -10,11 +10,29 @@ import { useNavigate, useParams } from 'react-router'
 import {useState} from "react"
 import { Surgierslist } from '../../../components/surgeries/surgierslist'
 import { Createsurgeries } from '../../../components/surgeries/createsurgeries'
+import { ConsultsPetDetails } from '../../../interfaces'
 
 export function VetsSurgeries() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate()
   const [renderizarion, setRenderizarion] = useState<string>("List")
+  const [consultDetails, setConsultDetails] = useState(
+    {} as ConsultsPetDetails
+  );
+  const [pagination, SetPagination] = useState(1)
+  const [paginationInfos, setPaginationInfos] = useState({
+    totalPages: 0,
+    currentPage: 0,
+    totalProceds: 0
+  })
+
+  function incrementPage() {
+    SetPagination(prevCount => pagination < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
+  }
+
+  function decrementPage() {
+    SetPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+  }
 
 
   return (

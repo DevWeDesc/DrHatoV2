@@ -23,6 +23,9 @@ export function OpenedBox() {
     const response = await api.get("/vetbox")
     setFatherBox(response.data)
   } 
+
+  const {isLoading: isDailyBoxLoading, refetch: refetchDaily} = useQuery('dailyBox', GetDailyBox)
+  const {isLoading: isFatherBoxLoading, refetch: refetchFather} = useQuery('fatherBox', getFatherBox)
   
   async function handleOpenBox() {
     try {
@@ -32,6 +35,8 @@ export function OpenedBox() {
         openBy: user.username,
       };
       await api.post(`/openhistbox/${fatherBox?.id}`, data)
+      refetchFather()
+      refetchDaily()
       queryClient.invalidateQueries(['dailyBox', 'fatherBox'])
       toast.success("Caixa aberto com sucesso")
     } catch (error) {
@@ -40,8 +45,7 @@ export function OpenedBox() {
     }
   }
 
-  const {isLoading: isDailyBoxLoading} = useQuery('dailyBox', GetDailyBox)
-  const {isLoading: isFatherBoxLoading} = useQuery('fatherBox', getFatherBox)
+
 
   
   if(isDailyBoxLoading || isFatherBoxLoading) {
@@ -49,7 +53,7 @@ export function OpenedBox() {
   }
 
   let boxShow;
-  switch(true) {
+  switch(dailyBox?.boxIsOpen) {
     case dailyBox?.boxIsOpen === true:
       boxShow =  <ClosedBox />
       break;

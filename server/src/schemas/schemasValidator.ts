@@ -19,7 +19,7 @@ export const petSchema = z.object({
   especie: z.string(),
   sexo: z.string(),
   race: z.string(),
-  weigth: z.number().optional(),
+  weigth: z.string(),
   haveChip: z.boolean().optional(),
   isCastred: z.boolean().optional(),
   corPet: z.string(),
@@ -110,6 +110,8 @@ export const QueueSchema = z.object({
   observations: z.string().optional(),
   openedBy: z.string().optional(),
   removePreference: z.boolean().optional(),
+  healthInsuranceId: z.number().optional(),
+  healthInsuranceName: z.string().optional(),
 });
 
 export const ExamsType = ["lab", "image"];
@@ -157,6 +159,7 @@ export const ProcedureSchema = z.object({
   priceFour: z.any().optional(),
   minAge: z.any().optional(),
   maxAge: z.any().optional(),
+  health_id: z.any().optional(),
 });
 
 export const SearchSchema = z.object({

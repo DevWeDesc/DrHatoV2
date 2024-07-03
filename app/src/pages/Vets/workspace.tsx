@@ -13,15 +13,11 @@ import {
   Td,
   Tbody,
   HStack,
-  VStack,
-  Select,
   TableContainer,
   Th,
-  Input,
   Text,
   Flex,
   Grid,
-  Radio,
   Checkbox,
 } from "@chakra-ui/react";
 import {
@@ -31,6 +27,8 @@ import {
   TbArrowBack,
   TbMedicalCrossFilled,
   GiMedicines,
+  BsFillTrashFill,
+  FaExchangeAlt,
 } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState, ChangeEvent, useContext } from "react";
@@ -50,6 +48,7 @@ import { ThrowDiagnoisticsInConsult } from "./WorkSpaceComponents/ThrowDiagnotic
 import { QueryClient, useQuery } from "react-query";
 import { LoadingSpinner } from "../../components/Loading";
 import moment from "moment";
+import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 type OpenExamProps = {
   isMultiPart: boolean;
   isReportByText: boolean;
@@ -153,9 +152,12 @@ export function WorkSpaceVet() {
     });
   }
 
+
+
   const { isLoading } = useQuery("getPetDetailsInfos", {
     queryFn: getDetailsInformations,
   });
+
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -297,6 +299,25 @@ export function WorkSpaceVet() {
       break;
   }
 
+
+  async function updateQueuePetPreference(petId: number)   {
+
+    if(consultDetails.vetPreference == "Sem preferência") {
+      const data = {
+        vetPreference: user.consultName,
+        queueId: queueId
+      }
+      await api.patch("/queue/vetpreference", data).then(() => {
+        toast.success("Preferência atualizada com sucesso!")
+      })
+    
+    } else {
+      return toast.error("Animal já possui preferência!")
+    }
+   
+    
+  }
+console.log(consultDetails)
   return (
     <ChakraProvider>
       <WorkSpaceContainer>
@@ -574,11 +595,13 @@ export function WorkSpaceVet() {
                     <Th borderRight="1px solid black">
                       <Text fontWeight="bold">Plano de Saúde</Text>
                     </Th>
-                    <Th>
-                      <Text fontWeight="bold">
-                        {pet.more != "" ? "PetLove" : "Sem plano de Saúde"}
-                      </Text>
-                    </Th>
+
+               
+                        {
+                          consultDetails.healthInsuranceId ? <Th fontWeight="black" bgColor="green.100">{consultDetails.healthInsuranceName}</Th> : <Th fontWeight="bold">Sem plano para está consulta</Th>
+                        }
+                   
+                  
                   </Tr>
                 </Thead>
               </Table>
@@ -774,16 +797,15 @@ export function WorkSpaceVet() {
             >
               Imprimir Solicitação Exames
             </Button>
-
-            <Button
-              whiteSpace="normal"
-              colorScheme="red"
-              w="100%"
-              py="6"
-              fontSize={{ base: "sm" }}
-            >
-              Gravar Alterações
-            </Button>
+				        <ConfirmationDialog
+                height="48px"
+              icon={
+                <FaExchangeAlt fill="white" size={16} />
+                
+              }
+              buttonTitle="Alterar preferências" callbackFn={() => updateQueuePetPreference(pet.id)} describreConfirm="Deseja atribuir essa consulta a seu nome?" whatIsConfirmerd="Este animal está sem preferência" disabled={false}
+              
+                      />
           </Grid>
         </WorkSpaceFooter>
       </WorkSpaceContainer>

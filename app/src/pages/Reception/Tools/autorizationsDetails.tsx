@@ -36,7 +36,6 @@ export function ToolsAutorizationsDetails() {
     setPetsCustomer(customerfilter[0].pets);
     setCustomer(customerfilter);
   }
-  console.log(customer);
   useEffect(() => {
     getCustomer();
   }, []);

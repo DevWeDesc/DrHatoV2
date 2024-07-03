@@ -162,6 +162,7 @@ export const petsController = {
             surgerieStatus: surgerie.status,
             linkedConsultId: surgerie.linkedConsultDebitId,
             linkedAdmissionId: surgerie.LinkedAdmissionDebitId,
+            slotId: surgerie.slotId,
           };
           return surgeriesData;
         }),
@@ -230,22 +231,13 @@ export const petsController = {
     const { id }: any = request.params;
 
     try {
-      const petAlreadyExists = await prisma.pets.findFirst({
-        where: { name: name },
-      });
-
-      if (petAlreadyExists) {
-        reply.status(404).send("Pet already exists");
-        return;
-      }
-
       await prisma.pets.create({
         data: {
           name,
           especie,
           sexo,
           race,
-          weigth,
+          weigth: parseFloat(weigth),
           haveChip,
           isCastred,
           corPet,
@@ -278,58 +270,126 @@ export const petsController = {
 
       reply.status(201).send("Sucesso");
     } catch (error) {
-      reply.send("FALHA");
+      console.error(error);
     }
   },
 
-  petsInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
+  petsInQueue: async (
+    request: FastifyRequest<{
+      Querystring: {
+        vetName: string;
+        isClosed: string;
+        initialDate: string;
+        finalDate: string;
+        petName: string;
+        petCode: string;
+        customerName: string;
+        page: number;
+      };
+    }>,
+    reply: FastifyReply
+  ) => {
+    const {
+      vetName,
+      isClosed,
+      initialDate,
+      finalDate,
+      petName,
+      petCode,
+      customerName,
+      page,
+    } = request.query;
+
+    const filter: { openedDate?: { gte: Date; lte: Date } } = {};
+
+    if (initialDate && finalDate) {
+      filter.openedDate = {
+        gte: new Date(initialDate),
+        lte: new Date(finalDate),
+      };
+    }
+
     try {
-      const pets = await prisma.pets.findMany({
+      const currentPage = Number(page) || 1;
+      const totalConsults = await prisma.pets.count({
         where: {
           medicineRecords: {
             petConsults: {
               some: {
-                isClosed: false,
+                isClosed: isClosed === "true" ? true : false,
+                vetPreference: { contains: vetName },
+              },
+            },
+          },
+        },
+      });
+
+      const totalPages = Math.ceil(totalConsults / 35);
+
+      const pets = await prisma.pets.findMany({
+        skip: (currentPage - 1) * 35,
+        take: 35,
+        where: {
+          CodAnimal: petCode ? Number(petCode) : undefined,
+          name: { contains: petName },
+          customer: { name: { contains: customerName } },
+          medicineRecords: {
+            petConsults: {
+              some: {
+                petName: { contains: petName },
+                isClosed: isClosed === "true" ? true : false,
+                vetPreference: { contains: vetName },
+                openedDate: filter.openedDate,
               },
             },
           },
         },
         include: {
           medicineRecords: {
-            include: { petConsults: true },
+            include: {
+              petConsults: {
+                where: {
+                  isClosed: isClosed === "true" ? true : false,
+                  openedDate: filter.openedDate,
+                  vetPreference: { contains: vetName },
+                },
+              },
+            },
           },
-
           customer: { select: { name: true, vetPreference: true, cpf: true } },
         },
       });
 
       const totalInQueue = await prisma.openedConsultsForPet.count({
-        where: { isClosed: false },
+        where: {
+          vetPreference: { contains: vetName },
+        },
       });
 
-      const response = pets.map((pet) => {
-        let data = {
-          name: pet.name,
-          id: pet.id,
-          customerName: pet.customer.name,
-          vetPreference:
-            pet.medicineRecords?.petConsults[0]?.vetPreference ??
-            "Sem preferência",
-          queueId: pet.medicineRecords?.petConsults[0]?.id,
-          openedBy: pet.medicineRecords?.petConsults[0]?.openedBy,
-          codPet: pet.CodAnimal,
-          queueEntry: pet.medicineRecords?.petConsults[0]?.openedDate,
-          especie: pet.especie,
-          more: pet.medicineRecords?.petConsults[0]?.observations,
-          race: pet.race,
-          customerCpf: pet.customer.cpf,
-          queryType: pet.medicineRecords?.petConsults[0]?.consultType,
-          totalInQueue,
-        };
-        return data;
+      const response = pets.flatMap((pet: any) => {
+        return (
+          pet.medicineRecords?.petConsults.map((consult: any) => {
+            return {
+              name: pet.name,
+              id: pet.id,
+              customerName: pet.customer.name,
+              vetPreference: consult.vetPreference ?? "Sem preferência",
+              queueId: consult.id,
+              openedBy: consult.openedBy,
+              codPet: pet.CodAnimal,
+              queueEntry: consult.openedDate,
+              especie: pet.especie,
+              more: consult.observations,
+              race: pet.race,
+              customerCpf: pet.customer.cpf,
+              queryType: consult.consultType,
+              totalInQueue,
+            };
+          }) || []
+        );
       });
 
-      return reply.send({ response, totalInQueue });
+      return reply.send({ response, totalInQueue, totalPages, totalConsults });
     } catch (error) {
       console.error(error);
       reply.status(404).send(error);
@@ -559,7 +619,7 @@ export const petsController = {
       const { petId } = request.params;
 
       const oldConsults = await prisma.pets.findUnique({
-        where: { CodAnimal: parseInt(petId) },
+        where: { id: parseInt(petId) },
         include: {
           petOldConsults: true,
           customer: true,
