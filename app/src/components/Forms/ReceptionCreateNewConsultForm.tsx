@@ -10,6 +10,9 @@ import {
   Radio,
   HStack,
   Select,
+  Checkbox,
+  CheckboxGroup,
+  Stack,
 } from "@chakra-ui/react";
 import { set, SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
@@ -99,11 +102,9 @@ export function ReceptionCreateNewConsultForm() {
     }
   }
 
-  const handleCreateNewCliente: SubmitHandler<CreateNewClienteProps> = async (
-    values
-  ) => {
+  const handleCreateNewCliente = async (values: any) => {
     const data = {
-      name: values.name + values.surname,
+      name: `${values.name} ${values.surname}`,
       adress: `${logradouro}, N° ${adressNumber}`,
       district: estado,
       email: values.email,
@@ -118,6 +119,7 @@ export function ReceptionCreateNewConsultForm() {
       state: estado,
       neighbour: bairro,
     };
+    console.log(data);
     try {
       const validCpf = validateCpf(CPFValue);
 
@@ -158,7 +160,7 @@ export function ReceptionCreateNewConsultForm() {
           display="flex"
           mt="5"
           as="form"
-          onSubmit={handleSubmit(handleCreateNewCliente as any)}
+          onSubmit={handleSubmit(handleCreateNewCliente)}
         >
           <Flex
             style={{ overflow: "none" }}
@@ -172,6 +174,20 @@ export function ReceptionCreateNewConsultForm() {
             <Flex justify="space-between" style={{ overflow: "none" }}>
               <Flex w="100%" gap="2">
                 <Flex w="50%" direction="column">
+                  <RadioGroup
+                    onChange={(value) => setKindPerson(value)}
+                    defaultValue="Fisica"
+                    mb="4"
+                  >
+                    <Stack direction="row">
+                      <Radio colorScheme="green" value="Fisica">
+                        Física
+                      </Radio>
+                      <Radio colorScheme="green" value="Juridica">
+                        Jurídica
+                      </Radio>
+                    </Stack>
+                  </RadioGroup>
                   <FormLabel
                     textAlign="left"
                     fontWeight="bold"
@@ -194,7 +210,19 @@ export function ReceptionCreateNewConsultForm() {
                     {errors?.name?.message}
                   </Text>
                 </Flex>
+
                 <Flex w="50%" direction="column">
+                  <Flex
+                    visibility="hidden"
+                    textAlign="left"
+                    fontWeight="bold"
+                    w="100%"
+                    fontSize="17"
+                    mb="4"
+                  >
+                    <label htmlFor="">Pessoa fisica</label>
+                    <input type="checkbox" />
+                  </Flex>
                   <FormLabel
                     textAlign="left"
                     fontWeight="bold"
@@ -582,13 +610,7 @@ export function ReceptionCreateNewConsultForm() {
               </Flex>
             </Flex>
 
-            <Button
-              w="100%"
-              mt="8"
-              colorScheme="whatsapp"
-              type={errorInput === 0 ? "submit" : "button"}
-              py="8"
-            >
+            <Button w="100%" mt="8" colorScheme="whatsapp" type="submit" py="8">
               Cadastrar
             </Button>
           </Flex>
