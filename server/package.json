@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsup src --format cjs",
     "dev": "ts-node-dev src/server.ts",
+    "populate": "node src/utils/PopulateAll.mjs",
     "test": "jest"
   },
   "author": "dilan",
@@ -19,7 +20,7 @@
     "@types/react": "^18.3.1",
     "jest": "^29.5.0",
     "jest-mock-extended": "^3.0.4",
-    "prisma": "^4.11.0",
+    "prisma": "^4.16.2",
     "prisma-erd-generator": "^1.5.4",
     "ts-jest": "^29.1.0",
     "ts-node-dev": "^2.0.0",
