@@ -119,23 +119,18 @@ export function ReceptionCreateNewConsultForm() {
       state: estado,
       neighbour: bairro,
     };
-    console.log(data);
-    try {
-      const validCpf = validateCpf(CPFValue);
 
-      if (validCpf) {
-        await api
-          .post("/customers", data)
-          .then((res) => navigate(`/Recepcao/Consultas/Clientes/${res.data}`));
+    const validCpf = validateCpf(CPFValue);
+
+    if (!validCpf) return toast.error("CPF Fora dos padrões");
+
+    await api
+      .post("/customers", data)
+      .then((res) => {
         toast.success("Usuário cadastrado");
-      } else {
-        toast.error("CPF Fora dos padrões");
-      }
-    } catch (error) {
-      toast.error("Falha ao cadastrar novo usuário");
-      console.log(data);
-      console.log(error);
-    }
+        navigate(`/Recepcao/Consultas/Clientes/${res.data}`);
+      })
+      .catch((err) => toast.error(err.response.data.message));
   };
 
   const handleBlur = () => {
