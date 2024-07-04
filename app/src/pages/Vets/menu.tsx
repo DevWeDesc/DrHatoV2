@@ -34,9 +34,7 @@ export function MenuVet() {
     queryKey: ["queueVets"],
     queryFn: async () => { 
       
-      console.log(pagination)
-
-      const res = showOldConsults ? await api.get(`/consults/historie/old?initialDate=${initialDate}&finalDate=${finalDate}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`)  : await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`) ;
+      const res = showOldConsults ? await api.get(`/consults/historie/old?initialDate=${initialDate}&finalDate=${finalDate}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`)  : await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}`) ;
       setTotalInQueue(res.data.totalInQueue);
       setNumberOfPages(res.data.totalPages);
       
@@ -246,6 +244,8 @@ export function MenuVet() {
                           .map((pet: any) => (
                             <Tr
                               onClick={() => navigate(
+                                showOldConsults ? 
+                                `/Pets/MedicineRecordOld/${pet.id}/${pet.queueId}` :
                                 `/Vets/Workspace/${pet.id}/${pet.queueId}`
                               )}
                               color={pet.petAdmitted ? "red.500" : "black"}

@@ -97,7 +97,7 @@ export const oldConsultsController = {
         const petInfos = await oldConsultsController.getPetInfos(consult.petsId as number);
         return {
           name: consult.petName,
-          id: consult.id,
+          id: petInfos?.id,
           customerName: consult.customerName,
           vetPreference: consult.vetName ?? "Sem preferência",
           queueId: consult.codConsulta,
