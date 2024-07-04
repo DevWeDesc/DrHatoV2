@@ -53,7 +53,9 @@ export const customerController = {
     const currentPage = Number(request.params.page) || 1;
 
     // Obtenha o número total de usuários.
-    const totalUsers = await prisma.customer.count();
+    const totalUsers = await prisma.customer.count({
+      where: { name: { contains: name, mode: "insensitive" } },
+    });
 
     // Calcule o número de páginas.
     const totalPages = Math.ceil(totalUsers / 35);
@@ -65,7 +67,7 @@ export const customerController = {
         take: 35,
         where: {
           OR: [
-            { name: { contains: name } },
+            { name: { contains: name, mode: "insensitive" } },
             { cpf: { contains: cpf } },
             { rg: { contains: rg } },
           ],
@@ -150,87 +152,87 @@ export const customerController = {
   },
 
   findUserById: async (request: FastifyRequest, reply: FastifyReply) => {
-      try {
-        const { id }: any = request.params;
-    const customer = await prisma.customer.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        transaction: true,
-        customerAccount: {
-          include: {
-            installments: {
-              include: {
-                consult: { include: { consultDebits: true } },
-                admission: true,
+    try {
+      const { id }: any = request.params;
+      const customer = await prisma.customer.findUnique({
+        where: { id: parseInt(id) },
+        include: {
+          transaction: true,
+          customerAccount: {
+            include: {
+              installments: {
+                include: {
+                  consult: { include: { consultDebits: true } },
+                  admission: true,
+                },
+              },
+              consultsForPet: { include: { consultDebits: true } },
+              Admission: { include: { consultDebits: true } },
+            },
+          },
+          pets: {
+            include: {
+              medicineRecords: {
+                include: {
+                  petConsults: {
+                    where: {
+                      AND: [{ totaLDebits: { gte: 1 } }, { isClosed: true }],
+                    },
+                  },
+                  petAdmissions: {
+                    where: {
+                      AND: [{ totaLDebits: { gte: 1 } }, { isClosed: true }],
+                    },
+                  },
+                },
               },
             },
-            consultsForPet: { include: { consultDebits: true } },
-            Admission: {include: {consultDebits: true }}
           },
         },
-        pets: {
-          include: {
-            medicineRecords:{ 
-              include: {
-                petConsults: {
-                  where: {
-                    AND: [
-                      { totaLDebits: {gte: 1}},
-                      {isClosed: true}
-                    ]
-                  }
-                },
-                petAdmissions: {
-                  where: {
-                    AND: [
-                      { totaLDebits: {gte: 1}},
-                      {isClosed: true}
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-    });
+      });
 
-    
-    const consults = customer?.customerAccount?.consultsForPet
-     const admissions = customer?.customerAccount?.Admission
-     //@ts-ignore
-      const installments = customer?.customerAccount?.installments?.concat(consults).concat(admissions).filter((install) => install?.id).map((installment) => {
-        const data = {
+      const consults: any = customer?.customerAccount?.consultsForPet;
+      const admissions: any = customer?.customerAccount?.Admission;
+      //@ts-ignore
+      const installments = customer?.customerAccount?.installments
+        ?.concat(consults)
+        .concat(admissions)
+        .filter((install) => install?.id)
+        .map((installment) => {
+          const data = {
             id: installment?.id,
             debitName: installment?.debitName,
             totalDebit: installment?.totalDebit,
-			      paymentType: installment?.paymentType,
-			      paymentDate: installment?.paymentDate?.toLocaleDateString('pt-BR', {day: '2-digit',
-          month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit'}),
-			      installmentAmount: installment?.installmentAmount,
-			      amountInstallments: installment?.amountInstallments,
-			      customerId: installment?.customerId,
-			      boxHistoryId: installment?.boxHistoryId,
-			      consultPetId: installment?.consultPetId,
-			      admissionsPetId: installment?.admissionsPetId,
-            consult: installment?.consult
-        }
-        return data
-      })
+            paymentType: installment?.paymentType,
+            paymentDate: installment?.paymentDate?.toLocaleDateString("pt-BR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            installmentAmount: installment?.installmentAmount,
+            amountInstallments: installment?.amountInstallments,
+            customerId: installment?.customerId,
+            boxHistoryId: installment?.boxHistoryId,
+            consultPetId: installment?.consultPetId,
+            admissionsPetId: installment?.admissionsPetId,
+            consult: installment?.consult,
+          };
+          return data;
+        });
 
-
-      const debits = customer?.pets.flatMap((pet) => {
-
+      const debits = customer?.pets.flatMap((pet: any) => {
         //@ts-ignore
-        return pet.medicineRecords?.petConsults.concat(pet.medicineRecords.petAdmissions)
-  
-   
-      })
+        return pet.medicineRecords?.petConsults.concat(
+          pet.medicineRecords.petAdmissions
+        );
+      });
 
-    reply.send({customer, installments, debits});
-      } catch (error) {
-        console.log(error)
-      }
+      reply.send({ customer, installments, debits });
+    } catch (error) {
+      console.log(error);
+    }
   },
 
   updateCustomer: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -253,8 +255,7 @@ export const customerController = {
     } = createCustomer.parse(request.body);
 
     try {
-
-      const updatedCustomer =  await prisma.customer.update({
+      const updatedCustomer = await prisma.customer.update({
         where: { id: parseInt(id) },
         data: {
           name,
@@ -270,94 +271,93 @@ export const customerController = {
           email,
           kindPerson,
           birthday,
-        }
+        },
       });
 
       return reply.status(201).send(updatedCustomer);
-      
     } catch (error) {
-      console.log(error)
-      
+      console.log(error);
     }
-    
   },
 
-  getInstallmentDetails: async(request: FastifyRequest, reply: FastifyReply) => {
+  getInstallmentDetails: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
     const { id }: any = request.params;
-    
+
     try {
       const installment = await prisma.installmentsDebts.findUnique({
-        where: {id: parseInt(id)},
+        where: { id: parseInt(id) },
         include: {
           consult: {
-            include: {consultDebits: true}
-          }
-        }
-      })
+            include: { consultDebits: true },
+          },
+        },
+      });
 
-      if(!installment) {
-        const installment =  await prisma.openedConsultsForPet.findFirst({
+      if (!installment) {
+        const installment = await prisma.openedConsultsForPet.findFirst({
           where: {
-            id: id
+            id: id,
           },
           include: {
-            consultDebits: true
-          }
-        })
+            consultDebits: true,
+          },
+        });
 
-
-          if(!installment) {
-            const installment =  await prisma.openededAdmissionsForPet.findFirst({
-              where: {
-                id: id
-              },
+        if (!installment) {
+          const installment = await prisma.openededAdmissionsForPet.findFirst({
+            where: {
+              id: id,
+            },
             include: {
-              consultDebits: true
-            }})
+              consultDebits: true,
+            },
+          });
 
-              if(!installment) {
-                reply.status(404)
-              }
-
-              reply.send(installment)
+          if (!installment) {
+            reply.status(404);
           }
 
-          
-          
+          reply.send(installment);
+        }
 
-         reply.send(installment)
+        reply.send(installment);
       }
 
-
-      reply.send(installment)
+      reply.send(installment);
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
-      
   },
 
-
-  incrementCustomerCredits: async(request: FastifyRequest, reply: FastifyReply) => {
-    try { 
+  incrementCustomerCredits: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
+    try {
       const incrementCustomerCreditsBody = z.object({
         customerId: z.coerce.number(),
-        credits: z.coerce.number()
-      })
-      
-      const {credits, customerId} = incrementCustomerCreditsBody.parse(request.body)
+        credits: z.coerce.number(),
+      });
+
+      const { credits, customerId } = incrementCustomerCreditsBody.parse(
+        request.body
+      );
 
       await prisma.customerAccount.update({
         where: {
-          customerId
+          customerId,
         },
         data: {
-          credits: {increment: credits}
-        }
-      })
+          credits: { increment: credits },
+        },
+      });
 
-      reply.status(200)
+      reply.status(200);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  },
 };
