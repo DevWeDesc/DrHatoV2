@@ -90,8 +90,6 @@ export const customerController = {
     }
   },
   createUser: async (request: FastifyRequest, reply: FastifyReply) => {
-    const contract = new ValidationContract();
-
     const {
       name,
       adress,
@@ -109,46 +107,41 @@ export const customerController = {
       neighbour,
       state,
     } = createCustomer.parse(request.body);
-    try {
-      await contract.customerAlreadyExists(cpf, "Usuário já existe!");
-      if (contract.hadError()) {
-        reply.status(400).send(contract.showErrors());
-        contract.clearErrors();
-        return;
-      }
 
-      const customer = await prisma.customer.create({
-        data: {
-          name,
-          adress,
-          phone,
-          email,
-          cpf,
-          birthday,
-          balance,
-          cep,
-          district,
-          howKnowUs,
-          rg,
-          tell,
-          kindPerson,
-          neighbour,
-          state,
-          customerAccount: {
-            create: {
-              accountNumber: randomNumberAccount(100, 100000),
-              credits: 0,
-              debits: 0,
-              clientIsVip: false,
-            },
+    const findUserByCPF = await prisma.customer.findUnique({ where: { cpf } });
+
+    if (findUserByCPF)
+      reply.status(401).send({ message: "CPF já cadastrado no sistema!" });
+
+    const customer = await prisma.customer.create({
+      data: {
+        name,
+        adress,
+        phone,
+        email,
+        cpf,
+        birthday,
+        balance,
+        cep,
+        district,
+        howKnowUs,
+        rg,
+        tell,
+        kindPerson,
+        neighbour,
+        state,
+        customerAccount: {
+          create: {
+            accountNumber: randomNumberAccount(100, 100000),
+            credits: 0,
+            debits: 0,
+            clientIsVip: false,
           },
         },
-      });
+      },
+    });
 
-      reply.send(customer.id);
-    } catch (error) {
-      console.error(error);
-    }
+    reply.send(customer.id);
   },
 
   findUserById: async (request: FastifyRequest, reply: FastifyReply) => {
