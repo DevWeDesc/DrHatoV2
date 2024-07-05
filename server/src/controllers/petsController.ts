@@ -285,6 +285,7 @@ export const petsController = {
         petCode: string;
         customerName: string;
         page: number;
+        isAddmited: string;
       };
     }>,
     reply: FastifyReply
@@ -298,6 +299,8 @@ export const petsController = {
       petCode,
       customerName,
       page,
+      isAddmited,
+
     } = request.query;
 
     const filter: { openedDate?: { gte: Date; lte: Date } } = {};
@@ -343,6 +346,7 @@ export const petsController = {
               },
             },
           },
+          bed: isAddmited === "true" ? { isBusy: true } : undefined,
         },
         include: {
           medicineRecords: {
@@ -356,6 +360,7 @@ export const petsController = {
               },
             },
           },
+          bed: { select: { isBusy: true } },
           customer: { select: { name: true, vetPreference: true, cpf: true } },
         },
       });
@@ -363,6 +368,8 @@ export const petsController = {
       const totalInQueue = await prisma.openedConsultsForPet.count({
         where: {
           vetPreference: { contains: vetName },
+          isClosed: false,
+          
         },
       });
 
@@ -384,6 +391,7 @@ export const petsController = {
               customerCpf: pet.customer.cpf,
               queryType: consult.consultType,
               totalInQueue,
+              petAdmitted: pet.bed?.isBusy ? true : false,
             };
           }) || []
         );

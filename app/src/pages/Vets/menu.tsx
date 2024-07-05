@@ -15,6 +15,7 @@ export function MenuVet() {
   const [isFinishied, setIsFinishied] = useState(false);
   const [isAddmited, setIsAddmited] = useState(false);
   const [showAllVets, setShowAllVets] = useState(false);
+  const [showOldConsults, setShowOldConsults] = useState(false);
   const [pagination, setPagination] = useState(1);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [totalInQueue, setTotalInQueue] = useState(0);
@@ -31,10 +32,12 @@ export function MenuVet() {
 
   const { data: PetData, isLoading, refetch } = useQuery({
     queryKey: ["queueVets"],
-    queryFn: async () => {
-      const res = await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`);
+    queryFn: async () => { 
+      
+      const res = showOldConsults ? await api.get(`/consults/historie/old?initialDate=${initialDate}&finalDate=${finalDate}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`)  : await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}`) ;
       setTotalInQueue(res.data.totalInQueue);
       setNumberOfPages(res.data.totalPages);
+      
       return res.data.response;
     },
   });
@@ -118,7 +121,7 @@ export function MenuVet() {
                         </VStack>
 
                         <VStack w={160}>
-                          <FormLabel>Todos Veterinários</FormLabel>
+                          <FormLabel whiteSpace={"nowrap"}>Todos Veterinários</FormLabel>
                           <Checkbox
                             onChange={(ev) => {
                               setShowAllVets(ev.target.checked);
@@ -127,6 +130,18 @@ export function MenuVet() {
                             size="lg"
                           />
                         </VStack>
+                        {
+                          isFinishied && (
+                            <VStack>
+                          <FormLabel whiteSpace={"nowrap"}>Histórico Consultas</FormLabel>
+                          <Checkbox
+                            onChange={(ev) => setShowOldConsults(ev.target.checked)}
+                            border="2px"
+                            size="lg"
+                          />
+                        </VStack>
+                          )
+                        }
                       </HStack>
                     </HStack>
                   </Flex>
@@ -213,6 +228,7 @@ export function MenuVet() {
                     <Table colorScheme="blackAlpha">
                       <Thead>
                         <Tr>
+                          <Th>Tipo</Th>
                           <Th>CPF</Th>
                           <Th>Cliente</Th>
                           <Th>Animal</Th>
@@ -228,17 +244,20 @@ export function MenuVet() {
                           .map((pet: any) => (
                             <Tr
                               onClick={() => navigate(
+                                showOldConsults ? 
+                                `/Pets/MedicineRecordOld/${pet.id}/${pet.queueId}` :
                                 `/Vets/Workspace/${pet.id}/${pet.queueId}`
                               )}
+                              color={pet.petAdmitted ? "red.500" : "black"}
                               key={pet.id}
                               cursor="pointer" 
                             >
                               <Td>
                                 <Text colorScheme="whatsapp">
-                                  {pet.customerCpf}
+                                  {pet.queryType}
                                 </Text>
                               </Td>
-
+                              <Td>{pet.customerCpf}</Td>
                               <Td>{pet.customerName}</Td>
 
                               <Td
@@ -252,6 +271,7 @@ export function MenuVet() {
                               <Td>{pet.codPet}</Td>
                               <Td>
                                 {new Intl.DateTimeFormat("pt-BR", {
+                                  year: "2-digit",
                                   month: "2-digit",
                                   day: "2-digit",
                                   hour: "2-digit",

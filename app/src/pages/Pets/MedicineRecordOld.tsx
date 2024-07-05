@@ -115,15 +115,19 @@ export function MedicineRecordOld() {
   const [typeShowHistorie, setTypeShowHistorie] = useState("")
   const navigate = useNavigate();
 
-  function handleOpenOldResultExams({
-    CodCli,
-    CodConsulta
-  }: OpenOldExamsProps) {
+  function handleOpenOldResultExams({ CodCli, CodConsulta }: OpenOldExamsProps) {
+    window.open(`https://drhatomf.ddns.net/vet/scr/PrintExamNewONLINE.asp?CodCli=${CodCli}&text=|${CodConsulta}|`, "_blank");
+  }
 
+  async function getOldHistorieAdmission(): Promise<any[]> {
+    try {
+      const response =  await api.get(`/admission/historie/old/all/${consultsData?.CodAnimal}`)
+      console.log(response.data.oldAdmissions, "Entrei3")
+      return  response.data.oldAdmissions
 
-      window.open(`https://drhatomf.ddns.net/vet/scr/PrintExamNewONLINE.asp?CodCli=${CodCli}&text=|${CodConsulta}|`, "_blank");
- 
-  
+    } catch (error) {
+      throw error
+    }
   }
 
   async function getConsults(): Promise<OldConsultsHistories> {
@@ -133,9 +137,10 @@ export function MedicineRecordOld() {
       if(!response) {
         throw new Error()
       }
+      console.log(response.data.oldConsults, "Entrei1", id)
 
       return response.data.oldConsults
-    } catch (error) {
+    } catch (error) { 
       throw error
     }
   }
@@ -143,27 +148,16 @@ export function MedicineRecordOld() {
   async function getOldExamsHistorie(): Promise<OldExamsHistorie[]> {
     try {
       const response =  await api.get(`/exams/historie/old/${id}`)
+      console.log(response.data.examsHistorie, "Entrei2")
       return  response.data.examsHistorie
     } catch (error) {
         throw error
     }
   }
 
-
-
-
   const { data: consultsData, isLoading: consultsLoading } = useQuery('oldHistory', {queryFn: getConsults})
   const { data: examsData, isLoading: examsLoading } = useQuery('oldExams', {queryFn: getOldExamsHistorie})
-
-  async function getOldHistorieAdmission(): Promise<any[]> {
-    try {
-      const response =  await api.get(`/admission/historie/old/all/${consultsData?.CodAnimal}`)
-      return  response.data.oldAdmissions
-    } catch (error) {
-        throw error
-    }
-  }
-  const { data: oldHistorieData} = useQuery('oldHistorie', {queryFn: getOldHistorieAdmission})
+  const { data: oldHistorieData } = useQuery('oldHistorie', () => getOldHistorieAdmission(),{ enabled: !!consultsData?.CodAnimal });
 
   if(consultsLoading || examsLoading) {
     return <LoadingSpinner/>
@@ -526,7 +520,8 @@ export function MedicineRecordOld() {
             <Button
               colorScheme="yellow"
               leftIcon={<TbArrowBack size={24} />}
-              onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
+              // onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
+              onClick={() => navigate(-1)}
             >
               Voltar
             </Button>

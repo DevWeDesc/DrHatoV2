@@ -29,6 +29,7 @@ import { examPartRoutes } from "./routes/exam.parts.routes";
 import { searchEngineMenu } from "./routes/search.engine.routes";
 import { healthInsuranceRoutes } from "./routes/health.insurance.routes";
 import { surgeriesCentralRoutes } from "./routes/surgeries.central.routes";
+import { oldConsultsRoutes } from "./routes/oldconsults.routes";
 
 export const app = fastify();
 
@@ -62,6 +63,7 @@ app.register(examPartRoutes)
 app.register(searchEngineMenu)
 app.register(healthInsuranceRoutes)
 app.register(surgeriesCentralRoutes)
+app.register(oldConsultsRoutes)
 
 
 app.get('/hello', () => {

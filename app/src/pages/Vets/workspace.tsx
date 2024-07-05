@@ -317,7 +317,6 @@ export function WorkSpaceVet() {
    
     
   }
-console.log(consultDetails)
   return (
     <ChakraProvider>
       <WorkSpaceContainer>
