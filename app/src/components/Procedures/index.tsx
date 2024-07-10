@@ -143,17 +143,15 @@ export default function ProceduresVets({
         InAdmission,
       };
 
-      const validateEspecie = procedures
-        .find((p) => p.id === procedureId)
-        ?.appicableEspecies?.some((e) => e.name === petDetails.especie);
+      // const validateEspecie = procedures.find((p) => p.id === procedureId)
+      // ?.appicableEspecies?.some((e) => e.name === petDetails.especie);
 
 
-
-      if (validateEspecie === false) {
-        return toast.warning(
-          "Essa especie não e permitida para esse procedimento!"
-        );
-      }
+      // if (validateEspecie === false) {
+      //   return toast.warning(
+      //     "Essa especie não e permitida para esse procedimento!"
+      //   );
+      // }
 
       if (InAdmission === true) {
         await api.post(
@@ -227,8 +225,6 @@ export default function ProceduresVets({
     setReloadData(false); // Reseta o estado para evitar chamadas infinitas
   }, [reloadData, query, pagination]);
 
-
-  console.log(consultDetails)
   return (
     <>
       <Flex w="100%" height="45vh" align="center">
@@ -453,7 +449,6 @@ export default function ProceduresVets({
                     <Button
                       colorScheme="whatsapp"
                       onClick={() => {
-                        // console.log(procedure.id);
                         setProcedureInPet(procedure.id);
                       }}
                     >

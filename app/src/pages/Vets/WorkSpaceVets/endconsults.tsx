@@ -43,6 +43,7 @@ interface ConsultDebitsProps {
     isVaccine: boolean;
     isProcedure: boolean;
     isAdmission: boolean;
+    itemId: number;
   }>;
 }
 
@@ -227,7 +228,18 @@ export function EndConsults({
             )}
           </Text>
           <Button
-            onClick={isAdmission ? handleCloseAdmission : handleCloseQuery}
+            onClick={()=> {
+              if(totalDebits.total === 0){
+                return toast.error("Não é possível finalizar a consulta sem nenhum item adicionado.")
+              }
+              const addedQueryValidation = consultDebitsDetails.some((debits)=> debits.consultDebits.some((item)=> item.itemId === 1))
+              
+              if(!addedQueryValidation){
+               return toast.error("É necessario ter uma consulta adicionada.")
+              }
+              
+              isAdmission ? handleCloseAdmission?.() : handleCloseQuery?.()
+            }}
             w="100%"
             colorScheme="whatsapp"
           >
