@@ -395,7 +395,7 @@ export const petsController = {
             };
           }) || []
         );
-      });
+      }).sort((a: any, b: any) => b.queueEntry - a.queueEntry);
 
       return reply.send({ response, totalInQueue, totalPages, totalConsults });
     } catch (error) {
