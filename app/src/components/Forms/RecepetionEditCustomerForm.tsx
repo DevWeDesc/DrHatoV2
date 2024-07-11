@@ -15,13 +15,14 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { object, string, date } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation, useQuery } from "react-query";
-import { set } from "lodash";
+import { get, set } from "lodash";
 import moment from "moment";
+import { complement } from "polished";
 
 const states = [
   "SP",
@@ -86,7 +87,16 @@ const customerSchema = object({
   tell: string().optional(),
   cpf: string().required("CPF é Obrigatório"),
   rg: string().optional(),
-  cep: string().required("Cep é Obrigatório"),
+  cep: string()
+    .required("Cep é Obrigatório")
+    .transform((value) => {
+      return value
+        .replace(/\D/g, "")
+        .substring(0, 8)
+        .replace(/^(\d{5})(\d)/, "$1-$2");
+    }),
+  //       .substring(0, 8)
+  //       .replace(/^(\d{5})(\d)/, "$1-$2")),
   // howKnowUs: string().required("Como nos conheceu é Obrigatório"),
   kindPerson: string().required("Pessoa Fisica ou Juridica é Obrigatório"),
   state: string().required("Estado é Obrigatório"),
@@ -101,6 +111,7 @@ export function ReceptionEditCustomerForm() {
     handleSubmit,
     setValue,
     getValues,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(customerSchema),
@@ -110,27 +121,43 @@ export function ReceptionEditCustomerForm() {
   const [isCheckedProps, setIsCheckedProps] = useState("");
 
   const { data: dataCustomer, refetch } = useQuery({
-    queryKey: "customer",
+    queryKey: ["customer", watch("cep")],
     queryFn: async () => {
       const response = await api.get(`/customers/${id}`);
       const name = response.data.customer.name.split(" ")[0];
       const lastName = response.data.customer.name.replace(`${name} `, "");
 
+      console.log(response.data.customer);
+
+      if (getValues("cep").length >= 9) {
+        fetch(`https://viacep.com.br/ws/${getValues("cep")}/json/`)
+          .then((response) => response.json())
+          .then((data) => {
+            setValue("adress", data.logradouro);
+            setValue("district", data.localidade);
+            setValue("neighbour", data.bairro);
+            setValue("state", data.uf);
+          });
+      }
+
       setValue("name", name);
       setValue("lastName", lastName);
       setValue("adress", response.data.customer.adress);
       setValue("district", response.data.customer.district);
+      setValue("neighbour", response.data.customer.neighbour);
+      setValue("state", response.data.customer.state);
       setValue("email", response.data.customer.email);
       setValue("birthday", response.data.customer.birthday);
       setValue("phone", response.data.customer.phone);
       setValue("tell", response.data.customer.tell || "");
       setValue("cpf", response.data.customer.cpf);
       setValue("rg", response.data.customer.rg);
-      setValue("cep", response.data.customer.cep);
+      console.log(response);
+      // setValue("cep", response.data.customer.cep);
       setValue("kindPerson", response.data.customer.kindPerson);
+      setValue("complement", response.data.customer.complement);
+      setValue("number", response.data.customer.number);
       setIsCheckedProps(response.data.customer.kindPerson);
-      setValue("state", response.data.customer.state);
-      setValue("neighbour", response.data.customer.neighbour);
 
       return response.data.customer as CreateNewClienteProps;
     },
@@ -163,6 +190,8 @@ export function ReceptionEditCustomerForm() {
       rg: values.rg,
       cep: values.cep,
       // howKnowUs: howKnow,
+      // complement: values.complement,
+      // number: values.number,
       kindPerson: values.kindPerson,
       state: values.state,
       neighbour: values.neighbour,
@@ -480,6 +509,16 @@ export function ReceptionEditCustomerForm() {
                     {...register("cep")}
                     id="cep"
                     name="cep"
+                    onChange={(ev) => {
+                      setValue(
+                        "cep",
+                        ev.target.value
+                          .replace(/\D/g, "")
+                          .substring(0, 8)
+                          .replace(/^(\d{5})(\d)/, "$1-$2")
+                      );
+                    }}
+                    defaultValue={dataCustomer?.cep}
                   />
                   <Text color="red.500" fontWeight="bold" textAlign="left">
                     {errors?.cep?.message}
