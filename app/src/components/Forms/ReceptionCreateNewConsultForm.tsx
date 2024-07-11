@@ -169,17 +169,30 @@ export function ReceptionCreateNewConsultForm() {
             <Flex justify="space-between" style={{ overflow: "none" }}>
               <Flex w="100%" gap="2">
                 <Flex w="50%" direction="column">
+                  <Text textAlign="left" fontWeight="bold">
+                    Tipo de Pessoa
+                  </Text>
                   <RadioGroup
                     onChange={(value) => setKindPerson(value)}
                     defaultValue="Fisica"
                     mb="4"
                   >
                     <Stack direction="row">
-                      <Radio colorScheme="green" value="Fisica">
-                        Física
+                      <Radio
+                        fontWeight="bold"
+                        colorScheme="green"
+                        value="Fisica"
+                        borderColor="blackAlpha.600"
+                      >
+                        Pessoa Física
                       </Radio>
-                      <Radio colorScheme="green" value="Juridica">
-                        Jurídica
+                      <Radio
+                        borderColor="blackAlpha.600"
+                        fontWeight="bold"
+                        colorScheme="green"
+                        value="Juridica"
+                      >
+                        Pessoa Jurídica
                       </Radio>
                     </Stack>
                   </RadioGroup>
@@ -215,7 +228,9 @@ export function ReceptionCreateNewConsultForm() {
                     fontSize="17"
                     mb="4"
                   >
-                    <label htmlFor="">Pessoa fisica</label>
+                    <Text textAlign="left" fontWeight="bold">
+                      Tipo de Pessoa
+                    </Text>
                     <input type="checkbox" />
                   </Flex>
                   <FormLabel
@@ -224,7 +239,7 @@ export function ReceptionCreateNewConsultForm() {
                     htmlFor="name"
                     w="100%"
                     fontSize="17"
-                    mb="0"
+                    mt="3.5"
                   >
                     * Sobrenome do Cliente
                   </FormLabel>
