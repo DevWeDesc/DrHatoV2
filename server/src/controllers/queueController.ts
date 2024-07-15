@@ -417,5 +417,15 @@ export const queueController = {
     } catch (error) {
       console.log(error)
     }
+  },
+
+  getQueuesInProgress: async (request: FastifyRequest, reply: FastifyReply) => {
+
+    const queues = await prisma.openedConsultsForPet.findMany({
+      where:  { isClosed: false },
+    })
+
+    reply.status(200).send(queues);
   }
+
 };
