@@ -113,9 +113,25 @@ export const oldConsultsController = {
         };
       }));
 
-      const totalExams = await prisma.oldConsults.count();
-      const totalPages = Math.ceil(totalExams / 35);
+      const totalExams = await prisma.oldConsults.count({
+        where: {
+          vetName: {
+            contains: vetName,
+          },
+          petName: {
+            contains: petName,
+          },
+          customerName: {
+            contains: customerName,
+          },
+          CodAnimal: {
+            equals: Number(petCode) || undefined,
+          },
+          date: filter.date,
+        },
+      });
 
+      const totalPages = Math.ceil(totalExams / 35);
       reply.send({ totalPages, totalExams, currentPage, response });
     } catch (error) {
       console.log(error);

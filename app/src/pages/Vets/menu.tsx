@@ -37,7 +37,6 @@ export function MenuVet() {
       const res = showOldConsults ? await api.get(`/consults/historie/old?initialDate=${initialDate}&finalDate=${finalDate}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`)  : await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}`) ;
       setTotalInQueue(res.data.totalInQueue);
       setNumberOfPages(res.data.totalPages);
-      
       return res.data.response;
     },
   });
@@ -241,7 +240,7 @@ export function MenuVet() {
 
                       <Tbody>
                         {PetData
-                          .map((pet: any) => (
+                          .map((pet: any, index: number) => (
                             <Tr
                               onClick={() => navigate(
                                 showOldConsults ? 
@@ -249,7 +248,7 @@ export function MenuVet() {
                                 `/Vets/Workspace/${pet.id}/${pet.queueId}`
                               )}
                               color={pet.petAdmitted ? "red.500" : "black"}
-                              key={pet.id}
+                              key={`${pet.id}-${index}`}
                               cursor="pointer" 
                             >
                               <Td>
