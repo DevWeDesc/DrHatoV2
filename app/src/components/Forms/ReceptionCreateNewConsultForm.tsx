@@ -27,7 +27,7 @@ import { FixedInput } from "../InputMasks/FixedInput";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, number, date, InferType } from "yup";
 import { useNavigate } from "react-router-dom";
-import { validateCpf } from "../../helpers/validateCpf";
+import { ValidateCPFOrCNPJ } from "../../utils/validators/ValidateCPFOrCNPJ";
 
 interface CreateNewClienteProps {
   name: string;
@@ -120,9 +120,20 @@ export function ReceptionCreateNewConsultForm() {
       neighbour: bairro,
     };
 
-    const validCpf = validateCpf(CPFValue);
+    const isValidCPFOrCNPJ = ValidateCPFOrCNPJ(CPFValue);
 
-    if (!validCpf) return toast.error("CPF Fora dos padrões");
+    if (!isValidCPFOrCNPJ)
+      return toast.error(
+        `${
+          kindPerson === "Fisica"
+            ? "CPF informado é inválido!"
+            : "CNPJ informado é inválido!"
+        }`
+      );
+
+    // const validCpf = validateCpf(CPFValue);
+
+    // if (!validCpf) return toast.error("CPF Fora dos padrões");
 
     await api
       .post("/customers", data)
@@ -137,6 +148,16 @@ export function ReceptionCreateNewConsultForm() {
     if (logradouro.endsWith("  ")) {
       setLogradouro(logradouro + "Nº ");
     }
+  };
+
+  const formatCNPJ = (value: string) => {
+    return value
+      .replace(/\D/g, "")
+      .replace(/^(\d{2})(\d)/, "$1.$2")
+      .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/\.(\d{3})(\d)/, ".$1/$2")
+      .replace(/(\d{4})(\d)/, "$1-$2")
+      .substring(0, 18);
   };
 
   return (
@@ -169,17 +190,30 @@ export function ReceptionCreateNewConsultForm() {
             <Flex justify="space-between" style={{ overflow: "none" }}>
               <Flex w="100%" gap="2">
                 <Flex w="50%" direction="column">
+                  <Text textAlign="left" fontWeight="bold">
+                    Tipo de Pessoa
+                  </Text>
                   <RadioGroup
                     onChange={(value) => setKindPerson(value)}
                     defaultValue="Fisica"
                     mb="4"
                   >
                     <Stack direction="row">
-                      <Radio colorScheme="green" value="Fisica">
-                        Física
+                      <Radio
+                        fontWeight="bold"
+                        colorScheme="green"
+                        value="Fisica"
+                        borderColor="blackAlpha.600"
+                      >
+                        Pessoa Física
                       </Radio>
-                      <Radio colorScheme="green" value="Juridica">
-                        Jurídica
+                      <Radio
+                        borderColor="blackAlpha.600"
+                        fontWeight="bold"
+                        colorScheme="green"
+                        value="Juridica"
+                      >
+                        Pessoa Jurídica
                       </Radio>
                     </Stack>
                   </RadioGroup>
@@ -215,7 +249,9 @@ export function ReceptionCreateNewConsultForm() {
                     fontSize="17"
                     mb="4"
                   >
-                    <label htmlFor="">Pessoa fisica</label>
+                    <Text textAlign="left" fontWeight="bold">
+                      Tipo de Pessoa
+                    </Text>
                     <input type="checkbox" />
                   </Flex>
                   <FormLabel
@@ -224,7 +260,7 @@ export function ReceptionCreateNewConsultForm() {
                     htmlFor="name"
                     w="100%"
                     fontSize="17"
-                    mb="0"
+                    mt="3.5"
                   >
                     * Sobrenome do Cliente
                   </FormLabel>
@@ -254,27 +290,57 @@ export function ReceptionCreateNewConsultForm() {
                 mt="4"
                 style={{ overflow: "none" }}
               >
-                <FormLabel
-                  textAlign="left"
-                  fontWeight="bold"
-                  htmlFor="cpf"
-                  mb="0"
-                  fontSize="17"
-                >
-                  * CPF do cliente
-                </FormLabel>
-                <CPFInput
-                  id="cpf"
-                  name="cpf"
-                  //{...register("cpf")}
-                  value={CPFValue}
-                  onChange={(e: any) => setCPFValue(e.target.value)}
-                  onBlur=""
-                />
-                {errorInput > 0 && (
-                  <Text textAlign="start" color="red.500" fontWeight="bold">
-                    {CPFValue != "" ? null : "O campo CPF é obrigatório"}
-                  </Text>
+                {kindPerson === "Fisica" ? (
+                  <>
+                    <FormLabel
+                      textAlign="left"
+                      fontWeight="bold"
+                      htmlFor="cpf"
+                      mb="0"
+                      fontSize="17"
+                    >
+                      * CPF do cliente
+                    </FormLabel>
+                    <CPFInput
+                      id="cpf"
+                      name="cpf"
+                      //{...register("cpf")}
+                      value={CPFValue}
+                      onChange={(e: any) => setCPFValue(e.target.value)}
+                      onBlur=""
+                    />
+                    {errorInput > 0 && (
+                      <Text textAlign="start" color="red.500" fontWeight="bold">
+                        {CPFValue != "" ? null : "O campo CPF é obrigatório"}
+                      </Text>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <FormLabel
+                      textAlign="left"
+                      fontWeight="bold"
+                      htmlFor="cpf"
+                      mb="0"
+                      fontSize="17"
+                    >
+                      * CNPJ do cliente
+                    </FormLabel>
+                    <Input
+                      id="cpf"
+                      name="cpf"
+                      //{...register("cpf")}
+                      value={formatCNPJ(CPFValue)}
+                      onChange={(ev) => {
+                        setCPFValue(formatCNPJ(ev.target.value));
+                      }}
+                    />
+                    {errorInput > 0 && (
+                      <Text textAlign="start" color="red.500" fontWeight="bold">
+                        {CPFValue != "" ? null : "O campo CPF é obrigatório"}
+                      </Text>
+                    )}
+                  </>
                 )}
               </Flex>
               <Flex direction="column" w="50%" mt="4">

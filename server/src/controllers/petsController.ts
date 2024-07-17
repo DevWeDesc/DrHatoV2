@@ -300,7 +300,6 @@ export const petsController = {
       customerName,
       page,
       isAddmited,
-
     } = request.query;
 
     const filter: { openedDate?: { gte: Date; lte: Date } } = {};
@@ -357,6 +356,7 @@ export const petsController = {
                   openedDate: filter.openedDate,
                   vetPreference: { contains: vetName },
                 },
+                orderBy: { openedDate: "asc" },
               },
             },
           },
@@ -369,7 +369,6 @@ export const petsController = {
         where: {
           vetPreference: { contains: vetName },
           isClosed: false,
-          
         },
       });
 

@@ -37,16 +37,35 @@ type VetsProps = {
   username: string;
   id: number;
   consultName: string;
-}
+};
+
+type IPetsInQueue = {
+  codPet: number;
+  customerCpf: string;
+  customerName: string;
+  especie: string;
+  id: number;
+  more: string;
+  name: string;
+  openedBy: string;
+  petAdmitted: boolean;
+  queryType: string;
+  queueEntry: string;
+  queueId: string;
+  race: string;
+  totalInQueue: number;
+  vetPreference: string;
+};
 
 export function QueueSistem() {
-  const [petsInQueue, setPetsInQueue] = useState([]);
+  const [petsInQueue, setPetsInQueue] = useState<IPetsInQueue[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [queryType, setQueryType] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [vetPreference, setVetPreference] = useState("");
   const navigate = useNavigate();
-  const [userVets, setUserVets] = useState<VetsProps[]>([])
+  const [userVets, setUserVets] = useState<VetsProps[]>([]);
+  const [queueSelected, setQueueSelected] = useState({} as IPetsInQueue);
   function openModal() {
     setIsModalOpen(true);
   }
@@ -59,28 +78,31 @@ export function QueueSistem() {
     setUserVets(response.data.vets);
   }
 
-  async function setPetInQueue(id: string | number) {
-    try {
-      const data = {
-        vetPreference: vetPreference,
-        queryType: queryType,
-        openedBy: user.consultName.length >= 1 ? user.consultName : `${user.name} - Id: ${user.id}`,
-        moreInfos: ""
-      };
+  async function setPetInQueue(queueId: string | number) {
+    const data = {
+      consultType: queryType,
+      vetPreference: vetPreference,
+    };
 
-      await api.put(`queue/${id}`, data);
-      toast.success("Pet atualizado na fila com sucesso!");
-      navigate('/Recepcao/Consultas');
-    } catch (error) {
-      toast.error("Falha ao colocar na fila");
-    }
+    await api
+      .patch(`queue/${queueId}`, data)
+      .then(() => {
+        toast.success("Pet atualizado na fila com sucesso!");
+        navigate("/Recepcao/Consultas");
+      })
+      .catch(() => toast.error("Erro ao editar consulta!"));
   }
-
 
   async function GetPetQueue() {
     try {
       const response = await api.get("/pets/queue");
-      setPetsInQueue(response.data.response);
+      const responseData: IPetsInQueue[] = response.data.response;
+      setPetsInQueue(
+        responseData.sort(
+          (a, b) =>
+            new Date(a.queueEntry).getTime() - new Date(b.queueEntry).getTime()
+        )
+      );
     } catch (error) {
       toast.error("Falha ao carregar Fila.");
     }
@@ -88,15 +110,10 @@ export function QueueSistem() {
 
   const path = useLocation();
 
-
   useEffect(() => {
-
-    loadVets()  
+    loadVets();
     GetPetQueue();
   }, []);
-
-
-
 
   let queue;
   switch (true) {
@@ -127,159 +144,28 @@ export function QueueSistem() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {petsInQueue.map((pet: PetsInQueue) => (
+                  {petsInQueue.map((pet: IPetsInQueue) => (
                     <Tr key={pet.id}>
                       <Td color="black">{pet.queryType}</Td>
                       <Td>{pet.customerName}</Td>
                       <Td>
-                        <GenericModal
-                          isOpen={isModalOpen}
-                          onRequestClose={closeModal}
-                        >
-                          <Flex justify="center">
-                            <Flex
-                              direction="column"
-                              overflow="auto"
-                              h={600}
-                            >
-                              <Text mt="4" fontWeight="bold" pb="2">
-                                SELECIONAR VETERINARIO
-                              </Text>
-
-                              {userVets.map((vet) => (
-                                <RadioGroup
-                                 
-                                  key={vet.id}
-                                  onChange={setVetPreference}
-                                  value={vetPreference}
-                                >
-                                  <Flex direction="column">
-                                    <Radio
-                                      mb="2"
-                                      borderColor="teal.800"
-                                      colorScheme="green"
-                                      value={vet.consultName.toString()}
-                                    >
-                                      {vet.consultName}
-                                    </Radio>
-                                  </Flex>
-                                </RadioGroup>
-                              ))}
-                            </Flex>
-                            <Flex
-                              direction="column"
-                              overflow="auto"
-                              height="100%"
-                            >
-                              <Text mt="4" fontWeight="bold" pb="2">
-                                SELECIONAR ATENDIMENTO
-                              </Text>
-                              <RadioGroup
-                                onChange={setQueryType}
-                                value={queryType}
-                              >
-                                <Flex direction="column">
-                                  <Radio
-                                    mb="2"
-                                    borderColor="teal.800"
-                                    colorScheme="green"
-                                    value="Avaliação"
-                                  >
-                                    Avaliação
-                                  </Radio>
-                                  <Radio
-                                    mb="2"
-                                    borderColor="teal.800"
-                                    colorScheme="green"
-                                    value="Cancelar"
-                                  >
-                                    Cancelar
-                                  </Radio>
-                                  <Radio
-                                    mb="2"
-                                    borderColor="teal.800"
-                                    colorScheme="green"
-                                    value="Consulta"
-                                  >
-                                    Consulta
-                                  </Radio>
-                                  <Radio
-                                    mb="2"
-                                    borderColor="teal.800"
-                                    colorScheme="green"
-                                    value="Consulta ESP"
-                                  >
-                                    Consulta ESP
-                                  </Radio>
-                                  <Radio
-                                    mb="2"
-                                    borderColor="teal.800"
-                                    colorScheme="green"
-                                    value="Consulta PetLove"
-                                  >
-                                    Consulta PetLove
-                                  </Radio>
-                                  <Radio
-                                    mb="2"
-                                    borderColor="teal.800"
-                                    colorScheme="green"
-                                    value="Consulta Triagem"
-                                  >
-                                    Consulta Triagem
-                                  </Radio>
-                                  <Radio
-                                    mb="2"
-                                    borderColor="teal.800"
-                                    colorScheme="green"
-                                    value="Exame Externo"
-                                  >
-                                    Exame Externo
-                                  </Radio>
-                                  <Radio
-                                    mb="2"
-                                    borderColor="teal.800"
-                                    colorScheme="green"
-                                    value="Orientação"
-                                  >
-                                    Orientação
-                                  </Radio>
-                                  <Radio
-                                    mb="2"
-                                    borderColor="teal.800"
-                                    colorScheme="green"
-                                    value="Retorno ESP"
-                                  >
-                                    Retorno ESP
-                                  </Radio>
-                                  <Radio
-                                    mb="2"
-                                    borderColor="teal.800"
-                                    colorScheme="green"
-                                    value="Telefone"
-                                  >
-                                    Telefone
-                                  </Radio>
-                                </Flex>
-                              </RadioGroup>
-                            </Flex>
-                          </Flex>
-
-                          <Button
-                            colorScheme="teal"
-                            onClick={() => setPetInQueue(pet.id)}
-                          >
-                            ATUALIZAR FILA
-                          </Button>
-                        </GenericModal>
                         <Button
-                          onClick={() => openModal()}
+                          onClick={() => {
+                            setQueueSelected(pet);
+                            console.log(pet);
+                            openModal();
+                          }}
                           colorScheme="whatsapp"
                         >
                           {pet.name}
                         </Button>
                       </Td>
                       <Td>{pet.race}</Td>
-                      <Td>{pet.queueEntry}</Td>
+                      <Td>
+                        {Intl.DateTimeFormat("pt-br", {
+                          dateStyle: "short",
+                        }).format(new Date(pet.queueEntry))}
+                      </Td>
                       <Td>{pet.codPet}</Td>
                       <Td>
                         {pet.vetPreference
@@ -290,6 +176,131 @@ export function QueueSistem() {
                     </Tr>
                   ))}
                 </Tbody>
+
+                <GenericModal isOpen={isModalOpen} onRequestClose={closeModal}>
+                  <Flex justify="center">
+                    <Flex direction="column" overflow="auto" h={600}>
+                      <Text mt="4" fontWeight="bold" pb="2">
+                        SELECIONAR VETERINARIO
+                      </Text>
+
+                      {userVets.map((vet) => (
+                        <RadioGroup
+                          key={vet.id}
+                          onChange={setVetPreference}
+                          value={vetPreference}
+                        >
+                          <Flex direction="column">
+                            <Radio
+                              mb="2"
+                              borderColor="teal.800"
+                              colorScheme="green"
+                              value={vet.consultName.toString()}
+                            >
+                              {vet.consultName}
+                            </Radio>
+                          </Flex>
+                        </RadioGroup>
+                      ))}
+                    </Flex>
+                    <Flex direction="column" overflow="auto" height="100%">
+                      <Text mt="4" fontWeight="bold" pb="2">
+                        SELECIONAR ATENDIMENTO
+                      </Text>
+                      <RadioGroup onChange={setQueryType} value={queryType}>
+                        <Flex direction="column">
+                          <Radio
+                            mb="2"
+                            borderColor="teal.800"
+                            colorScheme="green"
+                            value="Avaliação"
+                          >
+                            Avaliação
+                          </Radio>
+                          <Radio
+                            mb="2"
+                            borderColor="teal.800"
+                            colorScheme="green"
+                            value="Cancelar"
+                          >
+                            Cancelar
+                          </Radio>
+                          <Radio
+                            mb="2"
+                            borderColor="teal.800"
+                            colorScheme="green"
+                            value="Consulta"
+                          >
+                            Consulta
+                          </Radio>
+                          <Radio
+                            mb="2"
+                            borderColor="teal.800"
+                            colorScheme="green"
+                            value="Consulta ESP"
+                          >
+                            Consulta ESP
+                          </Radio>
+                          <Radio
+                            mb="2"
+                            borderColor="teal.800"
+                            colorScheme="green"
+                            value="Consulta PetLove"
+                          >
+                            Consulta PetLove
+                          </Radio>
+                          <Radio
+                            mb="2"
+                            borderColor="teal.800"
+                            colorScheme="green"
+                            value="Consulta Triagem"
+                          >
+                            Consulta Triagem
+                          </Radio>
+                          <Radio
+                            mb="2"
+                            borderColor="teal.800"
+                            colorScheme="green"
+                            value="Exame Externo"
+                          >
+                            Exame Externo
+                          </Radio>
+                          <Radio
+                            mb="2"
+                            borderColor="teal.800"
+                            colorScheme="green"
+                            value="Orientação"
+                          >
+                            Orientação
+                          </Radio>
+                          <Radio
+                            mb="2"
+                            borderColor="teal.800"
+                            colorScheme="green"
+                            value="Retorno ESP"
+                          >
+                            Retorno ESP
+                          </Radio>
+                          <Radio
+                            mb="2"
+                            borderColor="teal.800"
+                            colorScheme="green"
+                            value="Telefone"
+                          >
+                            Telefone
+                          </Radio>
+                        </Flex>
+                      </RadioGroup>
+                    </Flex>
+                  </Flex>
+
+                  <Button
+                    colorScheme="teal"
+                    onClick={() => setPetInQueue(queueSelected.queueId)}
+                  >
+                    ATUALIZAR FILA
+                  </Button>
+                </GenericModal>
               </Table>
             </Flex>
           </Flex>
@@ -337,7 +348,7 @@ export function QueueSistem() {
                 </Thead>
                 <Tbody>
                   {petsInQueue != null ? (
-                    petsInQueue.map((pet: PetsInQueue) => (
+                    petsInQueue.map((pet: IPetsInQueue) => (
                       <Tr key={pet.id}>
                         <Td color="black">{pet.queryType}</Td>
                         <Td>{pet.customerName}</Td>

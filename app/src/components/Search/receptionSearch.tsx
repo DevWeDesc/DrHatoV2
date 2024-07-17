@@ -27,6 +27,16 @@ export function RecepetionSearch({ path }: UniversalSearchProps) {
   const [customerRg, setCustomerRg] = useState("");
   const [customerCodAnimal, setCustomerCodAnimal] = useState("");
 
+  const cleanFilters = async () => {
+    setCustomerCpf("");
+    setCustomerName("");
+    setCustomerRg("");
+    setCustomerCodAnimal("");
+    await api
+      .get(`${path}`)
+      .then((responseData) => setCustomers(responseData.data));
+  };
+
   async function searchCustomer() {
     try {
       switch (true) {
@@ -65,9 +75,9 @@ export function RecepetionSearch({ path }: UniversalSearchProps) {
           <Grid
             gap={2}
             templateColumns={{
-              base: "repeat(2,1fr)",
-              lg: "repeat(3,1fr)",
-              xl: "repeat(5,1fr)",
+              base: "repeat(3,1fr)",
+              lg: "repeat(4,1fr)",
+              xl: "repeat(6,1fr)",
             }}
           >
             <Input
@@ -75,6 +85,7 @@ export function RecepetionSearch({ path }: UniversalSearchProps) {
               label="Nome do Cliente"
               name="customerName"
               onChange={(ev) => setCustomerName(ev.target.value)}
+              value={customerName}
             />
             <VStack minW="full" justifyContent="end" align="flex-start">
               <Text fontSize={{ base: "12", lg: "sm" }}>CPF do Cliente</Text>
@@ -84,6 +95,7 @@ export function RecepetionSearch({ path }: UniversalSearchProps) {
                 onChange={(ev: React.ChangeEvent<HTMLInputElement>) =>
                   setCustomerCpf(ev.target.value)
                 }
+                value={customerCpf}
               />
             </VStack>
 
@@ -92,12 +104,14 @@ export function RecepetionSearch({ path }: UniversalSearchProps) {
               label="R.G do Cliente"
               onChange={(ev) => setCustomerRg(ev.target.value)}
               name="rg"
+              value={customerRg}
             />
             <Input
               fontSize={{ base: "12", lg: "sm" }}
               label="Código do Animal"
               onChange={(ev) => setCustomerCodAnimal(ev.target.value)}
               name="codPet"
+              value={customerCodAnimal}
             />
             <Flex
               gridColumn={{ base: "span 2", xl: "span 1" }}
@@ -116,8 +130,28 @@ export function RecepetionSearch({ path }: UniversalSearchProps) {
                 colorScheme="whatsapp"
                 minWidth={220}
               >
-                {" "}
                 Filtrar
+              </Button>
+            </Flex>
+            <Flex
+              gridColumn={{ base: "span 2", xl: "span 1" }}
+              w="full"
+              gap="2"
+              align="center"
+              direction="column"
+            >
+              <Text fontSize={{ base: "12", lg: "sm" }} fontWeight="bold">
+                Limpar Filtros
+              </Text>
+              <Button
+                type="reset"
+                onClick={cleanFilters}
+                fontSize={{ base: "12", lg: "sm" }}
+                w="full"
+                colorScheme="twitter"
+                minWidth={220}
+              >
+                Limpar
               </Button>
             </Flex>
           </Grid>

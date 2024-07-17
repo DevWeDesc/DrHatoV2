@@ -14,31 +14,76 @@ type params = {
   date: string;
 };
 export const queueController = {
+  editVetAndServiceFromTheQueue: async (
+    request: FastifyRequest<{
+      Params: { id: string };
+      Body: { consultType: string; vetPreference: string };
+    }>,
+    reply: FastifyReply
+  ) => {
+    const { consultType, vetPreference } = request.body;
+    const { id } = request.params;
+    try {
+      await prisma.openedConsultsForPet
+        .findFirstOrThrow({
+          where: {
+            id,
+            isClosed: false,
+          },
+        })
+        .catch(() =>
+          reply.send({ message: "A consulta informada não existe!" })
+        );
+
+      await prisma.openedConsultsForPet.update({
+        where: { id },
+        data: {
+          consultType,
+          vetPreference,
+        },
+      });
+
+      reply.status(200).send({
+        message: "Fila Editada com sucesso!",
+      });
+    } catch (error) {
+      console.error(error);
+      reply.status(400).send({ message: { error } });
+    }
+  },
+
   setPetInQueue: async (
     request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
   ) => {
-    const { queryType, vetPreference, moreInfos, openedBy, removePreference, healthInsuranceId, healthInsuranceName } = QueueSchema.parse(
-      request.body
-    );
+    const {
+      queryType,
+      vetPreference,
+      moreInfos,
+      openedBy,
+      removePreference,
+      healthInsuranceId,
+      healthInsuranceName,
+    } = QueueSchema.parse(request.body);
     const { id } = request.params;
     try {
+      const pet = await prisma.pets.findUnique({ where: { id: parseInt(id) } });
 
-      const pet = await prisma.pets.findUnique({where:{ id: parseInt(id)}})
-
-      if(!pet) {
-        return
+      if (!pet) {
+        return;
       }
 
       const verifyConsult = await prisma.openedConsultsForPet.findFirst({
-        where: { 
+        where: {
           medicineRecordId: parseInt(id),
-          isClosed: false
-         },
+          isClosed: false,
+        },
       });
 
-      if(verifyConsult) {
-        return reply.status(409).send({message: "Já existe uma consulta aberta para este pet!"})
+      if (verifyConsult) {
+        return reply
+          .status(409)
+          .send({ message: "Já existe uma consulta aberta para este pet!" });
       }
 
       await prisma.openedConsultsForPet.create({
@@ -46,7 +91,8 @@ export const queueController = {
           petName: pet.name,
           openedDate: new Date(),
           consultType: queryType,
-          vetPreference: removePreference === true ? "Sem preferência": vetPreference,
+          vetPreference:
+            removePreference === true ? "Sem preferência" : vetPreference,
           isClosed: false,
           observations: moreInfos,
           openedBy,
@@ -98,7 +144,7 @@ export const queueController = {
       petWeight: z.number().optional(),
       consultId: z.string().optional(),
       admissionId: z.string().optional(),
-       accountId: z.number().optional(),
+      accountId: z.number().optional(),
     });
     const { petId, queueUUID, customerId } = ParamsSchema.parse(request.params);
     const {
@@ -107,7 +153,7 @@ export const queueController = {
       petWeight,
       consultId,
       admissionId,
-       accountId,
+      accountId,
     } = QueueSchema.parse(request.body);
     try {
       const getDebitsInConsultService = new GetDebitsInConsultsService();
@@ -116,7 +162,7 @@ export const queueController = {
         queueId: queueUUID,
       });
 
-     const pet = await prisma.pets.update({
+      const pet = await prisma.pets.update({
         where: { id: petId },
         data: { priceAccumulator: { update: { accumulator: 0 } } },
       });
@@ -153,8 +199,6 @@ export const queueController = {
           },
         },
       });
-
-  
 
       reply.status(201).send({
         message: "Fila encerrada com sucesso!",
@@ -347,26 +391,27 @@ export const queueController = {
     }
   },
 
-  updatePetWeightInQueue: async (request: FastifyRequest, reply: FastifyReply) => {
+  updatePetWeightInQueue: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
     try {
       const UpdatePetWeightInQueueParams = z.object({
         queueId: z.string().uuid(),
-        petWeigth: z.coerce.string()
+        petWeigth: z.coerce.string(),
       });
 
-      const {petWeigth, queueId} = UpdatePetWeightInQueueParams.parse(request.params)
+      const { petWeigth, queueId } = UpdatePetWeightInQueueParams.parse(
+        request.params
+      );
 
       await prisma.openedConsultsForPet.update({
-        where:{ id: queueId},
+        where: { id: queueId },
         data: {
-          petWeight: petWeigth
-        }
-      })
-
-
-    } catch (error) {
-      
-    }
+          petWeight: petWeigth,
+        },
+      });
+    } catch (error) {}
   },
 
   getQueueDiagnostics: async (request: FastifyRequest, reply: FastifyReply) => {
@@ -397,25 +442,28 @@ export const queueController = {
     }
   },
 
-
-  updateQueuePreference: async (request: FastifyRequest, reply: FastifyReply) => {
+  updateQueuePreference: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
     try {
       const updateQueuePreferenceSchema = z.object({
         queueId: z.string().uuid(),
-        vetPreference: z.string()
-      })
+        vetPreference: z.string(),
+      });
 
-      const {queueId, vetPreference} = updateQueuePreferenceSchema.parse(request.body)
+      const { queueId, vetPreference } = updateQueuePreferenceSchema.parse(
+        request.body
+      );
 
       const queue = await prisma.openedConsultsForPet.update({
-        where: {id: queueId},
-        data: {vetPreference: vetPreference}
-      })
+        where: { id: queueId },
+        data: { vetPreference: vetPreference },
+      });
 
-
-      reply.send(queue)
+      reply.send(queue);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   },
 
@@ -427,5 +475,4 @@ export const queueController = {
 
     reply.status(200).send(queues);
   }
-
 };
