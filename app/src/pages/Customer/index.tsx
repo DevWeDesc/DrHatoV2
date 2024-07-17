@@ -85,6 +85,20 @@ interface CreateNewPetProps {
   obs: string;
 }
 
+interface HospBoxHistory {
+  id: number;
+  entryValues?: number;
+  exitValues?: number;  
+  totalValues?: number; 
+  openBox?: Date;
+  closeBox?: Date;
+  openBy?: string;
+  closedBy?: string;
+  boxIsOpen?: boolean;
+  hospVetBoxId?: number;
+}
+
+
 export function CustomerDetails() {
   const { id } = useParams<{ id: string }>();
   const user = JSON.parse(localStorage.getItem("user") as string);
@@ -155,6 +169,17 @@ export function CustomerDetails() {
 
   async function setPetInQueue() {
     try {
+
+      const openedBox = await api.get("/vetbox")
+
+      const verifyOpenedBox = openedBox.data.historyBox.some((box: HospBoxHistory)=> box.boxIsOpen)
+
+      if(!verifyOpenedBox) {
+        toast.error("Não existe caixa em aberto, não é possivel colocar na fila")
+        return
+      }
+      
+
       const selectedHealth = healthInsurance.find(h => h.id === healthId)
 
       const data = {

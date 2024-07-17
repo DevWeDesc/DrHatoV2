@@ -353,4 +353,19 @@ export const customerController = {
       console.log(error);
     }
   },
+  getDetailsDebits: async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+    const { id } = request.params
+
+    const debitsDetails = await prisma.openedConsultsForPet.findUnique({
+      where:  { id },
+      select: {
+        consultDebits: true
+      }
+    })
+
+    reply.status(200).send(debitsDetails);
+
+
+
+  },
 };

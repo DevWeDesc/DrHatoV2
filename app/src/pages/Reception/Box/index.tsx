@@ -52,6 +52,15 @@ export function BoxReception() {
     };
 
     try {
+
+      const queues =  await api.get("/queues/inprogress")
+
+      if(queues.data.length > 0){
+        toast.warning("Existem consultas em andamento, finalize-as antes de fechar o caixa")
+        return
+      }
+
+
       await api
         .patch(`/closehistbox/${fatherBox?.id}/${dailyBox?.id}`, data)
         toast.success("Caixa fechado com sucesso!");

@@ -14,14 +14,13 @@ import {
   Text,
   InputGroup,
   InputLeftElement,
-
 } from "@chakra-ui/react";
 import { Header } from "../../../components/admin/Header";
 import { AdminContainer } from "../../AdminDashboard/style";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
 import { BsCashCoin, TbPigMoney } from "react-icons/all";
-import {useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { api } from "../../../lib/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { BsReception4 } from "react-icons/bs";
@@ -31,85 +30,86 @@ import { BoxContext } from "../../../contexts/BoxContext";
 import { GenericModal } from "../../../components/Modal/GenericModal";
 import { useQuery, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
+import ModalDetails from "./ModalDetails";
 
 export interface Installment {
-  id:                  number | string;
-  debitName?:          string;
-  totalDebit:           number;
-  paymentType?:        string;
-  paymentDate:          string;
-  installmentAmount?:  number;
+  id: number | string;
+  debitName?: string;
+  totalDebit: number;
+  paymentType?: string;
+  paymentDate: string;
+  installmentAmount?: number;
   amountInstallments?: string;
-  customerId?:         number;
-  boxHistoryId?:       number;
-  consultPetId?:       null | string;
-  admissionsPetId?:    null;
-  consult?:            Consult | null;
-  admission?:          null;
-  openedDate?:         Date;
-  petName?:            string;
-  openedBy?:           string;
-  vetPreference?:      string;
-  closedDate:           Date | string | null;
-  updatedDate:          Date | string | null;
-  isClosed?:           boolean;
-  closedByVetId?:      number;
-  clodedByVetName?:    string;
-  petWeight?:          string;
-  observations?:       string;
-  consultType?:        string;
-  symptoms?:           null;
-  request?:            null;
-  diagnostic?:         null;
-  totaLDebits?:        string;
-  medicineRecordId?:   number;
-  clientIsVip?:        boolean;
-  customerAccountId?:  number;
-  consultDebits?:      ConsultDebit[];
+  customerId?: number;
+  boxHistoryId?: number;
+  consultPetId?: null | string;
+  admissionsPetId?: null;
+  consult?: Consult | null;
+  admission?: null;
+  openedDate?: Date;
+  petName?: string;
+  openedBy?: string;
+  vetPreference?: string;
+  closedDate: Date | string | null;
+  updatedDate: Date | string | null;
+  isClosed?: boolean;
+  closedByVetId?: number;
+  clodedByVetName?: string;
+  petWeight?: string;
+  observations?: string;
+  consultType?: string;
+  symptoms?: null;
+  request?: null;
+  diagnostic?: null;
+  totaLDebits?: string;
+  medicineRecordId?: number;
+  clientIsVip?: boolean;
+  customerAccountId?: number;
+  consultDebits?: ConsultDebit[];
 }
 
 export interface Consult {
-  id:                string;
-  openedDate:        Date;
-  petName:           string;
-  openedBy:          string;
-  vetPreference:     string;
-  closedDate:        Date;
-  updatedDate:       null;
-  isClosed:          boolean;
-  closedByVetId:     number;
-  clodedByVetName:   string;
-  petWeight:         string;
-  observations:      string;
-  consultType:       string;
-  symptoms:          null;
-  request:           null;
-  diagnostic:        null;
-  totaLDebits:       string;
-  medicineRecordId:  number;
-  clientIsVip:       boolean;
+  id: string;
+  openedDate: Date;
+  petName: string;
+  openedBy: string;
+  vetPreference: string;
+  closedDate: Date;
+  updatedDate: null;
+  isClosed: boolean;
+  closedByVetId: number;
+  clodedByVetName: string;
+  petWeight: string;
+  observations: string;
+  consultType: string;
+  symptoms: null;
+  request: null;
+  diagnostic: null;
+  totaLDebits: string;
+  medicineRecordId: number;
+  clientIsVip: boolean;
   customerAccountId: number;
-  consultDebits:     ConsultDebit[];
+  consultDebits: ConsultDebit[];
 }
 
 export interface ConsultDebit {
-  id:                       number;
-  name:                     string;
-  price:                    string;
-  sectorId:                 number;
-  itemId:                   number;
-  isAdmissions:             null;
-  isExam:                   boolean;
-  isSurgerie:               null;
-  isVaccine:                null;
-  isProcedure:              null;
-  isAdmission:              null;
-  RequestedByVetId:         number;
-  RequestedByVetName:       string;
-  requestedDate:            Date;
-  consultOpenedId:          null;
-  surgerieOpenedId:         null;
-  openedConsultsForPetId:   string;
+  id: number;
+  name: string;
+  price: string;
+  sectorId: number;
+  itemId: number;
+  isAdmissions: null;
+  isExam: boolean;
+  isSurgerie: null;
+  isVaccine: null;
+  isProcedure: null;
+  isAdmission: null;
+  RequestedByVetId: number;
+  RequestedByVetName: string;
+  requestedDate: Date;
+  consultOpenedId: null;
+  surgerieOpenedId: null;
+  openedConsultsForPetId: string;
   openedAdmissionsForPetId: null;
 }
 
@@ -120,108 +120,126 @@ export function BoxPaymentsDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalDetailsIsOpen, setModalDetailsIsOpen] = useState(false);
   const [creditModalIsOpen, setCreditModalIsOpen] = useState(false);
   const [installments, setInstallments] = useState<Installment[]>([]);
-  const [installment, setInstallment] = useState({} as Installment)
-  const [debits, setDebits] = useState<any[]>([])
-  const [customerCredits, setCustomerCredits] = useState(0)
+  const [installment, setInstallment] = useState({} as Installment);
+  const [debits, setDebits] = useState<any[]>([]);
+  const [consultId, setConsultId] = useState<string | null>(null);
+  const [customerCredits, setCustomerCredits] = useState(0);
   const queryClient = useQueryClient();
-
 
   async function getCustomers() {
     const customer = await api.get(`/customers/${id}`);
     setClient(customer.data.customer);
     setInstallments(customer.data.installments);
-    setDebits(customer.data.debits)
+    setDebits(customer.data.debits);
+    setConsultId(customer.data.debits[0].id);
   }
 
   async function getInstallmentsDetails(installmentId: string | number) {
     const installment = await api.get(`/installments/${installmentId}`);
-    setInstallment(installment.data)
+    setInstallment(installment.data);
   }
+
+  const { data: dataDetailsDebits } = useQuery({
+    queryKey: ["debits", consultId],
+    queryFn: async () => {
+      const debits = await api.get(`/customer/debits/${consultId}`);
+      return debits.data.consultDebits;
+    },
+  });
 
   async function incrementCustomerCredits() {
     const data = {
       customerId: client.id,
-      credits: customerCredits
-    }
-    await api.patch(`/customer/credits`, data)
-    queryClient.invalidateQueries('customerDetails')
-    toast.success("Valor adicionado!") 
+      credits: customerCredits,
+    };
+    await api.patch(`/customer/credits`, data);
+    queryClient.invalidateQueries("customerDetails");
+    toast.success("Valor adicionado!");
   }
 
-  useQuery('customerDetails', getCustomers )
-
-
-  console.log(installment)
+  useQuery("customerDetails", getCustomers);
 
   let typePaymentShow;
   switch (true) {
     case typePayment === false:
       typePaymentShow = (
         <>
-         {
-          installments.filter(installment => installment.id && installment.consultPetId || installment.admissionsPetId).map((installment) => {
-            return <Tr
-            key={installment.id}
-            onClick={() => {
-              getInstallmentsDetails(installment.id)
-              setModalIsOpen(true);
-            }}
-          >
-            <Td>
-              Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
-            </Td>
-            <Td>
-            {installment.paymentDate}
-            </Td>
+          {installments
+            .filter(
+              (installment) =>
+                (installment.id && installment.consultPetId) ||
+                installment.admissionsPetId
+            )
+            .map((installment) => {
+              return (
+                <Tr
+                  key={installment.id}
+                  onClick={() => {
+                    getInstallmentsDetails(installment.id);
+                    setModalIsOpen(true);
+                  }}
+                >
+                  <Td>
+                    Pagamento Recebido. {`${fatherBox.name}: ${dailyBox.id}`}
+                  </Td>
+                  <Td>{installment.paymentDate}</Td>
 
-            <Td>0</Td>
-            <Td border="2px" bgColor="green.100">
-              {new Intl.NumberFormat("pt-BR", {
-                currency: "BRL",
-                style: "currency",
-              }).format(installment.totalDebit)}
-            </Td>
-            <Td>{installment.paymentType}</Td>
-            <Td>{client.customerAccount?.debits}</Td>
-          </Tr>
-          })
-         }
+                  <Td>0</Td>
+                  <Td border="2px" bgColor="green.100">
+                    {new Intl.NumberFormat("pt-BR", {
+                      currency: "BRL",
+                      style: "currency",
+                    }).format(installment.totalDebit)}
+                  </Td>
+                  <Td>{installment.paymentType}</Td>
+                  <Td>{client.customerAccount?.debits}</Td>
+                </Tr>
+              );
+            })}
         </>
       );
       break;
     case typePayment === true:
       typePaymentShow = (
         <>
-          {
-          debits.map((debit) => {
-            return <Tr
-            key={debit.id}
-         
-          >
-            <Td>
-              Procedimento {debit.consultType}
-            </Td>
-            <Td>
-            {new Intl.DateTimeFormat('pt-BR').format(new Date(debit.openedDate))}
-            </Td>
+          {debits.map((debit) => {
+            return (
+              <Tr
+                key={debit.id}
+                onClick={async () => {
+                  setConsultId(debit.id);
+                  setModalDetailsIsOpen(true);
+                }}
+                cursor={"pointer"}
+              >
+                <Td _hover={{
+                  color: "blue.700",
 
-            <Td border="2px" bgColor="red.100">
-              {new Intl.NumberFormat("pt-BR", {
-                currency: "BRL",
-                style: "currency",
-              }).format(debit.totaLDebits)}
-            </Td>
-          
-            <Td border="2px" bgColor="green.100">
-              0
-            </Td>
-            <Td>débito em aberto</Td>
-            <Td>{client.customerAccount?.debits}</Td>
-          </Tr>
-          })
-         }
+                }} border="1px" borderColor={"black"} fontWeight={"bold"} >{debit.consultType} nº {debit.id}</Td>
+                <Td border="1px">
+                  {new Intl.DateTimeFormat("pt-BR").format(
+                    new Date(debit.openedDate)
+                  )}
+                </Td>
+
+                <Td border="2px" bgColor="red.100">
+                  {new Intl.NumberFormat("pt-BR", {
+                    currency: "BRL",
+                    style: "currency",
+                  }).format(debit.totaLDebits)}
+                </Td>
+
+                <Td border="2px" bgColor="green.100">
+                  0
+                </Td>
+                <Td border="1px">Débito em aberto</Td>
+                <Td border="1px">{client.customerAccount?.debits}</Td>
+              </Tr>
+            );
+          })}
         </>
       );
       break;
@@ -312,7 +330,7 @@ export function BoxPaymentsDetails() {
                         bg="blue.100"
                         borderBottom="1px solid black"
                       >
-                        Dados do Cliente 
+                        Dados do Cliente
                       </Th>
 
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
@@ -321,9 +339,12 @@ export function BoxPaymentsDetails() {
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black">
-                        <Button 
-                        onClick={() => setCreditModalIsOpen(true)}
-                        colorScheme="orange">Adicionar Créditos</Button>
+                        <Button
+                          onClick={() => setCreditModalIsOpen(true)}
+                          colorScheme="orange"
+                        >
+                          Adicionar Créditos
+                        </Button>
                       </Th>
                     </Tr>
 
@@ -606,119 +627,136 @@ export function BoxPaymentsDetails() {
           isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}
         >
-
-            <>
-              <TableContainer gridColumnStart={1} gridColumnEnd={3}>
-                <Table size="sm">
-                  <Thead>
-                    <Tr>
-                      <Td
-                        py={3}
-                        bg="gray.200"
-                        fontWeight="bold"
-                        colSpan={2}
-                        textAlign="center"
-                      >
-                        Visualização de Consulta
-                      </Td>
+          <>
+            <TableContainer gridColumnStart={1} gridColumnEnd={3}>
+              <Table size="sm">
+                <Thead>
+                  <Tr>
+                    <Td
+                      py={3}
+                      bg="gray.200"
+                      fontWeight="bold"
+                      colSpan={2}
+                      textAlign="center"
+                    >
+                      Visualização de Consulta
+                    </Td>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Tr>
+                    <Td fontWeight="bold"> Nome do cliente</Td>
+                    <Td>{client?.name}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td fontWeight="bold">Nome do Animal</Td>
+                    <Td>{installment?.consult?.petName}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td fontWeight="bold"> Data da consulta</Td>
+                    {installment?.consult?.closedDate
+                      ? new Intl.DateTimeFormat("pt-BR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }).format(new Date(installment?.consult.closedDate))
+                      : ""}
+                  </Tr>
+                  <Tr>
+                    <Td fontWeight="bold"> Veterinário</Td>
+                    <Td>{installment?.consult?.vetPreference}</Td>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </TableContainer>
+            <TableContainer gridColumnStart={1} gridColumnEnd={3}>
+              <Table size="sm">
+                <Thead bg="gray.200">
+                  <Tr>
+                    <Th py={3} colSpan={5} textColor="black">
+                      {" "}
+                      Produtos / Serviços desta Consulta:
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Tr fontWeight="bold">
+                    <Td>Quantidade</Td>
+                    <Td>Produtos / Serviços</Td>
+                    <Td>Tabela</Td>
+                    <Td>Desconto</Td>
+                    <Td>Valor Cobrado</Td>
+                  </Tr>
+                  {installment?.consult?.consultDebits?.map((data: any) => (
+                    <Tr key={data?.id}>
+                      <Td>1</Td>
+                      <Td>{data?.name}</Td>
+                      <Td>{data?.price.concat(",00")}</Td>
+                      <Td>0%</Td>
+                      <Td>{data?.price.concat(",00")}</Td>
                     </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Tr>
-                      <Td fontWeight="bold"> Nome do cliente</Td>
-                      <Td>{client?.name}</Td>
-                    </Tr>
-                    <Tr>
-                      <Td fontWeight="bold">Nome do Animal</Td>
-                      <Td>{installment?.consult?.petName}</Td>
-                    </Tr>
-                    <Tr>
-                      <Td fontWeight="bold"> Data da consulta</Td>
-                      {installment?.consult?.closedDate ? new Intl.DateTimeFormat('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year:'2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      }).format(new Date(installment?.consult.closedDate)) : ''}
-                    </Tr>
-                    <Tr>
-                      <Td fontWeight="bold"> Veterinário</Td>
-                      <Td>{installment?.consult?.vetPreference}</Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </TableContainer>
-              <TableContainer gridColumnStart={1} gridColumnEnd={3}>
-                <Table size="sm">
-                  <Thead bg="gray.200">
-                    <Tr>
-                      <Th py={3} colSpan={5} textColor="black">
-                        {" "}
-                        Produtos / Serviços desta Consulta:
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Tr fontWeight="bold">
-                      <Td>Quantidade</Td>
-                      <Td>Produtos / Serviços</Td>
-                      <Td>Tabela</Td>
-                      <Td>Desconto</Td>
-                      <Td>Valor Cobrado</Td>
-                    </Tr>
-                    {installment?.consult?.consultDebits?.map(
-                      (data: any) => (
-                        <Tr key={data?.id}>
-                          <Td>1</Td>
-                          <Td>{data?.name}</Td>
-                          <Td>{data?.price.concat(",00")}</Td>
-                          <Td>0%</Td>
-                          <Td>{data?.price.concat(",00")}</Td>
-                        </Tr>
-                      )
-                    )}
-                    <Tr fontWeight="bold">
-                      <Td colSpan={4} textAlign="end">
-                        Total
-                      </Td>
-                      <Td>
-                        {new Intl.NumberFormat("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        }).format(Number(installment?.amountInstallments))}
-                        x{installment.installmentAmount}
-                      </Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </>
-         
+                  ))}
+                  <Tr fontWeight="bold">
+                    <Td colSpan={4} textAlign="end">
+                      Total
+                    </Td>
+                    <Td>
+                      {new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      }).format(Number(installment?.amountInstallments))}
+                      x{installment.installmentAmount}
+                    </Td>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </>
         </GenericModal>
-        <GenericModal isOpen={creditModalIsOpen} onRequestClose={() => setCreditModalIsOpen(false)}>
+        <GenericModal
+          isOpen={creditModalIsOpen}
+          onRequestClose={() => setCreditModalIsOpen(false)}
+        >
           <Flex align="center" direction="column" w="400px" h="200px">
-           <Text fontWeight="bold">Adicionar créditos ao cliente: -  {client.name}</Text>
-           
-           <InputGroup marginTop={8}>
-                <InputLeftElement
-               
-                  pointerEvents='none'
-                  color="green.400"
-                  fontSize='1.2em'
-                >
-                <TbPigMoney    />
+            <Text fontWeight="bold">
+              Adicionar créditos ao cliente: - {client.name}
+            </Text>
 
-                </InputLeftElement>
-                <Input
-                  type="number"
-                onChange={(ev) => setCustomerCredits(Number(ev.target.value))} border="1px" placeholder='Digite a quantia de créditos a ser adicionado!' />
-
-              </InputGroup>
-              <Button 
-                onClick={() => incrementCustomerCredits()}
-              marginTop={8} w="100%" colorScheme="whatsapp">Salvar</Button>
+            <InputGroup marginTop={8}>
+              <InputLeftElement
+                pointerEvents="none"
+                color="green.400"
+                fontSize="1.2em"
+              >
+                <TbPigMoney />
+              </InputLeftElement>
+              <Input
+                type="number"
+                onChange={(ev) => setCustomerCredits(Number(ev.target.value))}
+                border="1px"
+                placeholder="Digite a quantia de créditos a ser adicionado!"
+              />
+            </InputGroup>
+            <Button
+              onClick={() => incrementCustomerCredits()}
+              marginTop={8}
+              w="100%"
+              colorScheme="whatsapp"
+            >
+              Salvar
+            </Button>
           </Flex>
+        </GenericModal>
+        <GenericModal
+          isOpen={modalDetailsIsOpen}
+          onRequestClose={() => setModalDetailsIsOpen(false)}
+        >
+          <ModalDetails
+            debitsDetails={dataDetailsDebits}
+            setModalDetailsIsOpen={setModalDetailsIsOpen}
+          />
         </GenericModal>
       </AdminContainer>
     </ChakraProvider>
