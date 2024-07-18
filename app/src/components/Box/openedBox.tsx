@@ -34,6 +34,11 @@ export function OpenedBox() {
         exitValues: 500,
         openBy: user.username,
       };
+      
+      if (!fatherBox?.id) {
+        toast.error("Não existe caixa cadastrado, cadastre um caixa para prosseguir!");
+        return;
+      }
       await api.post(`/openhistbox/${fatherBox?.id}`, data)
       refetchFather()
       refetchDaily()

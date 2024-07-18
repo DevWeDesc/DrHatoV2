@@ -172,11 +172,11 @@ export function CustomerDetails() {
 
       const openedBox = await api.get("/vetbox")
 
-      const verifyOpenedBox = openedBox.data.historyBox.some((box: HospBoxHistory)=> box.boxIsOpen)
+      const verifyOpenedBox = openedBox?.data?.historyBox?.some((box: HospBoxHistory)=> box.boxIsOpen)
 
       if(!verifyOpenedBox) {
         toast.error("Não existe caixa em aberto, não é possivel colocar na fila")
-        return
+        return;
       }
       
 
@@ -205,6 +205,7 @@ export function CustomerDetails() {
         toast.error(`Selecione Pet/Tipo de Atendimento/Veterinário`);
       }
     } catch (error: any) {
+      console.log(error)
       if(error.response.status === 409) {
         return toast.error(`${error.response.data.message}`)
       }

@@ -168,7 +168,12 @@ export const boxController = {
       const boxs = await prisma.hospVetBox.findMany({
         include: { historyBox: true },
       });
-      reply.send(boxs[0]);
+
+      if(boxs.length === 0) {
+        return reply.send({}).status(200)
+      }
+
+      reply.send(boxs[0]).status(200);
     } catch (error) {
       console.log(error);
       reply.send(error);

@@ -214,6 +214,27 @@ export const petsController = {
     }
   },
 
+  getPetLastedCodAnimal: async () => {
+    try {
+      const lastedPet = await prisma.pets.findMany({
+        where: {
+          CodAnimal: {
+            not: null,
+            gte: 60000
+          },
+          
+        },
+        orderBy: { CodCli: "desc" },
+        take: 1,
+      });
+      return lastedPet[0].CodAnimal;
+
+    }catch(error){
+      console.log(error);
+    }
+  },
+
+
   createPet: async (request: FastifyRequest, reply: FastifyReply) => {
     const {
       name,
@@ -228,13 +249,29 @@ export const petsController = {
       observations,
     } = petSchema.parse(request.body);
 
+    
     const { id }: any = request.params;
+    
+    const customer = await prisma.customer.findUnique({
+      where: { id: parseInt(id) },
+      select: { CodCli: true },
+    });
+
+    const codeAnimal = await petsController.getPetLastedCodAnimal();
+    
+
+  
+    if (!customer) {
+      reply.status(404).send("Cliente não encontrado");
+      return;
+    }
 
     try {
       await prisma.pets.create({
         data: {
           name,
           especie,
+          CodAnimal: codeAnimal ? codeAnimal + 1 : 60000,
           sexo,
           race,
           weigth: parseFloat(weigth),
@@ -242,10 +279,12 @@ export const petsController = {
           isCastred,
           corPet,
           bornDate,
+          CodCli: customer.CodCli,
           observations,
           customer: {
             connect: {
               id: parseInt(id),
+              
             },
           },
           queue: {

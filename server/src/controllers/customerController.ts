@@ -41,6 +41,8 @@ export const customerController = {
     }
   },
 
+  
+
   searchUser: async (
     request: FastifyRequest<{
       Params: { page: string };
@@ -89,6 +91,25 @@ export const customerController = {
       console.log(error);
     }
   },
+
+  getCustomerLastedCodClient: async () => {
+    try {
+      const lastedCustomer = await prisma.customer.findMany({
+        where: { 
+          CodCli: { 
+            not: null, gte: 50000
+          } 
+        },
+        orderBy: { CodCli: "desc" },
+        take: 1,
+      });
+      return lastedCustomer[0].CodCli;
+
+    }catch(error){
+      console.log(error);
+    }
+  },
+
   createUser: async (request: FastifyRequest, reply: FastifyReply) => {
     const {
       name,
@@ -109,6 +130,7 @@ export const customerController = {
     } = createCustomer.parse(request.body);
 
     const findUserByCPF = await prisma.customer.findUnique({ where: { cpf } });
+    const codeClient = await customerController.getCustomerLastedCodClient();
 
     if (findUserByCPF)
       reply.status(401).send({ message: "CPF já cadastrado no sistema!" });
@@ -122,6 +144,7 @@ export const customerController = {
         cpf,
         birthday,
         balance,
+        CodCli: codeClient ? codeClient + 1 : 50000,
         cep,
         district,
         howKnowUs,
