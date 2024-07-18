@@ -170,7 +170,7 @@ export const boxController = {
       });
 
       if(boxs.length === 0) {
-        return reply.send([]).status(200)
+        return reply.send({}).status(200)
       }
 
       reply.send(boxs[0]).status(200);

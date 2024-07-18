@@ -55,6 +55,12 @@ export function BoxReception() {
 
       const queues =  await api.get("/queues/inprogress")
 
+
+      if (!fatherBox?.id) {
+        toast.error("Não existe caixa em aberto para fechar");
+        return;
+      }
+
       if(queues.data.length > 0){
         toast.warning("Existem consultas em andamento, finalize-as antes de fechar o caixa")
         return

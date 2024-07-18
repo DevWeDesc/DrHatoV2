@@ -53,7 +53,6 @@ export default function AdminBoxs() {
   async function GetVaccine() {
     try {
       const response = await api.get("/vetbox");
-
       setBox(response.data);
     } catch (error) {
       console.log(error);
@@ -139,7 +138,7 @@ export default function AdminBoxs() {
                 </Thead>
 
                 <Tbody>
-                  {boxs ? (
+                  {boxs.id ? (
                     <Tr key={boxs.id}>
                       <Td fontSize={{ base: "12", lg: "sm" }}>{boxs.name}</Td>
 
