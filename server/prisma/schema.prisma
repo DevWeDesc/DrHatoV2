@@ -422,6 +422,7 @@ model SurgeriesForPet {
 
 model OpenedConsultsForPet {
   id                  String              @id @default(uuid())
+  idConsult           Int?                 
   openedDate          DateTime            @default(now())
   petName             String?
   openedBy            String?

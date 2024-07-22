@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { z } from "zod";
 import { GetDebitsInConsultsService } from "../services/GetDebitsInConsultsService";
 import { ResourceNotFoundError } from "../errors/ResouceNotFoundError";
+
 type params = {
   id: string;
   petId: string;
@@ -52,6 +53,20 @@ export const queueController = {
     }
   },
 
+  getIdConsultHistory: async () => {
+    const idConsult = await prisma.oldConsults.findFirst({
+      select: {
+        codConsulta: true,
+      },
+      take: 1,
+      orderBy: {
+        codConsulta: "desc",
+      },
+    })
+    
+    return idConsult?.codConsulta;
+  },
+
   setPetInQueue: async (
     request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
@@ -86,9 +101,22 @@ export const queueController = {
           .send({ message: "Já existe uma consulta aberta para este pet!" });
       }
 
+      const idConsult = await queueController.getIdConsultHistory() as number;
+
+      const openedConsultsForPetId = await prisma.openedConsultsForPet.findFirst({
+        select: {
+          idConsult: true,
+        },
+        take: 1,
+        orderBy: {
+          idConsult: "desc",
+        },
+      });
+
       await prisma.openedConsultsForPet.create({
         data: {
           petName: pet.name,
+          idConsult: openedConsultsForPetId && openedConsultsForPetId.idConsult ? openedConsultsForPetId.idConsult + 1 : idConsult + 1,
           openedDate: new Date(),
           consultType: queryType,
           vetPreference:
@@ -474,5 +502,5 @@ export const queueController = {
     })
 
     reply.status(200).send(queues);
-  }
+  }, 
 };
