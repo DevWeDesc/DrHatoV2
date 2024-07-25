@@ -565,6 +565,7 @@ model CustomerAccount {
   returnsClientBox ReturnsClientBox[]
   clientIsVip      Boolean?                  @default(false)
   consultId        String?
+  dateConsult      DateTime?
   consultsForPet   OpenedConsultsForPet?
   admissionId      String?
   Admission        OpenededAdmissionsForPet?

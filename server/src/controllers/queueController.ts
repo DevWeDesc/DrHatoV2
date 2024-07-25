@@ -214,7 +214,6 @@ export const queueController = {
           customerAccountId: accountId,
         },
       });
-
       await prisma.customer.update({
         where: { id: customerId },
         data: {
@@ -223,6 +222,7 @@ export const queueController = {
               debits: { increment: Number(total) },
               admissionId: admissionId,
               consultId: consultId,
+              dateConsult: new Date(),
             },
           },
         },

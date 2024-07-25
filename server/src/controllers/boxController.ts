@@ -341,6 +341,11 @@ export const boxController = {
       const accounts = await prisma.customer.findMany({
         where: { customerAccount: { debits: { gte: 1 } } },
         include: {
+          pets: {
+            select: {
+              name: true,
+            }
+          },
           customerAccount: true,
         },
       });
