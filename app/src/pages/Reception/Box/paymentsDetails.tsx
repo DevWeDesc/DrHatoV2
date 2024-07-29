@@ -113,8 +113,13 @@ export interface ConsultDebit {
   openedAdmissionsForPetId: null;
 }
 
+
+interface ICustomerProps extends ICustomer {
+  CodCli: string;
+}
+
 export function BoxPaymentsDetails() {
-  const [client, setClient] = useState({} as ICustomer);
+  const [client, setClient] = useState({} as ICustomerProps);
   const { fatherBox, dailyBox } = useContext(BoxContext);
   const [typePayment, setTypePayment] = useState(true);
   const { id } = useParams<{ id: string }>();
@@ -215,14 +220,23 @@ export function BoxPaymentsDetails() {
                 }}
                 cursor={"pointer"}
               >
-                <Td _hover={{
-                  color: "blue.700",
-
-                }} border="1px" borderColor={"black"} fontWeight={"bold"} >{debit.consultType} nº {debit.id}</Td>
                 <Td border="1px">
                   {new Intl.DateTimeFormat("pt-BR").format(
                     new Date(debit.openedDate)
                   )}
+                </Td>
+                <Td border={"1px"} borderColor={"black"} fontWeight={"extrabold"} color="red">
+                  {debit.consultType === "Consulta" && "C"}
+                </Td>
+                <Td _hover={{
+                  color: "blue.700",
+
+                }} border="1px" borderColor={"black"} fontWeight={"bold"} >
+                  <Flex gap={2}>
+
+                  <Text>{debit.consultType} nº {debit.idConsult},</Text>
+                  <Text>animal: {debit.petName}</Text>
+                  </Flex>
                 </Td>
 
                 <Td border="2px" bgColor="red.100">
@@ -235,8 +249,14 @@ export function BoxPaymentsDetails() {
                 <Td border="2px" bgColor="green.100">
                   0
                 </Td>
-                <Td border="1px">Débito em aberto</Td>
-                <Td border="1px">{client.customerAccount?.debits}</Td>
+                <Td border="1px">-</Td>
+                <Td border="1px">
+                  
+                  {new Intl.NumberFormat("pt-BR", {
+                    currency: "BRL",
+                    style: "currency",
+                  }).format(Number(client?.customerAccount?.credits) - debit.totaLDebits)}
+                </Td>
               </Tr>
             );
           })}
@@ -323,216 +343,85 @@ export function BoxPaymentsDetails() {
                   </Thead>
                   <Tbody>
                     <Tr>
-                      <Th
-                        fontSize="18"
-                        py="8"
-                        color="black"
-                        bg="blue.100"
-                        borderBottom="1px solid black"
-                      >
-                        Dados do Cliente
-                      </Th>
+                      <Td fontSize="18" py="2" color="black" bg="transparent" border={"2px"} colSpan={1} fontWeight={"bold"}>
+                        Cliente
+                      </Td>
+                      <Td colSpan={5} border={"2px"} backgroundColor={"white"}>
+                        <Flex gap={2}>
 
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black">
-                        <Button
-                          onClick={() => setCreditModalIsOpen(true)}
-                          colorScheme="orange"
-                        >
-                          Adicionar Créditos
-                        </Button>
-                      </Th>
+                        <Text fontWeight={"bold"}>{client.name}</Text>
+                        {"-"}
+                        <Flex gap={1}>
+                          <Text>CPF</Text>
+                        <Text>{client.cpf}</Text>
+
+                        </Flex>
+                        {"-"}
+                        <Flex gap={1}>
+                        <Text>Código:</Text>
+                        <Text fontWeight={"bold"}>{client.CodCli}</Text>
+                        </Flex>
+                        {"-"}
+                        <Flex gap={1}>
+                        <Text>Email:</Text>
+                        <Text fontWeight={"bold"}>{client.email}</Text>
+                        </Flex>
+
+                        </Flex>
+                      </Td>
                     </Tr>
-
-                    <>
-                      <Tr border="1px solid black">
-                        <Td
-                          fontSize="18"
-                          p="0"
-                          pl="5"
-                          fontWeight="bold"
-                          w="10"
-                          borderColor="black"
-                        >
-                          Cliente
-                        </Td>
-                        <Td colSpan={2} py="0" borderColor="black">
-                          <Input
-                            borderTop="1px solid black"
-                            borderRight="2px solid black"
-                            borderLeft="2px solid black"
-                            borderBottom="0"
-                            bg="white"
-                            borderColor="black"
-                            rounded="0"
-                            defaultValue={client.name}
-                          />
-                        </Td>
-                        <Td
-                          pl="0"
-                          textAlign="end"
-                          fontSize="18"
-                          fontWeight="bold"
-                          w="10"
-                          py="0"
-                          borderColor="black"
-                        >
-                          Endereço
-                        </Td>
-                        <Td colSpan={3} py="0" borderColor="black" pr="0">
-                          <Input
-                            borderTop="1px solid black"
-                            borderLeft="2px solid black"
-                            borderBottom="0"
-                            bg="white"
-                            borderColor="black"
-                            w="100%"
-                            rounded="0"
-                            defaultValue={client.adress}
-                          />
-                        </Td>
-                      </Tr>
-                      <Tr border="1px solid black">
-                        <Td
-                          borderColor="black"
-                          fontSize="18"
-                          py="0"
-                          pl="5"
-                          fontWeight="bold"
-                        >
-                          Bairro
-                        </Td>
-                        <Td colSpan={2} py="0" borderColor="black">
-                          <Input
-                            borderRight="2px solid black"
-                            borderLeft="2px solid black"
-                            borderBottom="0"
-                            bg="white"
-                            borderColor="black"
-                            rounded="0"
-                            defaultValue={client.neighbour}
-                          />
-                        </Td>
-                        <Td
-                          py="0"
-                          fontSize="18"
-                          fontWeight="bold"
-                          pl="0"
-                          textAlign="end"
-                          borderColor="black"
-                        >
-                          CEP
-                        </Td>
-                        <Td colSpan={3} pr="0" py="0" borderColor="black">
-                          <Input
-                            borderRight="2px solid black"
-                            borderLeft="2px solid black"
-                            borderBottom="0"
-                            bg="white"
-                            borderColor="black"
-                            rounded="0"
-                            defaultValue={
-                              client.cep === null ? "Sem CEP" : client.cep
-                            }
-                          />
-                        </Td>
-                      </Tr>
-                      <Tr border="1px solid black">
-                        <Td
-                          py="0"
-                          fontSize="18"
-                          pl="5"
-                          fontWeight="bold"
-                          borderColor="black"
-                        >
-                          Estado
-                        </Td>
-                        <Td colSpan={2} py="0" borderColor="black">
-                          <Input
-                            borderRight="2px solid black"
-                            borderLeft="2px solid black"
-                            borderBottom="0"
-                            bg="white"
-                            borderColor="black"
-                            rounded="0"
-                            defaultValue={client.district}
-                          />
-                        </Td>
-                        <Td
-                          fontSize="18"
-                          fontWeight="bold"
-                          py="0"
-                          pl="0"
-                          textAlign="end"
-                          borderColor="black"
-                        >
-                          Telefone
-                        </Td>
-                        <Td colSpan={3} py="0" borderColor="black" pr="0">
-                          <Input
-                            borderLeft="2px solid black"
-                            borderBottom="0"
-                            bg="white"
-                            borderColor="black"
-                            rounded="0"
-                            defaultValue={client.phone}
-                          />
-                        </Td>
-                      </Tr>
-                      <Tr border="1px solid black">
-                        <Td
-                          fontSize="18"
-                          py="0"
-                          pl="5"
-                          fontWeight="bold"
-                          borderColor="black"
-                        >
-                          Débitos Atuais
-                        </Td>
-                        <Td colSpan={6} py="0" borderColor="black" pr="0">
-                          <Input
-                            borderLeft="2px solid black"
-                            borderBottom="1px solid black"
-                            bgColor="red.100"
-                            borderColor="black"
-                            rounded="0"
-                            defaultValue={client.customerAccount?.debits}
-                          />
-                        </Td>
-                      </Tr>
-                      <Tr border="1px solid black">
-                        <Td
-                          fontSize="18"
-                          py="0"
-                          pl="5"
-                          fontWeight="bold"
-                          borderColor="black"
-                        >
-                          Créditos Atuais
-                        </Td>
-                        <Td colSpan={6} py="0" borderColor="black" pr="0">
-                          <Input
-                            borderLeft="2px solid black"
-                            borderBottom="1px solid black"
-                            bgColor="green.100"
-                            borderColor="black"
-                            rounded="0"
-                            defaultValue={client.customerAccount?.credits}
-                          />
-                        </Td>
-                      </Tr>
-                    </>
-
+                    <Tr>
+                      <Td fontSize="18" py="2" color="black" bg="transparent" border={"2px"} colSpan={1} fontWeight={"bold"}>
+                        Endereço
+                      </Td>
+                      <Td colSpan={5} border={"2px"} backgroundColor={"white"}>
+                        <Flex gap={1}>
+                          <Text>{client.adress}</Text>
+                          {"-"}
+                          <Text>{client.neighbour}</Text>
+                          {"-"}
+                          <Text >{client.district}</Text>
+                          {"-"}
+                          <Flex gap={1} fontWeight={"bold"}>
+                          <Text>CEP:</Text>
+                          <Text >{client.cep}</Text>
+                          </Flex>
+                        </Flex>
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td fontSize="18" py="2" color="black" bg="transparent" border={"2px"} colSpan={1} fontWeight={"bold"}>
+                        Telefone / Celular
+                      </Td>
+                      <Td colSpan={5} border={"2px"} backgroundColor={"white"}>
+                      <Flex gap={1}>
+                          <Text>{client.tell ? client.tell : "-"}</Text>
+                          {"/"}
+                          <Text>{client.phone ? client.phone : "-"}</Text>
+                        </Flex>
+                      </Td>
+                    </Tr>
+                    <Tr>
+                      <Td fontSize="18" py="2" color="black" bg="transparent" border={"2px"} colSpan={1} fontWeight={"bold"}>
+                        Saldo Atual
+                      </Td>
+                      <Td colSpan={5} border={"2px"} backgroundColor={"green.100"}>
+                        {
+                         new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(client.customerAccount?.credits - client.customerAccount?.debits)
+                        }
+                      </Td>
+                    </Tr>
                     <Tr>
                       <Td p="0" py="4" colSpan={8}>
                         <Button
                           py="8"
                           w="100%"
-                          colorScheme="facebook"
+                          backgroundColor={"black"}
+                          colorScheme="blackAlpha"
+                          color="#7CFC00"
                           onClick={() =>
                             navigate(`/Recepcao/Caixa/NovoPagamento/${id}`)
                           }
@@ -547,8 +436,20 @@ export function BoxPaymentsDetails() {
               <TableContainer height="400px" overflowY="auto">
                 <Table variant="simple">
                   <Thead>
-                    <Tr>
-                      <Th
+                    <Tr fontSize="18"
+                        
+                 
+                    >
+                    
+                    <Td color="black"
+                        mb="40"
+                        bg="blue.100"
+                        borderBottom="1px solid black" py="8" colSpan={16}
+                        fontWeight={"bold"}
+                    >
+                    Exibindo todos os lançamentos:
+                    </Td>
+                      {/* <Th
                         fontSize="18"
                         py="8"
                         color="black"
@@ -556,35 +457,25 @@ export function BoxPaymentsDetails() {
                         bg="blue.100"
                         borderBottom="1px solid black"
                       >
-                        Exibindo todos os lançamentos:{" "}
-                        <Button
-                          colorScheme="whatsapp"
-                          onClick={() => setTypePayment(false)}
-                        >
-                          CRÉDITOS
-                        </Button>
-                        <Button
-                          ml={2}
-                          onClick={() => setTypePayment(true)}
-                          colorScheme="whatsapp"
-                        >
-                          DÉBITOS
-                        </Button>
-                      </Th>
+                       
+                      </Th> */}
+                      {/* <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
                       <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
+                      <Th bg="blue.100" borderBottom="1px solid black"></Th> */}
                     </Tr>
                     <Tr border="1px solid black" bg="blue.400">
                       <Th border="1px solid black" fontSize="18" color="white">
+                        Data
+                      </Th>
+                      <Th border="1px solid black" fontSize="18" color="white">
+                        C
+                      </Th>
+                      <Th border="1px solid black" fontSize="18" paddingRight={"64"} color="white">
                         Descrição
                       </Th>
 
-                      <Th border="1px solid black" fontSize="18" color="white">
-                        Data
-                      </Th>
                       <Th
                         border="1px solid black"
                         fontSize="18"

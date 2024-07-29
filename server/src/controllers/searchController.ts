@@ -82,35 +82,32 @@ export const searchController = {
 
   paymentsSearch: async (request: FastifyRequest<{ Querystring: { name: string, cpf: string, codCli: string, codPet: string, telephone: string } }>, reply: FastifyReply) => {
     try {
-
       const { name, cpf, codCli, codPet, telephone } = request.query;
+      
+      const cpfFilter = cpf ? { contains: cpf } : undefined;
+      const codCliFilter = codCli && !isNaN(Number(codCli)) ? Number(codCli) : undefined;
+      const phoneFilter = telephone ? { contains: telephone } : undefined;
+      const codPetNumber = codPet && !isNaN(Number(codPet)) ? Number(codPet) : undefined;
+      const petsFilter = codPetNumber ? { some: { CodAnimal: codPetNumber } } : undefined;
 
-const cpfFilter = cpf ? { contains: cpf } : undefined;
-const codCliFilter = codCli && !isNaN(Number(codCli)) ? Number(codCli) : undefined;
-const phoneFilter = telephone ? { contains: telephone } : undefined;
-const codPetNumber = codPet && !isNaN(Number(codPet)) ? Number(codPet) : undefined;
-const petsFilter = codPetNumber ? { some: { CodAnimal: codPetNumber } } : undefined;
-
-
-const accounts = await prisma.customer.findMany({
-  take: 10,
-  where: {
-    name: { contains: name, mode: 'insensitive' },
-    cpf: cpfFilter,
-    CodCli: codCliFilter,
-    phone: phoneFilter,
-    pets: petsFilter,
-  },
-  include: {
-    pets: {
-      select: {
-        name: true,
-        CodAnimal: true,
-      }
-    },
-    customerAccount: true,
-  },
-});
+      const accounts = await prisma.customer.findMany({
+                where: {
+          name: { contains: name, mode: 'insensitive' },
+          cpf: cpfFilter,
+          CodCli: codCliFilter,
+          phone: phoneFilter,
+          pets: petsFilter,
+        },
+        include: {
+          pets: {
+            select: {
+              name: true,
+              CodAnimal: true,
+            }
+          },
+          customerAccount: true,
+        },
+      });
 
       reply.send(accounts);
     } catch (error) {
