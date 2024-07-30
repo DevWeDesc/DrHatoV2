@@ -8,36 +8,45 @@ import {
   Thead,
   Tbody,
   Th,
-  Button,
-  Grid,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import { Header } from "../../../components/admin/Header";
 import { GenericLink } from "../../../components/Sidebars/GenericLink";
 import { GenericSidebar } from "../../../components/Sidebars/GenericSideBar";
-import { BiCalendarPlus, AiFillEdit, CiStar, FaStar } from "react-icons/all";
+import { BiCalendarPlus, AiFillEdit } from "react-icons/all";
 import { AdminContainer } from "../../AdminDashboard/style";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../lib/axios";
-import { PaymentsSearch } from "../../../components/Search/paymentsSearch";
+import { PaymentFilterSearch } from "../../../components/Search/PaymentFilterSearch";
 import { BsReception4 } from "react-icons/bs";
 import { LoadingSpinner } from "../../../components/Loading";
 import { useQuery } from "react-query";
-
-interface QueueProps {
-  response: [];
-  totalInQueue: number;
-}
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 
 export function BoxPayments() {
   const navigate = useNavigate();
+  const methods = useForm();
 
   async function getQueue() {
-    const response = await api.get("/debitaccounts");
+    const queueSearch = methods.watch();
+
+    const validatedQueueSearch = Object.values(queueSearch).some(
+      (value) => value !== ""
+    );
+
+    const response = validatedQueueSearch
+      ? await api.get(
+          `/filtredquerypayments?name=${queueSearch.name}&cpf=${queueSearch.cpf}&codCli=${queueSearch.codCli}&codPet=${queueSearch.codPet}&telephone=${queueSearch.telephone}`
+        )
+      : await api.get("/debitaccounts");
+
     return response.data;
   }
 
-  const { data, isLoading } = useQuery("accountDebits", {
+  const handleSearch: SubmitHandler<any> = async (values) => {
+    refetch();
+  };
+
+  const { data, isLoading, refetch } = useQuery("accountDebits", {
     queryFn: getQueue,
   });
 
@@ -69,40 +78,27 @@ export function BoxPayments() {
               />
             </GenericSidebar>
             <Box flex="1" borderRadius={8} bg="gray.200" p="8">
-              <Flex mb="8" gap="8" direction="column" align="center">
-                <PaymentsSearch path="filtredquery" />
-                <Grid templateColumns="repeat(3, 1fr)" gap={5}>
-                  <div />
-                  {/* <Button colorScheme="teal" onClick={() => navigate("/Queue")}> */}
-                  {/* <>TOTAL NA FILA: {totalCustomer.length}</> */}
-                  {/* </Button> */}
-                  {/* <Flex alignItems="center" gap={2}>
-                    <Button
-                      colorScheme="yellow"
-                      onClick={beforePage}
-                      fontSize={14}
-                    >
-                      Página Anterior
-                    </Button>
-                    <Text fontWeight="bold">{pagination}</Text>
-                    <Button
-                      colorScheme="yellow"
-                      onClick={nextPage}
-                      fontSize={14}
-                    >
-                      Próxima página
-                    </Button>
-                  </Flex> */}
-                </Grid>
-                <Flex textAlign="center" justify="center" w="80%">
+              <Flex mb="8" gap="8">
+                <FormProvider {...methods}>
+                  <form onSubmit={methods.handleSubmit(handleSearch)}>
+                    <PaymentFilterSearch />
+                  </form>
+                </FormProvider>
+
+                <Flex
+                  textAlign="center"
+                  justify="center"
+                  height={"full"}
+                  w="80%"
+                >
                   <Table colorScheme="blackAlpha">
                     <Thead>
                       <Tr>
-                        <Th>Conta</Th>
                         <Th>Cliente</Th>
-                        <Th>Valor em débito</Th>
-                        <Th>ID: Consulta/Internação</Th>
-                        <Th>Cliente Vip ?</Th>
+                        <Th>Último Animal</Th>
+                        <Th>Data</Th>
+                        <Th>Hora</Th>
+                        <Th>Saldo</Th>
                       </Tr>
                     </Thead>
 
@@ -114,22 +110,43 @@ export function BoxPayments() {
                           onClick={() =>
                             navigate(`/Recepcao/Caixa/Pagamentos/${payment.id}`)
                           }
+                          backgroundColor={
+                            payment?.customerAccount?.clientIsVip && "orange.200"
+                              
+                          }
+                          _hover={{
+                            backgroundColor: payment?.customerAccount
+                              ?.clientIsVip
+                              ? "orange.300"
+                              : "gray.300",
+                          }}
                         >
-                          <Td>{payment?.customerAccount?.accountNumber}</Td>
                           <Td>{payment?.name}</Td>
-
+                          <Td>{payment.pets[0].name}</Td>
+                          <Td>
+                            {new Intl.DateTimeFormat("pt-BR", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            }).format(
+                              new Date(payment?.customerAccount?.dateConsult)
+                            )}
+                          </Td>
+                          <Td>
+                            {new Intl.DateTimeFormat("pt-BR", {
+                              hour: "numeric",
+                              minute: "numeric",
+                            }).format(
+                              new Date(payment?.customerAccount?.dateConsult)
+                            )}
+                          </Td>
                           <Td>
                             {new Intl.NumberFormat("pt-BR", {
                               style: "currency",
                               currency: "BRL",
-                            }).format(payment?.customerAccount?.debits)}
-                          </Td>
-                          <Td>{payment?.customerAccount?.consultId}</Td>
-                          <Td>
-                            {!payment?.customerAccount?.clientIsVip ? (
-                              <FaStar color="red" size={32} />
-                            ) : (
-                              <FaStar color="orange" size={32} />
+                            }).format(
+                              payment?.customerAccount?.credits -
+                                payment?.customerAccount?.debits
                             )}
                           </Td>
                         </Tr>

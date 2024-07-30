@@ -4,6 +4,7 @@ import { searchController } from "../controllers/searchController";
 
 export async function searchsRoutes(app: FastifyInstance) {
   app.get("/filtredquery", searchController.vetsBigSearchs);
+  app.get("/filtredquerypayments", searchController.paymentsSearch);
   app.get("/queryall", searchController.getAll);
   app.get("/vetmenusearch/:page", searchController.searchVetMenu)
   app.get("/searchcodpet/:codPet", searchController.getByCodPet)
