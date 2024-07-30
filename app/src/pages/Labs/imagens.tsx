@@ -82,6 +82,7 @@ export function LabImagens() {
   const [codPet, setCodPet] = useState("");
   const [codExam, setCodExam] = useState("");
   const [solicitedBy, setSolicitedBy] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [filterDates, setFilterDates] = useState<filterDates>({
     initialDate: "",
     finalDate: "",
@@ -101,17 +102,21 @@ export function LabImagens() {
     queryKey: ["labs", showEndExams, codPet, solicitedBy, petName, codExam],
     queryFn: async () => {
       switch (true) {
-      case true: 
-        const res = await api.get(`/labmenusearch?petCode=${codPet}&petName=${petName}&solicitedBy=${solicitedBy}&initialDate=${filterDates.initialDate}&finalDate=${filterDates.finalDate}&codeExam=${codExam}&showEndExams=${showEndExams}`);
-        
-        return res.data.exams.filter((exam: LabImagensProps)=> exam.examsType[0] === "image") as LabImagensProps[];
+        case true:
+          const res = await api.get(
+            `/labmenusearch?petCode=${codPet}&petName=${petName}&solicitedBy=${solicitedBy}&initialDate=${filterDates.initialDate}&finalDate=${filterDates.finalDate}&codeExam=${codExam}&showEndExams=${showEndExams}`
+          );
 
-      default:
-        const resDef = await api.get("/labs");
-        setExams(resDef.data.allExams);
-        return resDef.data.exams.filter(
-          (exam: LabImagensProps) => exam.examsType[0] === "image"
-        ) as LabImagensProps[];
+          return res.data.exams.filter(
+            (exam: LabImagensProps) => exam.examsType[0] === "image"
+          ) as LabImagensProps[];
+
+        default:
+          const resDef = await api.get("/labs");
+          setExams(resDef.data.allExams);
+          return resDef.data.exams.filter(
+            (exam: LabImagensProps) => exam.examsType[0] === "image"
+          ) as LabImagensProps[];
       }
     },
   });
@@ -128,23 +133,22 @@ export function LabImagens() {
         examDetails: response.data.petExamResult,
         examCharacs: response.data.petExamRefs,
       };
-
+      setIsLoading(true);
       const res = await api.post(`/sendemail/report/onepart/${examId}`, data);
 
       if (res.status === 200) {
         toast.success("Email enviado com sucesso");
+        setIsLoading(false);
       }
     }
 
     if (isMultiPart === true) {
       const response = await api.get(`/lab/multipart/${examId}`);
-
       const data = {
         examDetails: response.data.petExamResult,
         examCharacs: response.data.examRefs,
       };
       const res = await api.post(`/sendemail/report/multipart/${examId}`, data);
-
       if (res.status === 200) {
         toast.success("Email enviado com sucesso");
       }
@@ -411,7 +415,16 @@ export function LabImagens() {
                   </Button>
                 </Flex>
                 <Button colorScheme="teal">
-                  <>TOTAL NA FILA: {dataExams?.filter((exam)=> exam.examsType[0] === "image" && exam.doneExame === showEndExams)?.length}</>
+                  <>
+                    TOTAL NA FILA:{" "}
+                    {
+                      dataExams?.filter(
+                        (exam) =>
+                          exam.examsType[0] === "image" &&
+                          exam.doneExame === showEndExams
+                      )?.length
+                    }
+                  </>
                 </Button>
                 <Flex textAlign="center" justify="center">
                   <Table colorScheme="blackAlpha">
@@ -488,6 +501,7 @@ export function LabImagens() {
                                             <Th>
                                               <Button
                                                 colorScheme="teal"
+                                                isLoading={isLoading}
                                                 onClick={() =>
                                                   handleSendEmailResultExams({
                                                     examId: exam.id,
@@ -536,6 +550,7 @@ export function LabImagens() {
                                   <Th>Veterinário</Th>
                                   <Th>Status</Th>
                                   <Th>Responsável</Th>
+                                  <Th>Impressão</Th>
                                 </Tr>
                               </Thead>
                               <Tbody>
@@ -547,7 +562,13 @@ export function LabImagens() {
                                           <Tr
                                             key={exam.id}
                                             cursor="pointer"
-                                            onClick={() => navigate(`/Labs/Set/${exam.id}/${exam.codeExam}/${exam.medicine?.pet.id}`)}
+                                            onClick={(ev: any) => {
+                                              if (ev.target.type !== "button") {
+                                                navigate(
+                                                  `/Labs/Set/${exam.id}/${exam.codeExam}/${exam.medicine?.pet.id}`
+                                                );
+                                              }
+                                            }}
                                           >
                                             <Td>
                                               {new Intl.DateTimeFormat(
@@ -575,6 +596,22 @@ export function LabImagens() {
                                               {exam.responsibleForExam
                                                 ? exam.responsibleForExam
                                                 : "Não Laudado"}
+                                            </Th>
+                                            <Th>
+                                              <Button
+                                                colorScheme="teal"
+                                                onClick={() =>
+                                                  printTag({
+                                                    examId: exam.id,
+                                                    isMultiPart: exam.twoPart,
+                                                    isOnePart: exam.onePart,
+                                                    isReportByText:
+                                                      exam.byReport,
+                                                  })
+                                                }
+                                              >
+                                                Imprimir
+                                              </Button>
                                             </Th>
                                           </Tr>
                                         )}
