@@ -336,13 +336,13 @@ export const labsController = {
       port: 587,
       secure: false,
       auth: {
-        user: "glaucoedtester@outlook.com",
+        user: "glauco.tester@hotmail.com",
         pass: "Glaucoed@1",
       },
     });
 
     const responseSendEmail = await transporter.sendMail({
-      from: `"Dr Hato Hospital Veterinário" <glaucoedteste@hotmail.com>`,
+      from: `"Dr Hato Hospital Veterinário" <glauco.tester@hotmail.com>`,
       to: email,
       subject: "Resultado de Exame",
       html: templateContent,
@@ -395,9 +395,10 @@ export const labsController = {
       }
 
       const responseEmailService = await labsController.emailService({
-        email: "glauco.powergames@gmail.com",
+        email: "desenvolvimento@wedesc.com.br",
         pdfs: data.length > 0 ? data : [result],
       });
+      
 
       reply.send(responseEmailService).status(200);
 
@@ -426,7 +427,7 @@ export const labsController = {
       }
 
       const responseEmailService = await labsController.emailService({
-        email: "glauco.powergames@gmail.com",
+        email: "desenvolvimento@wedesc.com.br",
         pdfs: data.length > 0 ? data : [result],
       });
 
@@ -454,10 +455,11 @@ export const labsController = {
       }
 
       const responseEmailService = await labsController.emailService({
-        email: "glauco.powergames@gmail.com",
+        email: "desenvolvimento@wedesc.com.br",
         pdfs: data.length > 0 ? data : [result],
       });
 
+      console.log(responseEmailService)
       reply.send(responseEmailService).status(200);
 
     } catch (error) {

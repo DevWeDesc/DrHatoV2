@@ -101,6 +101,7 @@ export function LabExames() {
   const [codPet, setCodPet] = useState("");
   const [solicitedBy, setSolicitedBy] = useState("");
   const [showEndExams, setShowEndExams] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [filterDates, setFilterDates] = useState<filterDates>({
     initialDate: "",
     finalDate: "",
@@ -251,10 +252,12 @@ export function LabExames() {
         examCharacs: response.data.petExamRefs,
       };
 
+      setIsLoading(true);
       const res = await api.post(`/sendemail/report/onepart/${examId}`, data);
 
       if (res.status === 200) {
         toast.success("Email enviado com sucesso");
+        setIsLoading(false);
       }
     }
 

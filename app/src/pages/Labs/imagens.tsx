@@ -82,6 +82,7 @@ export function LabImagens() {
   const [codPet, setCodPet] = useState("");
   const [codExam, setCodExam] = useState("");
   const [solicitedBy, setSolicitedBy] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [filterDates, setFilterDates] = useState<filterDates>({
     initialDate: "",
     finalDate: "",
@@ -132,23 +133,22 @@ export function LabImagens() {
         examDetails: response.data.petExamResult,
         examCharacs: response.data.petExamRefs,
       };
-
+      setIsLoading(true);
       const res = await api.post(`/sendemail/report/onepart/${examId}`, data);
 
       if (res.status === 200) {
         toast.success("Email enviado com sucesso");
+        setIsLoading(false);
       }
     }
 
     if (isMultiPart === true) {
       const response = await api.get(`/lab/multipart/${examId}`);
-
       const data = {
         examDetails: response.data.petExamResult,
         examCharacs: response.data.examRefs,
       };
       const res = await api.post(`/sendemail/report/multipart/${examId}`, data);
-
       if (res.status === 200) {
         toast.success("Email enviado com sucesso");
       }
@@ -501,6 +501,7 @@ export function LabImagens() {
                                             <Th>
                                               <Button
                                                 colorScheme="teal"
+                                                isLoading={isLoading}
                                                 onClick={() =>
                                                   handleSendEmailResultExams({
                                                     examId: exam.id,
