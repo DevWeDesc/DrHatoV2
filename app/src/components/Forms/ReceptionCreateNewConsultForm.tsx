@@ -67,7 +67,7 @@ export function ReceptionCreateNewConsultForm() {
     resolver: yupResolver(customerSchema),
   });
   const [howKnow, setHowKnow] = useState("");
-  const [kindPerson, setKindPerson] = useState("");
+  const [kindPerson, setKindPerson] = useState("Fisica");
   const [CPFValue, setCPFValue] = useState("");
   const [RGValue, setRGValue] = useState("");
   const [CEPValue, setCEPValue] = useState("");
@@ -329,6 +329,7 @@ export function ReceptionCreateNewConsultForm() {
                     <Input
                       id="cpf"
                       name="cpf"
+                      placeholder="CNPJ do Cliente"
                       //{...register("cpf")}
                       value={formatCNPJ(CPFValue)}
                       onChange={(ev) => {
