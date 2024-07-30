@@ -451,6 +451,7 @@ export function LabExames() {
                 <Th>Veterinário</Th>
                 <Th>Status</Th>
                 <Th>Responsável</Th>
+                <Th>Impressão</Th>
               </Tr>
             </Thead>
 
@@ -462,14 +463,17 @@ export function LabExames() {
                       <Tr
                         key={exam.id}
                         cursor="pointer"
-                        onClick={() =>
-                          navigate(
-                            `/Labs/Set/${exam.id}/${
-                              exams.find((data: any) => data.name === exam.name)
-                                .codexam
-                            }/${exam.medicine?.pet.id}`
-                          )
-                        }
+                        onClick={(ev: any) => {
+                          if (ev.target.type !== "button") {
+                            navigate(
+                              `/Labs/Set/${exam.id}/${
+                                exams.find(
+                                  (data: any) => data.name === exam.name
+                                ).codexam
+                              }/${exam.medicine?.pet.id}`
+                            );
+                          }
+                        }}
                       >
                         <Td>
                           {new Intl.DateTimeFormat("pt-BR").format(
@@ -491,6 +495,21 @@ export function LabExames() {
                           {exam.responsibleForExam
                             ? exam.responsibleForExam
                             : "Não Laudado"}
+                        </Th>
+                        <Th>
+                          <Button
+                            colorScheme="teal"
+                            onClick={() =>
+                              printTag({
+                                examId: exam.id,
+                                isMultiPart: exam.twoPart,
+                                isOnePart: exam.onePart,
+                                isReportByText: exam.byReport,
+                              })
+                            }
+                          >
+                            Imprimir
+                          </Button>
                         </Th>
                       </Tr>
                     )}
