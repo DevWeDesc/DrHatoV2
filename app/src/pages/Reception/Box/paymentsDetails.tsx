@@ -151,7 +151,8 @@ export function BoxPaymentsDetails() {
     queryKey: ["debits", consultId],
     queryFn: async () => {
       const debits = await api.get(`/customer/debits/${consultId}`);
-      return debits.data.consultDebits;
+      // return debits.data.consultDebits;
+      return debits.data as Consult;
     },
   });
 
@@ -405,7 +406,7 @@ export function BoxPaymentsDetails() {
                       <Td fontSize="18" py="2" color="black" bg="transparent" border={"2px"} colSpan={1} fontWeight={"bold"}>
                         Saldo Atual
                       </Td>
-                      <Td colSpan={5} border={"2px"} backgroundColor={"green.100"}>
+                      <Td colSpan={5} border={"2px"} backgroundColor={ client.customerAccount?.credits - client.customerAccount?.debits > 0 ? "green.100" : "red.100"}>
                         {
                          new Intl.NumberFormat("pt-BR", {
                           style: "currency",
@@ -645,7 +646,8 @@ export function BoxPaymentsDetails() {
           onRequestClose={() => setModalDetailsIsOpen(false)}
         >
           <ModalDetails
-            debitsDetails={dataDetailsDebits}
+            client={client}
+            debitsDetails={dataDetailsDebits as Consult} 
             setModalDetailsIsOpen={setModalDetailsIsOpen}
           />
         </GenericModal>

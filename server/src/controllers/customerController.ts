@@ -381,8 +381,9 @@ export const customerController = {
 
     const debitsDetails = await prisma.openedConsultsForPet.findUnique({
       where:  { id },
-      select: {
-        consultDebits: true
+      include: {
+        consultDebits: true,
+        
       }
     })
 
