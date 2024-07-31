@@ -209,8 +209,10 @@ export function BoxPaymentsDetails() {
       );
       break;
     case typePayment === true:
+      // Ta sendo renderizado aqui
       typePaymentShow = (
         <>
+        
           {debits.map((debit) => {
             return (
               <Tr
@@ -240,15 +242,15 @@ export function BoxPaymentsDetails() {
                   </Flex>
                 </Td>
 
-                <Td border="2px" bgColor="red.100">
+                <Td border="1px" bgColor="red.100">
                   {new Intl.NumberFormat("pt-BR", {
                     currency: "BRL",
                     style: "currency",
                   }).format(debit.totaLDebits)}
                 </Td>
 
-                <Td border="2px" bgColor="green.100">
-                  0
+                <Td border="1px" bgColor="green.100">
+                  
                 </Td>
                 <Td border="1px">-</Td>
                 <Td border="1px">
@@ -437,11 +439,7 @@ export function BoxPaymentsDetails() {
               <TableContainer height="400px" overflowY="auto">
                 <Table variant="simple">
                   <Thead>
-                    <Tr fontSize="18"
-                        
-                 
-                    >
-                    
+                    <Tr fontSize="18">
                     <Td color="black"
                         mb="40"
                         bg="blue.100"
@@ -450,21 +448,6 @@ export function BoxPaymentsDetails() {
                     >
                     Exibindo todos os lançamentos:
                     </Td>
-                      {/* <Th
-                        fontSize="18"
-                        py="8"
-                        color="black"
-                        mb="40"
-                        bg="blue.100"
-                        borderBottom="1px solid black"
-                      >
-                       
-                      </Th> */}
-                      {/* <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th> */}
                     </Tr>
                     <Tr border="1px solid black" bg="blue.400">
                       <Th border="1px solid black" fontSize="18" color="white">
