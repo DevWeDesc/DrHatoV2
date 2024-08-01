@@ -498,7 +498,7 @@ export function BoxPaymentsDetails() {
             </Box>
           </Flex>
         </Flex>
-        <GenericModal
+        {/* <GenericModal
           isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}
         >
@@ -589,8 +589,8 @@ export function BoxPaymentsDetails() {
               </Table>
             </TableContainer>
           </>
-        </GenericModal>
-        <GenericModal
+        </GenericModal> */}
+        {/* <GenericModal
           isOpen={creditModalIsOpen}
           onRequestClose={() => setCreditModalIsOpen(false)}
         >
@@ -623,7 +623,7 @@ export function BoxPaymentsDetails() {
               Salvar
             </Button>
           </Flex>
-        </GenericModal>
+        </GenericModal> */}
         <GenericModal
           isOpen={modalDetailsIsOpen}
           onRequestClose={() => setModalDetailsIsOpen(false)}
