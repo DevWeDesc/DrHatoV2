@@ -15,7 +15,6 @@ export function MenuVet() {
   const [isFinishied, setIsFinishied] = useState(false);
   const [isAddmited, setIsAddmited] = useState(false);
   const [showAllVets, setShowAllVets] = useState(false);
-  const [showOldConsults, setShowOldConsults] = useState(false);
   const [pagination, setPagination] = useState(1);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [totalInQueue, setTotalInQueue] = useState(0);
@@ -34,7 +33,12 @@ export function MenuVet() {
     queryKey: ["queueVets"],
     queryFn: async () => { 
       
-      const res = showOldConsults ? await api.get(`/consults/historie/old?initialDate=${initialDate}&finalDate=${finalDate}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`)  : await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}`) ;
+      // const res = showOldConsults ? await api.get(`/consults/historie/old?initialDate=${initialDate}&finalDate=${finalDate}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`)  : await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}`) ;
+      // setTotalInQueue(res.data.totalInQueue);
+      // setNumberOfPages(res.data.totalPages);
+      // return res.data.response;
+
+      const res =  await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}`) ;
       setTotalInQueue(res.data.totalInQueue);
       setNumberOfPages(res.data.totalPages);
       return res.data.response;
@@ -67,7 +71,6 @@ export function MenuVet() {
         `/Vets/Workspace/${petId}/${queueId}`
       )
     })
-  
   }
 
   return (
@@ -129,18 +132,6 @@ export function MenuVet() {
                             size="lg"
                           />
                         </VStack>
-                        {
-                          isFinishied && (
-                            <VStack>
-                          <FormLabel whiteSpace={"nowrap"}>Histórico Consultas</FormLabel>
-                          <Checkbox
-                            onChange={(ev) => setShowOldConsults(ev.target.checked)}
-                            border="2px"
-                            size="lg"
-                          />
-                        </VStack>
-                          )
-                        }
                       </HStack>
                     </HStack>
                   </Flex>
@@ -243,8 +234,6 @@ export function MenuVet() {
                           .map((pet: any, index: number) => (
                             <Tr
                               onClick={() => navigate(
-                                showOldConsults ? 
-                                `/Pets/MedicineRecordOld/${pet.id}/${pet.queueId}` :
                                 `/Vets/Workspace/${pet.id}/${pet.queueId}`
                               )}
                               color={pet.petAdmitted ? "red.500" : "black"}

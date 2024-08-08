@@ -60,7 +60,6 @@ function combineDateTime(date, time) {
     request: oldConsultas.Solicitacao,
     diagnostic: oldConsultas.Diagnostico,
     openedBy: oldConsultas.NomeCompleto,
-    medicineRecordId: parseInt(oldConsultas.CodAnimal),
     CodAnimal: parseInt(oldConsultas.CodAnimal),
     }));
 
@@ -70,7 +69,17 @@ function combineDateTime(date, time) {
 
       for (const consults of filteredData) {
 
-        try {
+             try {
+
+              const numberMedicioneRecord = await prisma.pets.findFirst({
+                where: {
+                  CodAnimal: consults.CodAnimal,
+                },
+                select: {
+                  id: true,
+                }
+              });
+
           await prisma.openedConsultsForPet.create({
             data: {
               idConsult: consults.idConsult,
@@ -88,7 +97,7 @@ function combineDateTime(date, time) {
               diagnostic: consults.diagnostic,
               openedBy: consults.openedBy,
               clientIsVip: false,
-              medicineRecordId: consults.medicineRecordId ? consults.medicineRecordId : null,
+              medicineRecordId: consults.CodAnimal ? numberMedicioneRecord.id : null,
             }, 
           });
                   
