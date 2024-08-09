@@ -40,8 +40,12 @@ import { toast } from "react-toastify";
 import { useQuery } from "react-query";
 import { LoadingSpinner } from "../../../components/Loading";
 
+interface ICustomerProps extends ICustomer {
+  CodCli: string;
+}
+
 export function BoxNewPayments() {
-  const [customers, setCostumers] = useState({} as ICustomer);
+  const [customers, setCostumers] = useState({} as ICustomerProps);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [typePayment, setTypePayment] = useState("");
@@ -254,7 +258,8 @@ export function BoxNewPayments() {
                         roundedTopStart="8px"
                       >
                         Conta Corrente -{" "}
-                        {customers?.customerAccount?.accountNumber}
+                        Novo Lançamento 
+                        {/* {customers?.customerAccount?.accountNumber} */}
                       </Th>
                       <Th bg="blue.800"></Th>
                       <Th bg="blue.800"></Th>
@@ -266,118 +271,71 @@ export function BoxNewPayments() {
                   </Thead>
                   <Tbody>
                     <Tr>
-                      <Th
-                        fontSize="18"
-                        py="8"
-                        color="black"
-                        bg="blue.100"
-                        borderBottom="1px solid black"
-                      >
-                        Dados do Cliente
-                      </Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                      <Th bg="blue.100" borderBottom="1px solid black"></Th>
-                    </Tr>
-                    <Tr border="1px solid black">
-                      <Td
-                        borderBottom="2px solid black"
-                        fontSize="18"
-                        fontWeight="bold"
-                        w="10"
-                        p="0"
-                        pl="5"
-                      >
-                        Nome do Cliente
+                      <Td fontSize="18" py="2" color="black" bg="transparent" border={"2px"} colSpan={1} fontWeight={"bold"}>
+                        Cliente
                       </Td>
-                      <Td borderBottom="1px solid black" colSpan={6} p="0">
-                        <Input
-                          borderLeft="2px solid black"
-                          h="12"
-                          rounded="0"
-                          bg="white"
-                          borderColor="black"
-                          defaultValue={customers.name}
-                        ></Input>
+                      <Td colSpan={6} border={"2px"} backgroundColor={"white"}>
+                        <Flex gap={2}>
+
+                        <Text fontWeight={"bold"}>{customers.name}</Text>
+                        {"-"}
+                        <Flex gap={1}>
+                          <Text>CPF</Text>
+                        <Text>{customers.cpf}</Text>
+
+                        </Flex>
+                        {"-"}
+                        <Flex gap={1}>
+                        <Text>Código:</Text>
+                        <Text fontWeight={"bold"}>{customers.CodCli}</Text>
+                        </Flex>
+                        </Flex>
                       </Td>
                     </Tr>
-                    <Tr border="1px solid black">
-                      <Td
-                        borderBottom="2px solid black"
-                        fontSize="18"
-                        fontWeight="bold"
-                        p="0"
-                        pl="5"
-                      >
+                    <Tr>
+                      <Td fontSize="18" py="2" color="black" bg="transparent" border={"2px"} colSpan={1} fontWeight={"bold"}>
                         Endereço
                       </Td>
-                      <Td borderBottom="1px solid black" colSpan={6} p="0">
-                        <Input
-                          borderLeft="2px solid black"
-                          h="12"
-                          rounded="0"
-                          bg="white"
-                          borderColor="black"
-                          defaultValue={customers.adress}
-                        ></Input>
+                      <Td colSpan={6} border={"2px"} backgroundColor={"white"}>
+                        <Flex gap={1}>
+                          <Text>{customers.adress}</Text>
+                          {"-"}
+                          <Text>{customers.neighbour}</Text>
+                          {"-"}
+                          <Text >{customers.district}</Text>
+                        </Flex>
                       </Td>
                     </Tr>
-                    <Tr border="1px solid black">
-                      <Td
-                        p="0"
-                        pl="5"
-                        borderBottom="2px solid black"
-                        fontSize="18"
-                        fontWeight="bold"
-                        textAlign="start"
-                      >
+                    <Tr>
+                      <Td fontSize="18" py="2" color="black" bg="transparent" border={"2px"} colSpan={1} fontWeight={"bold"}>
                         Telefone / Celular
                       </Td>
-                      <Td borderBottom="1px solid black" colSpan={6} p="0">
-                        <Input
-                          borderLeft="2px solid black"
-                          h="12"
-                          rounded="0"
-                          bg="white"
-                          borderColor="black"
-                          defaultValue={customers.phone}
-                        ></Input>
+                      <Td colSpan={6} border={"2px"} backgroundColor={"white"}>
+                      <Flex gap={1}>
+                          <Text>{customers.tell ? customers.tell : "-"}</Text>
+                          {"/"}
+                          <Text>{customers.phone ? customers.phone : "-"}</Text>
+                        </Flex>
                       </Td>
                     </Tr>
-                    <Tr border="1px solid black">
-                      <Td
-                        p="0"
-                        pl="5"
-                        borderBottom="2px solid black"
-                        fontSize="18"
-                        fontWeight="bold"
-                        textAlign="start"
-                      >
-                        Débitos Atuais
+                    <Tr>
+                      <Td fontSize="18" py="2" color="black" bg="transparent" border={"2px"} colSpan={1} fontWeight={"bold"}>
+                        Saldo Atual
                       </Td>
-                      <Td borderBottom="1px solid black" colSpan={6} p="0">
-                        <Input
-                          borderLeft="2px solid black"
-                          h="12"
-                          rounded="0"
-                          bgColor={
-                            customers?.customerAccount?.debits >= 1
-                              ? "red.100"
-                              : "green.100"
-                          }
-                          borderColor="black"
-                          defaultValue={customers?.customerAccount?.debits}
-                        ></Input>
+                      <Td colSpan={6} border={"2px"} backgroundColor={ customers.customerAccount?.credits - customers.customerAccount?.debits > 0 ? "green.100" : "red.100"}>
+                        {
+                         new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(customers.customerAccount?.credits - customers.customerAccount?.debits)
+                        }
                       </Td>
                     </Tr>
                     <Tr border="1px solid black">
                       <Td
                         p="0"
                         py="8"
-                        bg="blue.700"
+                        bg="blue.800"
                         fontSize="20"
                         fontWeight="bold"
                         color="white"
@@ -387,20 +345,23 @@ export function BoxNewPayments() {
                         Para Iniciar um lançamento, selecione o tipo de
                         pagamento
                       </Td>
-                    </Tr>
+                    </Tr>                    
                   </Tbody>
                 </Table>
               </TableContainer>
               <TableContainer>
                 <Table variant="simple">
-                  <Tbody>
+                  <Tbody
+                  display={"flex"}
+                  flexDirection={"column"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  
+                  >
                     <Tr>
-                      <Td px="0">
-                        {" "}
+                      <Td borderColor={"transparent"}>
                         <Select
-                          bg="white"
                           borderColor="black"
-                          w=""
                           onChange={(ev) => setPaymentType(ev.target.value)}
                           value={paymentType}
                           textAlign="center"
@@ -412,7 +373,10 @@ export function BoxNewPayments() {
                           <option value="Dinheiro"> Dinheiro</option>
                         </Select>
                       </Td>
-                      <Td textAlign="end" fontWeight="bold">
+                      </Tr>
+                      <Tr>
+
+                      <Td fontWeight="bold">
                         Cupom de Desconto
                       </Td>
                       <Td px="0">
@@ -420,9 +384,10 @@ export function BoxNewPayments() {
                           bg="white"
                           borderColor="black"
                           placeholder="Insira código do cupom"
-                        ></Input>
+                          ></Input>
                       </Td>
-                    </Tr>
+              </Tr>
+                   
                   </Tbody>
                 </Table>
               </TableContainer>
