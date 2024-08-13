@@ -52,25 +52,6 @@ export default function ModalDetails({
                     </Tr>
                     <Tr>
                       <Td py={2} fontSize="15"  color="black" bg="transparent" border={"2px"} colSpan={1} fontWeight={"bold"}>
-                        Endereço
-                      </Td>
-                      <Td py={2} fontSize="15" border={"2px"} backgroundColor={"white"}>
-                        <Flex gap={1}>
-                          <Text>{client.adress}</Text>
-                          {"-"}
-                          <Text>{client.neighbour}</Text>
-                          {"-"}
-                          <Text >{client.district}</Text>
-                          {"-"}
-                          <Flex gap={1} fontWeight={"bold"}>
-                          <Text>CEP:</Text>
-                          <Text >{client.cep}</Text>
-                          </Flex>
-                        </Flex>
-                      </Td>
-                    </Tr>
-                    <Tr>
-                      <Td py={2} fontSize="15"  color="black" bg="transparent" border={"2px"} colSpan={1} fontWeight={"bold"}>
                         Nome do Animal
                       </Td>
                       <Td py={2} fontSize="15" border={"2px"} backgroundColor={"white"}>
@@ -110,37 +91,37 @@ export default function ModalDetails({
                 </Table>
               </TableContainer>
               <Text fontSize="2xl" fontWeight="bold" >
-            Produtos / Serviços de
+            Produtos / Serviços desta consulta:
           </Text>
         <TableContainer overflowY="scroll" w="100%" mt="4" h={540}>
           <Table>
             <Thead>
-              <Tr>
-                <Th fontSize="md">Item</Th>
-                <Th fontSize="md">Valor</Th>
-                <Th fontSize="md">Data</Th>
-                <Th fontSize="md">Solicitado Por</Th>
+              <Tr border={"2px"} backgroundColor={"gray.100"}>
+                <Th border={"2px"} borderColor={"black"} color={"black"} py={2} fontSize="small">Qtd.</Th>
+                <Th border={"2px"} borderColor={"black"} color={"black"} py={2} fontSize="small">Produto / Serviço</Th>
+                <Th border={"2px"} borderColor={"black"} color={"black"} py={2} fontSize="small">Tabela</Th>
+                <Th border={"2px"} borderColor={"black"} color={"black"} py={2} fontSize="small">Desconto</Th>
+                <Th border={"2px"} borderColor={"black"} color={"black"} py={2} fontSize="small">Valor Cobrado</Th>
               </Tr>
             </Thead>
             <Tbody>
               {debitsDetails?.consultDebits.map((debit) => (
-                <Tr key={debit.id}>
-                  <Td>{debit.name}</Td>
-                  <Td>
+                <Tr fontWeight={"bold"} border={"2px"} borderColor={"black"} color={"black"} py={2} key={debit.id}>
+                  <Td border={"2px"} borderColor={"black"} color={"black"} py={2}>1</Td>
+                  <Td border={"2px"} borderColor={"black"} color={"black"} py={2}>{debit.name}</Td>
+                  <Td border={"2px"} borderColor={"black"} color={"black"} py={2}>
                     {new Intl.NumberFormat("pt-BR", {
                       currency: "BRL",
                       style: "currency",
                     }).format(Number(debit.price))}
                   </Td>
-                  <Td>
-                    {new Intl.DateTimeFormat("pt-BR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }).format(new Date(debit.requestedDate))}
+                  <Td border={"2px"} borderColor={"black"} color={"black"} py={2}>
+                    0%
                   </Td>
-                  <Td>{debit.RequestedByVetName}</Td>
+                  <Td border={"2px"} borderColor={"black"} color={"black"} py={2}>{new Intl.NumberFormat("pt-BR", {
+                      currency: "BRL",
+                      style: "currency",
+                    }).format(Number(debit.price))}</Td>
                 </Tr>
               ))}
             </Tbody>
@@ -163,6 +144,8 @@ export default function ModalDetails({
             setModalDetailsIsOpen(false);
           }}
           w="100%"
+          py={6}
+          mt={4}
           colorScheme="whatsapp"
         >
           Fechar

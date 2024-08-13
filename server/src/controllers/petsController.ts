@@ -351,6 +351,7 @@ export const petsController = {
     }
 
     try {
+
       const currentPage = Number(page) || 1;
       const totalConsults = await prisma.pets.count({
         where: {
@@ -365,19 +366,18 @@ export const petsController = {
         },
       });
 
-      const totalPages = Math.ceil(totalConsults / 35);
+      
 
       const pets = await prisma.pets.findMany({
-        skip: (currentPage - 1) * 35,
-        take: 35,
+        // skip: (currentPage - 1) * 35,
+        // take: 35,
         where: {
           CodAnimal: petCode ? Number(petCode) : undefined,
-          name: { contains: petName },
-          customer: { name: { contains: customerName } },
+          name: { contains: petName, mode: "insensitive" },
+          customer: { name: { contains: customerName, mode: "insensitive" } },
           medicineRecords: {
             petConsults: {
               some: {
-                petName: { contains: petName },
                 isClosed: isClosed === "true" ? true : false,
                 vetPreference: { contains: vetName },
                 openedDate: filter.openedDate,
@@ -430,12 +430,19 @@ export const petsController = {
               queryType: consult.consultType,
               totalInQueue,
               petAdmitted: pet.bed?.isBusy ? true : false,
+              idConsult: consult.idConsult,
             };
           }) || []
         );
-      }).sort((a: any, b: any) => b.queueEntry - a.queueEntry);
+      }).sort((a: any, b: any) => a.queueEntry - b.queueEntry);
 
-      return reply.send({ response, totalInQueue, totalPages, totalConsults });
+      //Paginação
+      const itemsPerPage = 35;
+      const totalPages = Math.ceil( isClosed === "true"  ? response.length / 35  : totalConsults / 35);
+      const paginatedResponse = response.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+      //Paginação
+
+      return reply.send({ response: paginatedResponse, totalInQueue, totalPages, totalConsults });
     } catch (error) {
       console.error(error);
       reply.status(404).send(error);

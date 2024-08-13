@@ -19,10 +19,13 @@ import { PopulateSectors } from "./transformExcellSector.mjs";
 import { PopulateSurgeries } from "./transformExcellSurgeries.mjs";
 import { PopulateCustomer } from "./transformExcellUser.mjs";
 import { PopulateVaccines } from "./transformExcellVaccines.mjs";
+import { PopulateOpenedConsultsForPet } from "./TransformExcellOpenedConsultsForPet.mjs";
+import { deleteOpenedConsultsForPet } from "./deleteOpenedConsultsForPet.mjs";
+
 
 export async function PopulateDataBase() {
     try {
-
+        
         await PopulateUsers();
         await PopulateCustomer();
         await PopulatePets();
@@ -44,6 +47,9 @@ export async function PopulateDataBase() {
         await PopulateOldExamsHistorie();
         await PopulateOldAdmission();
         await PopulateOldDetailsAdmission();
+        // await deleteOpenedConsultsForPet();
+        await PopulateOpenedConsultsForPet();
+        
 
         console.log("Todo Banco Populado com Sucesso!")
         
