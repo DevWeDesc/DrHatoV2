@@ -18,3 +18,21 @@ export const normalizeCpf = (value: string | undefined) => {
     .replace(/(\d{3})(\d)/, '$1.$2')
     .replace(/(\d{3})(\d{1,2})/, '$1-$2')
 }
+
+export const normalizeCurrency = (value: string | undefined) => {
+  if (!value) return 'R$ 0,00'; // Valor padrão se não houver entrada
+
+
+  value = value.replace(/[\D]/g, '');
+
+  // Converte o valor para formato monetário com duas casas decimais
+  value = (parseFloat(value) / 100).toFixed(2);
+
+  // Adiciona separadores de milhar e formata o valor
+  value = value
+    .replace('.', ',') // Converte ponto decimal para vírgula
+    .replace(/(\d)(?=(\d{3})+\,)/g, '$1.'); // Adiciona ponto como separador de milhar
+
+  // Adiciona o símbolo de moeda BRL
+  return `R$ ${value}`;
+};
