@@ -421,8 +421,9 @@ export function WorkSpaceVet() {
                 py={4}
                 whiteSpace="normal"
                 onClick={
-                  () => setIsMedicineRecordOpen(true)
-                  // navigate(`/Pets/MedicineRecord/${id}/${queueId}`)
+                  () => 
+                  // setIsMedicineRecordOpen(true)
+                  navigate(`/Pets/MedicineRecord/${id}/${queueId}`)
                 }
                 leftIcon={<MdPets />}
                 colorScheme="linkedin"
@@ -902,7 +903,7 @@ export function WorkSpaceVet() {
         <EndConsults handleCloseQuery={handleCloseQuery} />
       </GenericModal>
 
-      <GenericModal
+      {/* <GenericModal
         isOpen={isMedicineRecordOpen}
         onRequestClose={closeMedicineRecordModal}
       >
@@ -921,7 +922,7 @@ export function WorkSpaceVet() {
             title="Visualizar Histórico novo"
           />
         </Flex>
-      </GenericModal>
+      </GenericModal> */}
       <GenericModal
         isOpen={surgerieDetailsIsOpen}
         onRequestClose={() => setSurgerieDetailsIsOpen(false)}

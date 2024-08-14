@@ -13,7 +13,7 @@ import {
   Textarea,
   TableContainer,
 } from "@chakra-ui/react";
-import { BiHome, GiMedicines, TbArrowBack } from "react-icons/all";
+import { BiHome, GiMedicines, TbArrowBack, MdHistory  } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../lib/axios";
 import { MedicineContainer } from "./style";
@@ -528,6 +528,13 @@ export function MedicineRecordOld() {
             <Button colorScheme="cyan" leftIcon={<GiMedicines size={24} />}>
               Histórico de medicação
             </Button>
+            <Button leftIcon={<MdHistory size={24} />}
+              colorScheme="red"
+              onClick={() => navigate(`/Pets/MedicineRecord/${id}/${queueId}`)}
+            >
+              Prontuário Atual
+            </Button>
+
           </Flex>
         </Flex>
 
@@ -573,7 +580,8 @@ export function MedicineRecordOld() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={`${consultsData?.name}, ${consultsData?.race}, ${consultsData?.weigth}Kgs, ${consultsData?.sexo}, ${consultsData?.corPet}`}
+                          value={`Nome: ${consultsData?.name}, Raça: ${consultsData?.race}, Peso: ${consultsData?.weigth}Kgs, Sexo: ${consultsData?.sexo}, Cor:${consultsData?.corPet}`}
+                          // value={`Nome: ${pets.name}, Raça: ${pets.race}, Peso: ${pets.weigth},  Sexo ${pets.sexo}, Cor: ${pets.corPet} `}
                         />
                       </Td>
                     </Tr>
