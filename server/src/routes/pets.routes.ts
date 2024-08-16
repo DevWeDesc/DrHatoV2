@@ -28,4 +28,5 @@ export async function petRoutes(app: FastifyInstance) {
     petsController.getResultOldByExamId
   );
   app.post("/pet/results/old/:examId/:petId", petsController.createResultsOld);
+  app.put("/pet/edit/:petId", petsController.changePetAll);
 }

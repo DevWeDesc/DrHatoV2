@@ -39,6 +39,7 @@ import { CreatePetsForm } from "../../components/Forms/CreatePetsForm";
 import { QueryClient, useQuery } from "react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
+import ModalEditAnimal from "./modalEditAnimal";
 
 
 interface CustomerProps {
@@ -110,6 +111,7 @@ export function CustomerDetails() {
   const [notPreferences, setNotPreferences] = useState(false);
   const [vetPreference, setVetPreference] = useState("");
   const [moreInfos, setMoreInfos] = useState("");
+  const [isModalUpdated, setIsModalUpdated] = useState(false);
   const [customer, setCustomer] = useState<CustomerProps>({
     id: "",
     name: "",
@@ -163,9 +165,6 @@ export function CustomerDetails() {
     setUserVets(response.data);
     queryClient.invalidateQueries('vetsReception')
   }
-
-
-
 
   async function setPetInQueue() {
     try {
@@ -221,6 +220,7 @@ export function CustomerDetails() {
   const handleMonthChange = (e: any) => {
     setSelectedMonth(e.target.value);
   };
+  
   let selectRaces;
   switch (true) {
     case especieState === "Felina":
@@ -818,16 +818,28 @@ export function CustomerDetails() {
                       </Tr>
                       <Tr>
                         <Td py="0" colSpan={4} px="0">
-                          <Button
-                            py="6"
-                            mt="0.2"
-                            w="100%"
-                            colorScheme="blue"
-                            onClick={() => setPetSelected([])}
-                          >
-                            Voltar para a listagem de Animais
-                          </Button>
+                          <Flex display={"flex"} justifyContent={"space-around"} mt={"6"}>
+                            <Button
+                              py="6"
+                              mt="0.2"
+                              w="40%"
+                              colorScheme="blue"
+                              onClick={() => setPetSelected([])}
+                            >
+                              Voltar para a listagem de Animais
+                            </Button>
+                            <Button 
+                              colorScheme="whatsapp"
+                              py="6"
+                              mt="0.2"
+                              w="40%"
+                              onClick={ ()=> setIsModalUpdated(true)}
+                            >
+                              Editar Animal
+                            </Button>
+                          </Flex>
                         </Td>
+
                       </Tr>
                     </Tbody>
                   </Table>
@@ -1188,6 +1200,10 @@ export function CustomerDetails() {
           Cadastrar
         </Button>
       </FormControl>
+            </GenericModal>
+            {/* isOpen={modalEditOpen} onRequestClose={() => setModalEditOpen(false)} pet={petSelected} */}
+            <GenericModal  isOpen={isModalUpdated} onRequestClose={()=> setIsModalUpdated(false)}>
+              <ModalEditAnimal petSelected={petSelected}  />
             </GenericModal>
           </Flex>
         </WorkSpaceContent>
