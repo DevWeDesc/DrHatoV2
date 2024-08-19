@@ -26,13 +26,7 @@ import {
 } from "@chakra-ui/react";
 import { AiFillTags, BiHome, TbArrowBack } from "react-icons/all";
 import { toast } from "react-toastify";
-
-
-import {
-  WorkSpaceContainer,
-  WorkSpaceContent,
-  WorkSpaceHeader,
-} from "../Vets/styles";
+import { WorkSpaceContainer, WorkSpaceContent, WorkSpaceHeader } from "../Vets/styles";
 import { PetProps } from "../Pets/details";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { CreatePetsForm } from "../../components/Forms/CreatePetsForm";
@@ -140,6 +134,7 @@ export function CustomerDetails() {
   const months = Array.from({ length: 13 }, (_, i) => i);
   const { register, handleSubmit } = useForm();
   const [weight, setWeight] = useState("");
+
   async function loadHealthInsurances() {
     const response = await api.get("/health/insurance")
     setHealthInsurance(response.data.healthInsurance)
@@ -165,7 +160,7 @@ export function CustomerDetails() {
     setUserVets(response.data);
     queryClient.invalidateQueries('vetsReception')
   }
-
+  
   async function setPetInQueue() {
     try {
 
@@ -687,7 +682,11 @@ export function CustomerDetails() {
                             <Td>
                               <RadioGroup onChange={setPetId} value={petId}>
                                 <Radio
-                                  onClick={() => setPetSelected(pet)}
+                                  onClick={() => {
+                                    setPetSelected(pet)
+                                    
+                                                                      
+                                  }}
                                   borderColor="teal.800"
                                   colorScheme="green"
                                   value={pet.id.toString()}
@@ -1203,7 +1202,7 @@ export function CustomerDetails() {
             </GenericModal>
             {/* isOpen={modalEditOpen} onRequestClose={() => setModalEditOpen(false)} pet={petSelected} */}
             <GenericModal  isOpen={isModalUpdated} onRequestClose={()=> setIsModalUpdated(false)}>
-              <ModalEditAnimal petSelected={petSelected}  />
+              <ModalEditAnimal refetch={()=> refetch()} petSelected={petSelected} setPetSelected={setPetSelected} setIsModalUpdated={setIsModalUpdated}  />
             </GenericModal>
           </Flex>
         </WorkSpaceContent>

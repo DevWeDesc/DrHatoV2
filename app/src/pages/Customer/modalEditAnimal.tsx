@@ -1,21 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { GenericModal } from "../../components/Modal/GenericModal";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   Text,
   Flex,
-  ChakraProvider,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Td,
   Button,
   HStack,
   Textarea,
   RadioGroup,
   Radio,
-  Th,
-  TableContainer,
   Input,
   Select,
   Checkbox,
@@ -27,7 +18,12 @@ import { useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
 import { toast } from "react-toastify";
 
-export default function ModalEditAnimal({ petSelected }: { petSelected: any }) {
+export default function ModalEditAnimal({ petSelected, setIsModalUpdated, refetch, setPetSelected }: { 
+  petSelected?: any, 
+  setIsModalUpdated?: Dispatch<SetStateAction<boolean>>, 
+  refetch?: ()=> void, 
+  setPetSelected?: Dispatch<SetStateAction<any>> 
+}) {
   const { register, handleSubmit } = useForm({
     defaultValues: {
       race: petSelected.race,
@@ -39,7 +35,7 @@ export default function ModalEditAnimal({ petSelected }: { petSelected: any }) {
       haveChip: petSelected.haveChip,
     }
   });
-  const years = Array.from({ length: 21 }, (_, i) => i);
+  const years = Array.from({ length: 31 }, (_, i) => i);
   const months = Array.from({ length: 13 }, (_, i) => i);
   const [especieState, setEspecie] = useState("");
   const [raceState, setRace] = useState("");
@@ -85,7 +81,6 @@ export default function ModalEditAnimal({ petSelected }: { petSelected: any }) {
     );
   }, []);
 
-console.log(petSelected)
 
   let selectRaces;
   switch (true) {
@@ -308,14 +303,20 @@ console.log(petSelected)
         : `${selectedYear} anos`,
       sexo: selectSex,
     };
-    console.log(newData)
-    
+
     try{
       const response = await api.put(`/pet/edit/${petSelected.id}`, newData)
 
       if(response.status === 201){
         toast.success('Pet Atualizado com Sucesso');
-
+        
+        if(setPetSelected){
+          setPetSelected([])
+        }
+        if(refetch && setIsModalUpdated){
+          setIsModalUpdated(false);
+          refetch();
+        }
       }
 
     }catch(err){

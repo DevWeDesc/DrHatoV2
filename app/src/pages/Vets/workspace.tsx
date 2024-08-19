@@ -49,6 +49,8 @@ import { QueryClient, useQuery } from "react-query";
 import { LoadingSpinner } from "../../components/Loading";
 import moment from "moment";
 import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
+import ModalEditAnimal from "../../pages/Customer/modalEditAnimal";
+
 type OpenExamProps = {
   isMultiPart: boolean;
   isReportByText: boolean;
@@ -87,6 +89,9 @@ export function WorkSpaceVet() {
     isCustomerDetailsOpen,
   } = useContext(ModalContext);
   const [handleViewComponent, setHandleViewComponent] = useState("");
+  // petSelected, setIsModalUpdated, refetch, setPetSelected
+  const [isModalUpdated, setIsModalUpdated] = useState(false);
+
   const [petWeigth, setPetWeigth] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [customerDetails, setCustomerDetails] = useState({} as ICustomer);
@@ -154,7 +159,7 @@ export function WorkSpaceVet() {
 
 
 
-  const { isLoading } = useQuery("getPetDetailsInfos", {
+  const { isLoading, refetch } = useQuery("getPetDetailsInfos", {
     queryFn: getDetailsInformations,
   });
 
@@ -541,18 +546,34 @@ export function WorkSpaceVet() {
                     <Th borderRight="1px solid black">
                       <Text fontWeight="bold">Animal</Text>
                     </Th>
-                    <Th>
+                    <Th py={0}>
+                      <Grid
+                        w="100%"
+                        fontWeight="bold"
+                        templateColumns="repeat(2, 1fr)"
+                        alignItems="center"
+                      >
+
                       <Text
                         fontWeight="bold"
-                        cursor="pointer"
-                        onClick={() =>
-                          navigate(
-                            `/Recepcao/Consultas/Clientes/Pets/Edit/${id}/${queueId}`
-                          )
-                        }
+                        // cursor="pointer"
+                        // onClick={() =>
+                        //   navigate(
+                        //     `/Recepcao/Consultas/Clientes/Pets/Edit/${id}/${queueId}`
+                        //   )
+                        // }
                       >
                         {`${pet.name}, ${pet.race}`}
                       </Text>
+                      <Button
+                          size="sm"
+                          colorScheme="yellow"
+                          // onClick={() => setModalWeigthPet(true)}
+                          onClick={() => setIsModalUpdated(true)}
+                          >
+                          Editar Animal
+                        </Button>
+                          </Grid>
                     </Th>
                   </Tr>
                   <Tr>
@@ -567,13 +588,13 @@ export function WorkSpaceVet() {
                         alignItems="center"
                       >
                         <Text> {`${pet.sexo}, ${pet.weigth}`} </Text>{" "}
-                        <Button
+                        {/* <Button
                           size="sm"
                           colorScheme="yellow"
                           onClick={() => setModalWeigthPet(true)}
                         >
                           Editar Peso
-                        </Button>
+                        </Button> */}
                       </Grid>
                     </Th>
                   </Tr>
@@ -961,6 +982,10 @@ export function WorkSpaceVet() {
           <Textarea value={surgerieDetails?.surgeriesReport?.reportedText} />
         </Flex>
       </GenericModal>
+      <GenericModal isOpen={isModalUpdated} onRequestClose={()=> setIsModalUpdated(false)}>
+        <ModalEditAnimal setIsModalUpdated={setIsModalUpdated} petSelected={pet} refetch={()=> refetch()} />
+      </GenericModal>
+      
     </ChakraProvider>
   );
 }
