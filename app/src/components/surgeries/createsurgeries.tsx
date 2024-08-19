@@ -298,7 +298,7 @@ export function Createsurgeries({
         <Flex
           color="black"
           direction="column"
-          w="65vw"
+          w="70vw"
           h="90vh"
           borderRight="2px solid black"
           fontWeight="bold"
@@ -383,7 +383,7 @@ export function Createsurgeries({
               {" "}
               Adicione Cirurgias
             </Text>
-            <HStack spacing={2}>
+            <HStack px={2} py={1} spacing={2}>
             {SearchAlfabet.map((letter) => (
               <Button
                 _hover={{
@@ -399,13 +399,13 @@ export function Createsurgeries({
             ))}
           </HStack>
             <Flex bg="gray.200" py="2" justify="center">
-              <Flex gap={2}>
+              <Flex w={"full"} px={2} gap={2}>
               {
                   consultDetails?.healthInsuranceId ? <Button onClick={() => getProcedureByHealthInsurance()} colorScheme="whatsapp" w="300px">Plano de Saúde</Button> : <></>
                 }
               <Button 
                   onClick={() => getSurgerieByName ()}
-                  color="white" w={160} colorScheme="twitter">
+                  color="white" w={160} colorScheme="teal">
                     Particular
                   </Button>
                 <Input borderColor="black"  bg="white"
@@ -419,10 +419,10 @@ export function Createsurgeries({
               <HStack>
         
               <Button colorScheme="teal">
-                Páginas {paginationInfos?.totalPages}
+                Páginas {paginationInfos?.totalPages ? paginationInfos?.totalPages : 1}
               </Button>
               <Button colorScheme="teal">
-                Página Atual {paginationInfos?.currentPage}
+                Página Atual {paginationInfos?.currentPage ? paginationInfos?.currentPage : 1}
               </Button>
               <Button
                 colorScheme="yellow"
@@ -501,7 +501,7 @@ export function Createsurgeries({
           </Flex>
         </Flex>
 
-        <Flex direction="column" w="35vw" border="1px solid black">
+        <Flex direction="column" w="30vw" border="1px solid black">
           <Text
             bg="gray.700"
             fontSize="2xl"

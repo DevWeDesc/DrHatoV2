@@ -174,7 +174,7 @@ export const examsController = {
 
       const response = await prisma.oldExams.findMany({
         where: {
-          name: { contains: examName },
+          name: { contains: examName, mode: "insensitive" },
           
        
         },
