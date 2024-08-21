@@ -550,7 +550,7 @@ export function WorkSpaceVet() {
                     <Th py={2}>
                       {" "}
                       <Text
-                        fontWeight="bold"
+                        fontWeight="normal"
                         cursor="pointer"
                         onClick={() =>
                           GetDetailsCustomerById(Number(pet.customerId))
@@ -585,17 +585,17 @@ export function WorkSpaceVet() {
                     <Th py={2} borderRight="1px solid black">
                       <Text fontWeight="bold">Gastos</Text>
                     </Th>
-                    <Th py={2}>
-                      {/* <Flex rounded="4px" fontWeight="bold">
+                    <Th display={"flex"}  gap={2} py={2}>
+                      <Text rounded="4px" fontWeight="normal">
                         {new Intl.NumberFormat("pt-BR", {
                           currency: "BRL",
                           style: "currency",
                         }).format(pet.totalAcc?.price)}{" "}
                         Nesta Consulta
                        
-                      </Flex> */}
-                      <Text>
-                        {`6 Messes: ${pet.oneYear?.totalPrice} - 12 Messes: ${pet.oneYear?.totalPrice}`}
+                      </Text>
+                      <Text fontWeight="normal">
+                        {`- 12 Messes: ${pet.oneYear?.totalPrice} (${pet?.consultsPet?.length})`}
                       </Text>
                     </Th>
                   </Tr>
@@ -720,6 +720,8 @@ export function WorkSpaceVet() {
               <Textarea
                 color="red.900"
                 borderColor="black"
+                overflowY={"scroll"}
+                resize={"none"}
                 value={pet.queue?.moreInfos}
               />
             </Flex>

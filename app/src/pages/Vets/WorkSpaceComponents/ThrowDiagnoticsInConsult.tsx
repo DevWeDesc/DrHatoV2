@@ -15,7 +15,7 @@ export function ThrowDiagnoisticsInConsult() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const queryClient = useQueryClient();
 
-  const [viewDiagnosticHandler, setViewDiagnosticHandler] = useState("");
+  const [viewDiagnosticHandler, setViewDiagnosticHandler] = useState("Sintomas");
   async function getQueueDiagnostic(): Promise<DiagnosticProps> {
     const response = await api.get(`/queue/consult/diagnostic/${queueId}`);
     return response.data.diagnostic;
@@ -52,6 +52,8 @@ export function ThrowDiagnoisticsInConsult() {
             placeholder="Digite aqui o Diagnóstico"
             value={diagnostic}
             onChange={(e) => setDiagnostic(e.target.value)}
+            resize={"none"}
+            overflowY={"scroll"}
           />
           <Button onClick={() => updateQueueDiagnostic()} colorScheme="teal">
             Salvar alterações - Diagnóstico
@@ -68,6 +70,8 @@ export function ThrowDiagnoisticsInConsult() {
             minH="12.5rem"
             value={prescription}
             onChange={(e) => setPrescription(e.target.value)}
+            resize={"none"}
+            overflowY={"scroll"}
           />
           <Button onClick={() => updateQueueDiagnostic()} colorScheme="teal">
             Salvar alterações - Prescrição
@@ -85,6 +89,8 @@ export function ThrowDiagnoisticsInConsult() {
             minH="12.5rem"
             onChange={(e) => setSympthons(e.target.value)}
             value={sympthons}
+            resize={"none"}
+            overflowY={"scroll"}
           />
           <Button onClick={() => updateQueueDiagnostic()} colorScheme="teal">
             Salvar alterações - Sintomas
@@ -99,6 +105,8 @@ export function ThrowDiagnoisticsInConsult() {
           minW="100%"
           minH="12.5rem"
           defaultValue={sympthons}
+          overflowY={"scroll"}
+          resize={"none"}
           onChange={(e) => setSympthons(e.target.value)}
         />
       );

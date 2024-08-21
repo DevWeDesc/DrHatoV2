@@ -75,7 +75,7 @@ export const WorkSpaceContent = styled.div`
   .div1 {
     border-right: 1px solid black;
     border-bottom: 1px solid black;
-    overflow: auto;
+    /* overflow: auto; */
   }
   .div2 {
     border-bottom: 1px solid black;
