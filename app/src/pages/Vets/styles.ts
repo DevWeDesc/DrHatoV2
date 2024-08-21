@@ -19,6 +19,8 @@ export const WorkSpaceFooter = styled.footer`
   width: 100%;
   border-top: 1px solid black;
   padding: 10px 0;
+  display: flex;
+  padding-left: 8px;
   /* height: 10vh; */
   /* background-color: #eaeaea; */
 `;

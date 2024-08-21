@@ -58,11 +58,18 @@ type OpenExamProps = {
   examId: number;
 };
 
+interface PetDetailsIncrement extends PetDetaisl {
+  oneYear: {
+    totalPrice: number;
+  };
+}
+
 export function WorkSpaceVet() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const queryClient = new QueryClient();
   const navigate = useNavigate();
-  const [pet, setPet] = useState({} as PetDetaisl);
+  // const [pet, setPet] = useState({} as PetDetaisl);
+  const [pet, setPet] = useState({} as PetDetailsIncrement);
   const {
     setModalWeigthPet,
     setAutorizationModalOpen,
@@ -144,9 +151,43 @@ export function WorkSpaceVet() {
     }
   };
 
+  async function isWithinOneYear(dateString: Date) {
+    const currentDate = new Date();
+    const inputDate = new Date(dateString);
+  
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
+  
+    return inputDate >= oneYearAgo && inputDate <= currentDate;
+  }
+
   async function getDetailsInformations() {
     await api.get(`/pets/${id}`).then(async (res) => {
-      setPet(res.data);
+
+      const pet = res.data;
+      const examsWithinOneYear = pet.exams.filter((exam: any) =>  isWithinOneYear(exam.requestedDate));
+      const vaccinesWithinOneYear = pet.vaccines.filter((vac: any) =>  isWithinOneYear(vac.requestedDate));
+      const proceduresWithinOneYear = pet.procedures.filter((proc: any) => isWithinOneYear(proc.requestedDate));
+      console.log(examsWithinOneYear, vaccinesWithinOneYear, proceduresWithinOneYear);
+      const totalPriceOneYear = new Intl.NumberFormat("pt-BR", {
+        currency: "BRL",
+        style: "currency",
+      }).format(
+        Number(
+          examsWithinOneYear?.reduce((acc: any, exam: any) => acc + Number(exam.price), 0) +
+          vaccinesWithinOneYear?.reduce((acc: any, vac: any) => acc + Number(vac.price), 0) +
+          proceduresWithinOneYear?.reduce((acc: any, proc: any) => acc + Number(proc.price), 0)
+        )
+      );
+
+
+      setPet({
+        ...pet,
+        oneYear: {
+          totalPrice: totalPriceOneYear ? totalPriceOneYear : "R$ 0,00",
+        },
+      });     
+
       if (queueId == "Sem consulta aberta") {
         return toast.error(
           "Impossivel concluir consulta neste animal sem consulta aberta"
@@ -157,12 +198,9 @@ export function WorkSpaceVet() {
     });
   }
 
-
-
   const { isLoading, refetch } = useQuery("getPetDetailsInfos", {
     queryFn: getDetailsInformations,
   });
-
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -304,23 +342,18 @@ export function WorkSpaceVet() {
       break;
   }
 
-
-  async function updateQueuePetPreference(petId: number)   {
-
-    if(consultDetails.vetPreference == "Sem preferência") {
+  async function updateQueuePetPreference(petId: number) {
+    if (consultDetails.vetPreference == "Sem preferência") {
       const data = {
         vetPreference: user.consultName,
-        queueId: queueId
-      }
+        queueId: queueId,
+      };
       await api.patch("/queue/vetpreference", data).then(() => {
-        toast.success("Preferência atualizada com sucesso!")
-      })
-    
+        toast.success("Preferência atualizada com sucesso!");
+      });
     } else {
-      return toast.error("Animal já possui preferência!")
+      return toast.error("Animal já possui preferência!");
     }
-   
-    
   }
   return (
     <ChakraProvider>
@@ -425,8 +458,7 @@ export function WorkSpaceVet() {
               <Button
                 py={4}
                 whiteSpace="normal"
-                onClick={
-                  () => 
+                onClick={() =>
                   // setIsMedicineRecordOpen(true)
                   navigate(`/Pets/MedicineRecord/${id}/${queueId}`)
                 }
@@ -512,10 +544,10 @@ export function WorkSpaceVet() {
               <Table variant="simple" borderTop="1px solid black">
                 <Thead>
                   <Tr>
-                    <Th borderRight="1px solid black">
+                    <Th py={2} borderRight="1px solid black">
                       <Text fontWeight="bold">Cliente</Text>
                     </Th>
-                    <Th>
+                    <Th py={2}>
                       {" "}
                       <Text
                         fontWeight="bold"
@@ -524,26 +556,51 @@ export function WorkSpaceVet() {
                           GetDetailsCustomerById(Number(pet.customerId))
                         }
                       >
-                        {pet.customerName}
+                        {`${pet.customerName} - (C) - ${new Intl.NumberFormat(
+                          "pt-BR",
+                          {
+                            currency: "BRL",
+                            style: "currency",
+                          }
+                        ).format(
+                          Number(
+                            pet?.exams?.reduce(
+                              (acc, vac) => acc + Number(vac.price),
+                              0
+                            ) +
+                              pet?.vaccines?.reduce(
+                                (acc, vac) => acc + Number(vac.price),
+                                0
+                              ) +
+                              pet?.procedures?.reduce(
+                                (acc, vac) => acc + Number(vac.price),
+                                0
+                              )
+                          )
+                        )} em ${pet?.consultsPet?.length} visitas`}
                       </Text>
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th borderRight="1px solid black">
+                    <Th py={2} borderRight="1px solid black">
                       <Text fontWeight="bold">Gastos</Text>
                     </Th>
-                    <Th>
-                      <Text rounded="4px" fontWeight="bold">
+                    <Th py={2}>
+                      {/* <Flex rounded="4px" fontWeight="bold">
                         {new Intl.NumberFormat("pt-BR", {
                           currency: "BRL",
                           style: "currency",
                         }).format(pet.totalAcc?.price)}{" "}
                         Nesta Consulta
+                       
+                      </Flex> */}
+                      <Text>
+                        {`6 Messes: ${pet.oneYear?.totalPrice} - 12 Messes: ${pet.oneYear?.totalPrice}`}
                       </Text>
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th borderRight="1px solid black">
+                    <Th py={2} borderRight="1px solid black">
                       <Text fontWeight="bold">Animal</Text>
                     </Th>
                     <Th py={0}>
@@ -553,31 +610,31 @@ export function WorkSpaceVet() {
                         templateColumns="repeat(2, 1fr)"
                         alignItems="center"
                       >
-
-                      <Text
-                        fontWeight="bold"
-                        // cursor="pointer"
-                        // onClick={() =>
-                        //   navigate(
-                        //     `/Recepcao/Consultas/Clientes/Pets/Edit/${id}/${queueId}`
-                        //   )
-                        // }
-                      >
-                        {`${pet.name}, ${pet.race}`}
-                      </Text>
-                      <Button
+                        <Text
+                          fontWeight="bold"
+                          // cursor="pointer"
+                          // onClick={() =>
+                          //   navigate(
+                          //     `/Recepcao/Consultas/Clientes/Pets/Edit/${id}/${queueId}`
+                          //   )
+                          // }
+                        >
+                          {`${pet.name}, ${pet.especie}, ${pet.race}, Cód.: ${pet.codPet}`}
+                        </Text>
+                        <Button
                           size="sm"
+                          h={7}
                           colorScheme="yellow"
                           // onClick={() => setModalWeigthPet(true)}
                           onClick={() => setIsModalUpdated(true)}
-                          >
+                        >
                           Editar Animal
                         </Button>
-                          </Grid>
+                      </Grid>
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th borderRight="1px solid black">
+                    <Th py={2} borderRight="1px solid black">
                       <Text fontWeight="bold">Detalhes</Text>
                     </Th>
                     <Th py={0}>
@@ -587,7 +644,14 @@ export function WorkSpaceVet() {
                         templateColumns="repeat(2, 1fr)"
                         alignItems="center"
                       >
-                        <Text> {`${pet.sexo}, ${pet.weigth}`} </Text>{" "}
+                        <Text>
+                          {" "}
+                          {`${pet.sexo}, ${pet.weigth} Kg, ${pet.bornDate}, ${
+                            pet.corPet
+                          }, ${
+                            pet.chip ? "Microchipado" : "Não Microchipado"
+                          }`}{" "}
+                        </Text>{" "}
                         {/* <Button
                           size="sm"
                           colorScheme="yellow"
@@ -599,10 +663,28 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th borderRight="1px solid black">
+                    <Th py={2} borderRight="1px solid black">
+                      <Text fontWeight="bold">Horário</Text>
+                    </Th>
+                    <Th py={2}>
+                      {new Intl.DateTimeFormat("pt-BR", {
+                        hour: "numeric",
+                        minute: "numeric",
+                        second: "numeric",
+                      }).format(
+                        new Date(
+                          consultDetails?.openedDate
+                            ? consultDetails?.openedDate
+                            : new Date()
+                        )
+                      )}
+                    </Th>
+                  </Tr>
+                  <Tr>
+                    <Th py={2} borderRight="1px solid black">
                       <Text fontWeight="bold">Internações</Text>
                     </Th>
-                    <Th bg={pet.isBusy ? "red.200" : "green.100"}>
+                    <Th py={2} bg={pet.isBusy ? "red.200" : "green.100"}>
                       {pet.isBusy ? (
                         <Text fontWeight="bold">ANIMAL ESTÁ INTERNADO</Text>
                       ) : (
@@ -613,16 +695,19 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th borderRight="1px solid black">
+                    <Th py={2} borderRight="1px solid black">
                       <Text fontWeight="bold">Plano de Saúde</Text>
                     </Th>
 
-               
-                        {
-                          consultDetails.healthInsuranceId ? <Th fontWeight="black" bgColor="green.100">{consultDetails.healthInsuranceName}</Th> : <Th fontWeight="bold">Sem plano para está consulta</Th>
-                        }
-                   
-                  
+                    {consultDetails.healthInsuranceId ? (
+                      <Th py={2} fontWeight="black" bgColor="green.100">
+                        {consultDetails.healthInsuranceName}
+                      </Th>
+                    ) : (
+                      <Th py={2} fontWeight="bold">
+                        Sem plano para está consulta
+                      </Th>
+                    )}
                   </Tr>
                 </Thead>
               </Table>
@@ -630,7 +715,7 @@ export function WorkSpaceVet() {
 
             <Flex direction="column" mx="4" my={2}>
               <Text fontSize="sm" mx="2" mt="0" fontWeight="bold">
-                Observações
+                Observações da recepção
               </Text>
               <Textarea
                 color="red.900"
@@ -778,9 +863,11 @@ export function WorkSpaceVet() {
           </div>
         </WorkSpaceContent>
         <WorkSpaceFooter>
+          
           <Grid
             gap={2}
             templateColumns={{ base: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }}
+            w={"67%"}
           >
             <Button
               whiteSpace="normal"
@@ -818,16 +905,24 @@ export function WorkSpaceVet() {
             >
               Imprimir Solicitação Exames
             </Button>
-				        <ConfirmationDialog
-                height="48px"
-              icon={
-                <FaExchangeAlt fill="white" size={16} />
-                
-              }
-              buttonTitle="Alterar preferências" callbackFn={() => updateQueuePetPreference(pet.id)} describreConfirm="Deseja atribuir essa consulta a seu nome?" whatIsConfirmerd="Este animal está sem preferência" disabled={false}
-              
-                      />
+            <ConfirmationDialog
+              height="48px"
+              icon={<FaExchangeAlt fill="white" size={16} />}
+              buttonTitle="Alterar preferências"
+              callbackFn={() => updateQueuePetPreference(pet.id)}
+              describreConfirm="Deseja atribuir essa consulta a seu nome?"
+              whatIsConfirmerd="Este animal está sem preferência"
+              disabled={false}
+            />
           </Grid>
+          <Flex w={"33%"} mx={2} display={"flex"} color={"white"}>
+            <Text width={"fit-content"} py="3" fontWeight={"bold"} borderLeftRadius={"md"} fontSize={{ base: "sm" }} px={4} bg={"teal.500"}>
+              Veterinario:
+            </Text>
+            <Text width={"full"} py="3" fontWeight={"bold"} borderRightRadius={"md"} fontSize={{ base: "sm" }} px={4} bg={"whatsapp.400"}>
+              {consultDetails?.vetPreference}
+            </Text>
+          </Flex>
         </WorkSpaceFooter>
       </WorkSpaceContainer>
 
@@ -982,10 +1077,16 @@ export function WorkSpaceVet() {
           <Textarea value={surgerieDetails?.surgeriesReport?.reportedText} />
         </Flex>
       </GenericModal>
-      <GenericModal isOpen={isModalUpdated} onRequestClose={()=> setIsModalUpdated(false)}>
-        <ModalEditAnimal setIsModalUpdated={setIsModalUpdated} petSelected={pet} refetch={()=> refetch()} />
+      <GenericModal
+        isOpen={isModalUpdated}
+        onRequestClose={() => setIsModalUpdated(false)}
+      >
+        <ModalEditAnimal
+          setIsModalUpdated={setIsModalUpdated}
+          petSelected={pet}
+          refetch={() => refetch()}
+        />
       </GenericModal>
-      
     </ChakraProvider>
   );
 }

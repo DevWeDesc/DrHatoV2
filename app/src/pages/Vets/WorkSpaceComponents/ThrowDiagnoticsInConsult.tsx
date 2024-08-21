@@ -45,10 +45,11 @@ export function ThrowDiagnoisticsInConsult() {
   switch (true) {
     case viewDiagnosticHandler == "Diagnóstico":
       ComponentPrint = (
-        <Flex direction="column">
+        <Flex direction="column"p={2}>
           <Textarea
             minW="100%"
             minH="12.5rem"
+            placeholder="Digite aqui o Diagnóstico"
             value={diagnostic}
             onChange={(e) => setDiagnostic(e.target.value)}
           />
@@ -60,9 +61,10 @@ export function ThrowDiagnoisticsInConsult() {
       break;
     case viewDiagnosticHandler == "Prescrição":
       ComponentPrint = (
-        <Flex direction="column">
+        <Flex direction="column" p={2}>
           <Textarea
             minW="100%"
+            placeholder="Digite aqui a Prescrição"
             minH="12.5rem"
             value={prescription}
             onChange={(e) => setPrescription(e.target.value)}
@@ -76,9 +78,10 @@ export function ThrowDiagnoisticsInConsult() {
       break;
     case viewDiagnosticHandler == "Sintomas":
       ComponentPrint = (
-        <Flex direction="column">
+        <Flex direction="column" p={2}>
           <Textarea
             minW="100%"
+            placeholder="Digite aqui os Sintomas"
             minH="12.5rem"
             onChange={(e) => setSympthons(e.target.value)}
             value={sympthons}
