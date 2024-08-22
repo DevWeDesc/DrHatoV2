@@ -533,6 +533,49 @@ export const petsController = {
     }
   },
 
+  changePetAll: async (
+    request: FastifyRequest<{ Params: { petId: string }, Body: {
+      bornDate: string,
+      cor: string,
+      especie: string,
+      haveChip: boolean,
+      isCastred: boolean,
+      name: string,
+      observations: string,
+      race: string,
+      sexo: string,
+      weigth: number,
+    } }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const { petId } = request.params;
+      const { bornDate, cor, especie, haveChip, isCastred, name, observations, race, sexo, weigth } = request.body;
+
+      const pet = await prisma.pets.update({
+        where: { id: parseInt(petId) },
+        data: {
+          bornDate,
+          corPet: cor,
+          especie,
+          haveChip,
+          isCastred,
+          name,
+          observations,
+          race,
+          sexo,
+          weigth,
+        },
+      });
+
+      reply.status(201).send(pet);
+      
+    } catch (error) {
+      reply.send(error);
+      console.log(error);
+    }
+  },
+
   getPetBedHistory: async (
     request: FastifyRequest<{ Params: { petId: string } }>,
     reply: FastifyReply

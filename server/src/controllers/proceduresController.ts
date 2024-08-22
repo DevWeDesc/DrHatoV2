@@ -144,7 +144,7 @@ export const proceduresController = {
       if (animalSex === "Macho") {
         const totalProceds = await prisma.procedures.count({
           where: {
-            name: { startsWith: q },
+            name: { startsWith: q, mode: "insensitive" },
             applicableMale: true,
           },
         });
@@ -155,7 +155,7 @@ export const proceduresController = {
           skip: (currentPage - 1) * 35,
           take: 35,
           where: {
-            name: { startsWith: q },
+            name: { startsWith: q, mode: "insensitive" },
             applicableMale: true,
           },
           include: {
@@ -169,7 +169,7 @@ export const proceduresController = {
       } else if (animalSex != null && animalSex === "Femea") {
         const totalProceds = await prisma.procedures.count({
           where: {
-            name: { startsWith: q },
+            name: { startsWith: q, mode: "insensitive" },
             applicableFemale: true,
           },
         });
@@ -180,7 +180,7 @@ export const proceduresController = {
           skip: (currentPage - 1) * 35,
           take: 35,
           where: {
-            name: { startsWith: q },
+            name: { startsWith: q, mode: "insensitive" },
             applicableFemale: true,
           },
           include: {
@@ -193,14 +193,14 @@ export const proceduresController = {
         reply.send({ totalPages, totalProceds, currentPage, procedures });
       } else {
         const totalProceds = await prisma.procedures.count({
-          where: { name: { startsWith: q } },
+          where: { name: { startsWith: q, mode: "insensitive" } },
         });
 
         const totalPages = Math.ceil(totalProceds / 35);
         const procedures = await prisma.procedures.findMany({
           skip: (currentPage - 1) * 35,
           take: 35,
-          where: { name: { startsWith: q } },
+          where: { name: { startsWith: q, mode: "insensitive" } },
         });
 
         reply.send({

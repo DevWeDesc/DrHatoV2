@@ -193,7 +193,7 @@ export const surgeriesController = {
       const surgeries = await prisma.surgeries.findMany({
         skip: (currentPage - 1) * 35,
         take: 35,
-        where: { name: { contains: name } },
+        where: { name: { contains: name, mode: "insensitive" } },
       });
 
       reply.status(200).send({

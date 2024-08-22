@@ -17,7 +17,7 @@ import {
   Tfoot,
   TableContainer,
 } from "@chakra-ui/react";
-import { BiHome, GiMedicines, TbArrowBack } from "react-icons/all";
+import { BiHome, GiMedicines, MdHistory, TbArrowBack } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { api } from "../../lib/axios";
@@ -47,6 +47,7 @@ interface PetProps {
       race: string
     }>
   };
+  CodAnimal: string;
   codPet: string;
 
   medicineRecords: {
@@ -176,6 +177,12 @@ export function MedicineRecords() {
             >
               Histórico de medicação
             </Button>
+            <Button leftIcon={<MdHistory size={24} />}
+              colorScheme="red"
+              onClick={() => navigate(`/Pets/MedicineRecordOld/${id}/${queueId}`)}
+            >
+              Prontuário Antigo
+            </Button>
           </Flex>
         </Flex>
 
@@ -218,7 +225,7 @@ export function MedicineRecords() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={`Nome: ${pets.name}, Raça: ${pets.race}, Peso: ${pets.weigth},  Sexo ${pets.sexo}, Cor: ${pets.corPet} `}
+                          value={`Nome: ${pets.name}, Raça: ${pets.race}, Peso: ${pets.weigth}Kgs, Sexo: ${pets.sexo}, Cor:${pets.corPet} `}
                         />
                       </Td>
                     </Tr>
@@ -238,7 +245,7 @@ export function MedicineRecords() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={pets.codPet}
+                          value={`${pets.CodAnimal}`}
                         />
                       </Td>
                     </Tr>
@@ -289,7 +296,10 @@ export function MedicineRecords() {
 
               <Flex w="100%" h="100%" overflowY="auto">
                 <Flex direction="column" w="100%" h="100%">
-                  {pets?.medicineRecords?.petConsults?.map((queue) => (
+                  {pets?.medicineRecords?.petConsults?.filter((queue) => {
+                    return Number(queue?.openedDate.toString().slice(0, 4)) > 2023
+                    
+                  }).map((queue) => (
                     <Flex
                       textAlign="center"
                       direction="column"
@@ -302,9 +312,10 @@ export function MedicineRecords() {
                         bg="gray.300"
                         color="black"
                         fontWeight="bold"
-                      >{`Entrada: ${new Intl.DateTimeFormat("pt-BR", {
+                      >{ `Entrada: ${new Intl.DateTimeFormat("pt-BR", {
                         day: "2-digit",
                         month: "2-digit",
+                        year: "numeric",
                         hour: "2-digit",
                         minute: "2-digit",
                       }).format(new Date(queue.openedDate))} 
@@ -328,6 +339,7 @@ export function MedicineRecords() {
                           h="38px"
                           w="20%"
                         >
+                          
                           {" "}
                           Peso
                         </Text>

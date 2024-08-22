@@ -26,19 +26,14 @@ import {
 } from "@chakra-ui/react";
 import { AiFillTags, BiHome, TbArrowBack } from "react-icons/all";
 import { toast } from "react-toastify";
-
-
-import {
-  WorkSpaceContainer,
-  WorkSpaceContent,
-  WorkSpaceHeader,
-} from "../Vets/styles";
+import { WorkSpaceContainer, WorkSpaceContent, WorkSpaceHeader } from "../Vets/styles";
 import { PetProps } from "../Pets/details";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { CreatePetsForm } from "../../components/Forms/CreatePetsForm";
 import { QueryClient, useQuery } from "react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
+import ModalEditAnimal from "./modalEditAnimal";
 
 
 interface CustomerProps {
@@ -110,6 +105,7 @@ export function CustomerDetails() {
   const [notPreferences, setNotPreferences] = useState(false);
   const [vetPreference, setVetPreference] = useState("");
   const [moreInfos, setMoreInfos] = useState("");
+  const [isModalUpdated, setIsModalUpdated] = useState(false);
   const [customer, setCustomer] = useState<CustomerProps>({
     id: "",
     name: "",
@@ -138,6 +134,7 @@ export function CustomerDetails() {
   const months = Array.from({ length: 13 }, (_, i) => i);
   const { register, handleSubmit } = useForm();
   const [weight, setWeight] = useState("");
+
   async function loadHealthInsurances() {
     const response = await api.get("/health/insurance")
     setHealthInsurance(response.data.healthInsurance)
@@ -163,10 +160,7 @@ export function CustomerDetails() {
     setUserVets(response.data);
     queryClient.invalidateQueries('vetsReception')
   }
-
-
-
-
+  
   async function setPetInQueue() {
     try {
 
@@ -221,6 +215,7 @@ export function CustomerDetails() {
   const handleMonthChange = (e: any) => {
     setSelectedMonth(e.target.value);
   };
+  
   let selectRaces;
   switch (true) {
     case especieState === "Felina":
@@ -687,7 +682,11 @@ export function CustomerDetails() {
                             <Td>
                               <RadioGroup onChange={setPetId} value={petId}>
                                 <Radio
-                                  onClick={() => setPetSelected(pet)}
+                                  onClick={() => {
+                                    setPetSelected(pet)
+                                    
+                                                                      
+                                  }}
                                   borderColor="teal.800"
                                   colorScheme="green"
                                   value={pet.id.toString()}
@@ -818,16 +817,28 @@ export function CustomerDetails() {
                       </Tr>
                       <Tr>
                         <Td py="0" colSpan={4} px="0">
-                          <Button
-                            py="6"
-                            mt="0.2"
-                            w="100%"
-                            colorScheme="blue"
-                            onClick={() => setPetSelected([])}
-                          >
-                            Voltar para a listagem de Animais
-                          </Button>
+                          <Flex display={"flex"} justifyContent={"space-around"} mt={"6"}>
+                            <Button
+                              py="6"
+                              mt="0.2"
+                              w="40%"
+                              colorScheme="blue"
+                              onClick={() => setPetSelected([])}
+                            >
+                              Voltar para a listagem de Animais
+                            </Button>
+                            <Button 
+                              colorScheme="whatsapp"
+                              py="6"
+                              mt="0.2"
+                              w="40%"
+                              onClick={ ()=> setIsModalUpdated(true)}
+                            >
+                              Editar Animal
+                            </Button>
+                          </Flex>
                         </Td>
+
                       </Tr>
                     </Tbody>
                   </Table>
@@ -1188,6 +1199,10 @@ export function CustomerDetails() {
           Cadastrar
         </Button>
       </FormControl>
+            </GenericModal>
+            {/* isOpen={modalEditOpen} onRequestClose={() => setModalEditOpen(false)} pet={petSelected} */}
+            <GenericModal  isOpen={isModalUpdated} onRequestClose={()=> setIsModalUpdated(false)}>
+              <ModalEditAnimal refetch={()=> refetch()} petSelected={petSelected} setPetSelected={setPetSelected} setIsModalUpdated={setIsModalUpdated}  />
             </GenericModal>
           </Flex>
         </WorkSpaceContent>

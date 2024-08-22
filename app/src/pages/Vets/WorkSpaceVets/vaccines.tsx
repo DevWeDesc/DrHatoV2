@@ -13,7 +13,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiHome, BiLeftArrow, BiRightArrow } from "react-icons/bi";
 import { TbArrowBack } from "react-icons/tb";
 import { QueryClient, useQuery } from "react-query";
@@ -112,6 +112,18 @@ export function Vaccines({
   const {isLoading, refetch} = useQuery('vaccinesSet', GetVaccine)
   useQuery('queueDetails', getQueueDetails)
 
+  useEffect(() => {
+
+    switch (true) {
+      case vaccineName.length >= 1:
+        getVaccinesByName();
+        break;
+      default:
+        refetch();
+        break;
+    }
+  }, [vaccineName]);
+
 
   if(isLoading) {
     return <LoadingSpinner/>
@@ -168,7 +180,7 @@ export function Vaccines({
           .then(() => {
           
         queryClient.invalidateQueries('vaccinesSet')
-
+            refetch();
             toast.warning("Excluido com sucesso");
           });
       } else {
@@ -270,7 +282,7 @@ export function Vaccines({
                 
                 
        
-                <Flex align="center" gap="2" p="2">
+                <Flex w={"full"} align="center" gap="2" p="2">
                   
                   
    		          {
@@ -282,10 +294,10 @@ export function Vaccines({
                           <HStack>
         
               <Button colorScheme="teal">
-                Páginas {paginationInfos?.totalPages}
+                Páginas {paginationInfos?.totalPages ? paginationInfos?.totalPages : 1}
               </Button>
               <Button colorScheme="teal">
-                Página Atual {paginationInfos?.currentPage}
+                Página Atual {paginationInfos?.currentPage ? paginationInfos?.currentPage : 1}
               </Button>
               <Button
                 colorScheme="yellow"

@@ -13,14 +13,77 @@ import {
   Textarea,
   TableContainer,
 } from "@chakra-ui/react";
-import { BiHome, GiMedicines, TbArrowBack } from "react-icons/all";
+import { BiHome, GiMedicines, TbArrowBack, MdHistory  } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../lib/axios";
 import { MedicineContainer } from "./style";
 import { useQuery, useQueryClient } from "react-query";
 import { LoadingSpinner } from "../../components/Loading";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+interface PetProps {
+  id: number;
+  name: string;
+  especie: string;
+  corPet: string;
+  observations: string;
+  race: string;
+  rga: number;
+  sizePet: string;
+  weigth: string;
+  sexo: string;
+  status: string;
+  bornDate: string;
+  customer: {
+    name: string;
+    pets: Array<{
+      id: number
+      name: string
+      race: string
+    }>
+  };
+  CodAnimal: string;
+  codPet: string;
+
+  medicineRecords: {
+    petBeds: Array<{
+      id: number;
+      entryOur: string;
+    }>;
+    petExams: Array<{
+      id: number;
+      name: string;
+      requesteData: string;
+      doneExame: boolean;
+    }>;
+    petConsults: Array<{
+      id: string;
+      openedDate: Date ;
+      closedDate: Date | null;
+      consultType: string;
+      vetPreference: string;
+      petWeight: string;
+      observations: string;
+      symptoms: string;
+			request: string;
+			diagnostic: string;
+    }>;
+    petSurgeries: Array<{
+      id: number;
+      name: string;
+      requestedDate: Date;
+      completedDate: Date | null;
+      status: string;
+    }>;
+    petVaccines: Array<{
+      id: number;
+      name: string;
+      requestedDate: Date;
+      applicationDate: Date | null;
+      isDone: boolean;
+    }>;
+  };
+}
 
 export interface OldConsultsHistories {
   id:             number;
@@ -114,6 +177,7 @@ export function MedicineRecordOld() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [typeShowHistorie, setTypeShowHistorie] = useState("")
   const navigate = useNavigate();
+  const [pets, setPets] = useState({} as PetProps);
 
   function handleOpenOldResultExams({ CodCli, CodConsulta }: OpenOldExamsProps) {
     window.open(`https://drhatomf.ddns.net/vet/scr/PrintExamNewONLINE.asp?CodCli=${CodCli}&text=|${CodConsulta}|`, "_blank");
@@ -130,6 +194,15 @@ export function MedicineRecordOld() {
     }
   }
 
+  async function getPet() {
+    try {
+      const response = await api.get(`/pets/history/${id}`);
+      setPets(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async function getConsults(): Promise<OldConsultsHistories> {
     try {
       const response =  await api.get(`/pet/old/history/consults/${id}`)
@@ -137,7 +210,6 @@ export function MedicineRecordOld() {
       if(!response) {
         throw new Error()
       }
-      console.log(response.data.oldConsults, "Entrei1", id)
 
       return response.data.oldConsults
     } catch (error) { 
@@ -148,13 +220,15 @@ export function MedicineRecordOld() {
   async function getOldExamsHistorie(): Promise<OldExamsHistorie[]> {
     try {
       const response =  await api.get(`/exams/historie/old/${id}`)
-      console.log(response.data.examsHistorie, "Entrei2")
       return  response.data.examsHistorie
     } catch (error) {
         throw error
     }
   }
-
+  
+  useEffect(() => {
+    getPet();
+  }, []);
   const { data: consultsData, isLoading: consultsLoading } = useQuery('oldHistory', {queryFn: getConsults})
   const { data: examsData, isLoading: examsLoading } = useQuery('oldExams', {queryFn: getOldExamsHistorie})
   const { data: oldHistorieData } = useQuery('oldHistorie', () => getOldHistorieAdmission(),{ enabled: !!consultsData?.CodAnimal });
@@ -528,6 +602,13 @@ export function MedicineRecordOld() {
             <Button colorScheme="cyan" leftIcon={<GiMedicines size={24} />}>
               Histórico de medicação
             </Button>
+            <Button leftIcon={<MdHistory size={24} />}
+              colorScheme="red"
+              onClick={() => navigate(`/Pets/MedicineRecord/${id}/${queueId}`)}
+            >
+              Prontuário Atual
+            </Button>
+
           </Flex>
         </Flex>
 
@@ -573,7 +654,8 @@ export function MedicineRecordOld() {
                           py="6"
                           rounded="0"
                           borderColor="black"
-                          value={`${consultsData?.name}, ${consultsData?.race}, ${consultsData?.weigth}Kgs, ${consultsData?.sexo}, ${consultsData?.corPet}`}
+                          value={`Nome: ${consultsData?.name}, Raça: ${consultsData?.race}, Peso: ${consultsData?.weigth}Kgs, Sexo: ${consultsData?.sexo}, Cor:${consultsData?.corPet}`}
+                          // value={`Nome: ${pets.name}, Raça: ${pets.race}, Peso: ${pets.weigth},  Sexo ${pets.sexo}, Cor: ${pets.corPet} `}
                         />
                       </Td>
                     </Tr>
@@ -812,6 +894,20 @@ export function MedicineRecordOld() {
                     </Tr>
                   </Thead>
                   <Tbody>
+                  {pets?.customer?.pets.map((pet) => (
+                      <Tr border="2px" bgColor="gray.200" key={pet.id}>
+                        
+
+                        <Td borderY="1px solid black">{pet.name}</Td>
+
+                        <Td
+                          borderY="1px solid black"
+                          borderLeft="2px solid black"
+                        >
+                          {pet.race}
+                        </Td>
+                      </Tr>
+                    ))}
                     {/* {pets.medicineRecords?.petBeds?.map((admission) => (
                       <Tr key={admission.id}>
                         <Td borderY="1px solid black">Internação</Td>
