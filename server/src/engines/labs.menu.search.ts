@@ -17,12 +17,12 @@ export class LabsMenuSearch {
     finalDate,
     codeExam,
   }: LabParamsProps) {
-    const filter: { requesteData?: { gte: string; lte: string } } = {};
+    const filter: { requesteData?: { gte: Date; lte: Date } } = {};
 
     if (initialDate && finalDate) {
       filter.requesteData = {
-        gte: initialDate,
-        lte: finalDate,
+        gte: new Date(initialDate),
+        lte: new Date(finalDate),
       };
     }
 

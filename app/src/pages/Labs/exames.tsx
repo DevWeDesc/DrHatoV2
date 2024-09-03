@@ -27,28 +27,14 @@ import { BiHome } from "react-icons/all";
 import { Input } from "../../components/admin/Input";
 import React from "react";
 import { toast } from "react-toastify";
+import { useQuery } from "react-query";
 
 interface QueueProps {
   response: [];
   totalInQueue: number;
 }
 
-interface ExamsDataProps {
-  id: number;
-  CodAnimal: number;
-  name: string;
 
-  medicineRecords: {
-    petExams: Array<{
-      id: number;
-      name: string;
-      requestedFor: string;
-      doneExame: boolean;
-      requesteData: Date | null;
-      responsibleForExam: string | null;
-    }>;
-  };
-}
 type OpenExamProps = {
   isMultiPart: boolean;
   isReportByText: boolean;
@@ -95,12 +81,11 @@ export function LabExames() {
   const [labs, setLabs] = useState<LabDefaultDTO[]>([]);
   const [inQueue, setInQueue] = useState<QueueProps[]>([]);
   const [exams, setExams] = useState([] as any);
-  const [examsData, setExamsData] = useState<ExamsDataProps[]>([]);
   const [petName, setPetName] = useState("");
   const [codExam, setCodExam] = useState("");
   const [codPet, setCodPet] = useState("");
   const [solicitedBy, setSolicitedBy] = useState("");
-  const [showEndExams, setShowEndExams] = useState(false);
+  const [showEndExams, setShowEndExams] = useState("false");
   const [isLoading, setIsLoading] = useState(false);
   const [filterDates, setFilterDates] = useState<filterDates>({
     initialDate: "",
@@ -115,7 +100,6 @@ export function LabExames() {
     const filteredLabs = labs.data.exams.filter(
       (exam: any) => exam.examsType[0] === "lab"
     );
-
     setLabs(filteredLabs);
     setExams(labs.data.allExams);
     setInQueue(response.data.response);
@@ -293,253 +277,47 @@ export function LabExames() {
     getQueue();
   }, [inQueue.length]);
 
-  let typeTable: ReactNode;
-  switch (true) {
-    case examsData?.length >= 1:
-      typeTable = (
-        <>
-          <Table colorScheme="blackAlpha">
-            <Thead>
-              <Tr>
-                <Th>Data</Th>
-                <Th>Animal</Th>
-                <Th>Exame</Th>
-                <Th>Veterinário</Th>
-                <Th>Status</Th>
-                <Th>Responsável</Th>
-              </Tr>
-            </Thead>
-
-            <Tbody>
-              {examsData?.map((exam) => {
-                return exam?.medicineRecords?.petExams?.map((exams) => (
-                  <Tr key={exams.id}>
-                    <Td>
-                      {new Intl.DateTimeFormat("pt-BR").format(
-                        new Date(
-                          exams.requesteData ? exams.requesteData : Date.now()
-                        )
-                      )}
-                    </Td>
-                    <Td>{exam?.name}</Td>
-                    <Td>{exams?.name}</Td>
-                    <Td>
-                      {exams?.requestedFor
-                        ? exams.requestedFor
-                        : "Não definido"}
-                    </Td>
-                    <Td>{exams?.doneExame ? "Laudado" : "A Fazer"}</Td>
-                    <Td>
-                      {exams?.responsibleForExam
-                        ? exams.responsibleForExam
-                        : "Não Laudado"}
-                    </Td>
-                  </Tr>
-                ));
-              })}
-            </Tbody>
-          </Table>
-        </>
+  const { refetch } = useQuery(
+    [
+      "exams",
+      petName,
+      codPet,
+      solicitedBy,
+      showEndExams,
+      codExam,
+      filterDates.finalDate,
+      filterDates.initialDate,
+    ],
+    async () => {
+      const res = await api.get(
+        `/labmenusearch?petCode=${codPet}&petName=${petName}&solicitedBy=${solicitedBy}&initialDate=${
+          filterDates.initialDate
+        }&finalDate=${filterDates.finalDate}&codeExam=${codExam}&showEndExams=${showEndExams}`
       );
-      break;
-    case showEndExams === true:
-      typeTable = (
-        <>
-          <Table colorScheme="blackAlpha">
-            <Thead>
-              <Tr>
-                <Th>Data</Th>
-                <Th>Animal</Th>
-                <Th>Exame</Th>
-                <Th>Veterinário</Th>
-                <Th>Status</Th>
-                <Th>Responsável</Th>
-                <Th>Resultado</Th>
-                <Th whiteSpace={"nowrap"}>Resultado por Email</Th>
-                <Th>Impressão</Th>
-              </Tr>
-            </Thead>
-
-            <Tbody>
-              {labs?.map((exam) => {
-                return (
-                  <React.Fragment key={exam.id}>
-                    {exam.doneExame === true && (
-                      <Tr key={exam.id} cursor="pointer">
-                        <Td>
-                          {new Intl.DateTimeFormat("pt-BR").format(
-                            new Date(exam?.requesteData)
-                          )}{" "}
-                        </Td>
-
-                        <Td>{exam.medicine?.pet.name}</Td>
-
-                        <Td>{exam.name}</Td>
-
-                        <Td>
-                          {exam.requestedFor
-                            ? exam.requestedFor
-                            : "Não definido"}
-                        </Td>
-                        <Td>{exam.doneExame ? "Laudado" : "A Fazer"}</Td>
-                        <Th>
-                          {exam.responsibleForExam
-                            ? exam.responsibleForExam
-                            : "Não Laudado"}
-                        </Th>
-                        <Th>
-                          <Button
-                            colorScheme="teal"
-                            onClick={() =>
-                              handleOpenResultExams({
-                                examId: exam.id,
-                                isMultiPart: exam.twoPart,
-                                isOnePart: exam.onePart,
-                                isReportByText: exam.byReport,
-                              })
-                            }
-                          >
-                            Visualizar
-                          </Button>
-                        </Th>
-                        <Th>
-                          <Button
-                            colorScheme="teal"
-                            onClick={() =>
-                              handleSendEmailResultExams({
-                                examId: exam.id,
-                                isMultiPart: exam.twoPart,
-                                isOnePart: exam.onePart,
-                                isReportByText: exam.byReport,
-                              })
-                            }
-                          >
-                            Enviar Email
-                          </Button>
-                        </Th>
-                        <Th>
-                          <Button
-                            colorScheme="teal"
-                            onClick={() =>
-                              printTag({
-                                examId: exam.id,
-                                isMultiPart: exam.twoPart,
-                                isOnePart: exam.onePart,
-                                isReportByText: exam.byReport,
-                              })
-                            }
-                          >
-                            Imprimir
-                          </Button>
-                        </Th>
-                      </Tr>
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </>
+      
+      setLabs(
+        res.data.exams.filter(
+          (exam: LabDefaultDTO) => exam.examsType[0] === "lab"
+        )
       );
-      break;
-    default:
-      typeTable = (
-        <>
-          <Table colorScheme="blackAlpha">
-            <Thead>
-              <Tr>
-                <Th>Data</Th>
-                <Th>Animal</Th>
-                <Th>Exame</Th>
-                <Th>Veterinário</Th>
-                <Th>Status</Th>
-                <Th>Responsável</Th>
-                <Th>Impressão</Th>
-              </Tr>
-            </Thead>
-
-            <Tbody>
-              {labs?.map((exam: any) => {
-                return (
-                  <React.Fragment key={exam.id}>
-                    {exam.doneExame === false && (
-                      <Tr
-                        key={exam.id}
-                        cursor="pointer"
-                        onClick={(ev: any) => {
-                          if (ev.target.type !== "button") {
-                            navigate(
-                              `/Labs/Set/${exam.id}/${
-                                exams.find(
-                                  (data: any) => data.name === exam.name
-                                ).codexam
-                              }/${exam.medicine?.pet.id}`
-                            );
-                          }
-                        }}
-                      >
-                        <Td>
-                          {new Intl.DateTimeFormat("pt-BR").format(
-                            new Date(exam?.requesteData)
-                          )}{" "}
-                        </Td>
-
-                        <Td>{exam.medicine?.pet.name}</Td>
-
-                        <Td>{exam.name}</Td>
-
-                        <Td>
-                          {exam.requestedFor
-                            ? exam.requestedFor
-                            : "Não definido"}
-                        </Td>
-                        <Td>{exam.doneExame ? "Laudado" : "A Fazer"}</Td>
-                        <Th>
-                          {exam.responsibleForExam
-                            ? exam.responsibleForExam
-                            : "Não Laudado"}
-                        </Th>
-                        <Th>
-                          <Button
-                            colorScheme="teal"
-                            onClick={() =>
-                              printTag({
-                                examId: exam.id,
-                                isMultiPart: exam.twoPart,
-                                isOnePart: exam.onePart,
-                                isReportByText: exam.byReport,
-                              })
-                            }
-                          >
-                            Imprimir
-                          </Button>
-                        </Th>
-                      </Tr>
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </>
-      );
-      break;
-  }
+    },{
+      refetchOnWindowFocus: false,
+    }
+  );
 
   async function searchDataLabs() {
     switch (true) {
-      case true:
-        const res = await api.get(
-          `/labmenusearch?petCode=${codPet}&petName=${petName}&solicitedBy=${solicitedBy}&initialDate=${filterDates.initialDate}&finalDate=${filterDates.finalDate}&codeExam=${codExam}&showEndExams=${showEndExams}`
-        );
-        setLabs(
-          res.data.exams.filter(
-            (exam: LabDefaultDTO) => exam.examsType[0] === "lab"
-          )
-        );
+      case showEndExams === "":
+        await api.get("/labs/all").then((res) => {
+          const filteredLabs = res.data.exams.filter(
+            (exam: any) => exam.examsType[0] === "lab"
+          );
+          setLabs(filteredLabs);
+        });
+
         break;
 
-      case showEndExams === true:
+      case showEndExams === "true":
         await api.get("/labs/end").then((res) => {
           const filteredLabs = res.data.exams.filter(
             (exam: any) => exam.examsType[0] === "lab"
@@ -548,7 +326,7 @@ export function LabExames() {
         });
         break;
 
-      case showEndExams === false:
+      case showEndExams === "false":
         const labs = await api.get("/labs");
         const filteredLabs = labs.data.exams.filter(
           (exam: any) => exam.examsType[0] === "lab"
@@ -559,7 +337,6 @@ export function LabExames() {
   }
 
   function clearExamData() {
-    setExamsData([]);
     setPetName("");
     setCodPet("");
     setSolicitedBy("");
@@ -567,15 +344,7 @@ export function LabExames() {
 
   useEffect(() => {
     searchDataLabs();
-  }, [
-    petName,
-    codPet,
-    solicitedBy,
-    showEndExams,
-    codExam,
-    filterDates.finalDate,
-    filterDates.initialDate,
-  ]);
+  }, [showEndExams]);
 
   return (
     <ChakraProvider>
@@ -606,8 +375,9 @@ export function LabExames() {
               borderRadius={8}
               bg="gray.200"
               p="8"
-              maxH="44rem"
-              overflow="auto"
+              minH="44rem"
+              // maxH="44rem"
+              // overflow="auto"
             >
               <Flex mb="8" gap="8" direction="column" align="center">
                 <Flex w="100%" direction="column" align="center">
@@ -649,7 +419,8 @@ export function LabExames() {
                             ...filterDates,
                             initialDate: ev.target.value,
                           });
-                        }}
+                        }}                        
+                        defaultValue={ new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString().split('T')[0]}
                       />
 
                       <Input
@@ -662,19 +433,30 @@ export function LabExames() {
                             finalDate: ev.target.value,
                           });
                         }}
+                        defaultValue={ new Date().toISOString().split('T')[0]}
                       />
 
-                      <VStack>
-                        <FormLabel fontWeight="bold" htmlFor="finished">
-                          Concluidos
+                      <VStack display={"flex"} alignItems={"start"}>
+                        <FormLabel marginBottom={0}  htmlFor="finished">
+                          Realizados
                         </FormLabel>
-                        <Checkbox
-                          border="2px"
-                          onChange={(ev) => setShowEndExams(ev.target.checked)}
-                          name="finished"
-                          id="finished"
-                          size="lg"
-                        />
+                        <Select
+                        id="finished"
+                          focusBorderColor="green.200"
+                          border="1px"
+                          bgColor="white"
+                          variant="filled"
+                          w={150}
+                          _hover={{
+                            bgColor: "gray.100",
+                          }}
+                          fontSize={{ base: "sm", md: "md", lg: "lg" }}
+                          onChange={(ev) => setShowEndExams(ev.target.value)}
+                        >
+                          <option selected value="false">Não</option>
+                          <option value="true">Sim</option>
+                          <option value="">Todos</option>
+                        </Select>
                       </VStack>
                     </Flex>
                   </Flex>
@@ -707,22 +489,127 @@ export function LabExames() {
                     w="380px"
                     mt="4"
                     p={4}
-                    onClick={() => searchDataLabs()}
+                    onClick={() => refetch()}
                   >
                     Filtrar
                   </Button>
                 </Flex>
-                <Button colorScheme="teal" onClick={() => clearExamData()}>
-                  <>
-                    TOTAL NA FILA:{" "}
-                    {
-                      labs.filter((exam) => exam.doneExame === showEndExams)
-                        .length
-                    }
-                  </>
-                </Button>
                 <Flex textAlign="center" justify="center">
-                  {typeTable}
+                  {/* {typeTable} */}
+                  <Table colorScheme="blackAlpha">
+                    <Thead>
+                      <Tr>
+                        <Th border="1px">Data</Th>
+                        <Th border="1px">Animal</Th>
+                        <Th border="1px">Exame</Th>
+                        <Th border="1px">Veterinário</Th>
+                        <Th border="1px">Status</Th>
+                        <Th border="1px">Responsável</Th>
+                        <Th border="1px">Resultado</Th>
+                        <Th border="1px" whiteSpace={"nowrap"}>Resultado por Email</Th>
+                        <Th border="1px">Impressão</Th>
+                      </Tr>
+                    </Thead>
+
+                    <Tbody maxH="60vh" overflowY="scroll">
+                      {labs?.map((exam) => {
+                        return (
+                          <React.Fragment key={exam.id}>
+                            <Tr
+                              key={exam.id}
+                              cursor="pointer"
+                              _hover={{ bg: "gray.300" }}
+                              onClick={(ev: any) => {
+                                if (
+                                  ev.target.type !== "button" &&
+                                  exam.doneExame === false
+                                ) {
+                                  navigate(
+                                    `/Labs/Set/${exam.id}/${
+                                      exams.find(
+                                        (data: any) => data.name === exam.name
+                                      ).codexam
+                                    }/${exam.medicine?.pet.id}`
+                                  );
+                                }
+                              }}
+                            >
+                              <Td border="1px">
+                                {new Intl.DateTimeFormat("pt-BR").format(
+                                  new Date(exam?.requesteData)
+                                )}{" "}
+                              </Td>
+
+                              <Td border="1px">{exam.medicine?.pet.name}</Td>
+
+                              <Td border="1px">{exam.name}</Td>
+
+                              <Td border="1px">
+                                {exam.requestedFor
+                                  ? exam.requestedFor
+                                  : "Não definido"}
+                              </Td>
+                              <Td border="1px" whiteSpace={"nowrap"}>
+                                {exam.doneExame ? "Laudado" : "A Fazer"}
+                              </Td>
+                              <Th border="1px">
+                                {exam.responsibleForExam
+                                  ? exam.responsibleForExam
+                                  : "Não Laudado"}
+                              </Th>
+                              <Th border="1px">
+                                <Button
+                                  isDisabled={exam.doneExame === false}
+                                  colorScheme="teal"
+                                  onClick={() =>
+                                    handleOpenResultExams({
+                                      examId: exam.id,
+                                      isMultiPart: exam.twoPart,
+                                      isOnePart: exam.onePart,
+                                      isReportByText: exam.byReport,
+                                    })
+                                  }
+                                >
+                                  Visualizar
+                                </Button>
+                              </Th>
+                              <Th border="1px">
+                                <Button
+                                  isDisabled={exam.doneExame === false}
+                                  colorScheme="teal"
+                                  onClick={() =>
+                                    handleSendEmailResultExams({
+                                      examId: exam.id,
+                                      isMultiPart: exam.twoPart,
+                                      isOnePart: exam.onePart,
+                                      isReportByText: exam.byReport,
+                                    })
+                                  }
+                                >
+                                  Enviar Email
+                                </Button>
+                              </Th>
+                              <Th border="1px">
+                                <Button
+                                  colorScheme="teal"
+                                  onClick={() =>
+                                    printTag({
+                                      examId: exam.id,
+                                      isMultiPart: exam.twoPart,
+                                      isOnePart: exam.onePart,
+                                      isReportByText: exam.byReport,
+                                    })
+                                  }
+                                >
+                                  Imprimir
+                                </Button>
+                              </Th>
+                            </Tr>
+                          </React.Fragment>
+                        );
+                      })}
+                    </Tbody>
+                  </Table>
                 </Flex>
               </Flex>
             </Box>
