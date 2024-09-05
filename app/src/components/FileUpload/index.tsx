@@ -42,8 +42,8 @@ const FileUpload = ({ examId }: FileUploadProps) => {
       justify="center"
       direction="column"
     >
-      <Text mb={8} fontWeight="bold" borderBottom="2px">
-        LAUDAR COM ARQUIVOS
+      <Text mb={3} fontWeight="bold">
+        LAUDAR COM PDF
       </Text>
       <FormControl
         w="100%"
@@ -52,15 +52,19 @@ const FileUpload = ({ examId }: FileUploadProps) => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <FormLabel
-          boxShadow="0px 5px 15px rgba(0, 0, 0, 0.35)"
+          boxShadow="0px 2px 10px rgba(92, 89, 89, 0.35)"
           border="2px"
+          borderStyle={"dashed"}
+          borderColor={"gray.400"}
           rounded="8"
           w="100%"
+          py={4}
           htmlFor="files"
         >
-          <Flex align="center" justify="center" gap="4" w="100%">
-            <Text fontSize="sm">UPLOAD DE ARQUIVOS</Text>
-            <MdOutlineCloudUpload size={48} />
+          <Flex align="center" flexDirection={"column"} justify="center" gap="2" w="100%">
+            <MdOutlineCloudUpload color="gray" size={48} />
+            <Text fontSize="sm" fontWeight={"bold"}>UPLOAD DE PDF</Text>
+            <Text fontSize="sm">Clique aqui para adicionar o laudo em PDF</Text>
           </Flex>
         </FormLabel>
 
@@ -74,7 +78,7 @@ const FileUpload = ({ examId }: FileUploadProps) => {
         />
 
         <Button fontSize="sm" w="100%" colorScheme="linkedin" type="submit">
-          Enviar Arquivos
+          Enviar PDF
         </Button>
       </FormControl>
     </Flex>

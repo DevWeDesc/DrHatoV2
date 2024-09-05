@@ -350,7 +350,7 @@ export function LabExames() {
     <ChakraProvider>
       <AdminContainer>
         <Flex direction="column" h="100vh">
-          <Header title="Painel Veterinário" />
+          <Header title="Painel Veterinário" url="/Labs" />
           <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
             <GenericSidebar>
               <GenericLink
@@ -507,7 +507,7 @@ export function LabExames() {
                         <Th border="1px">Responsável</Th>
                         <Th border="1px">Resultado</Th>
                         <Th border="1px" whiteSpace={"nowrap"}>Resultado por Email</Th>
-                        <Th border="1px">Impressão</Th>
+                        <Th border="1px">Etiqueta</Th>
                       </Tr>
                     </Thead>
 
@@ -601,7 +601,7 @@ export function LabExames() {
                                     })
                                   }
                                 >
-                                  Imprimir
+                                  Etiqueta
                                 </Button>
                               </Th>
                             </Tr>
