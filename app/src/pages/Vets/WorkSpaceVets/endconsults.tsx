@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Button,
   Flex,
@@ -11,10 +11,13 @@ import {
   Th,
   Thead,
   Tr,
+  CloseButton,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { api } from "../../../lib/axios";
 import { toast } from "react-toastify";
+import { ModalContext } from "../../../hooks/useModal";
+
 interface ConsultDebitsProps {
   id: string;
   openedDate: Date;
@@ -47,6 +50,7 @@ interface ConsultDebitsProps {
   }>;
 }
 
+
 interface EndConsutsProps {
   handleCloseQuery?: () => void;
   handleCloseAdmission?: () => void;
@@ -57,6 +61,8 @@ export function EndConsults({
   handleCloseAdmission,
   isAdmission,
 }: EndConsutsProps) {
+
+  const { setIsEndConsultQueue } = useContext(ModalContext);
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [consultDebitsDetails, setConsultDebitsDetails] = useState<
     ConsultDebitsProps[]
@@ -112,6 +118,9 @@ export function EndConsults({
 
   return (
     <Flex w="800px" h="600px" direction="column">
+      <Flex w={"full"} justifyContent={"end"}>
+        <CloseButton size="lg" color={"red.500"} border={"1px"} borderColor={"gray.200"} onClick={()=> setIsEndConsultQueue(false)} />
+      </Flex>
       {consultDebitsDetails.map((consults) => (
         <React.Fragment key={consults.id}>
           <Flex m="2" align="center" justifyContent="space-between">

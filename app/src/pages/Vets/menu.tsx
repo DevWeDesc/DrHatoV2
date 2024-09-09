@@ -1,4 +1,20 @@
-import {  Box,  ChakraProvider, Flex, Table, Tr, Td, Thead, Tbody, Th, Text, Button, HStack, VStack, Checkbox, FormLabel } from "@chakra-ui/react";
+import {
+  Box,
+  ChakraProvider,
+  Flex,
+  Table,
+  Tr,
+  Td,
+  Thead,
+  Tbody,
+  Th,
+  Text,
+  Button,
+  HStack,
+  VStack,
+  Checkbox,
+  FormLabel,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { Header } from "../../components/admin/Header";
 import { GenericLink } from "../../components/Sidebars/GenericLink";
@@ -28,17 +44,25 @@ export function MenuVet() {
     customerName: "",
   });
 
-
-  const { data: PetData, isLoading, refetch } = useQuery({
+  const {
+    data: PetData,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["queueVets"],
-    queryFn: async () => { 
-      
+    queryFn: async () => {
       // const res = showOldConsults ? await api.get(`/consults/historie/old?initialDate=${initialDate}&finalDate=${finalDate}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`)  : await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}`) ;
       // setTotalInQueue(res.data.totalInQueue);
       // setNumberOfPages(res.data.totalPages);
       // return res.data.response;
 
-      const res =  await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}`) ;
+      const res = await api.get(
+        `/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${
+          showAllVets ? "" : user.consultName
+        }&petName=${searchBody.petName}&customerName=${
+          searchBody.customerName
+        }&petCode=${searchBody.codPet}`
+      );
       setTotalInQueue(res.data.totalInQueue);
       setNumberOfPages(res.data.totalPages);
       return res.data.response;
@@ -46,8 +70,8 @@ export function MenuVet() {
   });
 
   if (isLoading) {
-      return <LoadingSpinner />;
-    }
+    return <LoadingSpinner />;
+  }
 
   function incrementPage() {
     setPagination((prevCount) =>
@@ -61,16 +85,14 @@ export function MenuVet() {
     refetch();
   }
 
-  async function updateQueuePetPreference(queueId: string, petId: number)   {
+  async function updateQueuePetPreference(queueId: string, petId: number) {
     const data = {
       vetPreference: user.consultName,
-      queueId: queueId
-    }
+      queueId: queueId,
+    };
     await api.patch("/queue/vetpreference", data).then(() => {
-      navigate(
-        `/Vets/Workspace/${petId}/${queueId}`
-      )
-    })
+      navigate(`/Vets/Workspace/${petId}/${queueId}`);
+    });
   }
 
   return (
@@ -94,20 +116,22 @@ export function MenuVet() {
                       <Input
                         name="initialDate"
                         onChange={(ev) => setInitialDate(ev.target.value)}
-                        label="data inicial"
+                        label="Data Inicial"
                         type="date"
+                        defaultValue={ new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString().split('T')[0]}
                       />
                       <Input
                         name="finalDate"
                         onChange={(ev) => setFinalDate(ev.target.value)}
-                        label="data final"
+                        label="Data Final"
                         type="date"
+                        defaultValue={ new Date().toISOString().split('T')[0]}
                       />
                       <HStack align="center">
                         <VStack>
                           <FormLabel>Finalizados</FormLabel>
                           <Checkbox
-                            onChange={(ev) => setIsFinishied(ev.target.checked) }
+                            onChange={(ev) => setIsFinishied(ev.target.checked)}
                             border="2px"
                             size="lg"
                           />
@@ -123,7 +147,9 @@ export function MenuVet() {
                         </VStack>
 
                         <VStack w={160}>
-                          <FormLabel whiteSpace={"nowrap"}>Todos Veterinários</FormLabel>
+                          <FormLabel whiteSpace={"nowrap"}>
+                            Todos Veterinários
+                          </FormLabel>
                           <Checkbox
                             onChange={(ev) => {
                               setShowAllVets(ev.target.checked);
@@ -214,75 +240,77 @@ export function MenuVet() {
                   justify="center"
                   overflowY="auto"
                 >
-                  
-                    <Table colorScheme="blackAlpha">
-                      <Thead>
-                        <Tr>
-                          <Th>Tipo</Th>
-                          <Th>CPF</Th>
-                          <Th>Cliente</Th>
-                          <Th>Animal</Th>
-                          <Th>Código</Th>
-                          <Th>Data</Th>
-                          <Th>Preferência</Th>
-                          <Th>Especialidade</Th>
+                  <Table colorScheme="blackAlpha">
+                    <Thead>
+                      <Tr>
+                        <Th border="1px">Tipo</Th>
+                        <Th border="1px">Cliente</Th>
+                        <Th border="1px">Animal</Th>
+                        <Th border="1px">Código</Th>
+                        <Th border="1px">Data</Th>
+                        <Th border="1px">Hora</Th>
+                        <Th border="1px">Preferência</Th>
+                        <Th border="1px">Especialidade</Th>
+                      </Tr>
+                    </Thead>
+
+                    <Tbody>
+                      {PetData.map((pet: any, index: number) => (
+                        <Tr
+                          onClick={() =>
+                            navigate(`/Vets/Workspace/${pet.id}/${pet.queueId}`)
+                          }
+                          _hover={{ bg: "gray.300" }}
+                          color={pet.petAdmitted ? "red.500" : "black"}
+                          key={`${pet.id}-${index}`}
+                          cursor="pointer"
+                        >
+                          <Td border="1px">
+                            <Text colorScheme="whatsapp">{pet.queryType}</Text>
+                          </Td>
+                          <Td border="1px">{pet.customerName}</Td>
+
+                          <Td
+                            border="1px"
+                            cursor="pointer"
+                            onClick={() =>
+                              navigate(`/Vets/Workspace/${pet.id}`)
+                            }
+                          >
+                            {pet.name}
+                          </Td>
+                          <Td border="1px">{pet.codPet}</Td>
+                          <Td border="1px">
+                            {new Intl.DateTimeFormat("pt-BR", {
+                              year: "2-digit",
+                              month: "2-digit",
+                              day: "2-digit",
+                            }).format(new Date(pet?.queueEntry))}
+                          </Td>
+                          <Td border="1px">
+                            {new Intl.DateTimeFormat("pt-BR", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }).format(new Date(pet?.queueEntry))}
+                          </Td>
+
+                          {pet.vetPreference == "Sem preferência" ? (
+                            <Td border="1px">
+                              Sem preferência
+                            </Td>
+                          ) : (
+                            <Td border="1px">
+                              {pet.vetPreference == user.consultName
+                                ? pet.vetPreference
+                                : pet.vetPreference}
+                            </Td>
+                          )}
+
+                          <Td border="1px">0</Td>
                         </Tr>
-                      </Thead>
-
-                      <Tbody>
-                        {PetData
-                          .map((pet: any, index: number) => (
-                            <Tr
-                              onClick={() => navigate(
-                                `/Vets/Workspace/${pet.id}/${pet.queueId}`
-                              )}
-                              color={pet.petAdmitted ? "red.500" : "black"}
-                              key={`${pet.id}-${index}`}
-                              cursor="pointer" 
-                            >
-                              <Td>
-                                <Text colorScheme="whatsapp">
-                                  {pet.queryType}
-                                </Text>
-                              </Td>
-                              <Td>{pet.customerCpf}</Td>
-                              <Td>{pet.customerName}</Td>
-
-                              <Td
-                                cursor="pointer"
-                                onClick={() =>
-                                  navigate(`/Vets/Workspace/${pet.id}`)
-                                }
-                              >
-                                {pet.name}
-                              </Td>
-                              <Td>{pet.codPet}</Td>
-                              <Td>
-                                {new Intl.DateTimeFormat("pt-BR", {
-                                  year: "2-digit",
-                                  month: "2-digit",
-                                  day: "2-digit",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }).format(new Date(pet?.queueEntry))}
-                              </Td>
-
-                                {
-                                  pet.vetPreference == "Sem preferência" ? <Td>
-                                         <Button colorScheme="teal">Sem preferência</Button>
-                                  </Td> :  <Td>
-                                {pet.vetPreference == user.consultName
-                                  ? pet.vetPreference
-                                  : pet.vetPreference}
-                              </Td>
-                                }
-                             
-                              <Td>0</Td>
-                            </Tr>
-                          ))
-                          .reverse()}
-                      </Tbody>
-                    </Table>
+                      )).reverse()}
+                    </Tbody>
+                  </Table>
                 </Flex>
               </Flex>
             </Box>

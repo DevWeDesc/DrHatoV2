@@ -95,7 +95,7 @@ export function WorkSpaceVet() {
     setIsCustomerDetailsOpen,
     isCustomerDetailsOpen,
   } = useContext(ModalContext);
-  const [handleViewComponent, setHandleViewComponent] = useState("");
+  const [handleViewComponent, setHandleViewComponent] = useState("allPets");
   // petSelected, setIsModalUpdated, refetch, setPetSelected
   const [isModalUpdated, setIsModalUpdated] = useState(false);
 
