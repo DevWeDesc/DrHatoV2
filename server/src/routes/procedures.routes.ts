@@ -34,9 +34,13 @@ export async function proceduresRoutes(app: FastifyInstance) {
     proceduresController.removeAllEspeciesInProcedure
   );
 
+  app.get(
+    "/procedures/health/:planName/:page",
+    proceduresController.getProcedureByHealthInsurance
+  );
 
-  app.get("/procedures/health/:planName/:page", proceduresController.getProcedureByHealthInsurance)
-
-
-  app.get("/procedures/letters/:letter/:page", proceduresController.getProceduresByLetters)
+  app.get(
+    "/procedures/letters/:letter/:page",
+    proceduresController.getProceduresByLetters
+  );
 }

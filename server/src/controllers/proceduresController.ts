@@ -36,7 +36,7 @@ export const proceduresController = {
       minAge,
       maxAge,
       sector_id,
-      health_id
+      health_id,
     } = ProcedureSchema.parse(request.body);
     try {
       await prisma.procedures.create({
@@ -53,10 +53,10 @@ export const proceduresController = {
           applicableMale,
           maxAge,
           minAge,
-          sector: { connect: { id: parseInt(sector_id) }, },
+          sector: { connect: { id: parseInt(sector_id) } },
           HealthInsurance: {
-            connect: {id:  health_id}
-          }
+            connect: { id: health_id },
+          },
         },
       });
       reply.status(201).send("Procedimento criado!");
@@ -213,86 +213,127 @@ export const proceduresController = {
     } catch (error) {}
   },
 
-  getProceduresByLetters: async (request: FastifyRequest,reply: FastifyReply) => {
+  getProceduresByLetters: async (
+    request: FastifyRequest<{ Querystring: { sex: string } }>,
+    reply: FastifyReply
+  ) => {
     try {
       const GetProceduresByLetters = z.object({
         letter: z.string(),
-        page: z.coerce.number()
-      })
+        page: z.coerce.number(),
+      });
 
-      const {letter, page} = GetProceduresByLetters.parse(request.params)
+      const { letter, page } = GetProceduresByLetters.parse(request.params);
       const currentPage = page || 1;
+      const animalSex = request.query.sex || null;
 
-      const procedures = await prisma.procedures.findMany({
-        skip: (currentPage - 1) * 35,
-        take: 35,
-        where: {name: { startsWith: letter}}
-      })
+      if (animalSex === "Macho") {
+        const procedures = await prisma.procedures.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            applicableMale: true,
+            name: { startsWith: letter },
+          },
+          include: {
+            groups: { select: { name: true } },
+            sector: { select: { name: true } },
+            appicableEspecies: true,
+          },
+        });
+        const totalProceds = await prisma.procedures.count({
+          where: { applicableMale: true },
+        });
+        const totalPages = Math.ceil(totalProceds / 35);
 
-      const totalProceds = await prisma.procedures.count({  where: {name: { startsWith: letter}}})
+        reply.send({ totalPages, totalProceds, currentPage, procedures });
+      } else if (animalSex === "Femea") {
+        const procedures = await prisma.procedures.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            applicableFemale: true,
+            name: { startsWith: letter },
+          },
+          include: {
+            groups: { select: { name: true } },
+            sector: { select: { name: true } },
+            appicableEspecies: true,
+          },
+        });
+        const totalProceds = await prisma.procedures.count({
+          where: { applicableFemale: true },
+        });
+        const totalPages = Math.ceil(totalProceds / 35);
 
-      const totalPages = Math.ceil(totalProceds / 35);
+        reply.send({ totalPages, totalProceds, currentPage, procedures });
+      } else {
+        const procedures = await prisma.procedures.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: { name: { startsWith: letter } },
+        });
 
+        const totalProceds = await prisma.procedures.count({
+          where: { name: { startsWith: letter } },
+        });
+        const totalPages = Math.ceil(totalProceds / 35);
 
-      reply.send({
-        totalPages,
-        totalProceds,
-        currentPage,
-        procedures
-      })
-
-
+        reply.send({
+          totalPages,
+          totalProceds,
+          currentPage,
+          procedures,
+        });
+      }
     } catch (error) {
-
-      console.log(error)
-    
+      console.log(error);
     }
   },
 
-
-  getProcedureByHealthInsurance: async (request: FastifyRequest,reply: FastifyReply) => {
+  getProcedureByHealthInsurance: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
     try {
       const GetHealthInsuranceProcedureSchema = z.object({
         planName: z.string(),
         // planProvider: z.string(),
-        page: z.coerce.number()
-      })
-   
-      const {planName,page} = GetHealthInsuranceProcedureSchema.parse(request.params)
+        page: z.coerce.number(),
+      });
+
+      const { planName, page } = GetHealthInsuranceProcedureSchema.parse(
+        request.params
+      );
       const currentPage = page || 1;
       const procedures = await prisma.procedures.findMany({
         skip: (currentPage - 1) * 35,
         take: 35,
         where: {
           HealthInsurance: {
-            planName: {contains: planName},
+            planName: { contains: planName },
             // planProvider: {equals: planProvider}
-          }
-        }
-      })
+          },
+        },
+      });
 
-     
       const totalPages = Math.ceil(procedures.length / 35);
 
       reply.send({
         procedures,
         currentPage,
         totalPages,
-        totalProceds: procedures.length
-      })
-
+        totalProceds: procedures.length,
+      });
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
   },
 
-  getWithId: async (
-    request: FastifyRequest,
-    reply: FastifyReply
-  ) => {
+  getWithId: async (request: FastifyRequest, reply: FastifyReply) => {
     const GetProceduresByIdSchema = z.object({
-      id: z.coerce.number()
-    })
+      id: z.coerce.number(),
+    });
     const { id } = GetProceduresByIdSchema.parse(request.params);
     try {
       const procedure = await prisma.procedures.findUnique({
@@ -311,31 +352,26 @@ export const proceduresController = {
     }
   },
 
-  editProcedure: async (
-    request: FastifyRequest,
-    reply: FastifyReply
-  ) => {
-
+  editProcedure: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const editProcedureSchema = z.object({
         procedureId: z.coerce.number(),
-        name                : z.string().optional(),
-        price               : z.coerce.number().optional(),
-        priceTwo            : z.coerce.number().optional(),
-        priceThree          : z.coerce.number().optional(),
-        priceFour           : z.coerce.number().optional(),
-        minAge              : z.coerce.number().optional(),
-        maxAge              : z.coerce.number().optional(),
-        applicableMale      : z.boolean().optional(),
-        applicableFemale    : z.boolean().optional(),
-        applicationInterval : z.string().optional(),
-        available           : z.boolean().optional(),
-        observations        : z.string().optional(),
-        group_id            : z.coerce.number().optional(),
-        sector_id           : z.coerce.number().optional(),
-   
-      })
-  
+        name: z.string().optional(),
+        price: z.coerce.number().optional(),
+        priceTwo: z.coerce.number().optional(),
+        priceThree: z.coerce.number().optional(),
+        priceFour: z.coerce.number().optional(),
+        minAge: z.coerce.number().optional(),
+        maxAge: z.coerce.number().optional(),
+        applicableMale: z.boolean().optional(),
+        applicableFemale: z.boolean().optional(),
+        applicationInterval: z.string().optional(),
+        available: z.boolean().optional(),
+        observations: z.string().optional(),
+        group_id: z.coerce.number().optional(),
+        sector_id: z.coerce.number().optional(),
+      });
+
       const {
         procedureId,
         name,
@@ -352,9 +388,8 @@ export const proceduresController = {
         priceThree,
         priceTwo,
         sector_id,
-    
       } = editProcedureSchema.parse(request.body);
-  
+
       await prisma.procedures.update({
         where: { id: procedureId },
         data: {
@@ -375,13 +410,11 @@ export const proceduresController = {
         },
       });
 
-    
-
-      reply.status(200)
+      reply.status(200);
     } catch (error) {
       reply.send({
-        message: error
-      })
+        message: error,
+      });
       console.log(error);
     }
   },
@@ -408,7 +441,6 @@ export const proceduresController = {
     const { procedureId, petId, accId, queueId } = request.params;
     const { RequestedByVetId, RequestedByVetName, InAdmission } = request.body;
     try {
-      
       const procedure = await prisma.procedures.findUnique({
         where: { id: parseInt(procedureId) },
       });
@@ -416,7 +448,8 @@ export const proceduresController = {
       if (!procedure) return;
 
       if (InAdmission === true) {
-        await prisma.petConsultsDebits.create({
+        await prisma.petConsultsDebits
+          .create({
             data: {
               OpenedAdmissionsForPet: { connect: { id: queueId } },
               isProcedure: true,
@@ -442,7 +475,7 @@ export const proceduresController = {
               },
             });
           });
-      } else if(InAdmission === false) {
+      } else if (InAdmission === false) {
         await prisma.petConsultsDebits
           .create({
             data: {
