@@ -16,6 +16,7 @@ type params = {
 };
 type query = {
   page: string;
+  sex: string;
 };
 
 type body = {
@@ -105,25 +106,70 @@ export const examsController = {
   ) => {
     try {
       const currentPage = Number(request.query.page) || 1;
-      const totalExams = await prisma.oldExams.count({
-        where: {
-          disponible: true,
-        }
-      });
-      const totalPages = Math.ceil(totalExams / 35);
+      const { sex } = request.query;
+      if (sex === "Macho") {
+        const totalExams = await prisma.oldExams.count({
+          where: {
+            disponible: true,
+          },
+        });
+        const totalPages = Math.ceil(totalExams / 35);
 
-      const exams = await prisma.oldExams.findMany({
-        skip: (currentPage - 1) * 35,
-        take: 35,
-        where: {
-          disponible: true,
-        },
-        include:{
-          appicableEspecies: true
-        }
-      });
+        const exams = await prisma.oldExams.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            disponible: true,
+            applicableMales: true,
+          },
+          include: {
+            appicableEspecies: true,
+          },
+        });
 
-      reply.send({ totalPages, totalExams, currentPage, exams });
+        reply.send({ totalPages, totalExams, currentPage, exams });
+      } else if (sex === "Fêmea") {
+        const totalExams = await prisma.oldExams.count({
+          where: {
+            disponible: true,
+            appicableFemales: true,
+          },
+        });
+        const totalPages = Math.ceil(totalExams / 35);
+
+        const exams = await prisma.oldExams.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            disponible: true,
+          },
+          include: {
+            appicableEspecies: true,
+          },
+        });
+
+        reply.send({ totalPages, totalExams, currentPage, exams });
+      } else {
+        const totalExams = await prisma.oldExams.count({
+          where: {
+            disponible: true,
+          },
+        });
+        const totalPages = Math.ceil(totalExams / 35);
+
+        const exams = await prisma.oldExams.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            disponible: true,
+          },
+          include: {
+            appicableEspecies: true,
+          },
+        });
+
+        reply.send({ totalPages, totalExams, currentPage, exams });
+      }
     } catch (error) {
       reply.send({
         message: error,
@@ -148,7 +194,7 @@ export const examsController = {
           partExams: {
             include: { examsDetails: true },
           },
-          appicableEspecies: true
+          appicableEspecies: true,
         },
       });
 
@@ -171,19 +217,89 @@ export const examsController = {
   ) => {
     try {
       const { examName } = request.params;
+      const currentPage = Number(request.query.page) || 1;
+      const { sex } = request.query;
 
-      const response = await prisma.oldExams.findMany({
-        where: {
-          name: { contains: examName, mode: "insensitive" },
-          
-       
-        },
-        include:{
-          appicableEspecies: true
-        }
-      });
+      if (sex === "Macho") {
+        const totalExams = await prisma.oldExams.count({
+          where: {
+            name: { contains: examName, mode: "insensitive" },
+            applicableMales: true,
+          },
+        });
 
-      reply.send(response);
+        const exams = await prisma.oldExams.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            name: { contains: examName, mode: "insensitive" },
+            applicableMales: true,
+          },
+          include: {
+            appicableEspecies: true,
+          },
+        });
+
+        const totalPages = Math.ceil(totalExams / 35);
+        reply.send({
+          currentPage,
+          totalPages,
+          totalProceds: totalExams,
+          exams,
+        });
+      } else if (sex === "Fêmea") {
+        const totalExams = await prisma.oldExams.count({
+          where: {
+            name: { contains: examName, mode: "insensitive" },
+            appicableFemales: true,
+          },
+        });
+
+        const exams = await prisma.oldExams.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            name: { contains: examName, mode: "insensitive" },
+            appicableFemales: true,
+          },
+          include: {
+            appicableEspecies: true,
+          },
+        });
+
+        const totalPages = Math.ceil(totalExams / 35);
+        reply.send({
+          currentPage,
+          totalPages,
+          totalProceds: totalExams,
+          exams,
+        });
+      } else {
+        const totalExams = await prisma.oldExams.count({
+          where: {
+            name: { contains: examName, mode: "insensitive" },
+          },
+        });
+
+        const exams = await prisma.oldExams.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            name: { contains: examName, mode: "insensitive" },
+          },
+          include: {
+            appicableEspecies: true,
+          },
+        });
+
+        const totalPages = Math.ceil(totalExams / 35);
+        reply.send({
+          currentPage,
+          totalPages,
+          totalProceds: totalExams,
+          exams,
+        });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -198,58 +314,132 @@ export const examsController = {
   ) => {
     try {
       const { firstLetter } = request.params;
+      const { sex } = request.query;
+      const currentPage = Number(request.query.page) || 1;
 
-      const response = await prisma.oldExams.findMany({
-        where: {
-          name: { startsWith: firstLetter.toUpperCase() },
-        },
-        include:{
-          appicableEspecies: true
-        }
-      });
+      if (sex === "Macho") {
+        const totalExams = await prisma.oldExams.count({
+          where: {
+            name: { startsWith: firstLetter.toUpperCase() },
+            applicableMales: true,
+          },
+        });
 
-      reply.send(response);
+        const totalPages = Math.ceil(totalExams / 35);
+        const response = await prisma.oldExams.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            name: { startsWith: firstLetter.toUpperCase() },
+            applicableMales: true,
+          },
+          include: {
+            appicableEspecies: true,
+          },
+        });
+
+        reply.send({
+          currentPage,
+          totalPages,
+          totalProceds: totalExams,
+          exams: response,
+        });
+      } else if (sex === "Fêmea") {
+        const totalExams = await prisma.oldExams.count({
+          where: {
+            name: { startsWith: firstLetter.toUpperCase() },
+            appicableFemales: true,
+          },
+        });
+
+        const totalPages = Math.ceil(totalExams / 35);
+        const response = await prisma.oldExams.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            name: { startsWith: firstLetter.toUpperCase() },
+            appicableFemales: true,
+          },
+          include: {
+            appicableEspecies: true,
+          },
+        });
+
+        reply.send({
+          currentPage,
+          totalPages,
+          totalProceds: totalExams,
+          exams: response,
+        });
+      } else {
+        const totalExams = await prisma.oldExams.count({
+          where: {
+            name: { startsWith: firstLetter.toUpperCase() },
+          },
+        });
+
+        const totalPages = Math.ceil(totalExams / 35);
+        const response = await prisma.oldExams.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            name: { startsWith: firstLetter.toUpperCase() },
+          },
+          include: {
+            appicableEspecies: true,
+          },
+        });
+
+        reply.send({
+          currentPage,
+          totalPages,
+          totalProceds: totalExams,
+          exams: response,
+        });
+      }
     } catch (error) {
       console.log(error);
     }
   },
 
-  getExamByHealthInsurance: async (request: FastifyRequest,reply: FastifyReply) => {
+  getExamByHealthInsurance: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
     try {
       const GetHealthInsuranceExamSchema = z.object({
         planName: z.string(),
         // planProvider: z.string(),
-        page: z.coerce.number()
-      })
-   
-      const {planName,page} = GetHealthInsuranceExamSchema.parse(request.params)
+        page: z.coerce.number(),
+      });
+
+      const { planName, page } = GetHealthInsuranceExamSchema.parse(
+        request.params
+      );
       const currentPage = page || 1;
       const exams = await prisma.oldExams.findMany({
         skip: (currentPage - 1) * 35,
         take: 35,
         where: {
           HealthInsurance: {
-            planName: {contains: planName},
+            planName: { contains: planName },
             // planProvider: {equals: planProvider}
-          }
-        }
-      })
+          },
+        },
+      });
 
-     
       const totalPages = Math.ceil(exams.length / 35);
 
       reply.send({
         exams,
         currentPage,
         totalPages,
-        totalProceds: exams.length
-      })
-
+        totalProceds: exams.length,
+      });
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
   },
-
 
   setExamInPet: async (
     request: FastifyRequest<{
@@ -353,23 +543,29 @@ export const examsController = {
     }
   },
 
-
-  createExam: async (  request: FastifyRequest, reply: FastifyReply) => {
+  createExam: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-
       const CreateExamSchema = z.object({
         name: z.string(),
         price: z.number(),
-        disponible: z.boolean(), 
+        disponible: z.boolean(),
         onePart: z.boolean(),
         twoPart: z.boolean(),
         report: z.boolean(),
         sector: z.coerce.number(),
-        health_id: z.number().optional()
-      })
-      
-      const {disponible, name, onePart, price, report, twoPart, sector, health_id} = CreateExamSchema.parse(request.body)
+        health_id: z.number().optional(),
+      });
 
+      const {
+        disponible,
+        name,
+        onePart,
+        price,
+        report,
+        twoPart,
+        sector,
+        health_id,
+      } = CreateExamSchema.parse(request.body);
 
       await prisma.oldExams.create({
         data: {
@@ -381,40 +577,34 @@ export const examsController = {
           disponible,
           sector,
           HealthInsurance: {
-            connect: {id: health_id}
-          }
+            connect: { id: health_id },
+          },
+        },
+      });
 
-        }
-      })
-
-      reply.status(201)
-
+      reply.status(201);
     } catch (error) {
-
-      console.error(error)
+      console.error(error);
     }
   },
 
-
   deleteExam: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-        const DeletExamParams =  z.object({
-          examId: z.coerce.number()
-        })
- 
-        const {examId} = DeletExamParams.parse(request.params)
+      const DeletExamParams = z.object({
+        examId: z.coerce.number(),
+      });
 
+      const { examId } = DeletExamParams.parse(request.params);
 
-        await prisma.oldExams.delete({
-          where: {
-            codexam: examId
-          }
-        })
+      await prisma.oldExams.delete({
+        where: {
+          codexam: examId,
+        },
+      });
 
-
-        reply.status(204)
+      reply.status(204);
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
   },
   setEspecieInExam: async (
@@ -446,24 +636,22 @@ export const examsController = {
       Params: { examId: string; especieId: string };
     }>,
     reply: FastifyReply
-  )=>{
+  ) => {
     try {
-      const {examId, especieId} = request.params
+      const { examId, especieId } = request.params;
 
       await prisma.oldExams.update({
-        where: {codexam: parseInt(examId)},
+        where: { codexam: parseInt(examId) },
         data: {
           appicableEspecies: {
             disconnect: {
-              id: parseInt(especieId)
-            }
-          }
-        }
-      })
+              id: parseInt(especieId),
+            },
+          },
+        },
+      });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
-
-
+  },
 };
