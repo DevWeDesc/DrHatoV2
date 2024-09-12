@@ -21,7 +21,7 @@ type body = {
 export const vaccinesController = {
   createVaccine: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-    const CreateVaccineSchema = z.object({
+      const CreateVaccineSchema = z.object({
         name: z.string(),
         price: z.number(),
         description: z.string(),
@@ -30,12 +30,28 @@ export const vaccinesController = {
         applicableMale: z.boolean().optional(),
         health_id: z.number(),
       });
-      const { name, description, price, applicableFemale, applicableMale, disponible, health_id } = CreateVaccineSchema.parse(request.body);
+      const {
+        name,
+        description,
+        price,
+        applicableFemale,
+        applicableMale,
+        disponible,
+        health_id,
+      } = CreateVaccineSchema.parse(request.body);
 
       await prisma.vaccines.create({
-        data: { name, description, price,disponible, applicableFemale, applicableMale, HealthInsurance: {
-          connect: {id: health_id }
-        }},
+        data: {
+          name,
+          description,
+          price,
+          disponible,
+          applicableFemale,
+          applicableMale,
+          HealthInsurance: {
+            connect: { id: health_id },
+          },
+        },
       });
       reply.send("Sucesso ao criar nova Vacina").status(200);
     } catch (error) {
@@ -51,87 +67,215 @@ export const vaccinesController = {
     try {
       const animalSex = request.query.sex || null;
 
-      const vaccines = await prisma.vaccines.findMany({
-        where: {
-          disponible: true,
-        },
-      });
-      reply.send(vaccines).status(200);
+      if (animalSex === "Macho") {
+        const vaccines = await prisma.vaccines.findMany({
+          where: {
+            disponible: true,
+            applicableMale: true,
+          },
+        });
+        reply.send(vaccines).status(200);
+      } else if (animalSex === "Fêmea") {
+        const vaccines = await prisma.vaccines.findMany({
+          where: {
+            disponible: true,
+            applicableFemale: true,
+          },
+        });
+        reply.send(vaccines).status(200);
+      } else {
+        const vaccines = await prisma.vaccines.findMany({
+          where: {
+            disponible: true,
+          },
+        });
+        reply.send(vaccines).status(200);
+      }
     } catch (error) {
       reply.send({ message: error });
       console.log(error);
     }
   },
 
-  getVaccinesByLetter: async (request: FastifyRequest,
-    reply: FastifyReply) => {
-      try {
-        const getVaccinesByLetterSchema = z.object({
-          letter: z.string(),
-          page: z.coerce.number()
-        })
-        const {letter, page} = getVaccinesByLetterSchema.parse(request.params)
-        const currentPage = page || 1;
-        // Obtenha o número total de usuários.
-        const totalVaccines = await prisma.vaccines.count();
-        // Calcule o número de páginas.
+  getVaccinesByLetter: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const getVaccinesByLetterSchema = z.object({
+        letter: z.string(),
+        page: z.coerce.number(),
+      });
+      const { letter, page } = getVaccinesByLetterSchema.parse(request.params);
+      const currentPage = page || 1;
+      const getVaccinesByLetterSchemaQuery = z.object({
+        sex: z.string(),
+      });
+
+      const { sex: animalSex } = getVaccinesByLetterSchemaQuery.parse(
+        request.query
+      );
+
+      if (animalSex === "Macho") {
+        const totalVaccines = await prisma.vaccines.count({
+          where: {
+            name: { startsWith: letter.toUpperCase() },
+            applicableMale: true,
+          },
+        });
+
         const totalPages = Math.ceil(totalVaccines / 35);
 
-        const vaccines =  await prisma.vaccines.findMany({
+        const vaccines = await prisma.vaccines.findMany({
           skip: (currentPage - 1) * 35,
           take: 35,
-          where: {name: {startsWith: letter.toUpperCase()}}
-        })
+          where: {
+            name: { startsWith: letter.toUpperCase() },
+            applicableMale: true,
+          },
+        });
 
-        reply.
-        status(200).send({
+        reply.status(200).send({
           currentPage,
           totalPages,
           totalVaccines,
           vaccines,
-        })
-        
+        });
+      } else if (animalSex === "Fêmea") {
+        const totalVaccines = await prisma.vaccines.count({
+          where: {
+            name: { startsWith: letter.toUpperCase() },
+            applicableFemale: true,
+          },
+        });
 
+        const totalPages = Math.ceil(totalVaccines / 35);
 
+        const vaccines = await prisma.vaccines.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            name: { startsWith: letter.toUpperCase() },
+            applicableFemale: true,
+          },
+        });
+
+        reply.status(200).send({
+          currentPage,
+          totalPages,
+          totalVaccines,
+          vaccines,
+        });
+      } else {
+        const totalVaccines = await prisma.vaccines.count({
+          where: { name: { startsWith: letter.toUpperCase() } },
+        });
+
+        const totalPages = Math.ceil(totalVaccines / 35);
+
+        const vaccines = await prisma.vaccines.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: { name: { startsWith: letter.toUpperCase() } },
+        });
+
+        reply.status(200).send({
+          currentPage,
+          totalPages,
+          totalVaccines,
+          vaccines,
+        });
+      }
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-  }, 
+  },
 
-  getVaccinesByName: async (request: FastifyRequest,
-    reply: FastifyReply) => {
+  getVaccinesByName: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const getVaccinesByLetterSchema = z.object({
         name: z.string(),
-        page: z.coerce.number()
-      })
-      const {name, page} = getVaccinesByLetterSchema.parse(request.params)
+        page: z.coerce.number(),
+      });
+
+      const getVaccinesByLetterSchemaQuery = z.object({
+        sex: z.string(),
+      });
+
+      const { sex } = getVaccinesByLetterSchemaQuery.parse(request.query);
+      const { name, page } = getVaccinesByLetterSchema.parse(request.params);
       const currentPage = page || 1;
       // Obtenha o número total de usuários.
-      const totalVaccines = await prisma.surgeries.count();
-      // Calcule o número de páginas.
-      const totalPages = Math.ceil(totalVaccines / 35);
 
-      const vaccines =  await prisma.vaccines.findMany({
-        skip: (currentPage - 1) * 35,
-        take: 35,
-        where: {name: {contains: name}}
-      })
+      if (sex === "Macho") {
+        const totalVaccines = await prisma.vaccines.count({
+          where: {
+            name: { contains: name },
+            applicableMale: true,
+          },
+        });
 
-      reply.
-      status(200).send({
-        currentPage,
-        totalPages,
-        totalVaccines,
-        vaccines,
-      })
-      
+        const totalPages = Math.ceil(totalVaccines / 35);
 
+        const vaccines = await prisma.vaccines.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: {
+            name: { contains: name },
+            applicableMale: true,
+          },
+        });
 
-  } catch (error) {
+        reply.status(200).send({
+          currentPage,
+          totalPages,
+          totalVaccines,
+          vaccines,
+        });
+      } else if (sex === "Fêmea") {
+        const totalVaccines = await prisma.vaccines.count({
+          where: {
+            name: { contains: name },
+            applicableFemale: true,
+          },
+        });
+
+        const totalPages = Math.ceil(totalVaccines / 35);
+
+        const vaccines = await prisma.vaccines.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: { name: { contains: name }, applicableFemale: true },
+        });
+
+        reply.status(200).send({
+          currentPage,
+          totalPages,
+          totalVaccines,
+          vaccines,
+        });
+      } else {
+        const totalVaccines = await prisma.vaccines.count({
+          where: {
+            name: { contains: name },
+          },
+        });
+
+        const totalPages = Math.ceil(totalVaccines / 35);
+
+        const vaccines = await prisma.vaccines.findMany({
+          skip: (currentPage - 1) * 35,
+          take: 35,
+          where: { name: { contains: name } },
+        });
+
+        reply.status(200).send({
+          currentPage,
+          totalPages,
+          totalVaccines,
+          vaccines,
+        });
+      }
+    } catch (error) {
       console.log(error);
-  }
-
+    }
   },
 
   setVaccineInPet: async (
@@ -254,7 +398,7 @@ export const vaccinesController = {
       await accumulatorService.removePriceToAccum(Number(examPrice), accId);
 
       await prisma.vaccinesForPet.delete({
-        where: { id: parseInt(id), },
+        where: { id: parseInt(id) },
       });
 
       reply.status(200).send("Sucesso ao deletar");
@@ -263,39 +407,42 @@ export const vaccinesController = {
     }
   },
 
-  getVaccineByHealthInsurance: async (request: FastifyRequest,reply: FastifyReply) => {
+  getVaccineByHealthInsurance: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
     try {
       const GetHealthInsuranceVaccineSchema = z.object({
         planName: z.string(),
         // planProvider: z.string(),
-        page: z.coerce.number()
-      })
-   
-      const {planName,page} = GetHealthInsuranceVaccineSchema.parse(request.params)
+        page: z.coerce.number(),
+      });
+
+      const { planName, page } = GetHealthInsuranceVaccineSchema.parse(
+        request.params
+      );
       const currentPage = page || 1;
       const vaccines = await prisma.vaccines.findMany({
         skip: (currentPage - 1) * 35,
         take: 35,
         where: {
           HealthInsurance: {
-            planName: {contains: planName},
+            planName: { contains: planName },
             // planProvider: {equals: planProvider}
-          }
-        }
-      })
+          },
+        },
+      });
 
-     
       const totalPages = Math.ceil(vaccines.length / 35);
 
       reply.send({
         vaccines,
         currentPage,
         totalPages,
-        totalProceds: vaccines.length
-      })
-
+        totalProceds: vaccines.length,
+      });
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
   },
 };

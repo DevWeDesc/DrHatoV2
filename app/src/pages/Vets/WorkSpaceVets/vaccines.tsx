@@ -86,7 +86,7 @@ export function Vaccines({
   const user = JSON.parse(localStorage.getItem("user") as string);
   async function GetVaccine() {
     try {
-      const vaccines = await api.get("/vaccines");
+      const vaccines = await api.get(`/vaccines?sex=${petDetails.sexo}`);
       const pet = await api.get(`/pets/${id}`);
       setPetDetails(pet.data);
       setVaccines(vaccines.data);
@@ -193,12 +193,12 @@ export function Vaccines({
   }
 
   async function getVaccinesByLetter(letter: string) {
-    const response = await api.get(`/vaccines/${letter}/${pagination}`);
+    const response = await api.get(`/vaccines/${letter}/${pagination}?sex=${petDetails.sexo}`);
     setVaccines(response.data.vaccines);
   }
 
   async function getVaccinesByName() {
-    const response = await api.get(`/vaccines/${vaccineName}/${pagination}`);
+    const response = await api.get(`/vaccines/${vaccineName}/${pagination}?sex=${petDetails.sexo}`);
     setVaccines(response.data.vaccines);
   }
 
