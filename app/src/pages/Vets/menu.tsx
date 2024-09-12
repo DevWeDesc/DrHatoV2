@@ -101,142 +101,127 @@ export function MenuVet() {
         <Flex direction="column" h="100vh">
           <Header title="Painel Veterinário" url="/Home" />
           <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
-            <GenericSidebar>
-              <GenericLink
-                name="Pesquisar Cliente"
-                icon={AiOutlineSearch}
-                path="/Vets/Menu"
-              />
-            </GenericSidebar>
-            <Box flex="1" borderRadius={8} bg="gray.200" p="8">
-              <Flex mb="8" gap="8" direction="column" align="center">
-                <Flex direction="column">
-                  <Flex align="center" justify="center" gap="8" w="960px">
-                    <HStack spacing={8}>
-                      <Input
-                        name="initialDate"
-                        onChange={(ev) => setInitialDate(ev.target.value)}
-                        label="Data Inicial"
-                        type="date"
-                        defaultValue={ new Date(new Date().setMonth(new Date().getMonth() - 2)).toISOString().split('T')[0]}
-                      />
-                      <Input
-                        name="finalDate"
-                        onChange={(ev) => setFinalDate(ev.target.value)}
-                        label="Data Final"
-                        type="date"
-                        defaultValue={ new Date().toISOString().split('T')[0]}
-                      />
-                      <HStack align="center">
-                        <VStack>
-                          <FormLabel>Finalizados</FormLabel>
-                          <Checkbox
-                            onChange={(ev) => setIsFinishied(ev.target.checked)}
-                            border="2px"
-                            size="lg"
-                          />
-                        </VStack>
+            <Box flex="1" borderRadius={8} minH={700} bg="gray.200" p="8">
+              <Flex gap="8" direction="column">
+                <Flex alignItems={"center"}>
+                  <Flex direction="column" width={"full"}>
+                    <Flex align="center" gap="8">
+                      <HStack spacing={8}>
+                        <Input
+                          name="initialDate"
+                          onChange={(ev) => setInitialDate(ev.target.value)}
+                          label="Data Inicial"
+                          type="date"
+                          defaultValue={
+                            new Date(
+                              new Date().setMonth(new Date().getMonth() - 2)
+                            )
+                              .toISOString()
+                              .split("T")[0]
+                          }
+                        />
+                        <Input
+                          name="finalDate"
+                          onChange={(ev) => setFinalDate(ev.target.value)}
+                          label="Data Final"
+                          type="date"
+                          defaultValue={new Date().toISOString().split("T")[0]}
+                        />
+                        <HStack align="center">
+                          <VStack>
+                            <FormLabel>Finalizados</FormLabel>
+                            <Checkbox
+                              onChange={(ev) =>
+                                setIsFinishied(ev.target.checked)
+                              }
+                              border="2px"
+                              size="lg"
+                            />
+                          </VStack>
 
-                        <VStack>
-                          <FormLabel>Internados</FormLabel>
-                          <Checkbox
-                            onChange={(ev) => setIsAddmited(ev.target.checked)}
-                            border="2px"
-                            size="lg"
-                          />
-                        </VStack>
+                          <VStack>
+                            <FormLabel>Internados</FormLabel>
+                            <Checkbox
+                              onChange={(ev) =>
+                                setIsAddmited(ev.target.checked)
+                              }
+                              border="2px"
+                              size="lg"
+                            />
+                          </VStack>
 
-                        <VStack w={160}>
-                          <FormLabel whiteSpace={"nowrap"}>
-                            Todos Veterinários
-                          </FormLabel>
-                          <Checkbox
-                            onChange={(ev) => {
-                              setShowAllVets(ev.target.checked);
-                            }}
-                            border="2px"
-                            size="lg"
-                          />
-                        </VStack>
+                          <VStack w={160}>
+                            <FormLabel whiteSpace={"nowrap"}>
+                              Todos Veterinários
+                            </FormLabel>
+                            <Checkbox
+                              onChange={(ev) => {
+                                setShowAllVets(ev.target.checked);
+                              }}
+                              border="2px"
+                              size="lg"
+                            />
+                          </VStack>
+                        </HStack>
                       </HStack>
+                    </Flex>
+
+                    <HStack mt="4" w="100%">
+                      <Input
+                        name="codPet"
+                        type="number"
+                        value={searchBody?.codPet}
+                        onChange={(ev) =>
+                          setSearchBody({
+                            ...searchBody,
+                            codPet: ev.target.value,
+                          })
+                        }
+                        label="Código do Animal"
+                      />
+                      <Input
+                        name="petName"
+                        value={searchBody?.petName}
+                        onChange={(ev) =>
+                          setSearchBody({
+                            ...searchBody,
+                            petName: ev.target.value,
+                          })
+                        }
+                        label="Nome do Animal"
+                      />
+                      <Input
+                        name="customerName"
+                        value={searchBody?.customerName}
+                        onChange={(ev) =>
+                          setSearchBody({
+                            ...searchBody,
+                            customerName: ev.target.value,
+                          })
+                        }
+                        label="Nome do Cliente"
+                      />
                     </HStack>
                   </Flex>
-
-                  <HStack mt="4" w="100%">
-                    <Input
-                      name="codPet"
-                      type="number"
-                      value={searchBody?.codPet}
-                      onChange={(ev) =>
-                        setSearchBody({
-                          ...searchBody,
-                          codPet: ev.target.value,
-                        })
-                      }
-                      label="Código do Animal"
-                    />
-                    <Input
-                      name="petName"
-                      value={searchBody?.petName}
-                      onChange={(ev) =>
-                        setSearchBody({
-                          ...searchBody,
-                          petName: ev.target.value,
-                        })
-                      }
-                      label="Nome do Animal"
-                    />
-                    <Input
-                      name="customerName"
-                      value={searchBody?.customerName}
-                      onChange={(ev) =>
-                        setSearchBody({
-                          ...searchBody,
-                          customerName: ev.target.value,
-                        })
-                      }
-                      label="Nome do Cliente"
-                    />
-                  </HStack>
                   <Button
                     onClick={() => refetch()}
-                    mt="4"
+                    w={200}
+                    p={5}
+                    ml={8}
                     colorScheme="whatsapp"
                   >
                     FILTRAR
                   </Button>
                 </Flex>
-                <Flex gap={8}>
-                  <Button colorScheme="teal" onClick={() => navigate("/Queue")}>
-                    <>TOTAL NA FILA: {totalInQueue}</>
-                  </Button>
-                  <Button colorScheme="whatsapp">
-                    Total Paginas: {numberOfPages}
-                  </Button>
-                  <Button colorScheme="whatsapp">
-                    Pagina Atual: {pagination}
-                  </Button>
-                  <Button
-                    colorScheme="whatsapp"
-                    gap={4}
-                    onClick={() => decrementPage()}
-                  >
-                    <BiLeftArrow />
-                    Página Anterior
-                  </Button>
-                  <Button
-                    colorScheme="whatsapp"
-                    gap={4}
-                    onClick={() => incrementPage()}
-                  >
-                    Próxima Página
-                    <BiRightArrow />
-                  </Button>
+                <Flex>
+                  <Flex width={"full"} bg={"gray.300"} py={2} px={2} gap={2}>
+                    <Flex fontWeight={"bold"}>Usuário:</Flex>
+                    <span>{user.consultName}</span>
+                  </Flex>
                 </Flex>
-
                 <Flex
                   textAlign="center"
-                  h={300}
+                  maxH={400}
                   justify="center"
                   overflowY="auto"
                 >
@@ -295,9 +280,7 @@ export function MenuVet() {
                           </Td>
 
                           {pet.vetPreference == "Sem preferência" ? (
-                            <Td border="1px">
-                              Sem preferência
-                            </Td>
+                            <Td border="1px">Sem preferência</Td>
                           ) : (
                             <Td border="1px">
                               {pet.vetPreference == user.consultName
@@ -305,12 +288,46 @@ export function MenuVet() {
                                 : pet.vetPreference}
                             </Td>
                           )}
-
                           <Td border="1px">0</Td>
                         </Tr>
                       )).reverse()}
                     </Tbody>
                   </Table>
+                </Flex>
+                <Flex direction={"column"} alignItems={"center"} gap={4}>
+                  <Flex w={"full"} justifyContent={"center"} gap={4}>
+                    <Button
+                      colorScheme="whatsapp"
+                      gap={4}
+                      onClick={() => decrementPage()}
+                    >
+                      <BiLeftArrow />
+                      Página Anterior
+                    </Button>
+                    <Flex
+                      w={10}
+                      alignItems={"center"}
+                      justifyContent={"center"}
+                      h={10}
+                      color={"white"}
+                      fontWeight={"bold"}
+                      rounded={"full"}
+                      bg={"whatsapp.500"}
+                    >
+                      {pagination}
+                    </Flex>
+                    <Button
+                      colorScheme="whatsapp"
+                      gap={4}
+                      onClick={() => incrementPage()}
+                    >
+                      Próxima Página
+                      <BiRightArrow />
+                    </Button>
+                  </Flex>
+                  <Flex color={"whatsapp.500"} fontWeight={"bold"}>
+                    Total Paginas: {numberOfPages}
+                  </Flex>
                 </Flex>
               </Flex>
             </Box>
