@@ -381,6 +381,7 @@ export const petsController = {
                 isClosed: isClosed === "true" ? true : false,
                 vetPreference: { contains: vetName },
                 openedDate: filter.openedDate,
+                
               },
             },
           },
@@ -396,11 +397,13 @@ export const petsController = {
                   vetPreference: { contains: vetName },
                 },
                 orderBy: { openedDate: "asc" },
+              
               },
             },
           },
           bed: { select: { isBusy: true } },
-          customer: { select: { name: true, vetPreference: true, cpf: true } },
+          customer: { select: { name: true, vetPreference: true, cpf: true, } },
+          
         },
       });
 
@@ -419,6 +422,7 @@ export const petsController = {
               id: pet.id,
               customerName: pet.customer.name,
               vetPreference: consult.vetPreference ?? "Sem preferência",
+              vetPreferenceOriginal: consult.vetPreferenceOriginal,
               queueId: consult.id,
               openedBy: consult.openedBy,
               codPet: pet.CodAnimal,
@@ -442,7 +446,7 @@ export const petsController = {
       const paginatedResponse = response.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
       //Paginação
 
-      return reply.send({ response: paginatedResponse, totalInQueue, totalPages, totalConsults });
+      return reply.send({response: paginatedResponse, totalInQueue, totalPages, totalConsults });
     } catch (error) {
       console.error(error);
       reply.status(404).send(error);
@@ -494,6 +498,7 @@ export const petsController = {
           vetPreference:
             pet.medicineRecords?.petConsults[0]?.vetPreference ??
             "Sem preferência",
+          vetPreferenceOriginal: pet.customer.vetPreference,
           queueId: pet.medicineRecords?.petConsults[0]?.id,
           openedBy: pet.medicineRecords?.petConsults[0]?.openedBy,
           codPet: pet.CodAnimal,
