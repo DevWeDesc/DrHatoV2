@@ -7,6 +7,7 @@ export async function petRoutes(app: FastifyInstance) {
   app.get("/petsall/:petId", petsController.getPetBedHistory);
   app.post("/pets/:id", petsController.createPet);
   app.get("/pets/queue", petsController.petsInQueue);
+  app.get("/pets/queuevets", petsController.petsInQueueVet);
   app.get("/pets/queue/preference/:vetName", petsController.petsByVetQueue);
   app.put("/pet/:petId/:weight", petsController.changePetWeight);
 
