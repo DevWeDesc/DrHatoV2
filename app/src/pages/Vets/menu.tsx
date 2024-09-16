@@ -103,7 +103,7 @@ export function MenuVet() {
           <Flex w="100%" my="6" maxWidth={1680} mx="auto" px="6">
             <Box flex="1" borderRadius={8} minH={700} bg="gray.200" p="8">
               <Flex gap="8" direction="column">
-                <Flex alignItems={"center"}>
+                <Flex alignItems={"end"}>
                   <Flex direction="column" width={"full"}>
                     <Flex align="center" gap="8">
                       <HStack spacing={8}>
