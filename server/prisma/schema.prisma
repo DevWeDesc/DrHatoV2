@@ -421,33 +421,34 @@ model SurgeriesForPet {
 }
 
 model OpenedConsultsForPet {
-  id                  String              @id @default(uuid())
-  idConsult           Int?                 
-  openedDate          DateTime            @default(now())
-  petName             String?
-  openedBy            String?
-  vetPreference       String?
-  closedDate          DateTime?
-  updatedDate         DateTime?
-  isClosed            Boolean?
-  closedByVetId       Int?
-  clodedByVetName     String?
-  petWeight           String?
-  observations        String?
-  consultType         String?
-  symptoms            String?
-  request             String?
-  diagnostic          String?
-  totaLDebits         Decimal?
-  healthInsuranceId   Int?
-  healthInsuranceName String?
-  consultDebits       PetConsultsDebits[]
-  MedicineRecord      MedicineRecord?     @relation(fields: [medicineRecordId], references: [id])
-  medicineRecordId    Int?
-  clientIsVip         Boolean?            @default(false)
-  customerAccountId   Int?                @unique
-  customerAccount     CustomerAccount?    @relation(fields: [customerAccountId], references: [id])
-  InstallmentsDebts   InstallmentsDebts?
+  id                    String              @id @default(uuid())
+  idConsult             Int?
+  openedDate            DateTime            @default(now())
+  petName               String?
+  openedBy              String?
+  vetPreference         String?
+  vetPreferenceOriginal String?
+  closedDate            DateTime?
+  updatedDate           DateTime?
+  isClosed              Boolean?
+  closedByVetId         Int?
+  clodedByVetName       String?
+  petWeight             String?
+  observations          String?
+  consultType           String?
+  symptoms              String?
+  request               String?
+  diagnostic            String?
+  totaLDebits           Decimal?
+  healthInsuranceId     Int?
+  healthInsuranceName   String?
+  consultDebits         PetConsultsDebits[]
+  MedicineRecord        MedicineRecord?     @relation(fields: [medicineRecordId], references: [id])
+  medicineRecordId      Int?
+  clientIsVip           Boolean?            @default(false)
+  customerAccountId     Int?                @unique
+  customerAccount       CustomerAccount?    @relation(fields: [customerAccountId], references: [id])
+  InstallmentsDebts     InstallmentsDebts?
 }
 
 model OpenededAdmissionsForPet {
@@ -607,7 +608,7 @@ model Transaction {
 
 model ExamsForPet {
   id                     Int              @id @default(autoincrement())
-  codeExam               Int?              
+  codeExam               Int?
   name                   String
   price                  Decimal
   defaultMethodology     String?

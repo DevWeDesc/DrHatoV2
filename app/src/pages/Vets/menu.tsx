@@ -63,6 +63,9 @@ export function MenuVet() {
           searchBody.customerName
         }&petCode=${searchBody.codPet}`
       );
+
+      console.log(res.data);
+
       setTotalInQueue(res.data.totalInQueue);
       setNumberOfPages(res.data.totalPages);
       return res.data.response;
@@ -235,6 +238,7 @@ export function MenuVet() {
                         <Th border="1px">Data</Th>
                         <Th border="1px">Hora</Th>
                         <Th border="1px">Preferência</Th>
+                        <Th border="1px">Preferência Original</Th>
                         <Th border="1px">Especialidade</Th>
                       </Tr>
                     </Thead>
@@ -288,6 +292,7 @@ export function MenuVet() {
                                 : pet.vetPreference}
                             </Td>
                           )}
+                          <Td border="1px">{pet.vetPreferenceOriginal}</Td>
                           <Td border="1px">0</Td>
                         </Tr>
                       )).reverse()}
