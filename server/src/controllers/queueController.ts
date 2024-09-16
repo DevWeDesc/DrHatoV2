@@ -62,8 +62,8 @@ export const queueController = {
       orderBy: {
         codConsulta: "desc",
       },
-    })
-    
+    });
+
     return idConsult?.codConsulta;
   },
 
@@ -101,25 +101,31 @@ export const queueController = {
           .send({ message: "Já existe uma consulta aberta para este pet!" });
       }
 
-      const idConsult = await queueController.getIdConsultHistory() as number;
+      const idConsult = (await queueController.getIdConsultHistory()) as number;
 
-      const openedConsultsForPetId = await prisma.openedConsultsForPet.findFirst({
-        select: {
-          idConsult: true,
-        },
-        take: 1,
-        orderBy: {
-          idConsult: "desc",
-        },
-      });
+      const openedConsultsForPetId =
+        await prisma.openedConsultsForPet.findFirst({
+          select: {
+            idConsult: true,
+          },
+          take: 1,
+          orderBy: {
+            idConsult: "desc",
+          },
+        });
 
       await prisma.openedConsultsForPet.create({
         data: {
           petName: pet.name,
-          idConsult: openedConsultsForPetId && openedConsultsForPetId.idConsult ? openedConsultsForPetId.idConsult + 1 : idConsult + 1,
+          idConsult:
+            openedConsultsForPetId && openedConsultsForPetId.idConsult
+              ? openedConsultsForPetId.idConsult + 1
+              : idConsult + 1,
           openedDate: new Date(),
           consultType: queryType,
           vetPreference:
+            removePreference === true ? "Sem preferência" : vetPreference,
+          vetPreferenceOriginal:
             removePreference === true ? "Sem preferência" : vetPreference,
           isClosed: false,
           observations: moreInfos,
@@ -496,11 +502,10 @@ export const queueController = {
   },
 
   getQueuesInProgress: async (request: FastifyRequest, reply: FastifyReply) => {
-
     const queues = await prisma.openedConsultsForPet.findMany({
-      where:  { isClosed: false },
-    })
+      where: { isClosed: false },
+    });
 
     reply.status(200).send(queues);
-  }, 
+  },
 };

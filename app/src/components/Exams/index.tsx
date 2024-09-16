@@ -37,11 +37,11 @@ type ExamsDTO = {
 export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
-  const [exams, setExams] = useState<any[]>([])
+  const [exams, setExams] = useState<any[]>([]);
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [examName, setExamName] = useState("");
   const [searchByLetter, setSearchByLetter] = useState("");
-  const [pagination, SetPagination] = useState(1)
+  const [pagination, setPagination] = useState(1);
   const [consultDetails, setConsultDetails] = useState(
     {} as ConsultsPetDetails
   );
@@ -76,20 +76,25 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
   const [paginationInfos, setPaginationInfos] = useState({
     totalPages: 0,
     currentPage: 0,
-    totalProceds: 0
-  })
-
+    totalProceds: 0,
+  });
 
   function incrementPage() {
-    SetPagination(prevCount => pagination < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
+    setPagination((prevCount) =>
+      pagination < paginationInfos.totalPages
+        ? prevCount + 1
+        : paginationInfos.totalPages
+    );
   }
 
   function decrementPage() {
-    SetPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+    setPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
   }
 
   async function getExamsByHealthInsurance() {
-    const response = await api.get(`/exam/health/${consultDetails.healthInsuranceName}/${pagination}`)
+    const response = await api.get(
+      `/exam/health/${consultDetails.healthInsuranceName}/${pagination}`
+    );
     setExams(response.data.procedures);
     setPaginationInfos({
       currentPage: response.data.currentPage,
@@ -98,29 +103,18 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
     });
   }
   async function getQueueDetails() {
-    const response = await api.get(`/queue/details/${queueId}`)
-    setConsultDetails(response.data)
+    const response = await api.get(`/queue/details/${queueId}`);
+    setConsultDetails(response.data);
   }
 
-  async function getExams () {
-    if (examName.length >= 1) {
-      const response = await api.get(`/exams/old/${examName}`)
-      setExams(response.data.exams)
-      setPaginationInfos({
-       currentPage: response.data.currentPage,
-       totalPages: response.data.totalPages,
-       totalProceds: response.data.totalProceds,
-     });
-    } else {
-   const response = await api.get("/exams/old/all");
-   setExams(response.data.exams)
-   setPaginationInfos({
-    currentPage: response.data.currentPage,
-    totalPages: response.data.totalPages,
-    totalProceds: response.data.totalProceds,
-  });
-
-    }
+  async function getExams() {
+    const response = await api.get(`/exams/old/all?page=${pagination}&sex=${petDetails.sexo}`);
+    setExams(response.data.exams);
+    setPaginationInfos({
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      totalProceds: response.data.totalExams,
+    });
   }
 
   async function getPetExams() {
@@ -128,26 +122,35 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
     setPetDetails(response.data);
   }
 
-  useQuery('queueDetails', getQueueDetails)
+  useQuery("queueDetails", getQueueDetails);
 
-  const {refetch: refetchPets} = useQuery('petExamsDetails', getPetExams)
-  
-  const {isLoading, refetch } = useQuery("examsDetails", getExams);
+  const { refetch: refetchPets } = useQuery("petExamsDetails", getPetExams);
 
+  const { isLoading, refetch } = useQuery({
+    queryKey: ["exams", pagination],
+    queryFn: getExams,
+  });
 
   async function searchExamByName() {
-    const response = await api.get(`/exams/old/${examName}`);
-    setExams(response.data);
+    const response = await api.get(`/exams/old/${examName}?page=${pagination}`);
+    setExams(response.data.exams);
     setPaginationInfos({
       currentPage: response.data.currentPage,
       totalPages: response.data.totalPages,
       totalProceds: response.data.totalProceds,
     });
   }
+
+  const {} = useQuery({
+    queryKey: ["searchExamByName", pagination, examName],
+    queryFn: searchExamByName,
+  });
 
   async function searchByFirstLetter() {
-    const response = await api.get(`/exams/old/letter/${searchByLetter}`);
-    setExams(response.data);
+    const response = await api.get(
+      `/exams/old/letter/${searchByLetter}?page=${pagination}`
+    );
+    setExams(response.data.exams);
     setPaginationInfos({
       currentPage: response.data.currentPage,
       totalPages: response.data.totalPages,
@@ -155,17 +158,23 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
     });
   }
 
-  async function setOldExamInPet(examId: number) {
+  const {} = useQuery({
+    queryKey: ["searchByFirstLetter", pagination, searchByLetter],
+    queryFn: searchByFirstLetter,
+  });
 
+  async function setOldExamInPet(examId: number) {
     try {
-      const allowedEspecie = exams.find((esp: any, ind: any) => esp.codexam === examId);
-      const allowedSetExam =  allowedEspecie.appicableEspecies.map((esp: any) => {
-           if(esp.name.includes(petDetails.especie)){
-             throw new NotAllowedError('Especie não permitida!')
-           }
-   
-     
-         })
+      const allowedEspecie = exams.find(
+        (esp: any, ind: any) => esp.codexam === examId
+      );
+      const allowedSetExam = allowedEspecie.appicableEspecies.map(
+        (esp: any) => {
+          if (esp.name.includes(petDetails.especie)) {
+            throw new NotAllowedError("Especie não permitida!");
+          }
+        }
+      );
       const data = {
         RequestedByVetId: user.id,
         RequestedByVetName: user.consultName,
@@ -178,27 +187,24 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
           `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
           data
         );
-        refetch()
-        refetchPets()
+        refetch();
+        refetchPets();
         toast.success("Exame adicionado Ala Internação!");
       } else {
         await api.post(
           `/exams/old/${examId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
           data
         );
-        refetch()
-        refetchPets()
+        refetch();
+        refetchPets();
         toast.success("Exame adicionado Ala Veterinários");
       }
     } catch (error) {
-  
-      if(error instanceof NotAllowedError) {
-        toast.error(error.message)
+      if (error instanceof NotAllowedError) {
+        toast.error(error.message);
       } else {
-        toast.error("Falha ao cadastar exame!")
+        toast.error("Falha ao cadastar exame!");
       }
-      
-     
     }
   }
 
@@ -216,8 +222,8 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
         await api.delete(
           `/petexam/${examId}/${petDetails.totalAcc.id}/${examPrice}/${linkedDebitId}`
         );
-        refetch()
-        refetchPets()
+        refetch();
+        refetchPets();
         toast.warning("Deletado com sucesso!");
       } else {
         return;
@@ -227,8 +233,6 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
       console.log(error);
     }
   }
-
-
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -293,7 +297,6 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
                       colorScheme="red"
                       isDisabled={exam.doneExam}
                       onClick={() => {
-                        console.log(exam);
                         deleteExam(
                           exam.id,
                           exam.price,
@@ -328,23 +331,30 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
           gap={2}
         >
           <HStack>
-            
-   	      	{
-                  consultDetails?.healthInsuranceId ? <Button onClick={() => getExamsByHealthInsurance()} colorScheme="whatsapp" w="300px">Plano de Saúde</Button> : <></>
-                }
-            <Button width="180px" onClick={() => getExams()} colorScheme="teal">Particular</Button>
+            {consultDetails?.healthInsuranceId ? (
+              <Button
+                onClick={() => getExamsByHealthInsurance()}
+                colorScheme="whatsapp"
+                w="300px"
+              >
+                Plano de Saúde
+              </Button>
+            ) : (
+              <></>
+            )}
+            <Button width="180px" onClick={() => getExams()} colorScheme="teal">
+              Particular
+            </Button>
             <Input
               placeholder="Nome do Exame"
               height="38px"
               name="filter"
               onChange={(ev) => {
-                setExamName(ev.target.value)
-                searchExamByName()
+                setExamName(ev.target.value);
               }}
             />
-            
-      <HStack>
-           
+
+            <HStack>
               <Button colorScheme="teal">
                 Páginas {paginationInfos?.totalPages}
               </Button>
@@ -377,9 +387,9 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
                 }}
                 colorScheme="whatsapp"
                 onClick={() => {
-                  setSearchByLetter(letter)
-                  searchByFirstLetter()}
-                }
+                  setSearchByLetter(letter);
+                  // searchByFirstLetter();
+                }}
                 fontWeight="bold"
                 fontSize="22px"
               >
@@ -387,7 +397,6 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
               </Button>
             ))}
           </HStack>
-      
         </Flex>
         <TableContainer w="100%" height="100%" overflowY="auto">
           <Table>

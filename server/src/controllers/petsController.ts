@@ -313,6 +313,155 @@ export const petsController = {
     }
   },
 
+  petsInQueueVet: async (
+    request: FastifyRequest<{
+      Querystring: {
+        vetName: string;
+        isClosed: string;
+        initialDate: string;
+        finalDate: string;
+        petName: string;
+        petCode: string;
+        customerName: string;
+        page: number;
+        isAddmited: string;
+      };
+    }>,
+    reply: FastifyReply
+  ) => {
+    const {
+      vetName,
+      isClosed,
+      initialDate,
+      finalDate,
+      petName,
+      petCode,
+      customerName,
+      page,
+      isAddmited,
+    } = request.query;
+
+    const filter: { openedDate?: { gte: Date; lte: Date } } = {};
+
+    if (initialDate && finalDate) {
+      filter.openedDate = {
+        gte: new Date(initialDate),
+        lte: new Date(finalDate),
+      };
+    }
+
+    try {
+
+      const currentPage = Number(page) || 1;
+      const totalConsults = await prisma.pets.count({
+        where: {
+          medicineRecords: {
+            petConsults: {
+              some: {
+                isClosed: isClosed === "true" ? true : false,
+                OR: [
+                  { vetPreference: { contains: vetName } },
+                  { vetPreference: "Sem preferência" },
+                ]
+              },
+            },
+          },
+        },
+      });
+
+      
+
+      const pets = await prisma.pets.findMany({
+        // skip: (currentPage - 1) * 35,
+        // take: 35,
+        where: {
+          CodAnimal: petCode ? Number(petCode) : undefined,
+          name: { contains: petName, mode: "insensitive" },
+          customer: { name: { contains: customerName, mode: "insensitive" } },
+          medicineRecords: {
+            petConsults: {
+              some: {
+                isClosed: isClosed === "true" ? true : false,                
+                openedDate: filter.openedDate,
+                OR: [
+                  { vetPreference: { contains: vetName } },
+                  { vetPreference: "Sem preferência" },
+                ]
+                
+              },
+            },
+          },
+          bed: isAddmited === "true" ? { isBusy: true } : undefined,
+        },
+        include: {
+          medicineRecords: {
+            include: {
+              petConsults: {
+                where: {
+                  isClosed: isClosed === "true" ? true : false,
+                  openedDate: filter.openedDate,
+                  OR: [
+                    { vetPreference: { contains: vetName } },
+                    { vetPreference: "Sem preferência" },
+                  ]
+                },
+                orderBy: { openedDate: "asc" },
+              
+              },
+            },
+          },
+          bed: { select: { isBusy: true } },
+          customer: { select: { name: true, vetPreference: true, cpf: true, } },
+          
+        },
+      });
+
+      const totalInQueue = await prisma.openedConsultsForPet.count({
+        where: {
+          vetPreference: { contains: vetName },
+          isClosed: false,
+        },
+      });
+
+      const response = pets.flatMap((pet: any) => {
+        return (
+          pet.medicineRecords?.petConsults.map((consult: any) => {
+            return {
+              name: pet.name,
+              id: pet.id,
+              customerName: pet.customer.name,
+              vetPreference: consult.vetPreference ?? "Sem preferência",
+              vetPreferenceOriginal: consult.vetPreferenceOriginal,
+              queueId: consult.id,
+              openedBy: consult.openedBy,
+              codPet: pet.CodAnimal,
+              queueEntry: consult.openedDate,
+              especie: pet.especie,
+              more: consult.observations,
+              race: pet.race,
+              customerCpf: pet.customer.cpf,
+              queryType: consult.consultType,
+              totalInQueue,
+              petAdmitted: pet.bed?.isBusy ? true : false,
+              idConsult: consult.idConsult,
+            };
+          }) || []
+        );
+      }).sort((a: any, b: any) => a.queueEntry - b.queueEntry);
+
+      //Paginação
+      const itemsPerPage = 35;
+      const totalPages = Math.ceil( isClosed === "true"  ? response.length / 35  : totalConsults / 35);
+      const paginatedResponse = response.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+      //Paginação
+
+      return reply.send({response: paginatedResponse, totalInQueue, totalPages, totalConsults });
+    } catch (error) {
+      console.error(error);
+      reply.status(404).send(error);
+    }
+  },
+
   petsInQueue: async (
     request: FastifyRequest<{
       Querystring: {
@@ -381,6 +530,7 @@ export const petsController = {
                 isClosed: isClosed === "true" ? true : false,
                 vetPreference: { contains: vetName },
                 openedDate: filter.openedDate,
+                
               },
             },
           },
@@ -396,11 +546,13 @@ export const petsController = {
                   vetPreference: { contains: vetName },
                 },
                 orderBy: { openedDate: "asc" },
+              
               },
             },
           },
           bed: { select: { isBusy: true } },
-          customer: { select: { name: true, vetPreference: true, cpf: true } },
+          customer: { select: { name: true, vetPreference: true, cpf: true, } },
+          
         },
       });
 
@@ -419,6 +571,7 @@ export const petsController = {
               id: pet.id,
               customerName: pet.customer.name,
               vetPreference: consult.vetPreference ?? "Sem preferência",
+              vetPreferenceOriginal: consult.vetPreferenceOriginal,
               queueId: consult.id,
               openedBy: consult.openedBy,
               codPet: pet.CodAnimal,
@@ -442,7 +595,7 @@ export const petsController = {
       const paginatedResponse = response.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
       //Paginação
 
-      return reply.send({ response: paginatedResponse, totalInQueue, totalPages, totalConsults });
+      return reply.send({response: paginatedResponse, totalInQueue, totalPages, totalConsults });
     } catch (error) {
       console.error(error);
       reply.status(404).send(error);
@@ -494,6 +647,7 @@ export const petsController = {
           vetPreference:
             pet.medicineRecords?.petConsults[0]?.vetPreference ??
             "Sem preferência",
+          vetPreferenceOriginal: pet.customer.vetPreference,
           queueId: pet.medicineRecords?.petConsults[0]?.id,
           openedBy: pet.medicineRecords?.petConsults[0]?.openedBy,
           codPet: pet.CodAnimal,

@@ -12,6 +12,7 @@ type LabSearchParams = {
   initialDate: string;
   finalDate: string;
   codeExam: number;
+  showEndExams: string;
 };
 
 export const searchController = {
@@ -80,10 +81,21 @@ export const searchController = {
     }
   },
 
-  paymentsSearch: async (request: FastifyRequest<{ Querystring: { name: string, cpf: string, codCli: string, codPet: string, telephone: string } }>, reply: FastifyReply) => {
+  paymentsSearch: async (
+    request: FastifyRequest<{
+      Querystring: {
+        name: string;
+        cpf: string;
+        codCli: string;
+        codPet: string;
+        telephone: string;
+      };
+    }>,
+    reply: FastifyReply
+  ) => {
     try {
       const { name, cpf, codCli, codPet, telephone } = request.query;
-      
+
       const cpfFilter = cpf ? { contains: cpf } : undefined;
       const codCliFilter = codCli && !isNaN(Number(codCli)) ? Number(codCli) : undefined;
       const phoneFilter = telephone ? { contains: telephone } : undefined;
@@ -91,8 +103,8 @@ export const searchController = {
       const petsFilter = codPetNumber ? { some: { CodAnimal: codPetNumber } } : undefined;
 
       const accounts = await prisma.customer.findMany({
-                where: {
-          name: { contains: name, mode: 'insensitive' },
+        where: {
+          name: { contains: name, mode: "insensitive" },
           cpf: cpfFilter,
           CodCli: codCliFilter,
           phone: phoneFilter,
@@ -103,7 +115,7 @@ export const searchController = {
             select: {
               name: true,
               CodAnimal: true,
-            }
+            },
           },
           customerAccount: true,
         },
@@ -113,7 +125,6 @@ export const searchController = {
     } catch (error) {
       console.log(error);
     }
-
   },
 
   searchVetMenu: async (
@@ -223,6 +234,7 @@ export const searchController = {
         initialDate,
         finalDate,
         codeExam,
+        showEndExams,
       } = request.query;
 
       const labSearchMenu = new LabsMenuSearch();
@@ -236,9 +248,13 @@ export const searchController = {
         codeExam,
       });
 
-      reply.send({
-        exams,
-      });
+      if (showEndExams.length > 0) {
+        const filterExams = exams.filter((exam) =>  exam.doneExame !== null && exam.doneExame.toString() === showEndExams);
+        reply.send({ exams: filterExams });
+      }
+      
+      reply.send({ exams});
+
     } catch (error) {
       console.log(error);
 

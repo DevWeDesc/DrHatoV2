@@ -9,6 +9,7 @@ export async function labsRoutes(app: FastifyInstance) {
     },
   });
   app.get("/labs", labsController.getOpenExamsInLab);
+  app.get("/labs/all", labsController.getAllExamsInLab);
   app.get("/labs/end", labsController.getEndExamsInlab);
   app.get("/labexam/:petId", labsController.getPetOpenedExamDetails);
   app.get("/labsearch", labsController.searchExamsBy);

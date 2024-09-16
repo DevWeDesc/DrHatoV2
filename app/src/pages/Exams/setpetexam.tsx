@@ -741,7 +741,7 @@ export function SetPetExam() {
                       Animal
                     </Td>
                     <Td py={3} colSpan={5} bg="white" border="1px solid black">
-                      {pet?.name}
+                      {`${pet?.name}, ${pet?.especie}, ${pet?.bornDate}, ${pet?.sexo}, ${pet?.weigth} Kgs - Cód: ${pet?.CodAnimal}`}
                     </Td>
                   </Tr>
                   <Tr border="1px solid black">
@@ -771,7 +771,7 @@ export function SetPetExam() {
                   </Tr>
                   <Tr border="1px solid black">
                     <Td py={0} fontWeight="bold">
-                      Exame
+                      Data
                     </Td>
                     <Td py={3} colSpan={2} bg="white" border="1px solid black">
                       {new Intl.DateTimeFormat("pt-BR", {

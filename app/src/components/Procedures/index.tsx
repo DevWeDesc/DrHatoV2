@@ -115,6 +115,7 @@ export default function ProceduresVets({
         const response = await api.get(
           `/procedures/query?q=${query}&sex=${petDetails.sexo}&page=${pagination}`
         );
+
         setProcedures(response.data.procedures);
         setPaginationInfos({
           currentPage: response.data.currentPage,
@@ -200,8 +201,13 @@ export default function ProceduresVets({
   }
 
   async function getProcedureByLetter(letter: string){
-    const response = await api.get(`/procedures/letters/${letter}/${pagination}`)
+    const response = await api.get(`/procedures/letters/${letter}/${pagination}?sex=${petDetails.sexo}`)
     setProcedures(response.data.procedures);
+    setPaginationInfos({
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      totalProceds: response.data.totalProceds,
+    });
   }
  
 

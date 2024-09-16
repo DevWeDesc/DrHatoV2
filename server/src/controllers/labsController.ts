@@ -41,6 +41,27 @@ export const labsController = {
       console.log(error);
     }
   },
+  getAllExamsInLab: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const exams = await prisma.examsForPet.findMany({
+        orderBy: { requesteData: "asc" },
+        include: {
+          medicine: { select: { pet: { select: { name: true, id: true } } } },
+        },
+      });
+
+      const examsdefault = await prisma.oldExams.findMany({
+        select: { codexam: true, name: true },
+      });
+
+      const allExams = examsdefault;
+
+      reply.status(200).send({ exams, allExams });
+    } catch (error) {
+      reply.send({ message: { error } }).status(400);
+      console.log(error);
+    }
+  },  
 
   getEndExamsInlab: async (request: FastifyRequest, reply: FastifyReply) => {
     try {

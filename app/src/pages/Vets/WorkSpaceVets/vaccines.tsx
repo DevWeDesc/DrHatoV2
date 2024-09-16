@@ -45,16 +45,16 @@ export function Vaccines({
     {} as ConsultsPetDetails
   );
   const [vaccines, setVaccines] = useState<VaccinesProps[]>([]);
-  const [pagination, setPagination] = useState(1)
+  const [pagination, setPagination] = useState(1);
   const [paginationInfos, setPaginationInfos] = useState({
     totalPages: 0,
     currentPage: 0,
-    totalProceds: 0
-  })
-  const [vaccineName, setVaccineName] = useState("")
+    totalProceds: 0,
+  });
+  const [vaccineName, setVaccineName] = useState("");
   const navigate = useNavigate();
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient();
   const SearchAlfabet = [
     "a",
     "b",
@@ -86,7 +86,7 @@ export function Vaccines({
   const user = JSON.parse(localStorage.getItem("user") as string);
   async function GetVaccine() {
     try {
-      const vaccines = await api.get("/vaccines");
+      const vaccines = await api.get(`/vaccines?sex=${petDetails.sexo}`);
       const pet = await api.get(`/pets/${id}`);
       setPetDetails(pet.data);
       setVaccines(vaccines.data);
@@ -96,24 +96,26 @@ export function Vaccines({
   }
 
   async function getQueueDetails() {
-    const response = await api.get(`/queue/details/${queueId}`)
-    setConsultDetails(response.data)
+    const response = await api.get(`/queue/details/${queueId}`);
+    setConsultDetails(response.data);
   }
 
   function incrementPage() {
-    setPagination(prevCount => pagination < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
+    setPagination((prevCount) =>
+      pagination < paginationInfos.totalPages
+        ? prevCount + 1
+        : paginationInfos.totalPages
+    );
   }
 
   function decrementPage() {
-    setPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+    setPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
   }
 
-
-  const {isLoading, refetch} = useQuery('vaccinesSet', GetVaccine)
-  useQuery('queueDetails', getQueueDetails)
+  const { isLoading, refetch } = useQuery("vaccinesSet", GetVaccine);
+  useQuery("queueDetails", getQueueDetails);
 
   useEffect(() => {
-
     switch (true) {
       case vaccineName.length >= 1:
         getVaccinesByName();
@@ -124,9 +126,8 @@ export function Vaccines({
     }
   }, [vaccineName]);
 
-
-  if(isLoading) {
-    return <LoadingSpinner/>
+  if (isLoading) {
+    return <LoadingSpinner />;
   }
 
   async function setVaccineInPet(vaccineId: number) {
@@ -145,15 +146,15 @@ export function Vaccines({
           `/vaccinepet/${vaccineId}/${petDetails.id}/${petDetails.totalAcc.id}/${admissionQueueId}`,
           data
         );
-        queryClient.invalidateQueries('vaccinesSet')
+        queryClient.invalidateQueries("vaccinesSet");
         toast.success("Vacina criada com Sucesso");
       } else {
         await api.post(
           `/vaccinepet/${vaccineId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
           data
         );
-      
-        refetch()
+
+        refetch();
 
         toast.success("Vacina criada com Sucesso");
       }
@@ -178,8 +179,7 @@ export function Vaccines({
             `petvaccine/${vaccineId}/${petDetails.totalAcc.id}/${vaccPrice}/${linkedDebitId}`
           )
           .then(() => {
-          
-        queryClient.invalidateQueries('vaccinesSet')
+            queryClient.invalidateQueries("vaccinesSet");
             refetch();
             toast.warning("Excluido com sucesso");
           });
@@ -192,19 +192,20 @@ export function Vaccines({
     }
   }
 
-
   async function getVaccinesByLetter(letter: string) {
-    const response = await api.get(`/vaccines/${letter}/${pagination}`)
+    const response = await api.get(`/vaccines/${letter}/${pagination}?sex=${petDetails.sexo}`);
     setVaccines(response.data.vaccines);
   }
 
   async function getVaccinesByName() {
-    const response = await api.get(`/vaccines/${vaccineName}/${pagination}`)
+    const response = await api.get(`/vaccines/${vaccineName}/${pagination}?sex=${petDetails.sexo}`);
     setVaccines(response.data.vaccines);
   }
 
   async function getProcedureByHealthInsurance() {
-    const response = await api.get(`/vaccines/health/${consultDetails.healthInsuranceName}/${pagination}`)
+    const response = await api.get(
+      `/vaccines/health/${consultDetails.healthInsuranceName}/${pagination}`
+    );
     setVaccines(response.data.vaccines);
     setPaginationInfos({
       currentPage: response.data.currentPage,
@@ -212,7 +213,6 @@ export function Vaccines({
       totalProceds: response.data.totalProceds,
     });
   }
-
 
   return (
     <ChakraProvider>
@@ -269,7 +269,6 @@ export function Vaccines({
               </TableContainer>
             </Flex>
             <Flex height="70%" width="100%" direction="column">
-     
               <Flex
                 width="100%"
                 height="98px"
@@ -279,65 +278,81 @@ export function Vaccines({
                 align="center"
                 justify="center"
               >
-                
-                
-       
                 <Flex w={"full"} align="center" gap="2" p="2">
-                  
-                  
-   		          {
-                  consultDetails?.healthInsuranceId ? <Button onClick={() => getProcedureByHealthInsurance()} colorScheme="whatsapp" w="300px">Plano de Saúde</Button> : <></>
-                }
-                  <Button width={160} onClick={() => getVaccinesByName()} colorScheme="teal">Particular</Button>
-                  <Input bgColor="white"  name="filter" onChange={(ev) => setVaccineName(ev.target.value)} placeholder="Nome da Vacina" />
-                  
-                          <HStack>
-        
-              <Button colorScheme="teal">
-                Páginas {paginationInfos?.totalPages ? paginationInfos?.totalPages : 1}
-              </Button>
-              <Button colorScheme="teal">
-                Página Atual {paginationInfos?.currentPage ? paginationInfos?.currentPage : 1}
-              </Button>
-              <Button
-                colorScheme="yellow"
-                gap={4}
-                onClick={() => decrementPage()}
-              >
-                <BiLeftArrow />
-                Página Anterior
-              </Button>
-              <Button
-                colorScheme="yellow"
-                gap={4}
-                onClick={() => incrementPage()}
-              >
-                Próxima Página
-                <BiRightArrow />
-              </Button>
-            </HStack>
-            
+                  {consultDetails?.healthInsuranceId ? (
+                    <Button
+                      onClick={() => getProcedureByHealthInsurance()}
+                      colorScheme="whatsapp"
+                      w="300px"
+                    >
+                      Plano de Saúde
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
+                  <Button
+                    width={160}
+                    onClick={() => getVaccinesByName()}
+                    colorScheme="teal"
+                  >
+                    Particular
+                  </Button>
+                  <Input
+                    bgColor="white"
+                    name="filter"
+                    onChange={(ev) => setVaccineName(ev.target.value)}
+                    placeholder="Nome da Vacina"
+                  />
+
+                  <HStack>
+                    <Button colorScheme="teal">
+                      Páginas{" "}
+                      {paginationInfos?.totalPages
+                        ? paginationInfos?.totalPages
+                        : 1}
+                    </Button>
+                    <Button colorScheme="teal">
+                      Página Atual{" "}
+                      {paginationInfos?.currentPage
+                        ? paginationInfos?.currentPage
+                        : 1}
+                    </Button>
+                    <Button
+                      colorScheme="yellow"
+                      gap={4}
+                      onClick={() => decrementPage()}
+                    >
+                      <BiLeftArrow />
+                      Página Anterior
+                    </Button>
+                    <Button
+                      colorScheme="yellow"
+                      gap={4}
+                      onClick={() => incrementPage()}
+                    >
+                      Próxima Página
+                      <BiRightArrow />
+                    </Button>
+                  </HStack>
                 </Flex>
 
                 <HStack spacing={2} w="100%">
-            {SearchAlfabet.map((letter) => (
-              <Button
-                _hover={{
-                  bgColor: "green.300",
-                }}
-                colorScheme="whatsapp"
-                 onClick={() => getVaccinesByLetter(letter)}
-                fontWeight="bold"
-                fontSize="22px"
-              >
-                {letter.toUpperCase()}
-              </Button>
-            ))}
-                 </HStack>
-                
-    
+                  {SearchAlfabet.map((letter) => (
+                    <Button
+                      _hover={{
+                        bgColor: "green.300",
+                      }}
+                      colorScheme="whatsapp"
+                      onClick={() => getVaccinesByLetter(letter)}
+                      fontWeight="bold"
+                      fontSize="22px"
+                    >
+                      {letter.toUpperCase()}
+                    </Button>
+                  ))}
+                </HStack>
               </Flex>
-       
+
               <TableContainer
                 w="100%"
                 h="100%"
