@@ -142,6 +142,12 @@ export function Createsurgeries({
     setSurgerieCentral(response.data.centralSurgerie);
   }
 
+  const { refetch: refetchGetCentralSurgerieById } = useQuery({
+    queryKey: "getCentralSurgerieById",
+    queryFn: getCentralSurgerieById,
+    enabled: false,
+  });
+
   async function setSugeriesInPet(surgerieId: number) {
     try {
       let slotFound = false;
@@ -192,6 +198,7 @@ export function Createsurgeries({
         );
         queryClient.invalidateQueries("surgeriesData");
         toast.success("Cirurgia adicionada - Internações");
+        refetchGetCentralSurgerieById();
       } else {
         await api.post(
           `surgeries/${surgerieId}/${petDetails.id}/${petDetails.totalAcc.id}/${queueId}`,
@@ -199,12 +206,23 @@ export function Createsurgeries({
         );
         queryClient.invalidateQueries("surgeriesData");
         toast.success("Cirurgia adicionada - Veterinários");
+        refetchGetCentralSurgerieById();
       }
     } catch (error) {
       console.log(error);
       toast.error("Falha ao cadastrar Cirurgia!");
     }
   }
+  const { data: centralSurgeries, refetch } = useQuery({
+    queryKey: "centralSurgeries",
+    queryFn: getCentralSurgeries,
+    onSuccess: (data) => {
+      if (selectedCentral === 0 && data.length > 0) {
+        setSelectedCentral(data[0].id);
+      }
+    },
+    refetchOnWindowFocus: false,
+  });
 
   const handleDeleteSugerie = async (
     slotId: number,
@@ -223,6 +241,7 @@ export function Createsurgeries({
           )
           .then((res) => {
             queryClient.invalidateQueries("surgeriesData");
+            refetchGetCentralSurgerieById();
             toast.warning("EXCLUIDO COM SUCESSO");
           });
       } else {
@@ -234,14 +253,6 @@ export function Createsurgeries({
     }
   };
 
-  const { data: centralSurgeries, refetch } = useQuery({
-    queryKey: "centralSurgeries",
-    queryFn: getCentralSurgeries,
-    onSuccess: (data) => {
-      setSelectedCentral(data[0].id);
-    },
-    refetchOnWindowFocus: false,
-  });
   const { isLoading } = useQuery("surgeriesData", getSurgeriesData);
 
   async function reserveSurgerieSlot(slotId: number) {
@@ -582,7 +593,7 @@ export function Createsurgeries({
             </Flex>
           </Flex>
           <Button
-            onClick={() => getCentralSurgerieById()}
+            onClick={() => refetchGetCentralSurgerieById()}
             bg="whatsapp.600"
             fontSize="2xl"
             fontWeight="bold"
