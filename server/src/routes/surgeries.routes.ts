@@ -43,4 +43,7 @@ export async function surgeriesRoutes(app: FastifyInstance) {
   app.get("/surgerie/name/:name/:page", surgeriesController.getSurgeriesByName);
   app.get("/surgerie/health/:planName/:page", surgeriesController.getSurgerieByHealthInsurance)
 
+  app.get("/surgerie/consultation/:medicineId", surgeriesController.getSurgeriesByConsult);
+  app.delete("/surgerie/consultation/:medicineId", surgeriesController.deleteSurgerieByConsult);
+
 }

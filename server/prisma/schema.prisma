@@ -418,6 +418,7 @@ model SurgeriesForPet {
   linkedConsultDebitId   Int?              @unique
   LinkedAdmissionDebitId Int?              @unique
   slotId                 Int?
+  dateSurgerie           DateTime?
 }
 
 model OpenedConsultsForPet {

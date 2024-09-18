@@ -2,6 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../interface/PrismaInstance";
 import { z } from "zod";
 import { accumulatorService } from "../services/accumulatorService";
+import { promises } from "dns";
 
 type params = {
   id: string;
@@ -26,9 +27,10 @@ export const surgeriesController = {
       price: z.number(),
       applicableToFemale: z.boolean(),
       applicableToMale: z.boolean(),
-      healt_id: z.number()
+      healt_id: z.number(),
     });
-    const { name, price, applicableToFemale, applicableToMale, healt_id } = CreateSurgerieSchema.parse(request.body);
+    const { name, price, applicableToFemale, applicableToMale, healt_id } =
+      CreateSurgerieSchema.parse(request.body);
     try {
       await prisma.surgeries.create({
         data: {
@@ -38,10 +40,9 @@ export const surgeriesController = {
           applicableToMale,
           HealthInsurance: {
             connect: {
-                id:healt_id
-            }
-          }
-
+              id: healt_id,
+            },
+          },
         },
       });
 
@@ -177,6 +178,50 @@ export const surgeriesController = {
     }
   },
 
+  getSurgeriesByConsult: async (
+    request: FastifyRequest<{ Params: { medicineId: string } }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const surgeries = await prisma.surgeriesForPet.findMany({
+        where: {
+          medicine_id: parseInt(request.params.medicineId),
+        },
+      });
+
+      reply.send(surgeries).status(200);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  deleteSurgerieByConsult: async (
+    request: FastifyRequest<{ Params: { medicineId: string } }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const surgeries = await prisma.surgeriesForPet.findMany({
+        where: {
+          medicine_id: parseInt(request.params.medicineId),
+        },
+      });
+
+      await Promise.all(
+        surgeries.map(async (surgery) => {
+          await prisma.surgeriesForPet.delete({
+            where: {
+              id: surgery.id,
+            },
+          });
+        })
+      );
+
+      reply.send("Removido com sucesso!").status(200);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   getSurgeriesByName: async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const getSurgeriesByLetterSchema = z.object({
@@ -206,54 +251,59 @@ export const surgeriesController = {
       console.log(error);
     }
   },
-  getSurgerieByHealthInsurance: async (request: FastifyRequest,reply: FastifyReply) => {
+  getSurgerieByHealthInsurance: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
     try {
       const GetHealthInsuranceSurgerieSchema = z.object({
         planName: z.string(),
         // planProvider: z.string(),
-        page: z.coerce.number()
-      })
-   
-      const {planName,page} = GetHealthInsuranceSurgerieSchema.parse(request.params)
+        page: z.coerce.number(),
+      });
+
+      const { planName, page } = GetHealthInsuranceSurgerieSchema.parse(
+        request.params
+      );
       const currentPage = page || 1;
       const surgeries = await prisma.surgeries.findMany({
         skip: (currentPage - 1) * 35,
         take: 35,
         where: {
           HealthInsurance: {
-            planName: {contains: planName},
+            planName: { contains: planName },
             // planProvider: {equals: planProvider}
-          }
-        }
-      })
+          },
+        },
+      });
 
-     
       const totalPages = Math.ceil(surgeries.length / 35);
 
       reply.send({
         surgeries,
         currentPage,
         totalPages,
-        totalProceds: surgeries.length
-      })
-
+        totalProceds: surgeries.length,
+      });
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
   },
 
   setSurgerieInPet: async (
-    request: FastifyRequest<{ Params: params; }>,
+    request: FastifyRequest<{ Params: params }>,
     reply: FastifyReply
   ) => {
     const SetSurgerieInPetSchema = z.object({
       RequestedByVetId: z.coerce.number(),
       RequestedByVetName: z.string(),
       isAdmission: z.boolean(),
-      slotId: z.coerce.number()
-    })
+      slotId: z.coerce.number(),
+      dateSurgerie: z.string(),
+    });
     const { id, petId, accId, queueId } = request.params;
-    const { RequestedByVetId, RequestedByVetName, isAdmission, slotId } = SetSurgerieInPetSchema.parse(request.body);
+    const { RequestedByVetId, RequestedByVetName, isAdmission, slotId, dateSurgerie } =
+      SetSurgerieInPetSchema.parse(request.body);
     try {
       const surgerie = await prisma.surgeries.findUnique({
         where: { id: parseInt(id) },
@@ -288,13 +338,15 @@ export const surgeriesController = {
                 price: surgerie.price,
                 medicine: { connect: { petId: parseInt(petId) } },
                 linkedConsultDebitId: res.id,
-                slotId
+                slotId,
+                dateSurgerie: dateSurgerie,
               },
             });
 
-          await prisma.surgerieSlots.update({
-            where: {id: slotId}, data: {surgerieName: surgerie.name}
-          })
+            await prisma.surgerieSlots.update({
+              where: { id: slotId },
+              data: { surgerieName: surgerie.name },
+            });
           });
       } else {
         await prisma.petConsultsDebits
@@ -308,7 +360,6 @@ export const surgeriesController = {
               RequestedByVetId,
               RequestedByVetName,
               sectorId: surgerie.sector_id,
-              
             },
           })
           .then(async (res) => {
@@ -319,13 +370,15 @@ export const surgeriesController = {
                 price: surgerie.price,
                 medicine: { connect: { petId: parseInt(petId) } },
                 linkedConsultDebitId: res.id,
-                slotId
+                slotId,
+                dateSurgerie: dateSurgerie,
               },
             });
 
             await prisma.surgerieSlots.update({
-              where: {id: slotId}, data: {surgerieName: surgerie.name}
-            })
+              where: { id: slotId },
+              data: { surgerieName: surgerie.name },
+            });
           });
       }
 
@@ -345,7 +398,7 @@ export const surgeriesController = {
       accId: z.coerce.number(),
       sugPrice: z.any(),
       linkedDebitId: z.coerce.number(),
-      slotId: z.coerce.number()
+      slotId: z.coerce.number(),
     });
     try {
       const { slotId, accId, sugPrice, linkedDebitId } =
@@ -354,8 +407,9 @@ export const surgeriesController = {
       await accumulatorService.removePriceToAccum(Number(sugPrice), accId);
 
       await prisma.surgerieSlots.update({
-        where: {id: slotId}, data: {surgerieName: null}
-      })
+        where: { id: slotId },
+        data: { surgerieName: null },
+      });
 
       await prisma.petConsultsDebits
         .delete({

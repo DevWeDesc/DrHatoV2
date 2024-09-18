@@ -68,6 +68,7 @@ export function Createsurgeries({
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [surgerieName, setSurgerieName] = useState("");
   const [selectedCentral, setSelectedCentral] = useState(0);
+  const [dateSurgery, setDateSurgery] = useState(new Date());
   const [paginationInfos, setPaginationInfos] = useState({
     totalPages: 0,
     currentPage: 0,
@@ -85,12 +86,6 @@ export function Createsurgeries({
         : paginationInfos.totalPages
     );
   }
-
-  console.log(
-    "Createsurgeries",
-
-    surgerieCentral?.surgerieSlots
-  );
 
   function decrementPage() {
     setPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
@@ -185,6 +180,7 @@ export function Createsurgeries({
       }
 
       const data = {
+        dateSurgerie: dateSurgery,
         RequestedByVetId: user.id,
         RequestedByVetName: user.consultName,
         isAdmission: InAdmission,
@@ -590,6 +586,27 @@ export function Createsurgeries({
                   </option>
                 ))}
               </Select>
+            </Flex>
+            <Flex align="center">
+              <Text
+                border="1px solid black"
+                borderRight="2px solid black"
+                fontWeight="bold"
+                pl="5"
+                py="1"
+                w="14.4rem"
+              >
+                Data
+              </Text>
+              <Input
+                borderColor="black"
+                rounded="0"
+                fontWeight="bold"
+                bg="white"
+                type="date"
+                onChange={(ev) => setDateSurgery(new Date(ev.target.value))}
+                defaultValue={new Date().toISOString().split("T")[0]}
+              />
             </Flex>
           </Flex>
           <Button
