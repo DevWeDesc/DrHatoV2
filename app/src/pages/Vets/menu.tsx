@@ -51,21 +51,13 @@ export function MenuVet() {
   } = useQuery({
     queryKey: ["queueVets"],
     queryFn: async () => {
-      // const res = showOldConsults ? await api.get(`/consults/historie/old?initialDate=${initialDate}&finalDate=${finalDate}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}&page=${pagination}`)  : await api.get(`/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${showAllVets ? "" : user.consultName}&petName=${searchBody.petName}&customerName=${searchBody.customerName}&petCode=${searchBody.codPet}`) ;
-      // setTotalInQueue(res.data.totalInQueue);
-      // setNumberOfPages(res.data.totalPages);
-      // return res.data.response;
-
       const res = await api.get(
-        `/pets/queue?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${
+        `/pets/queuevets?isClosed=${isFinishied}&initialDate=${initialDate}&finalDate=${finalDate}&page=${pagination}&isAddmited=${isAddmited}&vetName=${
           showAllVets ? "" : user.consultName
         }&petName=${searchBody.petName}&customerName=${
           searchBody.customerName
         }&petCode=${searchBody.codPet}`
       );
-
-      console.log(res.data);
-
       setTotalInQueue(res.data.totalInQueue);
       setNumberOfPages(res.data.totalPages);
       return res.data.response;
