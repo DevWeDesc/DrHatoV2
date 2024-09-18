@@ -344,26 +344,21 @@ export function ReceptionCreateNewConsultForm() {
                   </>
                 )}
               </Flex>
-              <Flex direction="column" w="50%" mt="4">
-                {" "}
-                <FormLabel
-                  textAlign="left"
-                  fontWeight="bold"
-                  htmlFor="email"
-                  mb="0"
-                  fontSize="17"
-                >
-                  * E-mail do cliente
+              <Flex direction="column" w="50%" justifyContent="end">
+                <FormLabel textAlign="left" htmlFor="rg" mb="0" fontSize="17">
+                  RG do cliente
                 </FormLabel>
-                <Input
-                  placeholder="E-mail do Cliente"
-                  {...register("email")}
-                  id="email"
-                  name="email"
+                <RGInput
+                  id="rg"
+                  name="rg"
+                  //{...register("rg")}
+                  value={RGValue}
+                  onChange={(e: any) => setRGValue(e.target.value)}
+                  onBlur=""
                 />
-                <Text color="red.500" fontWeight="bold" textAlign="left">
-                  {errors?.email?.message}
-                </Text>
+                <Text
+                  h={CPFValue === "" && errorInput == 1 ? "25px" : "0"}
+                ></Text>
               </Flex>
             </Flex>
             <Flex w="100%" alignItems="center" gap="2" mt="4">
@@ -387,6 +382,30 @@ export function ReceptionCreateNewConsultForm() {
                   {errors?.birthday?.message}
                 </Text>
               </Flex>
+              <Flex direction="column" w="50%">
+                {" "}
+                <FormLabel
+                  textAlign="left"
+                  fontWeight="bold"
+                  htmlFor="email"
+                  mb="0"
+                  fontSize="17"
+                >
+                  * E-mail do cliente
+                </FormLabel>
+                <Input
+                  placeholder="E-mail do Cliente"
+                  {...register("email")}
+                  id="email"
+                  name="email"
+                />
+                <Text color="red.500" fontWeight="bold" textAlign="left">
+                  {errors?.email?.message}
+                </Text>
+              </Flex>
+            </Flex>
+
+            <Flex align="center" gap="2" mt="4">
               <Flex direction="column" w="50%">
                 <FormLabel
                   textAlign="left"
@@ -413,8 +432,6 @@ export function ReceptionCreateNewConsultForm() {
                   </Text>
                 )}
               </Flex>
-            </Flex>
-            <Flex align="center" gap="2" mt="4">
               <Flex direction="column" w="50%">
                 {" "}
                 <FormLabel textAlign="left" htmlFor="tell" mb="0" fontSize="17">
@@ -429,22 +446,6 @@ export function ReceptionCreateNewConsultForm() {
                   onBlur={""}
                 />
                 <Text h={errors?.email ? "24px" : "0"}></Text>
-              </Flex>
-              <Flex direction="column" w="50%" justifyContent="center">
-                <FormLabel textAlign="left" htmlFor="rg" mb="0" fontSize="17">
-                  RG do cliente
-                </FormLabel>
-                <RGInput
-                  id="rg"
-                  name="rg"
-                  //{...register("rg")}
-                  value={RGValue}
-                  onChange={(e: any) => setRGValue(e.target.value)}
-                  onBlur=""
-                />
-                <Text
-                  h={CPFValue === "" && errorInput == 1 ? "25px" : "0"}
-                ></Text>
               </Flex>
             </Flex>
 
