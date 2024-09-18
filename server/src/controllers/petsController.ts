@@ -74,6 +74,7 @@ export const petsController = {
               queueOur: true,
               queueEntry: true,
               petIsInQueue: true,
+              
             },
           },
           bed: {
@@ -198,6 +199,7 @@ export const petsController = {
             consultType: consult.consultType,
             medicineRecordId: consult.medicineRecordId,
             clientIsVip: consult.clientIsVip,
+            observations: consult.observations,
           };
           return consultPet;
         }),

@@ -321,6 +321,7 @@ export type ConsultsPetDetails = {
   consultType: string;
   medicineRecordId: number;
   clientIsVip: boolean;
+  observations?: string;
 };
 
 type QueueHistoryProps = {

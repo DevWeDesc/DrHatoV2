@@ -144,7 +144,7 @@ export const proceduresController = {
       if (animalSex === "Macho") {
         const totalProceds = await prisma.procedures.count({
           where: {
-            name: { startsWith: q, mode: "insensitive" },
+            name: { contains: q, mode: "insensitive" },
             applicableMale: true,
           },
         });
@@ -155,7 +155,7 @@ export const proceduresController = {
           skip: (currentPage - 1) * 35,
           take: 35,
           where: {
-            name: { startsWith: q, mode: "insensitive" },
+            name: { contains: q, mode: "insensitive" },
             applicableMale: true,
           },
           include: {

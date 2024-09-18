@@ -154,39 +154,56 @@ export function WorkSpaceVet() {
   async function isWithinOneYear(dateString: Date) {
     const currentDate = new Date();
     const inputDate = new Date(dateString);
-  
+
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
-  
+
     return inputDate >= oneYearAgo && inputDate <= currentDate;
   }
 
   async function getDetailsInformations() {
     await api.get(`/pets/${id}`).then(async (res) => {
-
       const pet = res.data;
-      const examsWithinOneYear = pet.exams.filter((exam: any) =>  isWithinOneYear(exam.requestedDate));
-      const vaccinesWithinOneYear = pet.vaccines.filter((vac: any) =>  isWithinOneYear(vac.requestedDate));
-      const proceduresWithinOneYear = pet.procedures.filter((proc: any) => isWithinOneYear(proc.requestedDate));
-      console.log(examsWithinOneYear, vaccinesWithinOneYear, proceduresWithinOneYear);
+      const examsWithinOneYear = pet.exams.filter((exam: any) =>
+        isWithinOneYear(exam.requestedDate)
+      );
+      const vaccinesWithinOneYear = pet.vaccines.filter((vac: any) =>
+        isWithinOneYear(vac.requestedDate)
+      );
+      const proceduresWithinOneYear = pet.procedures.filter((proc: any) =>
+        isWithinOneYear(proc.requestedDate)
+      );
+      console.log(
+        examsWithinOneYear,
+        vaccinesWithinOneYear,
+        proceduresWithinOneYear
+      );
       const totalPriceOneYear = new Intl.NumberFormat("pt-BR", {
         currency: "BRL",
         style: "currency",
       }).format(
         Number(
-          examsWithinOneYear?.reduce((acc: any, exam: any) => acc + Number(exam.price), 0) +
-          vaccinesWithinOneYear?.reduce((acc: any, vac: any) => acc + Number(vac.price), 0) +
-          proceduresWithinOneYear?.reduce((acc: any, proc: any) => acc + Number(proc.price), 0)
+          examsWithinOneYear?.reduce(
+            (acc: any, exam: any) => acc + Number(exam.price),
+            0
+          ) +
+            vaccinesWithinOneYear?.reduce(
+              (acc: any, vac: any) => acc + Number(vac.price),
+              0
+            ) +
+            proceduresWithinOneYear?.reduce(
+              (acc: any, proc: any) => acc + Number(proc.price),
+              0
+            )
         )
       );
-
 
       setPet({
         ...pet,
         oneYear: {
           totalPrice: totalPriceOneYear ? totalPriceOneYear : "R$ 0,00",
         },
-      });     
+      });
 
       if (queueId == "Sem consulta aberta") {
         return toast.error(
@@ -544,7 +561,7 @@ export function WorkSpaceVet() {
               <Table variant="simple" borderTop="1px solid black">
                 <Thead>
                   <Tr>
-                    <Th py={2} borderRight="1px solid black">
+                    <Th py={1}borderRight="1px solid black">
                       <Text fontWeight="bold">Cliente</Text>
                     </Th>
                     <Th py={2}>
@@ -582,17 +599,16 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={2} borderRight="1px solid black">
+                    <Th py={1}borderRight="1px solid black">
                       <Text fontWeight="bold">Gastos</Text>
                     </Th>
-                    <Th display={"flex"}  gap={2} py={2}>
+                    <Th display={"flex"} gap={2} py={2}>
                       <Text rounded="4px" fontWeight="normal">
                         {new Intl.NumberFormat("pt-BR", {
                           currency: "BRL",
                           style: "currency",
                         }).format(pet.totalAcc?.price)}{" "}
                         Nesta Consulta
-                       
                       </Text>
                       <Text fontWeight="normal">
                         {`- 12 Messes: ${pet.oneYear?.totalPrice} (${pet?.consultsPet?.length})`}
@@ -600,7 +616,7 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={2} borderRight="1px solid black">
+                    <Th py={1}borderRight="1px solid black">
                       <Text fontWeight="bold">Animal</Text>
                     </Th>
                     <Th py={0}>
@@ -623,7 +639,7 @@ export function WorkSpaceVet() {
                         </Text>
                         <Button
                           size="sm"
-                          h={7}
+                          h={6}
                           colorScheme="yellow"
                           // onClick={() => setModalWeigthPet(true)}
                           onClick={() => setIsModalUpdated(true)}
@@ -634,7 +650,7 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={2} borderRight="1px solid black">
+                    <Th py={1}borderRight="1px solid black">
                       <Text fontWeight="bold">Detalhes</Text>
                     </Th>
                     <Th py={0}>
@@ -663,7 +679,7 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={2} borderRight="1px solid black">
+                    <Th py={1}borderRight="1px solid black">
                       <Text fontWeight="bold">Horário</Text>
                     </Th>
                     <Th py={2}>
@@ -681,10 +697,10 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={2} borderRight="1px solid black">
+                    <Th py={1}borderRight="1px solid black">
                       <Text fontWeight="bold">Internações</Text>
                     </Th>
-                    <Th py={2} bg={pet.isBusy ? "red.200" : "green.100"}>
+                    <Th py={1}bg={pet.isBusy ? "red.200" : "green.100"}>
                       {pet.isBusy ? (
                         <Text fontWeight="bold">ANIMAL ESTÁ INTERNADO</Text>
                       ) : (
@@ -695,16 +711,16 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={2} borderRight="1px solid black">
+                    <Th py={1}borderRight="1px solid black">
                       <Text fontWeight="bold">Plano de Saúde</Text>
                     </Th>
 
                     {consultDetails.healthInsuranceId ? (
-                      <Th py={2} fontWeight="black" bgColor="green.100">
+                      <Th py={1}fontWeight="black" bgColor="green.100">
                         {consultDetails.healthInsuranceName}
                       </Th>
                     ) : (
-                      <Th py={2} fontWeight="bold">
+                      <Th py={1}fontWeight="bold">
                         Sem plano para está consulta
                       </Th>
                     )}
@@ -718,11 +734,18 @@ export function WorkSpaceVet() {
                 Observações da recepção
               </Text>
               <Textarea
+                size='sm'
                 color="red.900"
                 borderColor="black"
                 overflowY={"scroll"}
+                height={"10"}
                 resize={"none"}
-                value={pet.queue?.moreInfos}
+                value={
+                  pet.consultsPet
+                    ? pet?.consultsPet?.find((consult) => consult.id == queueId)
+                        ?.observations
+                    : ""
+                }
               />
             </Flex>
           </div>
@@ -865,7 +888,6 @@ export function WorkSpaceVet() {
           </div>
         </WorkSpaceContent>
         <WorkSpaceFooter>
-          
           <Grid
             gap={2}
             templateColumns={{ base: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }}
@@ -918,10 +940,26 @@ export function WorkSpaceVet() {
             />
           </Grid>
           <Flex w={"33%"} mx={2} display={"flex"} color={"white"}>
-            <Text width={"fit-content"} py="3" fontWeight={"bold"} borderLeftRadius={"md"} fontSize={{ base: "sm" }} px={4} bg={"teal.500"}>
+            <Text
+              width={"fit-content"}
+              py="3"
+              fontWeight={"bold"}
+              borderLeftRadius={"md"}
+              fontSize={{ base: "sm" }}
+              px={4}
+              bg={"teal.500"}
+            >
               Veterinario:
             </Text>
-            <Text width={"full"} py="3" fontWeight={"bold"} borderRightRadius={"md"} fontSize={{ base: "sm" }} px={4} bg={"whatsapp.400"}>
+            <Text
+              width={"full"}
+              py="3"
+              fontWeight={"bold"}
+              borderRightRadius={"md"}
+              fontSize={{ base: "sm" }}
+              px={4}
+              bg={"whatsapp.400"}
+            >
               {consultDetails?.vetPreference}
             </Text>
           </Flex>

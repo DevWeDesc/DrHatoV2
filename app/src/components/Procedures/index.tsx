@@ -51,7 +51,7 @@ export default function ProceduresVets({
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const [reloadData, setReloadData] = useState(false);
   const user = JSON.parse(localStorage.getItem("user") as string);
-  const [pagination, SetPagination] = useState(1)
+  const [pagination, SetPagination] = useState(1);
   const SearchAlfabet = [
     "a",
     "b",
@@ -86,14 +86,18 @@ export default function ProceduresVets({
   const [paginationInfos, setPaginationInfos] = useState({
     totalPages: 0,
     currentPage: 0,
-    totalProceds: 0
-  })
+    totalProceds: 0,
+  });
   function incrementPage() {
-    SetPagination(prevCount => pagination < paginationInfos.totalPages ? prevCount + 1 : paginationInfos.totalPages);
+    SetPagination((prevCount) =>
+      pagination < paginationInfos.totalPages
+        ? prevCount + 1
+        : paginationInfos.totalPages
+    );
   }
 
   function decrementPage() {
-    SetPagination(prevCount => pagination > 1 ? prevCount - 1 : 1);
+    SetPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
   }
 
   async function GetPet() {
@@ -102,12 +106,11 @@ export default function ProceduresVets({
   }
 
   async function getQueueDetails() {
-    const response = await api.get(`/queue/details/${queueId}`)
-    setConsultDetails(response.data)
+    const response = await api.get(`/queue/details/${queueId}`);
+    setConsultDetails(response.data);
   }
 
-
- useQuery('queueDetails', getQueueDetails)
+  useQuery("queueDetails", getQueueDetails);
 
   async function GetData() {
     switch (true) {
@@ -115,6 +118,7 @@ export default function ProceduresVets({
         const response = await api.get(
           `/procedures/query?q=${query}&sex=${petDetails.sexo}&page=${pagination}`
         );
+        
 
         setProcedures(response.data.procedures);
         setPaginationInfos({
@@ -125,7 +129,9 @@ export default function ProceduresVets({
         setReloadData(true);
         break;
       default:
-        const procedures = await api.get(`/procedures?sex=${petDetails.sexo}&page=${pagination}`);
+        const procedures = await api.get(
+          `/procedures?sex=${petDetails.sexo}&page=${pagination}`
+        );
         setProcedures(procedures.data.procedures);
         setPaginationInfos({
           currentPage: procedures.data.currentPage,
@@ -146,7 +152,6 @@ export default function ProceduresVets({
 
       // const validateEspecie = procedures.find((p) => p.id === procedureId)
       // ?.appicableEspecies?.some((e) => e.name === petDetails.especie);
-
 
       // if (validateEspecie === false) {
       //   return toast.warning(
@@ -200,8 +205,10 @@ export default function ProceduresVets({
     }
   }
 
-  async function getProcedureByLetter(letter: string){
-    const response = await api.get(`/procedures/letters/${letter}/${pagination}?sex=${petDetails.sexo}`)
+  async function getProcedureByLetter(letter: string) {
+    const response = await api.get(
+      `/procedures/letters/${letter}/${pagination}?sex=${petDetails.sexo}`
+    );
     setProcedures(response.data.procedures);
     setPaginationInfos({
       currentPage: response.data.currentPage,
@@ -209,10 +216,11 @@ export default function ProceduresVets({
       totalProceds: response.data.totalProceds,
     });
   }
- 
 
   async function getProcedureByHealthInsurance() {
-    const response = await api.get(`/procedures/health/${consultDetails.healthInsuranceName}/${pagination}`)
+    const response = await api.get(
+      `/procedures/health/${consultDetails.healthInsuranceName}/${pagination}`
+    );
     setProcedures(response.data.procedures);
     setPaginationInfos({
       currentPage: response.data.currentPage,
@@ -312,9 +320,8 @@ export default function ProceduresVets({
         </TableContainer>
       </Flex>
       <Flex w="100%" height="55vh" direction="column">
-     
         <Flex
-        direction="column"
+          direction="column"
           height="132px"
           w="100%"
           bgColor="cyan.100"
@@ -323,16 +330,22 @@ export default function ProceduresVets({
           gap={4}
           overflowY="hidden"
         >
-       
           <HStack>
-      
-                {
-                  consultDetails?.healthInsuranceId ? <Button onClick={() => getProcedureByHealthInsurance()} colorScheme="whatsapp" w="300px">Plano de Saúde</Button> : <></>
-                }
+            {consultDetails?.healthInsuranceId ? (
+              <Button
+                onClick={() => getProcedureByHealthInsurance()}
+                colorScheme="whatsapp"
+                w="300px"
+              >
+                Plano de Saúde
+              </Button>
+            ) : (
+              <></>
+            )}
             <Button onClick={() => GetData()} colorScheme="teal" w="300px">
               Particular
             </Button>
-          
+
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <AiOutlineSearch />
@@ -381,7 +394,7 @@ export default function ProceduresVets({
                   bgColor: "green.300",
                 }}
                 colorScheme="whatsapp"
-                 onClick={() => getProcedureByLetter(letter.toUpperCase())}
+                onClick={() => getProcedureByLetter(letter.toUpperCase())}
                 fontWeight="bold"
                 fontSize="22px"
               >
@@ -389,12 +402,9 @@ export default function ProceduresVets({
               </Button>
             ))}
           </HStack>
-          
         </Flex>
-  
-    
+
         <TableContainer w="100%" height="100%" overflowY="auto">
-          
           <Table>
             <Thead>
               <Tr>
