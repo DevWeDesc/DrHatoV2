@@ -88,6 +88,7 @@ export default function ProceduresVets({
     currentPage: 0,
     totalProceds: 0,
   });
+
   function incrementPage() {
     SetPagination((prevCount) =>
       pagination < paginationInfos.totalPages
@@ -110,6 +111,12 @@ export default function ProceduresVets({
     setConsultDetails(response.data);
   }
 
+  async function handlerClearFilter() {
+    SetPagination(1);
+    setQuery("");
+    GetData();
+  }
+
   useQuery("queueDetails", getQueueDetails);
 
   async function GetData() {
@@ -118,7 +125,6 @@ export default function ProceduresVets({
         const response = await api.get(
           `/procedures/query?q=${query}&sex=${petDetails.sexo}&page=${pagination}`
         );
-        
 
         setProcedures(response.data.procedures);
         setPaginationInfos({
@@ -342,9 +348,6 @@ export default function ProceduresVets({
             ) : (
               <></>
             )}
-            <Button onClick={() => GetData()} colorScheme="teal" w="300px">
-              Particular
-            </Button>
 
             <InputGroup>
               <InputLeftElement pointerEvents="none">
@@ -359,6 +362,13 @@ export default function ProceduresVets({
                 onChange={(ev) => setQuery(ev.target.value)}
               />
             </InputGroup>
+            <Button
+              onClick={() => handlerClearFilter()}
+              colorScheme="whatsapp"
+              w="330px"
+            >
+              Limpar Filtros
+            </Button>
             <HStack>
               <Button colorScheme="teal">
                 Total de Procedimentos {paginationInfos?.totalProceds}
