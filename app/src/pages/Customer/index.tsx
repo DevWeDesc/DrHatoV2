@@ -882,7 +882,7 @@ export function CustomerDetails() {
             align="center"
             textAlign="center"
           >
-            <Text>INFORMAÇÕES ADICIONAIS</Text>
+            <Text textTransform={"uppercase"} >Observações da recepção</Text>
             <Textarea
               value={moreInfos}
               onChange={(ev) => setMoreInfos(ev.target.value)}
