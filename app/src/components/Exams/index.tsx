@@ -234,6 +234,12 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
     }
   }
 
+  async function handleClearFilter() {
+    setExamName("");
+    setPagination(1);
+    refetch();
+  }
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -342,17 +348,18 @@ export function ExamsVet({ InAdmission, admissionQueueId }: ExamsVetProps) {
             ) : (
               <></>
             )}
-            <Button width="180px" onClick={() => getExams()} colorScheme="teal">
-              Particular
-            </Button>
             <Input
               placeholder="Nome do Exame"
               height="38px"
+              value={examName}
               name="filter"
               onChange={(ev) => {
                 setExamName(ev.target.value);
               }}
             />
+            <Button w={300} onClick={() => handleClearFilter()} colorScheme="whatsapp">
+              Limpar Filtros
+            </Button>
 
             <HStack>
               <Button colorScheme="teal">

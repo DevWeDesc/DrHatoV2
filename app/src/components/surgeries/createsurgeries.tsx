@@ -249,7 +249,7 @@ export function Createsurgeries({
     }
   };
 
-  const { isLoading } = useQuery("surgeriesData", getSurgeriesData);
+  const { isLoading, refetch: refetchGetSurgeriesData } = useQuery("surgeriesData", getSurgeriesData);
 
   async function reserveSurgerieSlot(slotId: number) {
     try {
@@ -284,6 +284,12 @@ export function Createsurgeries({
     } catch (error) {
       toast.error("Falha ao efetuar reserva!");
     }
+  }
+
+  async function handleClearFilter() {
+    setSurgerieName("");
+    setPagination(1);
+    refetchGetSurgeriesData();
   }
 
   useQuery("queueDetails", getQueueDetails);
@@ -438,17 +444,10 @@ export function Createsurgeries({
                 ) : (
                   <></>
                 )}
-                <Button
-                  onClick={() => getSurgerieByName()}
-                  color="white"
-                  w={160}
-                  colorScheme="teal"
-                >
-                  Particular
-                </Button>
                 <Input
                   borderColor="black"
                   bg="white"
+                  value={surgerieName}
                   name="name"
                   placeholder="Nome da cirurgia"
                   onChange={(ev) => {
@@ -456,6 +455,14 @@ export function Createsurgeries({
                     getSurgerieByName();
                   }}
                 />
+                <Button
+                  onClick={() => handleClearFilter()}
+                  color="white"
+                  w={260}
+                  colorScheme="whatsapp"
+                >
+                  Limpar Filtros
+                </Button>
                 <HStack>
                   <Button colorScheme="teal">
                     Páginas{" "}

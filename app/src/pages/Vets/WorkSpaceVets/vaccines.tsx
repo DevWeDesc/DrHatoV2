@@ -214,6 +214,13 @@ export function Vaccines({
     });
   }
 
+  async function handleClearFilter() {
+    setVaccineName("");
+    
+    setPagination(1);
+    refetch();
+  }
+
   return (
     <ChakraProvider>
       <Flex width="100vw" height="100vh" bgColor="white" direction="column">
@@ -290,19 +297,20 @@ export function Vaccines({
                   ) : (
                     <></>
                   )}
-                  <Button
-                    width={160}
-                    onClick={() => getVaccinesByName()}
-                    colorScheme="teal"
-                  >
-                    Particular
-                  </Button>
                   <Input
                     bgColor="white"
                     name="filter"
+                    value={vaccineName}
                     onChange={(ev) => setVaccineName(ev.target.value)}
                     placeholder="Nome da Vacina"
                   />
+                  <Button
+                    width={320}
+                    onClick={() => handleClearFilter()}
+                    colorScheme="whatsapp"
+                  >
+                    Limpar Filtros
+                  </Button>
 
                   <HStack>
                     <Button colorScheme="teal">
