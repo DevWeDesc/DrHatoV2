@@ -2,7 +2,6 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { prisma } from "../interface/PrismaInstance";
 import { z } from "zod";
 import { accumulatorService } from "../services/accumulatorService";
-import { promises } from "dns";
 
 type params = {
   id: string;
@@ -302,8 +301,13 @@ export const surgeriesController = {
       dateSurgerie: z.string(),
     });
     const { id, petId, accId, queueId } = request.params;
-    const { RequestedByVetId, RequestedByVetName, isAdmission, slotId, dateSurgerie } =
-      SetSurgerieInPetSchema.parse(request.body);
+    const {
+      RequestedByVetId,
+      RequestedByVetName,
+      isAdmission,
+      slotId,
+      dateSurgerie,
+    } = SetSurgerieInPetSchema.parse(request.body);
     try {
       const surgerie = await prisma.surgeries.findUnique({
         where: { id: parseInt(id) },
@@ -316,14 +320,34 @@ export const surgeriesController = {
         return;
       }
 
+      const pet = await prisma.pets.findUnique({
+        where: { id: parseInt(petId) },
+      });
+
+      let priceSurgerieByAnimalWeight: number | any = 0;
+
+      if (!pet?.weigth) throw new Error("Peso do animal não encontrado!");
+      if (pet?.weigth < 7) {
+        priceSurgerieByAnimalWeight = surgerie?.price;
+      } else if (pet?.weigth >= 7 && pet?.weigth < 16) {
+        priceSurgerieByAnimalWeight = surgerie?.priceTwo;
+      } else if (pet?.weigth >= 16 && pet?.weigth < 35) {
+        priceSurgerieByAnimalWeight = surgerie?.priceThree;
+      } else {
+        priceSurgerieByAnimalWeight = surgerie?.priceFour;
+      }
+
       if (isAdmission === true) {
+        if (!priceSurgerieByAnimalWeight)
+          throw new Error("Preço da cirurgia não encontrado!");
+
         await prisma.petConsultsDebits
           .create({
             data: {
               OpenedAdmissionsForPet: { connect: { id: queueId } },
               isSurgerie: true,
               name: surgerie.name,
-              price: surgerie.price,
+              price: priceSurgerieByAnimalWeight,
               itemId: surgerie.id,
               RequestedByVetId,
               RequestedByVetName,
@@ -335,7 +359,7 @@ export const surgeriesController = {
               data: {
                 name: surgerie.name,
                 status: "STARTED",
-                price: surgerie.price,
+                price: priceSurgerieByAnimalWeight,
                 medicine: { connect: { petId: parseInt(petId) } },
                 linkedConsultDebitId: res.id,
                 slotId,
@@ -355,7 +379,7 @@ export const surgeriesController = {
               OpenedConsultsForPet: { connect: { id: queueId } },
               isSurgerie: true,
               name: surgerie.name,
-              price: surgerie.price,
+              price: priceSurgerieByAnimalWeight,
               itemId: surgerie.id,
               RequestedByVetId,
               RequestedByVetName,
@@ -367,7 +391,7 @@ export const surgeriesController = {
               data: {
                 name: surgerie.name,
                 status: "STARTED",
-                price: surgerie.price,
+                price: priceSurgerieByAnimalWeight,
                 medicine: { connect: { petId: parseInt(petId) } },
                 linkedConsultDebitId: res.id,
                 slotId,

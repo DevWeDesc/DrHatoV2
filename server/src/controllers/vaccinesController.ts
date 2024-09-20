@@ -207,7 +207,7 @@ export const vaccinesController = {
       if (sex === "Macho") {
         const totalVaccines = await prisma.vaccines.count({
           where: {
-            name: { contains: name },
+            name: { contains: name, mode: "insensitive" },
             applicableMale: true,
           },
         });
@@ -218,7 +218,7 @@ export const vaccinesController = {
           skip: (currentPage - 1) * 35,
           take: 35,
           where: {
-            name: { contains: name },
+            name: { contains: name, mode: "insensitive" },
             applicableMale: true,
           },
         });
@@ -232,7 +232,7 @@ export const vaccinesController = {
       } else if (sex === "Fêmea") {
         const totalVaccines = await prisma.vaccines.count({
           where: {
-            name: { contains: name },
+            name: { contains: name, mode: "insensitive" },
             applicableFemale: true,
           },
         });
@@ -242,7 +242,10 @@ export const vaccinesController = {
         const vaccines = await prisma.vaccines.findMany({
           skip: (currentPage - 1) * 35,
           take: 35,
-          where: { name: { contains: name }, applicableFemale: true },
+          where: {
+            name: { contains: name, mode: "insensitive" },
+            applicableFemale: true,
+          },
         });
 
         reply.status(200).send({
@@ -254,7 +257,7 @@ export const vaccinesController = {
       } else {
         const totalVaccines = await prisma.vaccines.count({
           where: {
-            name: { contains: name },
+            name: { contains: name, mode: "insensitive" },
           },
         });
 
@@ -263,7 +266,7 @@ export const vaccinesController = {
         const vaccines = await prisma.vaccines.findMany({
           skip: (currentPage - 1) * 35,
           take: 35,
-          where: { name: { contains: name } },
+          where: { name: { contains: name, mode: "insensitive" } },
         });
 
         reply.status(200).send({
@@ -292,6 +295,23 @@ export const vaccinesController = {
       return;
     }
     try {
+      const pet = await prisma.pets.findUnique({
+        where: { id: parseInt(petId) },
+      });
+
+      let priceSurgerieByAnimalWeight: number | any = 0;
+
+      if (!pet?.weigth) throw new Error("Peso do animal não encontrado!");
+      if (pet?.weigth < 7) {
+        priceSurgerieByAnimalWeight = vaccine?.price;
+      } else if (pet?.weigth >= 7 && pet?.weigth < 16) {
+        priceSurgerieByAnimalWeight = vaccine?.priceTwo;
+      } else if (pet?.weigth >= 16 && pet?.weigth < 35) {
+        priceSurgerieByAnimalWeight = vaccine?.priceThree;
+      } else {
+        priceSurgerieByAnimalWeight = vaccine?.priceFour;
+      }
+
       if (isAdmission === true) {
         await prisma.petConsultsDebits
           .create({
@@ -299,7 +319,7 @@ export const vaccinesController = {
               OpenedAdmissionsForPet: { connect: { id: queueId } },
               isVaccine: true,
               name: vaccine.name,
-              price: vaccine.price,
+              price: priceSurgerieByAnimalWeight,
               itemId: vaccine.id,
               RequestedByVetId,
               RequestedByVetName,
@@ -310,7 +330,7 @@ export const vaccinesController = {
             await prisma.vaccinesForPet.create({
               data: {
                 name: vaccine?.name,
-                price: vaccine?.price,
+                price: priceSurgerieByAnimalWeight,
                 description: vaccine?.description,
                 requestedDate: new Date(),
                 medicine: { connect: { petId: parseInt(petId) } },
@@ -325,7 +345,7 @@ export const vaccinesController = {
               OpenedConsultsForPet: { connect: { id: queueId } },
               isVaccine: true,
               name: vaccine.name,
-              price: vaccine.price,
+              price: priceSurgerieByAnimalWeight,
               itemId: vaccine.id,
               RequestedByVetId,
               RequestedByVetName,
@@ -336,7 +356,7 @@ export const vaccinesController = {
             await prisma.vaccinesForPet.create({
               data: {
                 name: vaccine?.name,
-                price: vaccine?.price,
+                price: priceSurgerieByAnimalWeight,
                 description: vaccine?.description,
                 requestedDate: new Date(),
                 medicine: { connect: { petId: parseInt(petId) } },

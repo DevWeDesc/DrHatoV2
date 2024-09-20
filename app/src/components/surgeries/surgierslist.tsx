@@ -66,7 +66,7 @@ export function Surgierslist() {
                   color="black"
                   border="1px solid black"
                   pl="2"
-                  pr="33vw"
+                  pr="10vw"
                 >
                   Cirurgia
                 </Th>
@@ -109,7 +109,7 @@ export function Surgierslist() {
                       fontSize="16"
                       border="1px solid black"
                       pl="2"
-                      pr="33vw"
+                      pr="10vw"
                       whiteSpace={"nowrap"}
                     >
                       {surgery.name}

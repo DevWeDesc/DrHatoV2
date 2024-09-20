@@ -26,7 +26,10 @@ import { LoadingSpinner } from "../Loading";
 interface SugeriesProps {
   id: number;
   name: string;
-  price: number | string;
+  price: number;
+  priceTwo: number;
+  priceThree: number;
+  priceFour: number;
 }
 
 type SurgerieVetProps = {
@@ -522,19 +525,19 @@ export function Createsurgeries({
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
                           currency: "BRL",
-                        }).format(Number(sugerie?.price))}
+                        }).format(Number(sugerie?.priceTwo))}
                       </Td>
                       <Td>
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
                           currency: "BRL",
-                        }).format(Number(sugerie?.price))}
+                        }).format(Number(sugerie?.priceThree))}
                       </Td>
                       <Td>
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
                           currency: "BRL",
-                        }).format(Number(sugerie?.price))}
+                        }).format(Number(sugerie?.priceFour))}
                       </Td>
                       <Td>
                         <Button

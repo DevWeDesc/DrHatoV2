@@ -28,6 +28,9 @@ interface VaccinesProps {
   id: number;
   name: string;
   price: number;
+  priceTwo: number;
+  priceThree: number;
+  priceFour: number;
   description: string;
 }
 
@@ -193,12 +196,16 @@ export function Vaccines({
   }
 
   async function getVaccinesByLetter(letter: string) {
-    const response = await api.get(`/vaccines/${letter}/${pagination}?sex=${petDetails.sexo}`);
+    const response = await api.get(
+      `/vaccines/${letter}/${pagination}?sex=${petDetails.sexo}`
+    );
     setVaccines(response.data.vaccines);
   }
 
   async function getVaccinesByName() {
-    const response = await api.get(`/vaccines/${vaccineName}/${pagination}?sex=${petDetails.sexo}`);
+    const response = await api.get(
+      `/vaccines/name/${vaccineName}/${pagination}?sex=${petDetails.sexo}`
+    );
     setVaccines(response.data.vaccines);
   }
 
@@ -216,7 +223,7 @@ export function Vaccines({
 
   async function handleClearFilter() {
     setVaccineName("");
-    
+
     setPagination(1);
     refetch();
   }
@@ -256,21 +263,59 @@ export function Vaccines({
                 <Table>
                   <Thead>
                     <Tr>
-                      <Th>DATA</Th>
-                      <Th>Vacinas do Animal / Imprimir Programação</Th>
-                      <Th>Valor</Th>
-                      <Th>Compor</Th>
-                      <Th>Exclusão</Th>
+                      <Th border={"2px"} borderColor={"black"}>
+                        DATA
+                      </Th>
+                      <Th border={"2px"} borderColor={"black"}>
+                        Vacinas do Animal / Imprimir Programação
+                      </Th>
+                      <Th border={"2px"} borderColor={"black"}>
+                        Valor
+                      </Th>
+                      <Th border={"2px"} borderColor={"black"}>
+                        Compor
+                      </Th>
+                      <Th border={"2px"} borderColor={"black"}>
+                        Exclusão
+                      </Th>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    <Tr border="2px">
-                      <Td></Td>
-                      <Td></Td>
-                      <Td></Td>
-                      <Td></Td>
-                      <Td></Td>
-                    </Tr>
+                    {petDetails.vaccines?.map((vaccine) => (
+                      <Tr key={vaccine.id}>
+                        <Td border={"2px"} borderColor={"black"}>
+                          {new Intl.DateTimeFormat("pt-BR").format(
+                            new Date(vaccine?.requestedDate)
+                          )}
+                        </Td>
+                        <Td border={"2px"} borderColor={"black"}>
+                          {vaccine.name}
+                        </Td>
+                        <Td border={"2px"} borderColor={"black"}>
+                          {new Intl.NumberFormat("pt-BR", {
+                            currency: "BRL",
+                            style: "currency",
+                          }).format(vaccine?.price)}
+                        </Td>
+                        <Td border={"2px"} borderColor={"black"}>
+                          --
+                        </Td>
+                        <Td border={"2px"} borderColor={"black"}>
+                          <Button
+                            colorScheme="red"
+                            onClick={() => {
+                              deleteVaccine(
+                                vaccine.id,
+                                vaccine.price,
+                                vaccine.linkedConsultId
+                              );
+                            }}
+                          >
+                            Excluir
+                          </Button>
+                        </Td>
+                      </Tr>
+                    ))}
                   </Tbody>
                 </Table>
               </TableContainer>
@@ -392,19 +437,19 @@ export function Vaccines({
                           {new Intl.NumberFormat("pt-BR", {
                             currency: "BRL",
                             style: "currency",
-                          }).format(vaccine?.price)}
+                          }).format(vaccine?.priceTwo)}
                         </Td>
                         <Td>
                           {new Intl.NumberFormat("pt-BR", {
                             currency: "BRL",
                             style: "currency",
-                          }).format(vaccine?.price)}
+                          }).format(vaccine?.priceThree)}
                         </Td>
                         <Td>
                           {new Intl.NumberFormat("pt-BR", {
                             currency: "BRL",
                             style: "currency",
-                          }).format(vaccine?.price)}
+                          }).format(vaccine?.priceFour)}
                         </Td>
                         <Td>
                           <Button
@@ -444,7 +489,7 @@ export function Vaccines({
                       <Th>DATA SOLICITADA</Th>
                       <Th>VACINAS</Th>
 
-                      <Th>Cancelar?</Th>
+                      {/* <Th>Cancelar?</Th> */}
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -456,22 +501,6 @@ export function Vaccines({
                           )}
                         </Td>
                         <Td>{vaccine.name}</Td>
-
-                        <Td>
-                          <Button
-                            onClick={() => {
-                              deleteVaccine(
-                                vaccine.id,
-                                vaccine.price,
-                                vaccine.linkedConsultId
-                              );
-                            }}
-                            w="89px"
-                            colorScheme="red"
-                          >
-                            Excluir
-                          </Button>
-                        </Td>
                       </Tr>
                     ))}
                   </Tbody>
