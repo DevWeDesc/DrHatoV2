@@ -26,7 +26,10 @@ import { LoadingSpinner } from "../Loading";
 interface SugeriesProps {
   id: number;
   name: string;
-  price: number | string;
+  price: number;
+  priceTwo: number;
+  priceThree: number;
+  priceFour: number;
 }
 
 type SurgerieVetProps = {
@@ -68,6 +71,7 @@ export function Createsurgeries({
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const [surgerieName, setSurgerieName] = useState("");
   const [selectedCentral, setSelectedCentral] = useState(0);
+  const [dateSurgery, setDateSurgery] = useState(new Date());
   const [paginationInfos, setPaginationInfos] = useState({
     totalPages: 0,
     currentPage: 0,
@@ -85,12 +89,6 @@ export function Createsurgeries({
         : paginationInfos.totalPages
     );
   }
-
-  console.log(
-    "Createsurgeries",
-
-    surgerieCentral?.surgerieSlots
-  );
 
   function decrementPage() {
     setPagination((prevCount) => (pagination > 1 ? prevCount - 1 : 1));
@@ -185,6 +183,7 @@ export function Createsurgeries({
       }
 
       const data = {
+        dateSurgerie: dateSurgery,
         RequestedByVetId: user.id,
         RequestedByVetName: user.consultName,
         isAdmission: InAdmission,
@@ -253,7 +252,7 @@ export function Createsurgeries({
     }
   };
 
-  const { isLoading } = useQuery("surgeriesData", getSurgeriesData);
+  const { isLoading, refetch: refetchGetSurgeriesData } = useQuery("surgeriesData", getSurgeriesData);
 
   async function reserveSurgerieSlot(slotId: number) {
     try {
@@ -288,6 +287,12 @@ export function Createsurgeries({
     } catch (error) {
       toast.error("Falha ao efetuar reserva!");
     }
+  }
+
+  async function handleClearFilter() {
+    setSurgerieName("");
+    setPagination(1);
+    refetchGetSurgeriesData();
   }
 
   useQuery("queueDetails", getQueueDetails);
@@ -442,17 +447,10 @@ export function Createsurgeries({
                 ) : (
                   <></>
                 )}
-                <Button
-                  onClick={() => getSurgerieByName()}
-                  color="white"
-                  w={160}
-                  colorScheme="teal"
-                >
-                  Particular
-                </Button>
                 <Input
                   borderColor="black"
                   bg="white"
+                  value={surgerieName}
                   name="name"
                   placeholder="Nome da cirurgia"
                   onChange={(ev) => {
@@ -460,6 +458,14 @@ export function Createsurgeries({
                     getSurgerieByName();
                   }}
                 />
+                <Button
+                  onClick={() => handleClearFilter()}
+                  color="white"
+                  w={260}
+                  colorScheme="whatsapp"
+                >
+                  Limpar Filtros
+                </Button>
                 <HStack>
                   <Button colorScheme="teal">
                     Páginas{" "}
@@ -519,19 +525,19 @@ export function Createsurgeries({
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
                           currency: "BRL",
-                        }).format(Number(sugerie?.price))}
+                        }).format(Number(sugerie?.priceTwo))}
                       </Td>
                       <Td>
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
                           currency: "BRL",
-                        }).format(Number(sugerie?.price))}
+                        }).format(Number(sugerie?.priceThree))}
                       </Td>
                       <Td>
                         {new Intl.NumberFormat("pt-BR", {
                           style: "currency",
                           currency: "BRL",
-                        }).format(Number(sugerie?.price))}
+                        }).format(Number(sugerie?.priceFour))}
                       </Td>
                       <Td>
                         <Button
@@ -590,6 +596,27 @@ export function Createsurgeries({
                   </option>
                 ))}
               </Select>
+            </Flex>
+            <Flex align="center">
+              <Text
+                border="1px solid black"
+                borderRight="2px solid black"
+                fontWeight="bold"
+                pl="5"
+                py="1"
+                w="14.4rem"
+              >
+                Data
+              </Text>
+              <Input
+                borderColor="black"
+                rounded="0"
+                fontWeight="bold"
+                bg="white"
+                type="date"
+                onChange={(ev) => setDateSurgery(new Date(ev.target.value))}
+                defaultValue={new Date().toISOString().split("T")[0]}
+              />
             </Flex>
           </Flex>
           <Button

@@ -15,6 +15,9 @@ const filteredData = data
   .map((vaccine) => ({
     name: vaccine.NomeProcedimento,
     price: vaccine.Preço1,
+    priceTwo: vaccine.Preço2,
+    priceThree: vaccine.Preço3,
+    priceFour: vaccine.Preço4,
     disponible: vaccine.Disponivel,
     description: "",
     applicableMale: vaccine.macho,

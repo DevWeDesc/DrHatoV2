@@ -125,8 +125,7 @@ export const queueController = {
           consultType: queryType,
           vetPreference:
             removePreference === true ? "Sem preferência" : vetPreference,
-          vetPreferenceOriginal:
-            removePreference === true ? "Sem preferência" : vetPreference,
+          vetPreferenceOriginal: removePreference === true ? "Sem preferência" : vetPreference,
           isClosed: false,
           observations: moreInfos,
           openedBy,

@@ -26,7 +26,11 @@ import {
 } from "@chakra-ui/react";
 import { AiFillTags, BiHome, TbArrowBack } from "react-icons/all";
 import { toast } from "react-toastify";
-import { WorkSpaceContainer, WorkSpaceContent, WorkSpaceHeader } from "../Vets/styles";
+import {
+  WorkSpaceContainer,
+  WorkSpaceContent,
+  WorkSpaceHeader,
+} from "../Vets/styles";
 import { PetProps } from "../Pets/details";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { CreatePetsForm } from "../../components/Forms/CreatePetsForm";
@@ -34,7 +38,6 @@ import { QueryClient, useQuery } from "react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
 import ModalEditAnimal from "./modalEditAnimal";
-
 
 interface CustomerProps {
   id: string | number;
@@ -55,14 +58,14 @@ type VetsProps = {
   username: string;
   id: number;
   consultName: string;
-}
+};
 
 type HealthInsuranceProps = {
   id: number;
-	planName: string;
-	disponible: boolean
-	planProvider: string;
-}
+  planName: string;
+  disponible: boolean;
+  planProvider: string;
+};
 
 interface CreateNewPetProps {
   id: number | string;
@@ -83,8 +86,8 @@ interface CreateNewPetProps {
 interface HospBoxHistory {
   id: number;
   entryValues?: number;
-  exitValues?: number;  
-  totalValues?: number; 
+  exitValues?: number;
+  totalValues?: number;
   openBox?: Date;
   closeBox?: Date;
   openBy?: string;
@@ -93,14 +96,13 @@ interface HospBoxHistory {
   hospVetBoxId?: number;
 }
 
-
 export function CustomerDetails() {
   const { id } = useParams<{ id: string }>();
   const user = JSON.parse(localStorage.getItem("user") as string);
   const navigate = useNavigate();
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient();
   const [petId, setPetId] = useState("");
-  const [userVets, setUserVets] = useState<VetsProps[]>([])
+  const [userVets, setUserVets] = useState<VetsProps[]>([]);
   const [queryType, setQueryType] = useState("");
   const [notPreferences, setNotPreferences] = useState(false);
   const [vetPreference, setVetPreference] = useState("");
@@ -123,8 +125,10 @@ export function CustomerDetails() {
   const [petSelected, setPetSelected] = useState<any>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [vetName, setVetName] = useState("");
-  const [healthInsurance, setHealthInsurance] = useState<HealthInsuranceProps[]>([])
-  const [healthId, setHealthId] = useState(0)
+  const [healthInsurance, setHealthInsurance] = useState<
+    HealthInsuranceProps[]
+  >([]);
+  const [healthId, setHealthId] = useState(0);
   const [especieState, setEspecie] = useState("");
   const [raceState, setRace] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
@@ -136,13 +140,13 @@ export function CustomerDetails() {
   const [weight, setWeight] = useState("");
 
   async function loadHealthInsurances() {
-    const response = await api.get("/health/insurance")
-    setHealthInsurance(response.data.healthInsurance)
+    const response = await api.get("/health/insurance");
+    setHealthInsurance(response.data.healthInsurance);
   }
 
   async function loadCustomer() {
     const response = await api.get(`/customers/${id}`);
-    setCustomer(response.data.customer); 
+    setCustomer(response.data.customer);
   }
 
   async function loadVets() {
@@ -150,63 +154,65 @@ export function CustomerDetails() {
     setUserVets(response.data.vets);
   }
 
-  
-  useQuery('healthInsuranceReception', loadHealthInsurances)
-  const {refetch} = useQuery('customerReception', loadCustomer)
-  useQuery('vetsReception', loadVets)
+  useQuery("healthInsuranceReception", loadHealthInsurances);
+  const { refetch } = useQuery("customerReception", loadCustomer);
+  useQuery("vetsReception", loadVets);
 
   async function loadVetsByName() {
     const response = await api.get(`/users/vets/name/${vetName}`);
     setUserVets(response.data);
-    queryClient.invalidateQueries('vetsReception')
+    queryClient.invalidateQueries("vetsReception");
   }
-  
+
   async function setPetInQueue() {
     try {
+      const openedBox = await api.get("/vetbox");
 
-      const openedBox = await api.get("/vetbox")
+      const verifyOpenedBox = openedBox?.data?.historyBox?.some(
+        (box: HospBoxHistory) => box.boxIsOpen
+      );
 
-      const verifyOpenedBox = openedBox?.data?.historyBox?.some((box: HospBoxHistory)=> box.boxIsOpen)
-
-      if(!verifyOpenedBox) {
-        toast.error("Não existe caixa em aberto, não é possivel colocar na fila")
+      if (!verifyOpenedBox) {
+        toast.error(
+          "Não existe caixa em aberto, não é possivel colocar na fila"
+        );
         return;
       }
-      
 
-      const selectedHealth = healthInsurance.find(h => h.id === healthId)
+      const selectedHealth = healthInsurance.find((h) => h.id === healthId);
 
       const data = {
-        healthInsuranceId: selectedHealth?.id, 
+        healthInsuranceId: selectedHealth?.id,
         healthInsuranceName: selectedHealth?.planName,
         removePreference: notPreferences,
         vetPreference: vetPreference,
         queryType: queryType,
-        openedBy: user.consultName.length >= 1 ? user.consultName : `${user.name} - Id: ${user.id}`,
+        openedBy:
+          user.consultName.length >= 1
+            ? user.consultName
+            : `${user.name} - Id: ${user.id}`,
         moreInfos: moreInfos,
       };
 
-
       if (!!queryType && !!petSelected.id) {
-        if(notPreferences === false && vetPreference.length <= 1) {
-          toast.error("Selecione uma preferência")
-          return 
+        if (notPreferences === false && vetPreference.length <= 1) {
+          toast.error("Selecione uma preferência");
+          return;
         }
         await api.put(`queue/${petSelected.id}`, data);
-        navigate("/Recepcao/Change")
+        navigate("/Recepcao/Change");
         toast.success("Pet colocado na fila com sucesso!");
       } else {
         toast.error(`Selecione Pet/Tipo de Atendimento/Veterinário`);
       }
     } catch (error: any) {
-      console.log(error)
-      if(error.response.status === 409) {
-        return toast.error(`${error.response.data.message}`)
+      console.log(error);
+      if (error.response.status === 409) {
+        return toast.error(`${error.response.data.message}`);
       }
       toast.error("Falha ao colocar na fila");
     }
   }
-
 
   const handleYearChange = (e: any) => {
     setSelectedYear(e.target.value);
@@ -215,7 +221,7 @@ export function CustomerDetails() {
   const handleMonthChange = (e: any) => {
     setSelectedMonth(e.target.value);
   };
-  
+
   let selectRaces;
   switch (true) {
     case especieState === "Felina":
@@ -292,8 +298,7 @@ export function CustomerDetails() {
           <option value="Cocker Americano">Cocker Americano</option>
           <option value="Schnauzer">Schnauzer</option>
           <option value="Bull Dog">Bull Dog</option>
-          <option value="Starforshire Bull Terrier">
-          </option>
+          <option value="Starforshire Bull Terrier"></option>
           <option value="Boxer Inglês">Boxer Inglês</option>
           <option value="Americano">Americano</option>
           <option value="Lhasa-Apso">Lhasa-Apso</option>
@@ -450,10 +455,10 @@ export function CustomerDetails() {
         (selectedMonth === "" && selectedYear != "") ||
         (selectedMonth != "" && selectedYear === "")
       ) {
-        await api.post(`/pets/${id}`, data)
-        refetch()
-        toast.success("Animal cadastrado com sucesso")
-        setModalOpen(false)
+        await api.post(`/pets/${id}`, data);
+        refetch();
+        toast.success("Animal cadastrado com sucesso");
+        setModalOpen(false);
       } else {
         toast.error("Insira a idade correta do animal!!");
       }
@@ -462,7 +467,6 @@ export function CustomerDetails() {
       toast.error("Falha ao cadastrar pet, verifique se o mesmo ja não existe");
     }
   };
-
 
   return (
     <ChakraProvider>
@@ -683,9 +687,7 @@ export function CustomerDetails() {
                               <RadioGroup onChange={setPetId} value={petId}>
                                 <Radio
                                   onClick={() => {
-                                    setPetSelected(pet)
-                                    
-                                                                      
+                                    setPetSelected(pet);
                                   }}
                                   borderColor="teal.800"
                                   colorScheme="green"
@@ -722,9 +724,8 @@ export function CustomerDetails() {
                 <TableContainer>
                   <Table variant="simple">
                     <Thead>
-                      <Tr py="6" bg="blue.100">
+                      <Tr py="5" bg="blue.100">
                         <Td colSpan={4} fontWeight="bold" textAlign="center">
-                          {" "}
                           Animal Selecionado
                         </Td>
                       </Tr>
@@ -735,6 +736,8 @@ export function CustomerDetails() {
                             bg="white"
                             value={petSelected.name}
                             borderColor="black"
+                            h={"auto"}
+                            py={1}
                           />
                         </Th>
                         <Th py="0.5">Espécie</Th>
@@ -743,6 +746,8 @@ export function CustomerDetails() {
                             bg="white"
                             value={petSelected.especie}
                             borderColor="black"
+                            h={"auto"}
+                            py={1}
                           />
                         </Th>
                       </Tr>
@@ -755,6 +760,8 @@ export function CustomerDetails() {
                             bg="white"
                             value={petSelected.race}
                             borderColor="black"
+                            h={"auto"}
+                            py={1}
                           />
                         </Th>
                         <Th py="0.5">Cor</Th>
@@ -763,6 +770,8 @@ export function CustomerDetails() {
                             bg="white"
                             value={petSelected.corPet}
                             borderColor="black"
+                            h={"auto"}
+                            py={1}
                           />
                         </Th>
                       </Tr>
@@ -773,6 +782,8 @@ export function CustomerDetails() {
                             bg="white"
                             value={petSelected.especie}
                             borderColor="black"
+                            h={"auto"}
+                            py={1}
                           />
                         </Th>
                         <Th py="0.5">Idade</Th>
@@ -781,6 +792,8 @@ export function CustomerDetails() {
                             bg="white"
                             value={petSelected.bornDate}
                             borderColor="black"
+                            h={"auto"}
+                            py={1}
                           />
                         </Th>
                       </Tr>
@@ -791,6 +804,8 @@ export function CustomerDetails() {
                             bg="white"
                             value={petSelected.weigth}
                             borderColor="black"
+                            h={"auto"}
+                            py={1}
                           />
                         </Th>
                         <Th py="0.5">Sexo</Th>
@@ -799,46 +814,57 @@ export function CustomerDetails() {
                             bg="white"
                             value={petSelected.sexo}
                             borderColor="black"
+                            h={"auto"}
+                            py={1}
                           />
                         </Th>
                       </Tr>
                       <Tr>
                         <Th py="0.5">Plano de Saúde</Th>
                         <Th py="0.5" colSpan={3}>
-                          <Select bg={"white"} borderColor="black" onChange={(ev) => setHealthId(Number(ev.target.value))}>
-                           <option value="none">Não possui</option>
-                            {
-                              healthInsurance.map((health) => <option value={health.id}>{health.planName}</option>)
+                          <Select
+                            bg={"white"}
+                            borderColor="black"
+                            onChange={(ev) =>
+                              setHealthId(Number(ev.target.value))
                             }
-                            
-                     
+                          >
+                            <option value="none">Não possui</option>
+                            {healthInsurance.map((health) => (
+                              <option value={health.id}>
+                                {health.planName}
+                              </option>
+                            ))}
                           </Select>
                         </Th>
                       </Tr>
                       <Tr>
                         <Td py="0" colSpan={4} px="0">
-                          <Flex display={"flex"} justifyContent={"space-around"} mt={"6"}>
+                          <Flex
+                            display={"flex"}
+                            justifyContent={"space-around"}
+                            mt={"6"}
+                          >
                             <Button
                               py="6"
                               mt="0.2"
-                              w="40%"
+                              px={4}
                               colorScheme="blue"
                               onClick={() => setPetSelected([])}
                             >
                               Voltar para a listagem de Animais
                             </Button>
-                            <Button 
+                            <Button
                               colorScheme="whatsapp"
                               py="6"
                               mt="0.2"
                               w="40%"
-                              onClick={ ()=> setIsModalUpdated(true)}
+                              onClick={() => setIsModalUpdated(true)}
                             >
                               Editar Animal
                             </Button>
                           </Flex>
                         </Td>
-
                       </Tr>
                     </Tbody>
                   </Table>
@@ -856,7 +882,7 @@ export function CustomerDetails() {
             align="center"
             textAlign="center"
           >
-            <Text>INFORMAÇÕES ADICIONAIS</Text>
+            <Text textTransform={"uppercase"} >Observações da recepção</Text>
             <Textarea
               value={moreInfos}
               onChange={(ev) => setMoreInfos(ev.target.value)}
@@ -882,40 +908,48 @@ export function CustomerDetails() {
               w="100%"
               overflow="auto"
               height="100%"
+              px={2}
             >
-              <Flex direction="column" overflow="auto" height="100%"  >
-                <Flex align="center" justify="space-between" gap={8} w="100%" p="2" mb="2" position="relative">
-                <Text  fontWeight="bold" >
-                  SELECIONAR VETERINÁRIO:
-                </Text>
-                <Input
-                bgColor="white"
-                w="180px"
-                border="1px"
-                placeholder="Pesquisar"
-                name="searchVet"
-                onChange={(ev) => {
-                  setVetName(ev.target.value)
-                  setVetPreference("")
-                  loadVetsByName()
-                }}
-                />
+              <Flex direction="column" overflow="auto" height="100%">
+                <Flex
+                  align="center"
+                  justify="space-between"
+                  gap={8}
+                  w="100%"
+                  p="2"
+                  mb="2"
+                  position="relative"
+                >
+                  <Text fontWeight="bold">SELECIONAR VETERINÁRIO:</Text>
+                  <Input
+                    bgColor="white"
+                    w="180px"
+                    border="1px"
+                    placeholder="Pesquisar"
+                    name="searchVet"
+                    onChange={(ev) => {
+                      setVetName(ev.target.value);
+                      setVetPreference("");
+                      loadVetsByName();
+                    }}
+                  />
                 </Flex>
-                        <HStack>
-                          <Checkbox
-                          onChange={(ev) => setNotPreferences(ev.target.checked)}
-                           border='2px' mb="4px"  />
-                          <Text fontWeight="bold">Sem preferência</Text>
-                        </HStack>
+                <HStack>
+                  <Checkbox
+                    onChange={(ev) => setNotPreferences(ev.target.checked)}
+                    border="2px"
+                    mb="4px"
+                  />
+                  <Text fontWeight="bold">Sem preferência</Text>
+                </HStack>
                 {userVets.map((vet) => (
                   <RadioGroup
                     mt={2}
                     key={vet.id}
                     onChange={setVetPreference}
-                    value={notPreferences === true ? '' : vetPreference}
+                    value={notPreferences === true ? "" : vetPreference}
                   >
                     <Flex direction="column">
-                       
                       <Radio
                         mb="2"
                         borderColor="teal.800"
@@ -1046,163 +1080,179 @@ export function CustomerDetails() {
                 Cadastro de Animal
               </Text>
               <FormControl
-        as="form"
-        onSubmit={handleSubmit(handleCreateNewCliente as any)}
-      >
-        <Flex direction="row" align="center" justify="center">
-          <VStack pl="8">
-            <Text w="100%" fontWeight="bold">
-              Nome do Pet
-            </Text>
-            <Input {...register("name")} id="name" name="name" />
-
-            <Text w="100%" fontWeight="bold" mt="2">
-              Especie do PET
-            </Text>
-            <Select
-              name="especie"
-              onChange={(ev) => setEspecie(ev.target.value)}
-              borderColor="gray.900"
-              placeholder="Selecione a Especie do ANIMAL"
-            >
-              <option value="Felina">Felina</option>
-              <option value="Canina">Canina</option>
-              <option value="Ave">Ave</option>
-              <option value="Roedor">Roedor</option>
-              <option value="Silvestre">Silvestre</option>
-              <option value="Primata">Primata</option>
-              <option value="Réptil">Réptil</option>
-              <option value="Quelônio">Quelônio</option>
-              <option value="Peixe">Peixe</option>
-            </Select>
-
-            <Text w="100%" fontWeight="bold" mt="2">
-              Raça
-            </Text>
-            <>{selectRaces}</>
-
-            <Text w="100%" fontWeight="bold" mt="2">
-              Cor do pet
-            </Text>
-            <Input {...register("cor")} id="cor" maxWidth={320} name="cor" />
-
-            <Text w="100%" fontWeight="bold" mt="2">
-              Peso
-            </Text>
-            <WeightPetInput
-              onBlur={""}
-              value={weight}
-              onChange={(e: any) => setWeight(e.target.value)}
-              id="peso"
-              name="peso"
-            ></WeightPetInput>
-
-            <Text w="100%" fontWeight="bold" mt="2">
-              Idade
-            </Text>
-            <HStack display="flex" justifyContent="space-between" w="100%">
-              <Select
-                borderColor="gray.900"
-                id="year"
-                value={selectedYear}
-                onChange={handleYearChange}
+                as="form"
+                onSubmit={handleSubmit(handleCreateNewCliente as any)}
               >
-                {years.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </Select>
-              <label htmlFor="year">Anos</label>
+                <Flex direction="row" align="center" justify="center">
+                  <VStack pl="8">
+                    <Text w="100%" fontWeight="bold">
+                      Nome do Pet
+                    </Text>
+                    <Input {...register("name")} id="name" name="name" />
 
-              <Select
-                borderColor="gray.900"
-                id="month"
-                value={selectedMonth}
-                onChange={handleMonthChange}
-              >
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </Select>
-              <label htmlFor="month">Meses</label>
-            </HStack>
-          </VStack>
-          <VStack pl="8" pr="8">
-            <Text w="100%" fontWeight="bold" mt="2">
-              Sexo do Pet
-            </Text>
-            <RadioGroup
-              onChange={setSelectedSex}
-              value={selectSex}
-              w="100%"
-              display="flex"
-              justifyContent="space-between"
-            >
-              <Flex gap={2} w="100%">
-                <Radio borderColor="black" value="MACHO">
-                  MACHO
-                </Radio>
-                <Radio borderColor="black" value="FEMEA">
-                  FEMEA
-                </Radio>
-              </Flex>
-            </RadioGroup>
-            <Flex align="center" gap="2" w="100%">
-              <Checkbox
-                borderColor="gray.900"
-                {...register("isCastred")}
-                id="isCastred"
-                maxWidth={320}
-                name="isCastred"
-              />{" "}
-              <FormLabel m="0" fontWeight="bold" htmlFor="isCastred">
-                Animal e Castrado
-              </FormLabel>
-            </Flex>
-            <Flex gap="2">
-              <Checkbox
-                borderColor="gray.900"
-                {...register("haveChip")}
-                id="haveChip"
-                maxWidth={320}
-                name="haveChip"
-              />
-              <FormLabel m="0" fontWeight="bold" htmlFor="haveChip">
-                Animal e Microchipado
-              </FormLabel>
-            </Flex>
-            <Text w="100%" fontWeight="bold" mt="5">
-              Observações
-            </Text>
-            <Textarea
-              height={300}
-              bgColor="white"
-              borderColor="gray.900"
-              {...register("obs")}
-              id="obs"
-              maxWidth={320}
-              name="obs"
-            />
-          </VStack>
-        </Flex>
-        <Button
-          mt="8"
-          colorScheme="whatsapp"
-          type="submit"
-         
-          w="100%"
-          py="7"
-        >
-          Cadastrar
-        </Button>
-      </FormControl>
+                    <Text w="100%" fontWeight="bold" mt="2">
+                      Especie do PET
+                    </Text>
+                    <Select
+                      name="especie"
+                      onChange={(ev) => setEspecie(ev.target.value)}
+                      borderColor="gray.900"
+                      placeholder="Selecione a Especie do ANIMAL"
+                    >
+                      <option value="Felina">Felina</option>
+                      <option value="Canina">Canina</option>
+                      <option value="Ave">Ave</option>
+                      <option value="Roedor">Roedor</option>
+                      <option value="Silvestre">Silvestre</option>
+                      <option value="Primata">Primata</option>
+                      <option value="Réptil">Réptil</option>
+                      <option value="Quelônio">Quelônio</option>
+                      <option value="Peixe">Peixe</option>
+                    </Select>
+
+                    <Text w="100%" fontWeight="bold" mt="2">
+                      Raça
+                    </Text>
+                    <>{selectRaces}</>
+
+                    <Text w="100%" fontWeight="bold" mt="2">
+                      Cor do pet
+                    </Text>
+                    <Input
+                      {...register("cor")}
+                      id="cor"
+                      maxWidth={320}
+                      name="cor"
+                    />
+
+                    <Text w="100%" fontWeight="bold" mt="2">
+                      Peso
+                    </Text>
+                    <WeightPetInput
+                      onBlur={""}
+                      value={weight}
+                      onChange={(e: any) => setWeight(e.target.value)}
+                      id="peso"
+                      name="peso"
+                    ></WeightPetInput>
+
+                    <Text w="100%" fontWeight="bold" mt="2">
+                      Idade
+                    </Text>
+                    <HStack
+                      display="flex"
+                      justifyContent="space-between"
+                      w="100%"
+                    >
+                      <Select
+                        borderColor="gray.900"
+                        id="year"
+                        value={selectedYear}
+                        onChange={handleYearChange}
+                      >
+                        {years.map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </Select>
+                      <label htmlFor="year">Anos</label>
+
+                      <Select
+                        borderColor="gray.900"
+                        id="month"
+                        value={selectedMonth}
+                        onChange={handleMonthChange}
+                      >
+                        {months.map((month) => (
+                          <option key={month} value={month}>
+                            {month}
+                          </option>
+                        ))}
+                      </Select>
+                      <label htmlFor="month">Meses</label>
+                    </HStack>
+                  </VStack>
+                  <VStack pl="8" pr="8">
+                    <Text w="100%" fontWeight="bold" mt="2">
+                      Sexo do Pet
+                    </Text>
+                    <RadioGroup
+                      onChange={setSelectedSex}
+                      value={selectSex}
+                      w="100%"
+                      display="flex"
+                      justifyContent="space-between"
+                    >
+                      <Flex gap={2} w="100%">
+                        <Radio borderColor="black" value="MACHO">
+                          MACHO
+                        </Radio>
+                        <Radio borderColor="black" value="FEMEA">
+                          FEMEA
+                        </Radio>
+                      </Flex>
+                    </RadioGroup>
+                    <Flex align="center" gap="2" w="100%">
+                      <Checkbox
+                        borderColor="gray.900"
+                        {...register("isCastred")}
+                        id="isCastred"
+                        maxWidth={320}
+                        name="isCastred"
+                      />{" "}
+                      <FormLabel m="0" fontWeight="bold" htmlFor="isCastred">
+                        Animal e Castrado
+                      </FormLabel>
+                    </Flex>
+                    <Flex gap="2">
+                      <Checkbox
+                        borderColor="gray.900"
+                        {...register("haveChip")}
+                        id="haveChip"
+                        maxWidth={320}
+                        name="haveChip"
+                      />
+                      <FormLabel m="0" fontWeight="bold" htmlFor="haveChip">
+                        Animal e Microchipado
+                      </FormLabel>
+                    </Flex>
+                    <Text w="100%" fontWeight="bold" mt="5">
+                      Observações
+                    </Text>
+                    <Textarea
+                      height={300}
+                      bgColor="white"
+                      borderColor="gray.900"
+                      {...register("obs")}
+                      id="obs"
+                      maxWidth={320}
+                      name="obs"
+                    />
+                  </VStack>
+                </Flex>
+                <Button
+                  mt="8"
+                  colorScheme="whatsapp"
+                  type="submit"
+                  w="100%"
+                  py="7"
+                >
+                  Cadastrar
+                </Button>
+              </FormControl>
             </GenericModal>
             {/* isOpen={modalEditOpen} onRequestClose={() => setModalEditOpen(false)} pet={petSelected} */}
-            <GenericModal  isOpen={isModalUpdated} onRequestClose={()=> setIsModalUpdated(false)}>
-              <ModalEditAnimal refetch={()=> refetch()} petSelected={petSelected} setPetSelected={setPetSelected} setIsModalUpdated={setIsModalUpdated}  />
+            <GenericModal
+              isOpen={isModalUpdated}
+              onRequestClose={() => setIsModalUpdated(false)}
+            >
+              <ModalEditAnimal
+                refetch={() => refetch()}
+                petSelected={petSelected}
+                setPetSelected={setPetSelected}
+                setIsModalUpdated={setIsModalUpdated}
+              />
             </GenericModal>
           </Flex>
         </WorkSpaceContent>
@@ -1210,4 +1260,3 @@ export function CustomerDetails() {
     </ChakraProvider>
   );
 }
-

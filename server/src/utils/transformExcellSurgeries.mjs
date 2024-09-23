@@ -32,6 +32,9 @@ const filteredData = data
   .map((surgeries) => ({
     name: surgeries.NomeProcedimento,
     price: surgeries.Preço1,
+    priceTwo: surgeries.Preço2,
+    priceThree: surgeries.Preço3,
+    priceFour: surgeries.Preço4,
     applicableToFemale: surgeries.femea,
     applicableToMale: surgeries.macho,
     sector_id: surgeries.setor,
@@ -44,6 +47,9 @@ export async function PopulateSurgeries() {
         data: {
           name: surgeries.name,
           price: surgeries.price,
+          priceTwo: surgeries.priceTwo,
+          priceThree: surgeries.priceThree,
+          priceFour: surgeries.priceFour,
           applicableToFemale: surgeries.applicableToFemale,
           applicableToMale: surgeries.applicableToMale,
           sector_id: surgeries.sector_id,

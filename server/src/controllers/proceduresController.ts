@@ -5,6 +5,7 @@ import { getFormattedDateTime } from "../utils/getCurrentDate";
 import { accumulatorService } from "../services/accumulatorService";
 import { prisma } from "../interface/PrismaInstance";
 import { z } from "zod";
+import { Decimal } from "@prisma/client/runtime";
 
 type params = {
   id: string;
@@ -144,7 +145,7 @@ export const proceduresController = {
       if (animalSex === "Macho") {
         const totalProceds = await prisma.procedures.count({
           where: {
-            name: { startsWith: q, mode: "insensitive" },
+            name: { contains: q, mode: "insensitive" },
             applicableMale: true,
           },
         });
@@ -155,7 +156,7 @@ export const proceduresController = {
           skip: (currentPage - 1) * 35,
           take: 35,
           where: {
-            name: { startsWith: q, mode: "insensitive" },
+            name: { contains: q, mode: "insensitive" },
             applicableMale: true,
           },
           include: {
@@ -445,6 +446,24 @@ export const proceduresController = {
         where: { id: parseInt(procedureId) },
       });
 
+      const pet = await prisma.pets.findUnique({
+        where: { id: parseInt(petId) },
+      });
+
+      let priceProcedureByAnimalWeight: Decimal | null | undefined;
+
+      if (!pet?.weigth) throw new Error("Peso do animal não encontrado!");
+
+      if (pet?.weigth < 7) {
+        priceProcedureByAnimalWeight = procedure?.price;
+      } else if (pet?.weigth >= 7 && pet?.weigth < 16) {
+        priceProcedureByAnimalWeight = procedure?.priceTwo;
+      } else if (pet?.weigth >= 16 && pet?.weigth < 35) {
+        priceProcedureByAnimalWeight = procedure?.priceThree;
+      } else {
+        priceProcedureByAnimalWeight = procedure?.priceFour;
+      }
+
       if (!procedure) return;
 
       if (InAdmission === true) {
@@ -454,7 +473,7 @@ export const proceduresController = {
               OpenedAdmissionsForPet: { connect: { id: queueId } },
               isProcedure: true,
               name: procedure.name,
-              price: procedure.price,
+              price: priceProcedureByAnimalWeight,
               itemId: procedure.id,
               sectorId: procedure.sector_id,
               RequestedByVetId,
@@ -467,7 +486,7 @@ export const proceduresController = {
                 name: procedure.name,
                 available: procedure.available,
                 observations: procedure.observations,
-                price: procedure.price,
+                price: priceProcedureByAnimalWeight,
                 applicationInterval: procedure.applicationInterval,
                 requestedDate: actualDate,
                 linkedConsultDebitId: res.id,
@@ -482,7 +501,7 @@ export const proceduresController = {
               OpenedConsultsForPet: { connect: { id: queueId } },
               isProcedure: true,
               name: procedure.name,
-              price: procedure.price,
+              price: priceProcedureByAnimalWeight,
               sectorId: procedure.sector_id,
               itemId: procedure.id,
               RequestedByVetId,
@@ -495,7 +514,7 @@ export const proceduresController = {
                 name: procedure.name,
                 available: procedure.available,
                 observations: procedure.observations,
-                price: procedure.price,
+                price: priceProcedureByAnimalWeight,
                 applicationInterval: procedure.applicationInterval,
                 requestedDate: actualDate,
                 linkedConsultDebitId: res.id,

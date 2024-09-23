@@ -22,6 +22,9 @@ interface VaccinesProps {
   id: number;
   name: string;
   price: number;
+  priceTwo: number;
+  priceThree: number;
+  priceFour: number; 
   description: string;
 }
 
@@ -190,9 +193,9 @@ export default function VaccinesVets({
                     </Td>
                     <Td>{vaccine.name}</Td>
                     <Td>R${vaccine.price}</Td>
-                    <Td>R${vaccine.price}</Td>
-                    <Td>R${vaccine.price}</Td>
-                    <Td>R${vaccine.price}</Td>
+                    <Td>R${vaccine.priceTwo}</Td>
+                    <Td>R${vaccine.priceThree}</Td>
+                    <Td>R${vaccine.priceFour}</Td>
                   </Tr>
                 ))}
               </Tbody>

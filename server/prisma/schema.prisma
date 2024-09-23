@@ -339,6 +339,9 @@ model Vaccines {
   id                Int              @id @default(autoincrement())
   name              String
   price             Decimal
+  priceTwo          Decimal?
+  priceThree        Decimal?
+  priceFour         Decimal?
   description       String
   disponible        Boolean?
   applicableMale    Boolean?
@@ -369,6 +372,9 @@ model Surgeries {
   id                 Int              @id @default(autoincrement())
   name               String
   price              Decimal
+  priceTwo           Decimal?
+  priceThree         Decimal?
+  priceFour          Decimal?
   applicableToMale   Boolean?
   applicableToFemale Boolean?
   sector_id          Int?
@@ -418,6 +424,7 @@ model SurgeriesForPet {
   linkedConsultDebitId   Int?              @unique
   LinkedAdmissionDebitId Int?              @unique
   slotId                 Int?
+  dateSurgerie           DateTime?
 }
 
 model OpenedConsultsForPet {

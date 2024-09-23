@@ -16,7 +16,7 @@ import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { object, string, date } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation, useQuery } from "react-query";
@@ -106,6 +106,8 @@ const customerSchema = object({
 });
 
 export function ReceptionEditCustomerForm() {
+
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -168,8 +170,10 @@ export function ReceptionEditCustomerForm() {
       return await api.put(`/customers/${id}`, data);
     },
     onSuccess: () => {
+      
       toast.success("Cliente editado com sucesso");
       refetch();
+      navigate(-1);
     },
   });
 
