@@ -57,13 +57,12 @@ export function AdmissionSearch({ path }: UniversalSearchProps) {
     setData(response?.data);
   };
 
-  console.log(data);
   return (
     <ChakraProvider>
-      <Flex direction="row" gap="4">
-        <FormControl as="form" onSubmit={handleSubmit(handleSearch)}>
-          <VStack>
-            <HStack>
+      <Flex width={"full"} direction="row" gap="4">
+        <FormControl width={"full"} as="form" onSubmit={handleSubmit(handleSearch)}>
+          <VStack width={"full"}>
+            <HStack width={"full"}>
               <Input
                 label="Nome do Cliente"
                 {...register("name")}
@@ -80,10 +79,8 @@ export function AdmissionSearch({ path }: UniversalSearchProps) {
                 name="codPet"
               />
 
-              <Flex gap="2" align="center" direction="column">
-                <Text fontWeight="bold">Pesquisa Universal</Text>
+              <Flex alignSelf={"end"} gap="2" direction="column">
                 <Button type="submit" colorScheme="whatsapp" minWidth={220}>
-                  {" "}
                   Filtrar
                 </Button>
               </Flex>
