@@ -20,6 +20,7 @@ import { api } from "../../lib/axios";
 import { AdmissionSearch } from "../Search/admissionSearch";
 import { PetDetaisl } from "../../interfaces";
 import moment from "moment";
+import { useQuery } from "react-query";
 
 interface QueueProps {
   response: [];
@@ -27,18 +28,27 @@ interface QueueProps {
 }
 
 export function SearchAdmission() {
-  const [inQueue, setInQueue] = useState<QueueProps[]>([]);
+  const [finished, setFinished] = useState(false);
   const [addmitedPets, setAdmmitedPets] = useState<PetDetaisl[]>([]);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") as string);
 
-  useEffect(() => {
-    async function getQueue() {
-      const response = await api.get("/petsadmitted");
-      setAdmmitedPets(response.data);
-    }
-    getQueue();
-  }, [inQueue.length]);
+  async function getQueue(): Promise<PetDetaisl[]> {
+    const response = await api.get("/petsadmitted");
+    return response.data;
+  }
+  async function getQueueFinished(): Promise<PetDetaisl[]> {
+    const response = await api.get("/petsadmittedclosed");
+    return response.data;
+  }
+
+  useQuery<PetDetaisl[]>({
+    queryKey: ["petsadmitted", finished],
+    queryFn: finished ? getQueueFinished : getQueue,
+    onSuccess: (data) => {
+      setAdmmitedPets(data);
+    },
+  });
 
   return (
     <ChakraProvider>
@@ -69,7 +79,7 @@ export function SearchAdmission() {
                     {moment().format("DD/MM/YYYY")}
                   </Text>
                 </Flex>
-                <AdmissionSearch path="vetsearch" />
+                <AdmissionSearch setFinished={setFinished} path="vetsearch" />
                 <Flex align="center" gap={4}>
                   <Text>Legenda:</Text>
                   <HStack>
@@ -150,8 +160,8 @@ export function SearchAdmission() {
                           );
                         })
                       ) : (
-                        <Tr>
-                          <h1>SEM ANIMAIS INTERNADOS NO MOMENTO</h1>
+                        <Tr border={"1px"}>
+                          SEM ANIMAIS INTERNADOS NO MOMENTO
                         </Tr>
                       )}
                     </Tbody>

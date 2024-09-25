@@ -12,17 +12,16 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
-import { useState, useContext } from "react";
-import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { useContext, Dispatch, SetStateAction } from "react";
 import { DbContext } from "../../contexts/DbContext";
 import convertData from "../../helpers/convertData";
 
 interface UniversalSearchProps {
   path: string;
+  setFinished: Dispatch<SetStateAction<boolean>>;
 }
 
-export function AdmissionSearch({ path }: UniversalSearchProps) {
+export function AdmissionSearch({ path, setFinished }: UniversalSearchProps) {
   const { setData, data } = useContext<any>(DbContext);
 
   const { register, handleSubmit } = useForm();
@@ -54,13 +53,17 @@ export function AdmissionSearch({ path }: UniversalSearchProps) {
         );
         break;
     }
-    setData(response?.data);
+    setData(response?.data);  
   };
 
   return (
     <ChakraProvider>
       <Flex width={"full"} direction="row" gap="4">
-        <FormControl width={"full"} as="form" onSubmit={handleSubmit(handleSearch)}>
+        <FormControl
+          width={"full"}
+          as="form"
+          onSubmit={handleSubmit(handleSearch)}
+        >
           <VStack width={"full"}>
             <HStack width={"full"}>
               <Input
@@ -78,6 +81,16 @@ export function AdmissionSearch({ path }: UniversalSearchProps) {
                 {...register("codPet")}
                 name="codPet"
               />
+              <VStack w={160}>
+                <FormLabel whiteSpace={"nowrap"}>Finalizados</FormLabel>
+                <Checkbox
+                  onChange={(ev) => {
+                    setFinished(ev.target.checked);
+                  }}
+                  border="2px"
+                  size="lg"
+                />
+              </VStack>
 
               <Flex alignSelf={"end"} gap="2" direction="column">
                 <Button type="submit" colorScheme="whatsapp" minWidth={220}>

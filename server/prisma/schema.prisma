@@ -476,7 +476,7 @@ model OpenededAdmissionsForPet {
   consultDebits       PetConsultsDebits[]
   medicineRecordId    Int?
   MedicineRecord      MedicineRecord?     @relation(fields: [medicineRecordId], references: [id])
-  customerAccountId   Int?                @unique
+  customerAccountId   Int?                
   customerAccount     CustomerAccount?    @relation(fields: [customerAccountId], references: [id])
   InstallmentsDebts   InstallmentsDebts?
 }
@@ -576,7 +576,7 @@ model CustomerAccount {
   dateConsult      DateTime?
   consultsForPet   OpenedConsultsForPet?
   admissionId      String?
-  Admission        OpenededAdmissionsForPet?
+  Admission        OpenededAdmissionsForPet[]
 }
 
 model InstallmentsDebts {
