@@ -79,7 +79,7 @@ export function SearchAdmission() {
                     {moment().format("DD/MM/YYYY")}
                   </Text>
                 </Flex>
-                <AdmissionSearch setFinished={setFinished} path="vetsearch" />
+                <AdmissionSearch setFinished={setFinished} setAdmmitedPets={setAdmmitedPets} path="vetsearch" finished={finished} />
                 <Flex align="center" gap={4}>
                   <Text>Legenda:</Text>
                   <HStack>
