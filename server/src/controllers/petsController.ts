@@ -59,12 +59,14 @@ export const petsController = {
               petVaccines: true,
               petSurgeries: true,
               petProcedures: true,
+              petAdmissions: true,
               petBeds: {
                 where: { isCompleted: false },
                 include: { hospDiary: true },
               },
             },
           },
+          
           queue: {
             select: {
               id: true,
@@ -85,6 +87,7 @@ export const petsController = {
               kennel: { select: { name: true, price: true } },
               dailyRate: true,
               mustFasting: true,
+              vetPreference: true,
             },
           },
           priceAccumulator: { select: { id: true, accumulator: true } },
@@ -125,6 +128,7 @@ export const petsController = {
           kennelName: pet?.bed?.kennel,
           fasting: pet?.bed?.mustFasting,
           price: pet?.bed?.kennel?.price,
+          vetPreference: pet?.bed?.vetPreference,
         },
         exams: pet?.medicineRecords?.petExams.map((exams) => {
           let examData = {
@@ -190,6 +194,14 @@ export const petsController = {
           };
           return bedData;
         }),
+        admissionsHealthPlan: pet?.medicineRecords?.petAdmissions.map((admission) => {
+          let admissionData = {
+            id: admission.id,
+            healthInsuranceName: admission.healthInsuranceName,
+          };
+          return admissionData;
+        }
+        ),
         consultsPet: pet?.medicineRecords?.petConsults.map((consult) => {
           let consultPet = {
             id: consult.id,

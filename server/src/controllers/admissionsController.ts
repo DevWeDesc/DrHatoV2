@@ -77,7 +77,7 @@ export const admissionsController = {
   },
 
   admitPet: async (request: FastifyRequest, reply: FastifyReply) => {
-    const { petId, isBusy, dailyRate, mustFasting, kennelId, bedId, recordId } =
+    const { petId, isBusy, dailyRate, mustFasting, kennelId, bedId, recordId, vetPreference } =
       BedSchema.parse(request.body);
     const contract = new ValidationContract();
     const actualDate = new Date();
@@ -114,6 +114,7 @@ export const admissionsController = {
                 isBusy: isBusy,
                 mustFasting,
                 dailyRate,
+                vetPreference,
                 entryOur: actualDate,
                 pet: { connect: { id: petId } },
               },

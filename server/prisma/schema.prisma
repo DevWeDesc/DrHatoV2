@@ -308,6 +308,7 @@ model Bed {
   dailyRate        Int?
   hospitalizedDays Int?
   totalDebt        Decimal?
+  vetPreference    String?
 }
 
 model BedsForPet {

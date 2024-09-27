@@ -92,6 +92,7 @@ export function VetsAdmissions() {
     GetAllBeds();
   }, []);
 
+
   const handleAdmittPet = async () => {
     const data = {
       petId: Number(id),
@@ -101,6 +102,7 @@ export function VetsAdmissions() {
       mustFasting: fasting,
       recordId: petDetails.recordId,
       dailyRate: dailyRateState,
+      vetPreference: petDetails.consultsPet.find((consult)=> consult.id === queueId)?.vetPreference,
     };
     try {
       await api.put("admitpet", data);
