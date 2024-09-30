@@ -30,8 +30,8 @@ import { EndConsults } from "../../../pages/Vets/WorkSpaceVets/endconsults";
 export default function DetailsAdmissions() {
   const [admissiondiary, setAdmissionDiary] = useState<number | boolean>(false);
   const [endModalIsOpen, setEndModalIsOpen] = useState(false);
-  const [dailyObservations, setDailyObservations] = useState("")
-  const { id , queueId} = useParams<{ id: string; queueId: string; }>();
+  const [dailyObservations, setDailyObservations] = useState("");
+  const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate();
   const [petDetails, setPetDetails] = useState({} as PetDetaisl);
   const user = JSON.parse(localStorage.getItem("user") as string);
@@ -56,6 +56,7 @@ export default function DetailsAdmissions() {
     return totalToPay;
   }
 
+  console.log(petDetails);
   const totalToPayInTimeAdmmited = handleWithPriceChanges();
 
   function getNextPaymentHour(hourParam: number) {
@@ -82,9 +83,9 @@ export default function DetailsAdmissions() {
   const formattedDate = moment(entryDate).format("DD/MM/YYYY");
   async function getAdmissionDetails() {
     const response = await api.get(`pets/${id}`);
+    console.log(response.data);
     setPetDetails(response.data);
   }
-  console.log(queueId)
 
   useEffect(() => {
     getAdmissionDetails();
@@ -104,10 +105,10 @@ export default function DetailsAdmissions() {
           responsibleVeterinarian: user?.consultName,
           bedId: petDetails?.bedInfos?.id,
           admissionId: petDetails?.admissions[0]?.id,
-          totalInAdmission: Number(petDetails.totalAcc?.price)
+          totalInAdmission: Number(petDetails.totalAcc?.price),
         };
 
-        console.log(data)
+        console.log(data);
         await api.put("/endadmission", data);
         toast.success("Internação finalizada com Sucesso!");
         navigate("/Admissions");
@@ -123,27 +124,24 @@ export default function DetailsAdmissions() {
 
   const handleHospDiary = async () => {
     try {
-
       const data = {
-        observations: dailyObservations
-      }
+        observations: dailyObservations,
+      };
 
-      await api.post(`/admissions/diary/${petDetails?.admissions[0].id}`, data)
+      await api.post(`/admissions/diary/${petDetails?.admissions[0].id}`, data);
 
-      toast.success("Gravado com sucesso")
+      toast.success("Gravado com sucesso");
     } catch (error) {
-      toast.error("Falha ao gravar no diário")
-      console.log(error)
+      toast.error("Falha ao gravar no diário");
+      console.log(error);
     }
-  }
+  };
 
   const totalSum = useMemo(() => {
     return (
       Number(totalToPayInTimeAdmmited) + Number(petDetails.totalAcc?.price)
     );
   }, [totalToPayInTimeAdmmited, petDetails.totalAcc?.price]);
-
-
 
   return (
     <ChakraProvider>
@@ -199,7 +197,9 @@ export default function DetailsAdmissions() {
                   height={8}
                   colorScheme="whatsapp"
                   onClick={() => {
-                    navigate(`/Admissions/Procedures/${petDetails.recordId}/${queueId}`);
+                    navigate(
+                      `/Admissions/Procedures/${petDetails.recordId}/${queueId}`
+                    );
                   }}
                 >
                   Procedimentos
@@ -207,7 +207,9 @@ export default function DetailsAdmissions() {
                 <Button
                   height={8}
                   colorScheme="whatsapp"
-                  onClick={() => navigate(`/Admissions/Vaccines/${id}/${queueId}`)}
+                  onClick={() =>
+                    navigate(`/Admissions/Vaccines/${id}/${queueId}`)
+                  }
                 >
                   Vacinas
                 </Button>
@@ -222,7 +224,9 @@ export default function DetailsAdmissions() {
                 <Button
                   height={8}
                   colorScheme="whatsapp"
-                  onClick={() => navigate(`/Admissions/Surgeries/${id}/${queueId}`)}
+                  onClick={() =>
+                    navigate(`/Admissions/Surgeries/${id}/${queueId}`)
+                  }
                 >
                   Cirurgias
                 </Button>
@@ -248,94 +252,169 @@ export default function DetailsAdmissions() {
                     <Thead>
                       <Tr>
                         <Th
-                          borderRight="2px"
-                          borderBottom="2px"
-                          bgColor="gray.300"
-                          color="black"
-                          fontWeight="extrabold"
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                          bg="gray.300"
                         >
-                          Cliente
+                          <Text>Cliente</Text>
                         </Th>
                         <Th
-                          borderRight="2px"
-                          borderBottom="2px"
-                          bgColor="gray.300"
-                          color="black"
-                          fontWeight="extrabold"
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
                         >
-                          Detalhes Pet
+                          <Text>{petDetails?.customerName}</Text>
                         </Th>
                         <Th
-                          borderRight="2px"
-                          borderBottom="2px"
-                          bgColor="gray.300"
-                          color="black"
-                          fontWeight="extrabold"
-                        >
-                          Jejum
-                        </Th>
-                        <Th
-                          borderRight="2px"
-                          borderBottom="2px"
-                          bgColor="gray.300"
-                          color="black"
-                          fontWeight="extrabold"
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                          bg="gray.300"
                         >
                           Canil
                         </Th>
                         <Th
-                          borderRight="2px"
-                          borderBottom="2px"
-                          bgColor="gray.300"
-                          color="black"
-                          fontWeight="extrabold"
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
                         >
-                          Data Internação
+                          {" "}
+                          {petDetails.bedInfos?.kennelName?.name}
+                        </Th>
+                      </Tr>
+
+                      <Tr>
+                        <Th
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                          bg="gray.300"
+                        >
+                          <Text>Pet</Text>
                         </Th>
                         <Th
-                          borderRight="2px"
-                          borderBottom="2px"
-                          bgColor="gray.300"
-                          color="black"
-                          fontWeight="extrabold"
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
                         >
-                          Preferência Veterinário
+                          <Text>
+                            {petDetails.name} - {petDetails.especie},
+                            {petDetails.race}, Cod:{petDetails.codPet}
+                          </Text>
+                        </Th>
+                        <Th
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                          bg="gray.300"
+                        >
+                          Data de internação
+                        </Th>
+                        <Th
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                        >
+                          {formattedDate}
+                        </Th>
+                      </Tr>
+
+                      <Tr>
+                        <Th
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                          bg="gray.300"
+                        >
+                          <Text></Text>
+                        </Th>
+                        <Th
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                        >
+                          <Text>
+                            {petDetails.weigth} Kg, {petDetails.sexo},{" "}
+                            {petDetails.bornDate}, {petDetails.corPet}
+                          </Text>
+                        </Th>
+                        <Th
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                          bg="gray.300"
+                        >
+                          Veterinário
+                        </Th>
+                        <Th
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                        >
+                          {petDetails.bedInfos?.vetPreference}
+                        </Th>
+                      </Tr>
+
+                      <Tr>
+                        <Th
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                          bg="gray.300"
+                        >
+                          <Text>Jejum</Text>
+                        </Th>
+                        <Th
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                          bg={"red.200"}
+                        >
+                          <Text>
+                            {petDetails.bedInfos?.fasting === true
+                              ? "ANIMAL PRECISA DE JEJUM"
+                              : "ANIMAL NÃO PRECISA DE JEJUM"}
+                          </Text>
+                        </Th>
+                        <Th
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                          bg="gray.300"
+                        >
+                          Plano de Saude
+                        </Th>
+                        <Th
+                          border={"2px"}
+                          borderColor={"black"}
+                          color={"black"}
+                          fontWeight={"bold"}
+                        >
+                          {petDetails?.admissionsHealthPlan?.[0]
+                            ?.healthInsuranceName ?? "Não Possui"}
                         </Th>
                       </Tr>
                     </Thead>
-                    <Tbody>
-                      <Tr>
-                        <Td borderRight="2px">{petDetails?.customerName}</Td>
-                        <Td w={300} borderRight="2px">
-                          <Flex direction="column" gap="2">
-                            <Text>
-                              {" "}
-                              {petDetails.name},{petDetails.especie},
-                              {petDetails.race}
-                            </Text>
-                            <Text>
-                              {" "}
-                              {petDetails.sexo}, {petDetails.bornDate}, Cod:{petDetails.codPet}
-                            </Text>
-                          
-                          </Flex>
-                        </Td>
-                        <Td borderRight="2px">
-                          {petDetails.bedInfos?.fasting === true
-                            ? "ANIMAL PRECISA DE JEJUM"
-                            : "ANIMAL NÃO PRECISA DE JEJUM"}
-                        </Td>
-                        <Td borderRight="2px">
-                          {petDetails.bedInfos?.kennelName?.name}
-                        </Td>
-                        <Td borderRight="2px">{formattedDate}</Td>
-                        <Td>{petDetails.queue?.vetPreference}</Td>
-                      </Tr>
-                    </Tbody>
                   </Table>
                 </TableContainer>
 
-                <Button
+                {/* <Button
                   bg="blue.400"
                   color="white"
                   py="8"
@@ -355,7 +434,7 @@ export default function DetailsAdmissions() {
                 >
                   {" "}
                   Internação Diaria
-                </Button>
+                </Button> */}
 
                 <Flex>
                   {admissiondiary === false && (
@@ -382,20 +461,159 @@ export default function DetailsAdmissions() {
                         >
                           Inserir novo item do diário da internação
                         </Text>
-                        <Textarea
-                          pt="6"
-                          minH="40"
-                          onChange={(ev) => setDailyObservations(ev.target.value)}
-                          defaultValue={`Evolução de quadro clinico:
+                        <Flex p={2} borderBottom={"1px"}>
+                          <Textarea
+                            border={"1px"}
+                            pt="6"
+                            minH="40"
+                            onChange={(ev) =>
+                              setDailyObservations(ev.target.value)
+                            }
+                            defaultValue={`Evolução de quadro clinico:
 Mudanças de Protocolo:
 Metas para as próximas 12h horas:
 Prognóstico: 
-Previsão de alta:`}
-                        ></Textarea>
-                        <Button onClick={handleHospDiary} colorScheme="whatsapp">Gravar</Button>
+Previsão de alta:`
+}
+                          ></Textarea>
+                        </Flex>
+                        <Flex py={2} justifyContent={"center"}>
+                          <Button
+                            onClick={handleHospDiary}
+                            colorScheme="whatsapp"
+                          >
+                            Gravar
+                          </Button>
+                        </Flex>
+                        <Flex direction="column">
+                          <Flex
+                            align="center"
+                            borderY="1px solid black"
+                            bg={"gray.200"}
+                          >
+                            <Text w="60vw"></Text>
+                            <Text
+                              w="25vw"
+                              fontWeight="bold"
+                              mr="4"
+                              textAlign={"right"}
+                            >
+                              Valor total em procedimentos até o momento
+                            </Text>
+                            <Input
+                              value={new Intl.NumberFormat("pt-BR", {
+                                currency: "BRL",
+                                style: "currency",
+                              }).format(Number(petDetails.totalAcc?.price))}
+                              borderY="none"
+                              w="15vw"
+                              borderColor="black"
+                              rounded={0}
+                            ></Input>
+                          </Flex>
+                          <Flex
+                            align="center"
+                            borderY="1px solid black"
+                            bg={"gray.200"}
+                          >
+                            <Text w="70vw"></Text>
+                            <Text
+                              w="15vw"
+                              fontWeight="bold"
+                              pl="4"
+                              mr="4"
+                              textAlign={"right"}
+                            >
+                              Diaria(S) até o momento
+                            </Text>
+                            <Input
+                              value={dailyValue}
+                              borderY={0}
+                              w="15vw"
+                              borderColor="black"
+                              rounded={0}
+                            ></Input>
+                          </Flex>
+
+                          <Flex
+                            align="center"
+                            border="1px"
+                            height="38px"
+                            justify="flex-end"
+                            textAlign="center"
+                            bg={"gray.200"}
+                          >
+                            <Text
+                              justifyContent="center"
+                              align="center"
+                              w="3vw"
+                              textAlign={"right"}
+                              fontWeight="bold"
+                              mr="4"
+                            >
+                              Total
+                            </Text>
+                            <Text
+                              py="1"
+                              borderY="0px"
+                              borderX="1px solid black"
+                              w="14.7vw"
+                              textAlign="start"
+                              pl="4"
+                            >
+                              {new Intl.NumberFormat("pt-BR", {
+                                currency: "BRL",
+                                style: "currency",
+                              }).format(totalSum)}
+                            </Text>
+                          </Flex>
+
+                          {totalDaily >= 60 ? (
+                            <Text
+                              fontSize="20"
+                              bg={"gray.200"}
+                              border={"1px"}
+                              w="100%"
+                              textAlign="center"
+                              py={2}
+                              fontWeight="bold"
+                              color="red"
+                            >
+                              Tempo de Tolerância Restante:{" "}
+                              {totalDaily >= 60 ? "Esgotado" : "Em Tolerancia"}
+                            </Text>
+                          ) : (
+                            <Text
+                              color="green"
+                              fontSize="20"
+                              bg={"gray.200"}
+                              border={"1px"}
+                              w="100%"
+                              textAlign="center"
+                              py={2}
+                              fontWeight="bold"
+                            >
+                              Tempo de Tolerância Restante:{" "}
+                              {totalDaily >= 60 ? "Esgotado" : "Em Tolerancia"}
+                            </Text>
+                          )}
+                          <Text
+                            fontSize="20"
+                            bg={"gray.200"}
+                            border={"1px"}
+                            w="100%"
+                            textAlign="center"
+                            py={2}
+                            fontWeight="bold"
+                          >
+                            Tempo Restante até o final da meia diaría:{" "}
+                            {getNextPaymentHour(720)}
+                          </Text>
+                        </Flex>
                         <Text
                           fontSize="20"
-                          bg="yellow.300"
+                          bg={"gray.200"}
+                          border={"1px"}
                           w="100%"
                           textAlign="center"
                           py={2}
@@ -406,14 +624,15 @@ Previsão de alta:`}
                         </Text>
                         <Button
                           py="8"
-                          bg="whatsapp.500"
+                          // bg="whatsapp.500"
                           fontSize="20"
                           fontWeight="bold"
                           color="white"
                           boxShadow="0px 4px 5px rgba(0, 0, 0, 0.6)"
+                          bg="blue.300"
                           _hover={{
                             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.5)",
-                            backgroundColor: "whatsapp.600",
+                            backgroundColor: "blue.400",
                           }}
                           _active={{
                             boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.2)",
@@ -425,188 +644,21 @@ Previsão de alta:`}
                       </Flex>
                     </Box>
                   )}
-
-                  {admissiondiary === true && (
-                    <Flex direction="column">
-                      <Flex>
-             
-                        <Text
-                          w="73vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="blue.100"
-                          fontSize="20"
-                          height="40px"
-                          border="1px solid black"
-                        ></Text>
-                        <Text
-                          w="12vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="blue.100"
-                          fontSize="20"
-                          height="40px"
-                          border="1px solid black"
-                        >
-                          Unitário
-                        </Text>
-                        <Text
-                          w="15vw"
-                          fontWeight="bold"
-                          pl="2"
-                          bg="blue.100"
-                          fontSize="20"
-                          height="40px"
-                          border="1px solid black"
-                        >
-                          Total
-                        </Text>
-                      </Flex>
-                      <Flex>
-                     
-                      </Flex>
-                      <Flex align="center" borderY="1px solid black">
-                        <Text w="60vw"></Text>
-                        <Text w="25vw" fontWeight="bold">
-                          Valor total em procedimentos até o momento
-                        </Text>
-                        <Input
-                          value={new Intl.NumberFormat("pt-BR", {
-                            currency: "BRL",
-                            style: "currency",
-                          }).format(Number(petDetails.totalAcc?.price))}
-                          borderY="none"
-                          w="15vw"
-                          borderColor="black"
-                          rounded={0}
-                        ></Input>
-                      </Flex>
-                      <Flex align="center" borderY="1px solid black">
-                        <Text w="70vw"></Text>
-                        <Text w="15vw" fontWeight="bold" pl="4">
-                          Diaria(S) até o momento
-                        </Text>
-                        <Input
-                          value={dailyValue}
-                          borderY={0}
-                          w="15vw"
-                          borderColor="black"
-                          rounded={0}
-                        ></Input>
-                      </Flex>
-
-                      <Flex
-                        align="center"
-                        border="2px"
-                        w="100vw"
-                        height="38px"
-                        justify="flex-end"
-                        textAlign="center"
-                      >
-                        <Text
-                          textAlign="center"
-                          justifyContent="center"
-                          align="center"
-                          w="3vw"
-                          fontWeight="bold"
-                          mr="4"
-                        >
-                          Total
-                        </Text>
-                        <Text
-                          py="1"
-                          borderY="0px"
-                          borderX="1px solid black"
-                          w="14.9vw"
-                          textAlign="start"
-                          pl="4"
-                        >
-                          {new Intl.NumberFormat("pt-BR", {
-                            currency: "BRL",
-                            style: "currency",
-                          }).format(totalSum)}
-                        </Text>
-                      </Flex>
-
-                      {totalDaily >= 60 ? (
-                        <Text
-                          fontSize="20"
-                          bg="yellow.300"
-                          w="100%"
-                          textAlign="center"
-                          py={2}
-                          fontWeight="bold"
-                          color="red"
-                        >
-                          Tempo de Tolerância Restante:{" "}
-                          {totalDaily >= 60 ? "Esgotado" : "Em Tolerancia"}
-                        </Text>
-                      ) : (
-                        <Text
-                          color="green"
-                          fontSize="20"
-                          bg="yellow.300"
-                          w="100%"
-                          textAlign="center"
-                          py={2}
-                          fontWeight="bold"
-                        >
-                          Tempo de Tolerância Restante:{" "}
-                          {totalDaily >= 60 ? "Esgotado" : "Em Tolerancia"}
-                        </Text>
-                      )}
-                      <Text
-                        fontSize="20"
-                        bg="yellow.300"
-                        w="100%"
-                        textAlign="center"
-                        py={2}
-                        fontWeight="bold"
-                      >
-                        Tempo Restante até o final da meia diaría:{" "}
-                        {getNextPaymentHour(720)}
-                      </Text>
-                      <Text
-                        fontSize="20"
-                        bg="yellow.300"
-                        w="100%"
-                        textAlign="center"
-                        py={2}
-                        fontWeight="bold"
-                      >
-                        Tempo Restante até o final da diaría :{" "}
-                        {getNextPaymentHour(1440)}
-                      </Text>
-                      <Button
-                        py="8"
-                        bg="whatsapp.500"
-                        fontSize="20"
-                        fontWeight="bold"
-                        color="white"
-                        boxShadow="0px 4px 5px rgba(0, 0, 0, 0.6)"
-                        _hover={{
-                          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.5)",
-                          backgroundColor: "whatsapp.600",
-                        }}
-                        _active={{
-                          boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.2)",
-                        }}
-                        onClick={() => {
-                          setAdmissionDiary(false);
-                        }}
-                      >
-                        Encerrar Diárias
-                      </Button>
-                    </Flex>
-                  )}
                 </Flex>
               </Flex>
             </Box>
           </Flex>
         </Flex>
       </AdminContainer>
-      <GenericModal isOpen={endModalIsOpen} onRequestClose={() => setEndModalIsOpen(false)}>
-      <EndConsults handleCloseAdmission={handleEndAdmission} isAdmission={true} />
+      <GenericModal
+        isOpen={endModalIsOpen}
+        onRequestClose={() => setEndModalIsOpen(false)}
+      >
+        <EndConsults
+          handleCloseAdmission={handleEndAdmission}
+          setEndModalIsOpen={setEndModalIsOpen}
+          isAdmission={true}
+        />
       </GenericModal>
     </ChakraProvider>
   );

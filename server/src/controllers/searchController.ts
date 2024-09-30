@@ -81,6 +81,98 @@ export const searchController = {
     }
   },
 
+  admissionsSearch: async (
+    request: FastifyRequest<{
+      Querystring: {
+        clientName: string;
+        animalName: string;
+        codPet: string;
+        finished: string;
+      };
+    }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const { clientName, animalName, codPet, finished } = request.query;
+      if (finished === "true") {
+        const admmitepet = await prisma.openededAdmissionsForPet.findMany({
+          where: {
+            isClosed: true,
+            customerAccount: {
+              customer: {
+                name: { contains: clientName, mode: "insensitive" },
+              },
+            },
+            MedicineRecord: {
+              pet: {
+                name: { contains: animalName, mode: "insensitive" },
+                ...(codPet && { CodAnimal: Number(codPet) }),
+              },
+            },
+          },
+          include: {
+            MedicineRecord: {
+              include: {
+                pet: true,
+              },
+            },
+            customerAccount: {
+              include: {
+                customer: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const data = admmitepet.map((admission) => {
+          let data = {
+            id: admission.id,
+            customer: {
+              name: admission.customerAccount?.customer.name,
+            },
+            name: admission.petName,
+            especie: admission.MedicineRecord?.pet?.especie ?? "",
+            race: admission.MedicineRecord?.pet.race ?? "",
+            bed: {
+              entryOur: admission.openedDate,
+              kennel: {
+                name: "-",
+              },
+              id: "-",
+            },
+            CodAnimal: admission.MedicineRecord?.pet?.CodAnimal,
+          };
+          return data;
+        });
+        reply.send(data);
+      } else {
+        const admmitepet = await prisma.pets.findMany({
+          where: {
+            bed: { isBusy: true },
+            name: { contains: animalName, mode: "insensitive" },
+            ...(codPet && { CodAnimal: Number(codPet) }),
+            customer: { name: { contains: clientName, mode: "insensitive" } },
+          },
+          include: {
+            bed: { include: { kennel: true } },
+            customer: { select: { name: true } },
+            medicineRecords: {
+              include: { petBeds: { where: { isCompleted: false } } },
+            },
+          },
+        });
+
+        reply.send(admmitepet).status(200);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   paymentsSearch: async (
     request: FastifyRequest<{
       Querystring: {
@@ -97,10 +189,14 @@ export const searchController = {
       const { name, cpf, codCli, codPet, telephone } = request.query;
 
       const cpfFilter = cpf ? { contains: cpf } : undefined;
-      const codCliFilter = codCli && !isNaN(Number(codCli)) ? Number(codCli) : undefined;
+      const codCliFilter =
+        codCli && !isNaN(Number(codCli)) ? Number(codCli) : undefined;
       const phoneFilter = telephone ? { contains: telephone } : undefined;
-      const codPetNumber = codPet && !isNaN(Number(codPet)) ? Number(codPet) : undefined;
-      const petsFilter = codPetNumber ? { some: { CodAnimal: codPetNumber } } : undefined;
+      const codPetNumber =
+        codPet && !isNaN(Number(codPet)) ? Number(codPet) : undefined;
+      const petsFilter = codPetNumber
+        ? { some: { CodAnimal: codPetNumber } }
+        : undefined;
 
       const accounts = await prisma.customer.findMany({
         where: {
@@ -249,12 +345,15 @@ export const searchController = {
       });
 
       if (showEndExams.length > 0) {
-        const filterExams = exams.filter((exam) =>  exam.doneExame !== null && exam.doneExame.toString() === showEndExams);
+        const filterExams = exams.filter(
+          (exam) =>
+            exam.doneExame !== null &&
+            exam.doneExame.toString() === showEndExams
+        );
         reply.send({ exams: filterExams });
       }
-      
-      reply.send({ exams});
 
+      reply.send({ exams });
     } catch (error) {
       console.log(error);
 

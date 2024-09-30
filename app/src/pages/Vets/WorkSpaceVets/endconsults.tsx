@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, Dispatch, SetStateAction } from "react";
 import {
   Button,
   Flex,
@@ -52,6 +52,7 @@ interface ConsultDebitsProps {
 
 
 interface EndConsutsProps {
+  setEndModalIsOpen?: Dispatch<SetStateAction<boolean>>;
   handleCloseQuery?: () => void;
   handleCloseAdmission?: () => void;
   isAdmission?: boolean;
@@ -60,6 +61,7 @@ export function EndConsults({
   handleCloseQuery,
   handleCloseAdmission,
   isAdmission,
+  setEndModalIsOpen,
 }: EndConsutsProps) {
 
   const { setIsEndConsultQueue } = useContext(ModalContext);
@@ -119,7 +121,7 @@ export function EndConsults({
   return (
     <Flex w="800px" h="600px" direction="column">
       <Flex w={"full"} justifyContent={"end"}>
-        <CloseButton size="lg" color={"red.500"} border={"1px"} borderColor={"gray.200"} onClick={()=> setIsEndConsultQueue(false)} />
+        <CloseButton size="lg" color={"red.500"} border={"1px"} borderColor={"gray.200"} onClick={()=> setEndModalIsOpen ? setEndModalIsOpen(false) : setIsEndConsultQueue(false)} />
       </Flex>
       {consultDebitsDetails.map((consults) => (
         <React.Fragment key={consults.id}>

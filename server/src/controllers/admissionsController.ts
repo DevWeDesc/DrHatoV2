@@ -6,7 +6,6 @@ import { prisma } from "../interface/PrismaInstance";
 import { GetDebitsInConsultsService } from "../services/GetDebitsInConsultsService";
 const { getDiferrenceBetweenOurs } = require("../utils/countOurs");
 
-
 type params = {
   id: string;
   recordId: string;
@@ -78,7 +77,7 @@ export const admissionsController = {
   },
 
   admitPet: async (request: FastifyRequest, reply: FastifyReply) => {
-    const { petId, isBusy, dailyRate, mustFasting, kennelId, bedId, recordId } =
+    const { petId, isBusy, dailyRate, mustFasting, kennelId, bedId, recordId, vetPreference } =
       BedSchema.parse(request.body);
     const contract = new ValidationContract();
     const actualDate = new Date();
@@ -90,11 +89,20 @@ export const admissionsController = {
         return;
       }
 
-      const {id: openedSurgerieId} = await prisma.openededAdmissionsForPet.create({
-        data: {
-          openedDate: new Date(),
-        }
-      })
+      const pet = await prisma.pets.findUnique({
+        where: { id: petId },
+      });
+
+      const { id: openedSurgerieId } =
+        await prisma.openededAdmissionsForPet.create({
+          data: {
+            openedDate: new Date(),
+            medicineRecordId: recordId,
+            petName: pet?.name,
+            isClosed: false,
+            petWeight: pet?.weigth?.toString(),
+          },
+        });
 
       await prisma.kennel.update({
         where: { id: kennelId },
@@ -106,6 +114,7 @@ export const admissionsController = {
                 isBusy: isBusy,
                 mustFasting,
                 dailyRate,
+                vetPreference,
                 entryOur: actualDate,
                 pet: { connect: { id: petId } },
               },
@@ -141,24 +150,34 @@ export const admissionsController = {
       responsibleVeterinarianId: z.coerce.number(),
       responsibleVeterinarian: z.string().optional(),
     });
-    const { petId, bedId, admissionId, totalInAdmission, queueId, responsibleVeterinarianId, responsibleVeterinarian } = FinishAdmissionSchema.parse(
-    request.body
-    );
+    const {
+      petId,
+      bedId,
+      admissionId,
+      totalInAdmission,
+      queueId,
+      responsibleVeterinarianId,
+      responsibleVeterinarian,
+    } = FinishAdmissionSchema.parse(request.body);
     const actualDate = new Date();
     const bedDetails = await prisma.bed.findUnique({
       where: { id: bedId },
     });
 
     if (!bedDetails) {
-      return; 
+      return;
     }
 
-    const totalToPay = await getDiferrenceBetweenOurs(bedDetails.entryOur,actualDate, bedDetails.dailyRate
+    const totalToPay = await getDiferrenceBetweenOurs(
+      bedDetails.entryOur,
+      actualDate,
+      bedDetails.dailyRate
     );
-    const totalFinal = Number(totalToPay) + Number(totalInAdmission)
+    const totalFinal = Number(totalToPay) + Number(totalInAdmission);
     try {
       await prisma.bed.update({
-        where: { id: bedId }, data: {
+        where: { id: bedId },
+        data: {
           exitOur: actualDate,
           totalDebt: Number(totalToPay),
           isBusy: false,
@@ -168,23 +187,25 @@ export const admissionsController = {
       await prisma.pets.update({
         where: { id: petId },
         data: {
-          customer: {update: {
-            customerAccount: {update: {
-              debits: {increment: totalFinal }
-            }}
-          }}
+          customer: {
+            update: {
+              customerAccount: {
+                update: {
+                  debits: { increment: totalFinal },
+                },
+              },
             },
-        }),
-      
-
-      await prisma.bedsForPet.update({
-        where: { id: admissionId },
-        data: {
-          exitOur: actualDate,
-          totalDebt:  Number(totalToPay),
-          isCompleted: true,
+          },
         },
-      });
+      }),
+        await prisma.bedsForPet.update({
+          where: { id: admissionId },
+          data: {
+            exitOur: actualDate,
+            totalDebt: Number(totalToPay),
+            isCompleted: true,
+          },
+        });
 
       await prisma.bed.update({
         where: { id: bedId },
@@ -198,32 +219,32 @@ export const admissionsController = {
         },
       });
 
-     const pet  = await prisma.pets.update({
-        where: { id: petId},data: {priceAccumulator: {update: {accumulator: 0}}},
+      const pet = await prisma.pets.update({
+        where: { id: petId },
+        data: { priceAccumulator: { update: { accumulator: 0 } } },
         include: {
-          customer: { include: {customerAccount: true}}
-        }
-       }) 
-
-
-       const getDebitsInConsultService = new GetDebitsInConsultsService();
-
-       const { total } = await getDebitsInConsultService.execute({
-        queueId,
-        isAdmission: true
+          customer: { include: { customerAccount: true } },
+        },
       });
-       await prisma.openededAdmissionsForPet.update({
-        where: {id: queueId}, data: {
+
+      const getDebitsInConsultService = new GetDebitsInConsultsService();
+
+      const { total } = await getDebitsInConsultService.execute({
+        queueId,
+        isAdmission: true,
+      });
+      await prisma.openededAdmissionsForPet.update({
+        where: { id: queueId },
+        data: {
           closedDate: new Date(),
           petWeight: pet.weigth?.toString(),
           totaLDebits: total,
           isClosed: true,
           closedByVetId: responsibleVeterinarianId,
           clodedByVetName: responsibleVeterinarian,
-          customerAccountId: pet.customer?.customerAccount?.id
-          
-        }
-       })
+          customerAccountId: pet.customer?.customerAccount?.id,
+        },
+      });
 
       reply.send("Internação Encerrada com sucesso").status(202);
     } catch (error) {
@@ -273,33 +294,99 @@ export const admissionsController = {
     }
   },
 
-  showAdmitedPets: async (request: FastifyRequest, reply: FastifyReply) => {
-      try {
-          const admmitepet = await prisma.pets.findMany({
-            where: {bed: {isBusy: true}}, include: {bed: {include: {kennel: true}}, customer: {select: {name: true}}, medicineRecords: {include: {petBeds: {where: {isCompleted: false} }}}}
-          })
-          reply.send(admmitepet)
-      } catch (error) {
-        console.log(error)
-      }
-  },
-
-  recordHospDiary: async (request: FastifyRequest<{Params: {bedId: string}, Body: {observations: string}}>, reply: FastifyReply) => {
+  showAdmitedPetsClosed: async (
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) => {
     try {
-      const { bedId } = request.params
-      const {observations} = request.body
+      const admmitepet = await prisma.openededAdmissionsForPet.findMany({
+        where: {
+          isClosed: true,
+        },
+        include: {
+          MedicineRecord: {
+            include: {
+              pet: true,
+            },
+          },
+          customerAccount: {
+            include: {
+              customer: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
 
-      await prisma.hospitalizationDiary.create({
-        data: {observations, BedsForPet: {connect: {id: parseInt(bedId)}}}
-      })
-
-      reply.send("Gravação concluida com sucesso!")
-
+      const data = admmitepet.map((admission) => {
+        let data = {
+          id: admission.id,
+          customer: {
+            name: admission.customerAccount?.customer.name,
+          },
+          name: admission.petName,
+          especie: admission.MedicineRecord?.pet?.especie ?? "",
+          race: admission.MedicineRecord?.pet.race ?? "",
+          bed: {
+            entryOur: admission.openedDate,
+            kennel: {
+              name: "-",
+            },
+            id: "-",
+          },
+          CodAnimal: admission.MedicineRecord?.pet?.CodAnimal,
+        };
+        return data;
+      });
+      reply.send(data);
     } catch (error) {
-        reply.send(error)
-        console.log(error)
+      console.log(error);
     }
   },
 
- 
+  showAdmitedPets: async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const admmitepet = await prisma.pets.findMany({
+        where: { bed: { isBusy: true } },
+        include: {
+          bed: { include: { kennel: true } },
+          customer: { select: { name: true } },
+          medicineRecords: {
+            include: { petBeds: { where: { isCompleted: false } } },
+          },
+        },
+      });
+      reply.send(admmitepet);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  recordHospDiary: async (
+    request: FastifyRequest<{
+      Params: { bedId: string };
+      Body: { observations: string };
+    }>,
+    reply: FastifyReply
+  ) => {
+    try {
+      const { bedId } = request.params;
+      const { observations } = request.body;
+
+      await prisma.hospitalizationDiary.create({
+        data: {
+          observations,
+          BedsForPet: { connect: { id: parseInt(bedId) } },
+        },
+      });
+
+      reply.send("Gravação concluida com sucesso!");
+    } catch (error) {
+      reply.send(error);
+      console.log(error);
+    }
+  },
 };

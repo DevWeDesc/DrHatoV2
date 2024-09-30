@@ -2,68 +2,63 @@ import {
   ChakraProvider,
   Flex,
   Button,
-  Text,
   FormControl,
   HStack,
   VStack,
   Checkbox,
   FormLabel,
 } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { api } from "../../lib/axios";
 import { Input } from "../admin/Input";
-import { useState, useContext } from "react";
-import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
-import { DbContext } from "../../contexts/DbContext";
-import convertData from "../../helpers/convertData";
+import { Dispatch, SetStateAction } from "react";
+import { PetDetaisl } from "../../interfaces";
+import { useQuery } from "react-query";
 
 interface UniversalSearchProps {
   path: string;
+  setFinished: Dispatch<SetStateAction<boolean>>;
+  setAdmmitedPets: Dispatch<SetStateAction<PetDetaisl[]>>;
+  finished: boolean;
 }
 
-export function AdmissionSearch({ path }: UniversalSearchProps) {
-  const { setData, data } = useContext<any>(DbContext);
+interface AdmissionFormProps {
+  name: string;
+  petName: string;
+  codPet: string;
+}
 
-  const { register, handleSubmit } = useForm();
+export function AdmissionSearch({
+  path,
+  setFinished,
+  finished,
+  setAdmmitedPets,
+}: UniversalSearchProps) {
 
-  const handleSearch: SubmitHandler<any> = async (values) => {
-    let startDate = convertData(values.initialData);
-    let endDate = convertData(values.finalData);
+  const { register, handleSubmit, getValues } = useForm<AdmissionFormProps>();
 
-    let response;
+  async function fetchAdmittedPets() {
+    const formValues:AdmissionFormProps = getValues();
+  
+    const response = await api.get<PetDetaisl[]>(`/filtredqueryadmissions?codPet=${formValues.codPet}&animalName=${formValues.petName}&clientName=${formValues.name}&finished=${finished}`);
+    return response.data;
 
-    switch (true) {
-      case !!values.name:
-        response = await api.get(`filtredquery?name=${values.name}`);
-        break;
-      case !!values.codPet:
-        response = await api.get(`filtredquery?codPet=${values.codPet}`);
-        break;
-      case !!values.petName:
-        response = await api.get(`filtredquery?petName=${values.petName}`);
-        break;
-      case !!values.initialData:
-        response = await api.get(
-          `filtredquery?initialData=${startDate}&finalData=${endDate}`
-        );
-        break;
-      case !!values.finalData:
-        response = await api.get(
-          `filtredquery?initialData=${startDate}&finalData=${endDate}`
-        );
-        break;
-    }
-    setData(response?.data);
   };
 
-  console.log(data);
+  const { refetch } = useQuery<PetDetaisl[]>({
+    queryKey: ["petsadmitted"],
+    queryFn: fetchAdmittedPets,
+    onSuccess: (data) => {
+      setAdmmitedPets(data);
+    }
+  });
+
   return (
     <ChakraProvider>
-      <Flex direction="row" gap="4">
-        <FormControl as="form" onSubmit={handleSubmit(handleSearch)}>
-          <VStack>
-            <HStack>
+      <Flex width={"full"} direction="row" gap="4">
+        <FormControl width={"full"} as="form" onSubmit={handleSubmit(() => refetch())}>
+          <VStack width={"full"}>
+            <HStack width={"full"}>
               <Input
                 label="Nome do Cliente"
                 {...register("name")}
@@ -78,12 +73,21 @@ export function AdmissionSearch({ path }: UniversalSearchProps) {
                 label="Código Animal"
                 {...register("codPet")}
                 name="codPet"
+                type="number"
               />
+              <VStack w={160}>
+                <FormLabel whiteSpace={"nowrap"}>Finalizados</FormLabel>
+                <Checkbox
+                  onChange={(ev) => {
+                    setFinished(ev.target.checked);
+                  }}
+                  border="2px"
+                  size="lg"
+                />
+              </VStack>
 
-              <Flex gap="2" align="center" direction="column">
-                <Text fontWeight="bold">Pesquisa Universal</Text>
+              <Flex alignSelf={"end"} gap="2" direction="column">
                 <Button type="submit" colorScheme="whatsapp" minWidth={220}>
-                  {" "}
                   Filtrar
                 </Button>
               </Flex>

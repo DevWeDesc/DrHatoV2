@@ -205,6 +205,7 @@ type BedInfosProps = {
   entry: Date | number;
   kennelName: KennelProps;
   fasting: boolean;
+  vetPreference?: string;
 };
 
 type AdmissionsProps = {
@@ -273,6 +274,11 @@ export interface BoxProps {
   historyBox: HistoryBoxProps[];
 }
 
+export interface healthInsuranceName {
+  id: number;
+  healthInsuranceName: string;
+}
+
 export interface PetDetaisl {
   CodAnimal: string | number;
   id: number;
@@ -306,6 +312,7 @@ export interface PetDetaisl {
   isBusy: boolean;
   totalAcc: totalAccProps;
   admissions: AdmissionsProps[];
+  admissionsHealthPlan?: healthInsuranceName[];
   vetPreference: string;
   customer: { name: string };
   queueHistory: QueueHistoryProps[];
