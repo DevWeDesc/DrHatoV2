@@ -264,7 +264,6 @@ export default function ProceduresVets({
                 <Th color="black" fontSize="1xl" border="2px" w="200px">
                   Total
                 </Th>
-
                 <Th color="black" fontSize="1xl" border="2px" w="200px">
                   Data
                 </Th>
@@ -276,7 +275,6 @@ export default function ProceduresVets({
                 </Th>
               </Tr>
             </Thead>
-
             <Tbody>
               {petDetails.procedures?.map((procedure) => (
                 <Tr key={procedure.id}>
@@ -292,10 +290,16 @@ export default function ProceduresVets({
                     {procedure.name}
                   </Td>
                   <Td border="2px" fontSize="1xl" fontWeight="bold">
-                    R$ {procedure.price}
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(Number(procedure?.price))}
                   </Td>
                   <Td border="2px" fontSize="1xl" fontWeight="bold">
-                    R$ {procedure.price}
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(Number(procedure?.price))}
                   </Td>
 
                   <Td border="2px" fontSize="1xl" fontWeight="bold">

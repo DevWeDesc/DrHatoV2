@@ -30,6 +30,7 @@ import { EndConsults } from "../../../pages/Vets/WorkSpaceVets/endconsults";
 export default function DetailsAdmissions() {
   const [admissiondiary, setAdmissionDiary] = useState<number | boolean>(false);
   const [endModalIsOpen, setEndModalIsOpen] = useState(false);
+  const [endAdmission, setEndAdmission] = useState(false);
   const [dailyObservations, setDailyObservations] = useState("");
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const navigate = useNavigate();
@@ -188,9 +189,25 @@ export default function DetailsAdmissions() {
                   //onClick={() => openModal()}
                   height={8}
                   colorScheme="twitter"
-                  onClick={() => alert("TODOO")}
+                  onClick={() => navigate(`/Pets/MedicineRecord/${id}/${queueId}`)}
                 >
                   Histórico da Internação
+                </Button>
+                <Button
+                  //onClick={() => openModal()}
+                  height={8}
+                  colorScheme="whatsapp"
+                  onClick={() => alert("TODOO")}
+                >
+                  Impressão
+                </Button>
+                <Button
+                  //onClick={() => openModal()}
+                  height={8}
+                  colorScheme="whatsapp"
+                  onClick={() => alert("TODOO")}
+                >
+                  Etiqueta
                 </Button>
                 <Button
                   //onClick={() => openModal()}
@@ -473,8 +490,7 @@ export default function DetailsAdmissions() {
 Mudanças de Protocolo:
 Metas para as próximas 12h horas:
 Prognóstico: 
-Previsão de alta:`
-}
+Previsão de alta:`}
                           ></Textarea>
                         </Flex>
                         <Flex py={2} justifyContent={"center"}>
@@ -637,7 +653,7 @@ Previsão de alta:`
                           _active={{
                             boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.2)",
                           }}
-                          onClick={() => setEndModalIsOpen(true)}
+                          onClick={() => setEndAdmission(true)}
                         >
                           Encerrar Diárias
                         </Button>
@@ -648,6 +664,60 @@ Previsão de alta:`
               </Flex>
             </Box>
           </Flex>
+          {endAdmission && (
+            <>
+              <Flex
+                position={"absolute"}
+                border={"2px"}
+                bottom={5}
+                w="full"
+                bg={"white"}
+                direction={"column"}
+                zIndex={2}
+              >
+                <Text textAlign={"center"} bg={"blue.300"} py={2} fontWeight={"bold"} borderBottom={"2px"}  >Deseja mesmo Encerrar as diárias desta internação ?</Text>
+
+                <Flex gap={20} py={"10"} justifyContent={"center"}>
+                  <Flex
+                    _hover={{
+                      bg: "green.600",
+                    }}
+                    justifyContent={"center"}
+                    color={"white"}
+                    fontSize={"3xl"}
+                    cursor={"pointer"}
+                    fontWeight={"bold"}
+                    alignItems={"center"}
+                    borderRadius={"full"}
+                    bg={"green.500"}
+                    h={"20vh"}
+                    w={"20vh"}
+                    onClick={() => handleEndAdmission()}
+                  >
+                    Sim
+                  </Flex>
+                  <Flex
+                    _hover={{
+                      bg: "red.600",
+                    }}
+                    justifyContent={"center"}
+                    color={"white"}
+                    fontSize={"3xl"}
+                    cursor={"pointer"}
+                    fontWeight={"bold"}
+                    alignItems={"center"}
+                    borderRadius={"full"}
+                    bg={"red.500"}
+                    h={"20vh"}
+                    w={"20vh"}
+                    onClick={() => setEndAdmission(false)}
+                  >
+                    Não
+                  </Flex>
+                </Flex>
+              </Flex>
+            </>
+          )}
         </Flex>
       </AdminContainer>
       <GenericModal
