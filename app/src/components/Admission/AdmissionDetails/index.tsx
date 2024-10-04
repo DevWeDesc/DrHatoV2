@@ -40,6 +40,9 @@ export default function DetailsAdmissions() {
 
   const totalDaily = moment(new Date()).diff(entryDate, "minutes");
 
+
+  console.log(petDetails)
+
   function handleWithPriceChanges() {
     const differenceBetweenDates = moment(new Date()).diff(
       entryDate,
@@ -57,7 +60,72 @@ export default function DetailsAdmissions() {
     return totalToPay;
   }
 
-  console.log(petDetails);
+  async function handlePrintTag(petDetails: PetDetaisl) {
+
+    const printWindow = window.open("", "", "width=800,height=600");
+
+    if (!printWindow) {
+      return;
+    }
+
+    const container = printWindow.document.createElement("div");
+
+    container.innerHTML = `
+        <div class="label-container">
+            <p class="hospital-name">HOSPITAL VETERINARIO DR.HATO</p>
+            <p><span>Cod:</span> ${petDetails.codPet}</p>
+            <p><span>Prop:</span> ${petDetails.customerName}, ${petDetails.especie}, ${petDetails.name}, ${petDetails.race}, ${petDetails.sexo}, ${petDetails.bornDate}</p>
+            <p><span>Dr:</span> ${petDetails.bedInfos.vetPreference} - <span>CRMV:</span>-</p>
+            <p>${new Date().toLocaleDateString()}</p>
+        </div>`;
+
+    printWindow.document.body.appendChild(container);
+
+    const style = printWindow.document.createElement("style");
+    style.textContent = `
+      @media print {
+        @page {
+          size: 8cm 4cm;
+          margin: 0;
+        }
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: Arial, sans-serif;
+      }
+      .label-container {
+          width: 8cm;
+          height: 4cm;
+          padding: 5px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          box-sizing: border-box;
+          padding: 0px 50px;
+      }
+      .hospital-name {
+          font-size: 12px;
+          font-weight: bold;
+          text-align: center;
+          margin-bottom: 5px;
+      }
+      p {
+          font-size: 10px;
+          margin: 2px 0;
+      }
+      span {
+          font-weight: bold;       
+      }
+    `;
+    printWindow.document.head.appendChild(style);
+
+    setTimeout(() => {
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    }, 1000);
+  }
+
   const totalToPayInTimeAdmmited = handleWithPriceChanges();
 
   function getNextPaymentHour(hourParam: number) {
@@ -84,7 +152,6 @@ export default function DetailsAdmissions() {
   const formattedDate = moment(entryDate).format("DD/MM/YYYY");
   async function getAdmissionDetails() {
     const response = await api.get(`pets/${id}`);
-    console.log(response.data);
     setPetDetails(response.data);
   }
 
@@ -205,7 +272,7 @@ export default function DetailsAdmissions() {
                   //onClick={() => openModal()}
                   height={8}
                   colorScheme="whatsapp"
-                  onClick={() => alert("TODOO")}
+                  onClick={() => handlePrintTag(petDetails)}
                 >
                   Etiqueta
                 </Button>

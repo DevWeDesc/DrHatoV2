@@ -211,6 +211,8 @@ export default function ProceduresVets({
     }
   }
 
+  console.log(petDetails)
+
   async function getProcedureByLetter(letter: string) {
     const response = await api.get(
       `/procedures/letters/${letter}/${pagination}?sex=${petDetails.sexo}`
