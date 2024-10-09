@@ -166,7 +166,8 @@ export function MedicineRecords() {
             <Button
               colorScheme="yellow"
               leftIcon={<TbArrowBack size={24} />}
-              onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
+              // onClick={() => navigate(`/Vets/Workspace/${id}/${queueId}`)}
+              onClick={() => navigate(-1)}
             >
               Voltar
             </Button>

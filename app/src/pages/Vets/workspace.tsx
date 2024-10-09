@@ -27,28 +27,24 @@ import {
   TbArrowBack,
   TbMedicalCrossFilled,
   GiMedicines,
-  BsFillTrashFill,
-  FaExchangeAlt,
 } from "react-icons/all";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState, ChangeEvent, useContext } from "react";
+import { useState, ChangeEvent, useContext } from "react";
 import { api } from "../../lib/axios";
 import { ConsultsPetDetails, ICustomer, PetDetaisl } from "../../interfaces";
 import { toast } from "react-toastify";
 import { Textarea } from "@chakra-ui/react";
-import { ModalContext, ModalProvider } from "../../hooks/useModal";
+import { ModalContext } from "../../hooks/useModal";
 import { GenericModal } from "../../components/Modal/GenericModal";
 import { WorkVetAutorization } from "./WorkSpaceVets/autorizations";
 import { WeightPetInput } from "../../components/InputMasks/WeightPetInput";
 import { SetMedicineInPet } from "../../components/Medicine/SetMedicineInPet";
 import { VetInstructions } from "./WorkSpaceVets/instructions";
 import { EndConsults } from "./WorkSpaceVets/endconsults";
-import { CardMedicineRecord } from "../../components/CardMedicineRecord/CardMedicineRecord";
 import { ThrowDiagnoisticsInConsult } from "./WorkSpaceComponents/ThrowDiagnoticsInConsult";
 import { QueryClient, useQuery } from "react-query";
 import { LoadingSpinner } from "../../components/Loading";
 import moment from "moment";
-import { ConfirmationDialog } from "../../components/dialogConfirmComponent/ConfirmationDialog";
 import ModalEditAnimal from "../../pages/Customer/modalEditAnimal";
 
 type OpenExamProps = {
@@ -64,11 +60,16 @@ interface PetDetailsIncrement extends PetDetaisl {
   };
 }
 
+type DiagnosticProps = {
+  symptoms: string;
+  request: string;
+  diagnostic: string;
+};
+
 export function WorkSpaceVet() {
   const { id, queueId } = useParams<{ id: string; queueId: string }>();
   const queryClient = new QueryClient();
   const navigate = useNavigate();
-  // const [pet, setPet] = useState({} as PetDetaisl);
   const [pet, setPet] = useState({} as PetDetailsIncrement);
   const {
     setModalWeigthPet,
@@ -88,25 +89,28 @@ export function WorkSpaceVet() {
     closeEndQueueModal,
     isEndConsultQueue,
     setIsEndConsultQueue,
-    isMedicineRecordOpen,
-    setIsMedicineRecordOpen,
-    closeMedicineRecordModal,
     closeCustomerDetailsModal,
     setIsCustomerDetailsOpen,
     isCustomerDetailsOpen,
   } = useContext(ModalContext);
-  const [handleViewComponent, setHandleViewComponent] = useState("allPets");
-  // petSelected, setIsModalUpdated, refetch, setPetSelected
-  const [isModalUpdated, setIsModalUpdated] = useState(false);
 
+  const [handleViewComponent, setHandleViewComponent] = useState("allPets");
+  const [isModalUpdated, setIsModalUpdated] = useState(false);
   const [petWeigth, setPetWeigth] = useState("");
   const user = JSON.parse(localStorage.getItem("user") as string);
   const [customerDetails, setCustomerDetails] = useState({} as ICustomer);
-  const [consultDetails, setConsultDetails] = useState(
-    {} as ConsultsPetDetails
-  );
+  const [consultDetails, setConsultDetails] = useState({} as ConsultsPetDetails);
   const [surgerieDetailsIsOpen, setSurgerieDetailsIsOpen] = useState(false);
   const [surgerieDetails, setSurgerieDetails] = useState({} as any);
+  
+  const { data, refetch: refetchQueueDiagnostics } = useQuery("queueDiagnostics", {
+    queryFn: getQueueDiagnostic,
+  });
+  
+  const [diagnostic, setDiagnostic] = useState(data?.diagnostic);
+  const [prescription, setPrescription] = useState(data?.request);
+  const [symptoms, setSymptoms] = useState(data?.symptoms);
+
   const GetDetailsCustomerById = async (id: number) => {
     const customer = await api.get(`/customers/${id}`);
     setCustomerDetails(customer.data.customer);
@@ -118,23 +122,38 @@ export function WorkSpaceVet() {
     queryClient.invalidateQueries("getPetDetailsInfos");
   };
 
+  async function getQueueDiagnostic(): Promise<DiagnosticProps> {
+    const response = await api.get(`/queue/consult/diagnostic/${queueId}`);
+    return response.data.diagnostic;
+  }
+
+  async function updateQueueDiagnostic() {
+    try {
+      const data = {
+        diagnostic: diagnostic ? diagnostic : null,
+        request: prescription ? prescription : null,
+        symptoms: symptoms ? symptoms : null,
+      };
+      console.log(data);
+      await api.patch(`/queue/consult/${queueId}`, data).then(() => {
+        refetchQueueDiagnostics();
+        toast.success("Informações atualizadas com sucesso!");
+      });
+      queryClient.invalidateQueries({ queryKey: ["queueDiagnostics"] });
+    } catch (error) {
+      toast.error("Falha ao atualizar informaçõe desta consulta");
+    }
+  }
+
   function handleOpenResultExams({
     isOnePart,
     isMultiPart,
     isReportByText,
     examId,
   }: OpenExamProps) {
-    if (isOnePart === true) {
-      window.open(`/WorkSpace/ExamResultsOnePart/${examId}`, "_blank");
-    }
-
-    if (isMultiPart === true) {
-      window.open(`/WorkSpace/ExamResultsMultiPart/${examId}`, "_blank");
-    }
-
-    if (isReportByText === true) {
-      window.open(`/WorkSpace/ExamResultsByText/${examId}`, "_blank");
-    }
+    if (isOnePart === true) { window.open(`/WorkSpace/ExamResultsOnePart/${examId}`, "_blank"); }
+    if (isMultiPart === true) { window.open(`/WorkSpace/ExamResultsMultiPart/${examId}`, "_blank"); }
+    if (isReportByText === true) { window.open(`/WorkSpace/ExamResultsByText/${examId}`, "_blank"); }
   }
 
   const handleChangePetWeight = async (weigth: string) => {
@@ -366,6 +385,7 @@ export function WorkSpaceVet() {
         queueId: queueId,
       };
       await api.patch("/queue/vetpreference", data).then(() => {
+        refetch();
         toast.success("Preferência atualizada com sucesso!");
       });
     } else {
@@ -561,7 +581,7 @@ export function WorkSpaceVet() {
               <Table variant="simple" borderTop="1px solid black">
                 <Thead>
                   <Tr>
-                    <Th py={1}borderRight="1px solid black">
+                    <Th py={1} borderRight="1px solid black">
                       <Text fontWeight="bold">Cliente</Text>
                     </Th>
                     <Th py={2}>
@@ -599,7 +619,7 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={1}borderRight="1px solid black">
+                    <Th py={1} borderRight="1px solid black">
                       <Text fontWeight="bold">Gastos</Text>
                     </Th>
                     <Th display={"flex"} gap={2} py={2}>
@@ -616,7 +636,7 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={1}borderRight="1px solid black">
+                    <Th py={1} borderRight="1px solid black">
                       <Text fontWeight="bold">Animal</Text>
                     </Th>
                     <Th py={0}>
@@ -650,7 +670,7 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={1}borderRight="1px solid black">
+                    <Th py={1} borderRight="1px solid black">
                       <Text fontWeight="bold">Detalhes</Text>
                     </Th>
                     <Th py={0}>
@@ -668,18 +688,11 @@ export function WorkSpaceVet() {
                             pet.chip ? "Microchipado" : "Não Microchipado"
                           }`}{" "}
                         </Text>{" "}
-                        {/* <Button
-                          size="sm"
-                          colorScheme="yellow"
-                          onClick={() => setModalWeigthPet(true)}
-                        >
-                          Editar Peso
-                        </Button> */}
                       </Grid>
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={1}borderRight="1px solid black">
+                    <Th py={1} borderRight="1px solid black">
                       <Text fontWeight="bold">Horário</Text>
                     </Th>
                     <Th py={2}>
@@ -697,10 +710,10 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={1}borderRight="1px solid black">
+                    <Th py={1} borderRight="1px solid black">
                       <Text fontWeight="bold">Internações</Text>
                     </Th>
-                    <Th py={1}bg={pet.isBusy ? "red.200" : "green.100"}>
+                    <Th py={1} bg={pet.isBusy ? "red.200" : "green.100"}>
                       {pet.isBusy ? (
                         <Text fontWeight="bold">ANIMAL ESTÁ INTERNADO</Text>
                       ) : (
@@ -711,16 +724,16 @@ export function WorkSpaceVet() {
                     </Th>
                   </Tr>
                   <Tr>
-                    <Th py={1}borderRight="1px solid black">
+                    <Th py={1} borderRight="1px solid black">
                       <Text fontWeight="bold">Plano de Saúde</Text>
                     </Th>
 
                     {consultDetails.healthInsuranceId ? (
-                      <Th py={1}fontWeight="black" bgColor="green.100">
+                      <Th py={1} fontWeight="black" bgColor="green.100">
                         {consultDetails.healthInsuranceName}
                       </Th>
                     ) : (
-                      <Th py={1}fontWeight="bold">
+                      <Th py={1} fontWeight="bold">
                         Sem plano para está consulta
                       </Th>
                     )}
@@ -734,7 +747,7 @@ export function WorkSpaceVet() {
                 Observações da recepção
               </Text>
               <Textarea
-                size='sm'
+                size="sm"
                 color="red.900"
                 borderColor="black"
                 overflowY={"scroll"}
@@ -836,7 +849,14 @@ export function WorkSpaceVet() {
             </Flex>
           </Flex>
           <div className="div3">
-            <ThrowDiagnoisticsInConsult />
+            <ThrowDiagnoisticsInConsult
+              symptoms={symptoms}
+              setSymptoms={setSymptoms}
+              diagnostic={diagnostic}
+              setDiagnostic={setDiagnostic}
+              prescription={prescription}
+              setPrescription={setPrescription}
+            />
           </div>
           <div className="div4">
             <Grid templateColumns="repeat(3, 1fr)" gap={2} px={2}>
@@ -900,7 +920,6 @@ export function WorkSpaceVet() {
               mr="3"
               py="6"
               fontSize={{ base: "sm" }}
-
               // onClick={() => {
               //   viewComponentPrint === "Diagnóstico"
               //     ? handleCreateInstruction(PdfDiagnostic)
@@ -929,15 +948,17 @@ export function WorkSpaceVet() {
             >
               Imprimir Solicitação Exames
             </Button>
-            <ConfirmationDialog
-              height="48px"
-              icon={<FaExchangeAlt fill="white" size={16} />}
-              buttonTitle="Alterar preferências"
-              callbackFn={() => updateQueuePetPreference(pet.id)}
-              describreConfirm="Deseja atribuir essa consulta a seu nome?"
-              whatIsConfirmerd="Este animal está sem preferência"
-              disabled={false}
-            />
+            <Button
+              whiteSpace="normal"
+              colorScheme="red"
+              w="100%"
+              mr="3"
+              py="6"
+              fontSize={{ base: "sm" }}
+              onClick={() => {updateQueueDiagnostic(), updateQueuePetPreference(pet.id)}}
+            >
+              Gravar Alterações
+            </Button>
           </Grid>
           <Flex w={"33%"} mx={2} display={"flex"} color={"white"}>
             <Text
@@ -1058,27 +1079,6 @@ export function WorkSpaceVet() {
       >
         <EndConsults handleCloseQuery={handleCloseQuery} />
       </GenericModal>
-
-      {/* <GenericModal
-        isOpen={isMedicineRecordOpen}
-        onRequestClose={closeMedicineRecordModal}
-      >
-        <Flex gap="22px">
-          <CardMedicineRecord
-            content="Aqui você vai encontrar o histórico do animal que estava presente no antigo sistema do Dr Hato"
-            redirect={`/Pets/MedicineRecordOld/${id}/${queueId}`}
-            textButton="Histórico Antigo"
-            title="Visualizar Histórico antigo"
-          />
-
-          <CardMedicineRecord
-            content="Aqui você vai encontrar o histórico do animal que está presente no novo sistema do Dr Hato"
-            redirect={`/Pets/MedicineRecord/${id}/${queueId}`}
-            textButton="Histórico Novo"
-            title="Visualizar Histórico novo"
-          />
-        </Flex>
-      </GenericModal> */}
       <GenericModal
         isOpen={surgerieDetailsIsOpen}
         onRequestClose={() => setSurgerieDetailsIsOpen(false)}
